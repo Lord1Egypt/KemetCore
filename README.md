@@ -23,10 +23,28 @@
 | **Silicon or Bust** | Every project targets actual GDSII on ASAP7 7nm. Synthesis and P&R are not optional. |
 | **Honest Engineering** | Public failure logs, documented workarounds, zero masked timing violations. No paper secrets. |
 | **100% Test Coverage** | Directed edge cases + random fuzzing + exhaustive where feasible. Every test is a CI gate. |
+| **Composable by Default** | Every block implements the same [KAI](docs/00_RaCore_SoC.md) interface, so any accelerator drops into the RaCore SoC with zero glue logic — one driver, one testbench skeleton, one conformance suite. |
 
 ---
 
-## The Ten Projects
+## The Capstone — RaCore
+
+The ten building blocks below are each a verified, taped-out accelerator. **[RaCore](docs/00_RaCore_SoC.md)** is the project that makes them a *computer*: a heterogeneous AI SoC that integrates all eleven cores (the ten below + the completed PtahCore) over a shared interconnect, with a common accelerator interface and a post-quantum root of trust.
+
+| # | Project | Domain | Deity | Est. Complexity |
+|---|---------|--------|-------|:---:|
+| 00 | [**RaCore**](docs/00_RaCore_SoC.md) | **SoC — full-chip integration of all cores** | Ra (the supreme creator god) | ★★★★★ |
+
+Three things RaCore adds that no single block has:
+- **KAI (Kemet Accelerator Interface)** — one register + DMA contract every core implements, so blocks drop into the SoC with zero glue and one shared driver/testbench.
+- **A real interconnect + memory hierarchy** — NoC, banked scratchpad, descriptor DMA: the actual throughput story.
+- **A post-quantum security enclave** — AnubisCore + NeithCore compose into secure boot + attestation.
+
+Built in two honest tiers: **RaCore-Lite** (~3.5 mm², GDSII-feasible on a 16 GB laptop) and **RaCore-Full** (~16 mm², a real shuttle target).
+
+---
+
+## The Ten Building Blocks
 
 | # | Project | Domain | Deity | Est. Complexity |
 |---|---------|--------|-------|:---:|
@@ -54,6 +72,29 @@
 | **GDSII Area** | ~0.1 mm² | ~3 mm² | ~1.5 mm² | ~2 mm² | ~2 mm² | ~0.05 mm² | ~0.3 mm² | ~0.08 mm² | ~0.1 mm² | ~0.5 mm² |
 | **Depends on PtahCore** | No | Yes | Yes | Yes | Yes | No | No | No | Yes | Yes |
 | **Novelty vs. Prior Art** | ★★★ | ★★★★ | ★★★ | ★★★★ | ★★ | ★★ | ★★★ | ★★★ | ★★ | ★★★ |
+
+---
+
+## How It All Fits Together
+
+```
+                      ┌──────────── RaCore SoC (capstone) ───────────┐
+                      │                                              │
+   CPU complex ──▶    │  SethCore (RV32IM) + AtumCore (RVV vector)   │
+                      │                    │                          │
+                      │            ┌───────▼────────┐                 │
+   shared fabric ─▶   │            │  KAI NoC + DMA  │                 │
+                      │            └───────┬────────┘                 │
+                      │     ┌──────────────┼───────────────┐          │
+   ML cluster ──▶     │  PtahCore Bast PtahConv Geb Imentet │  Sobek   │
+                      │  (FP8) (BF16)(conv)(sparse)(attn)   │  (gfx)   │
+                      │                    │                          │
+   security ──▶       │  AnubisCore + NeithCore = PQ root of trust    │
+   shared math ─▶     │  HapiCore (FPU library, used everywhere)      │
+                      └──────────────────────────────────────────────┘
+```
+
+Every block speaks **KAI**, so the same host driver and the same cocotb testbench skeleton drive all of them. Integration cost scales with the *number of blocks*, not the *number of gates* — RaCore hardens each accelerator into a macro once, then routes only the top-level fabric. See [docs/00_RaCore_SoC.md](docs/00_RaCore_SoC.md).
 
 ---
 
