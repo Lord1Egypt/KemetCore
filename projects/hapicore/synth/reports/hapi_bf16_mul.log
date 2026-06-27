@@ -1,0 +1,802 @@
+
+ /----------------------------------------------------------------------------\
+ |  yosys -- Yosys Open SYnthesis Suite                                       |
+ |  Copyright (C) 2012 - 2026  Claire Xenia Wolf <claire@yosyshq.com>         |
+ |  Distributed under an ISC-like license, type "license" to see terms        |
+ \----------------------------------------------------------------------------/
+ Yosys 0.65 (git sha1 aec814bdf3071f7e0fd0fbe43f7f711e99d01e24, g++ 14.3.0-19 -fvisibility-inlines-hidden -fmessage-length=0 -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/yosys_1778591527500/work=/usr/local/src/conda/yosys-0.65 -fdebug-prefix-map=/home/lordegypt/miniconda3/envs/eda=/usr/local/src/conda-prefix -fPIC -O3) [conda-forge/yosys-feedstock]
+
+-- Running command `
+        read_verilog -sv ../rtl/hapi_bf16_mul.sv;
+        synth -top hapi_bf16_mul;
+        select -assert-none t:$_DLATCH_* t:$dlatch;
+        tee -o reports/hapi_bf16_mul.stat stat
+    ' --
+
+1. Executing Verilog-2005 frontend: ../rtl/hapi_bf16_mul.sv
+Parsing SystemVerilog input from `../rtl/hapi_bf16_mul.sv' to AST representation.
+Generating RTLIL representation for module `\hapi_bf16_mul'.
+Successfully finished Verilog frontend.
+
+2. Executing SYNTH pass.
+
+2.1. Executing HIERARCHY pass (managing design hierarchy).
+
+2.1.1. Analyzing design hierarchy..
+Top module:  \hapi_bf16_mul
+
+2.1.2. Analyzing design hierarchy..
+Top module:  \hapi_bf16_mul
+Removed 0 unused modules.
+
+2.2. Executing PROC pass (convert processes to netlists).
+
+2.2.1. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Cleaned up 0 empty switches.
+
+2.2.2. Executing PROC_RMDEAD pass (remove dead branches from decision trees).
+Marked 2 switch rules as full_case in process $proc$../rtl/hapi_bf16_mul.sv:92$92 in module hapi_bf16_mul.
+Marked 3 switch rules as full_case in process $proc$../rtl/hapi_bf16_mul.sv:161$84 in module hapi_bf16_mul.
+Marked 5 switch rules as full_case in process $proc$../rtl/hapi_bf16_mul.sv:111$41 in module hapi_bf16_mul.
+Removed a total of 0 dead cases.
+
+2.2.3. Executing PROC_PRUNE pass (remove redundant assignments in processes).
+Removed 0 redundant assignments.
+Promoted 17 assignments to connections.
+
+2.2.4. Executing PROC_INIT pass (extract init attributes).
+
+2.2.5. Executing PROC_ARST pass (detect async resets in processes).
+
+2.2.6. Executing PROC_ROM pass (convert switches to ROMs).
+Converted 0 switches.
+
+2.2.7. Executing PROC_MUX pass (convert decision trees to multiplexers).
+Creating decoders for process `\hapi_bf16_mul.$proc$../rtl/hapi_bf16_mul.sv:92$92'.
+     1/2: $2\clz16$func$../rtl/hapi_bf16_mul.sv:92$3.n[4:0]$99
+     2/2: $1\clz16$func$../rtl/hapi_bf16_mul.sv:92$3.n[4:0]$98
+Creating decoders for process `\hapi_bf16_mul.$proc$../rtl/hapi_bf16_mul.sv:161$84'.
+     1/3: $3\y[15:0]
+     2/3: $2\y[15:0]
+     3/3: $1\y[15:0]
+Creating decoders for process `\hapi_bf16_mul.$proc$../rtl/hapi_bf16_mul.sv:111$41'.
+     1/17: $4\result_bits[15:0]
+     2/17: $3$unnamed_block$1.exp_final[9:0]$81
+     3/17: $3\result_bits[15:0]
+     4/17: $2\result_bits[15:0]
+     5/17: $2$unnamed_block$1.exp_final[9:0]$78
+     6/17: $1\result_bits[15:0]
+     7/17: $1$unnamed_block$1.lost_mask[31:0]$64
+     8/17: $1$unnamed_block$1.shifted[31:0]$63
+     9/17: $1$unnamed_block$1.ext[31:0]$62
+    10/17: $1$unnamed_block$1.exp_final[9:0]$61
+    11/17: $1$unnamed_block$1.rounded[8:0]$60
+    12/17: $1$unnamed_block$1.round_up[0:0]$59
+    13/17: $1$unnamed_block$1.lsb[0:0]$58
+    14/17: $1$unnamed_block$1.sticky[0:0]$57
+    15/17: $1$unnamed_block$1.round_b[0:0]$56
+    16/17: $1$unnamed_block$1.guard[0:0]$55
+    17/17: $1$unnamed_block$1.keep[7:0]$54
+
+2.2.8. Executing PROC_DLATCH pass (convert process syncs to latches).
+No latch inferred for signal `\hapi_bf16_mul.\clz16$func$../rtl/hapi_bf16_mul.sv:92$2.$result' from process `\hapi_bf16_mul.$proc$../rtl/hapi_bf16_mul.sv:92$92'.
+No latch inferred for signal `\hapi_bf16_mul.\clz16$func$../rtl/hapi_bf16_mul.sv:92$3.$result' from process `\hapi_bf16_mul.$proc$../rtl/hapi_bf16_mul.sv:92$92'.
+No latch inferred for signal `\hapi_bf16_mul.\clz16$func$../rtl/hapi_bf16_mul.sv:92$3.x' from process `\hapi_bf16_mul.$proc$../rtl/hapi_bf16_mul.sv:92$92'.
+No latch inferred for signal `\hapi_bf16_mul.\clz16$func$../rtl/hapi_bf16_mul.sv:92$3.n' from process `\hapi_bf16_mul.$proc$../rtl/hapi_bf16_mul.sv:92$92'.
+No latch inferred for signal `\hapi_bf16_mul.\y' from process `\hapi_bf16_mul.$proc$../rtl/hapi_bf16_mul.sv:161$84'.
+No latch inferred for signal `\hapi_bf16_mul.\result_bits' from process `\hapi_bf16_mul.$proc$../rtl/hapi_bf16_mul.sv:111$41'.
+No latch inferred for signal `\hapi_bf16_mul.$unnamed_block$1.keep' from process `\hapi_bf16_mul.$proc$../rtl/hapi_bf16_mul.sv:111$41'.
+No latch inferred for signal `\hapi_bf16_mul.$unnamed_block$1.guard' from process `\hapi_bf16_mul.$proc$../rtl/hapi_bf16_mul.sv:111$41'.
+No latch inferred for signal `\hapi_bf16_mul.$unnamed_block$1.round_b' from process `\hapi_bf16_mul.$proc$../rtl/hapi_bf16_mul.sv:111$41'.
+No latch inferred for signal `\hapi_bf16_mul.$unnamed_block$1.sticky' from process `\hapi_bf16_mul.$proc$../rtl/hapi_bf16_mul.sv:111$41'.
+No latch inferred for signal `\hapi_bf16_mul.$unnamed_block$1.lsb' from process `\hapi_bf16_mul.$proc$../rtl/hapi_bf16_mul.sv:111$41'.
+No latch inferred for signal `\hapi_bf16_mul.$unnamed_block$1.round_up' from process `\hapi_bf16_mul.$proc$../rtl/hapi_bf16_mul.sv:111$41'.
+No latch inferred for signal `\hapi_bf16_mul.$unnamed_block$1.rounded' from process `\hapi_bf16_mul.$proc$../rtl/hapi_bf16_mul.sv:111$41'.
+No latch inferred for signal `\hapi_bf16_mul.$unnamed_block$1.exp_final' from process `\hapi_bf16_mul.$proc$../rtl/hapi_bf16_mul.sv:111$41'.
+No latch inferred for signal `\hapi_bf16_mul.$unnamed_block$1.ext' from process `\hapi_bf16_mul.$proc$../rtl/hapi_bf16_mul.sv:111$41'.
+No latch inferred for signal `\hapi_bf16_mul.$unnamed_block$1.shifted' from process `\hapi_bf16_mul.$proc$../rtl/hapi_bf16_mul.sv:111$41'.
+No latch inferred for signal `\hapi_bf16_mul.$unnamed_block$1.lost_mask' from process `\hapi_bf16_mul.$proc$../rtl/hapi_bf16_mul.sv:111$41'.
+
+2.2.9. Executing PROC_DFF pass (convert process syncs to FFs).
+
+2.2.10. Executing PROC_MEMWR pass (convert process memory writes to cells).
+
+2.2.11. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Found and cleaned up 2 empty switches in `\hapi_bf16_mul.$proc$../rtl/hapi_bf16_mul.sv:92$92'.
+Removing empty process `hapi_bf16_mul.$proc$../rtl/hapi_bf16_mul.sv:92$92'.
+Found and cleaned up 3 empty switches in `\hapi_bf16_mul.$proc$../rtl/hapi_bf16_mul.sv:161$84'.
+Removing empty process `hapi_bf16_mul.$proc$../rtl/hapi_bf16_mul.sv:161$84'.
+Found and cleaned up 5 empty switches in `\hapi_bf16_mul.$proc$../rtl/hapi_bf16_mul.sv:111$41'.
+Removing empty process `hapi_bf16_mul.$proc$../rtl/hapi_bf16_mul.sv:111$41'.
+Cleaned up 10 empty switches.
+
+2.2.12. Executing OPT_EXPR pass (perform const folding).
+Optimizing module hapi_bf16_mul.
+
+2.3. Executing OPT_EXPR pass (perform const folding).
+Optimizing module hapi_bf16_mul.
+
+2.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \hapi_bf16_mul..
+Removed 14 unused cells and 123 unused wires.
+
+2.5. Executing CHECK pass (checking for obvious problems).
+Checking module hapi_bf16_mul...
+Found and reported 0 problems.
+
+2.6. Executing OPT pass (performing simple optimizations).
+
+2.6.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module hapi_bf16_mul.
+
+2.6.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\hapi_bf16_mul'.
+Computing hashes of 96 cells of `\hapi_bf16_mul'.
+Finding duplicate cells in `\hapi_bf16_mul'.
+Computing hashes of 88 cells of `\hapi_bf16_mul'.
+Finding duplicate cells in `\hapi_bf16_mul'.
+Removed a total of 8 cells.
+
+2.6.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \hapi_bf16_mul..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+    dead port 1/2 on $mux $procmux$137.
+    dead port 1/2 on $mux $procmux$131.
+    dead port 1/2 on $mux $procmux$128.
+    dead port 1/2 on $mux $procmux$119.
+    dead port 16/17 on $pmux $procmux$102.
+    dead port 1/2 on $mux $procmux$173.
+    dead port 1/2 on $mux $procmux$167.
+    dead port 2/2 on $mux $procmux$164.
+    dead port 1/2 on $mux $procmux$149.
+    dead port 1/2 on $mux $procmux$146.
+Removed 10 multiplexer ports.
+
+2.6.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \hapi_bf16_mul.
+Performed a total of 0 changes.
+
+2.6.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\hapi_bf16_mul'.
+Computing hashes of 79 cells of `\hapi_bf16_mul'.
+Finding duplicate cells in `\hapi_bf16_mul'.
+Removed a total of 0 cells.
+
+2.6.6. Executing OPT_DFF pass (perform DFF optimizations).
+
+2.6.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \hapi_bf16_mul..
+Removed 0 unused cells and 17 unused wires.
+
+2.6.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module hapi_bf16_mul.
+
+2.6.9. Rerunning OPT passes. (Maybe there is more to do..)
+
+2.6.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \hapi_bf16_mul..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+
+2.6.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \hapi_bf16_mul.
+Performed a total of 0 changes.
+
+2.6.12. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\hapi_bf16_mul'.
+Computing hashes of 79 cells of `\hapi_bf16_mul'.
+Finding duplicate cells in `\hapi_bf16_mul'.
+Removed a total of 0 cells.
+
+2.6.13. Executing OPT_DFF pass (perform DFF optimizations).
+
+2.6.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \hapi_bf16_mul..
+
+2.6.15. Executing OPT_EXPR pass (perform const folding).
+Optimizing module hapi_bf16_mul.
+
+2.6.16. Finished fast OPT passes. (There is nothing left to do.)
+
+2.7. Executing FSM pass (extract and optimize FSM).
+
+2.7.1. Executing FSM_DETECT pass (finding FSMs in design).
+
+2.7.2. Executing FSM_EXTRACT pass (extracting FSM from design).
+
+2.7.3. Executing FSM_OPT pass (simple optimizations of FSMs).
+
+2.7.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \hapi_bf16_mul..
+
+2.7.5. Executing FSM_OPT pass (simple optimizations of FSMs).
+
+2.7.6. Executing FSM_RECODE pass (re-assigning FSM state encoding).
+
+2.7.7. Executing FSM_INFO pass (dumping all available information on FSM cells).
+
+2.7.8. Executing FSM_MAP pass (mapping FSMs to basic logic).
+
+2.8. Executing OPT pass (performing simple optimizations).
+
+2.8.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module hapi_bf16_mul.
+
+2.8.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\hapi_bf16_mul'.
+Computing hashes of 79 cells of `\hapi_bf16_mul'.
+Finding duplicate cells in `\hapi_bf16_mul'.
+Removed a total of 0 cells.
+
+2.8.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \hapi_bf16_mul..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+
+2.8.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \hapi_bf16_mul.
+Performed a total of 0 changes.
+
+2.8.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\hapi_bf16_mul'.
+Computing hashes of 79 cells of `\hapi_bf16_mul'.
+Finding duplicate cells in `\hapi_bf16_mul'.
+Removed a total of 0 cells.
+
+2.8.6. Executing OPT_DFF pass (perform DFF optimizations).
+
+2.8.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \hapi_bf16_mul..
+
+2.8.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module hapi_bf16_mul.
+
+2.8.9. Finished fast OPT passes. (There is nothing left to do.)
+
+2.9. Executing WREDUCE pass (reducing word size of cells).
+Removed top 1 bits (of 9) from mux cell hapi_bf16_mul.$ternary$../rtl/hapi_bf16_mul.sv:49$31 ($mux).
+Removed top 1 bits (of 9) from mux cell hapi_bf16_mul.$ternary$../rtl/hapi_bf16_mul.sv:50$32 ($mux).
+Removed top 3 bits (of 12) from port A of cell hapi_bf16_mul.$add$../rtl/hapi_bf16_mul.sv:98$35 ($add).
+Removed top 3 bits (of 12) from port B of cell hapi_bf16_mul.$add$../rtl/hapi_bf16_mul.sv:98$35 ($add).
+Converting cell hapi_bf16_mul.$add$../rtl/hapi_bf16_mul.sv:98$35 ($add) from signed to unsigned.
+Removed top 2 bits (of 12) from port Y of cell hapi_bf16_mul.$add$../rtl/hapi_bf16_mul.sv:98$35 ($add).
+Removed top 1 bits (of 9) from port A of cell hapi_bf16_mul.$add$../rtl/hapi_bf16_mul.sv:98$35 ($add).
+Removed top 1 bits (of 9) from port B of cell hapi_bf16_mul.$add$../rtl/hapi_bf16_mul.sv:98$35 ($add).
+Removed top 1 bits (of 10) from port Y of cell hapi_bf16_mul.$add$../rtl/hapi_bf16_mul.sv:98$35 ($add).
+Removed top 2 bits (of 12) from port A of cell hapi_bf16_mul.$sub$../rtl/hapi_bf16_mul.sv:98$36 ($sub).
+Removed top 4 bits (of 12) from port B of cell hapi_bf16_mul.$sub$../rtl/hapi_bf16_mul.sv:98$36 ($sub).
+Converting cell hapi_bf16_mul.$sub$../rtl/hapi_bf16_mul.sv:98$36 ($sub) from signed to unsigned.
+Removed top 1 bits (of 12) from port Y of cell hapi_bf16_mul.$sub$../rtl/hapi_bf16_mul.sv:98$36 ($sub).
+Removed top 1 bits (of 10) from port A of cell hapi_bf16_mul.$sub$../rtl/hapi_bf16_mul.sv:98$36 ($sub).
+Removed top 1 bits (of 8) from port B of cell hapi_bf16_mul.$sub$../rtl/hapi_bf16_mul.sv:98$36 ($sub).
+Removed top 1 bits (of 11) from port Y of cell hapi_bf16_mul.$sub$../rtl/hapi_bf16_mul.sv:98$36 ($sub).
+Converting cell hapi_bf16_mul.$sub$../rtl/hapi_bf16_mul.sv:98$37 ($sub) from unsigned to signed.
+Removed top 2 bits (of 12) from port A of cell hapi_bf16_mul.$sub$../rtl/hapi_bf16_mul.sv:98$37 ($sub).
+Removed top 6 bits (of 12) from port B of cell hapi_bf16_mul.$sub$../rtl/hapi_bf16_mul.sv:98$37 ($sub).
+Removed top 1 bits (of 12) from port Y of cell hapi_bf16_mul.$sub$../rtl/hapi_bf16_mul.sv:98$37 ($sub).
+Removed top 1 bits (of 12) from port A of cell hapi_bf16_mul.$le$../rtl/hapi_bf16_mul.sv:107$38 ($le).
+Removed top 11 bits (of 12) from port B of cell hapi_bf16_mul.$le$../rtl/hapi_bf16_mul.sv:107$38 ($le).
+Converting cell hapi_bf16_mul.$sub$../rtl/hapi_bf16_mul.sv:108$39 ($sub) from unsigned to signed.
+Removed top 10 bits (of 12) from port A of cell hapi_bf16_mul.$sub$../rtl/hapi_bf16_mul.sv:108$39 ($sub).
+Removed top 1 bits (of 12) from port B of cell hapi_bf16_mul.$sub$../rtl/hapi_bf16_mul.sv:108$39 ($sub).
+Removed top 7 bits (of 12) from port B of cell hapi_bf16_mul.$ge$../rtl/hapi_bf16_mul.sv:124$53 ($ge).
+Removed top 16 bits (of 32) from port A of cell hapi_bf16_mul.$shr$../rtl/hapi_bf16_mul.sv:130$65 ($shr).
+Removed top 16 bits (of 32) from port Y of cell hapi_bf16_mul.$shr$../rtl/hapi_bf16_mul.sv:130$65 ($shr).
+Removed top 31 bits (of 32) from port A of cell hapi_bf16_mul.$shl$../rtl/hapi_bf16_mul.sv:135$67 ($shl).
+Removed top 31 bits (of 32) from port B of cell hapi_bf16_mul.$sub$../rtl/hapi_bf16_mul.sv:135$68 ($sub).
+Removed top 16 bits (of 32) from port A of cell hapi_bf16_mul.$and$../rtl/hapi_bf16_mul.sv:136$71 ($and).
+Removed top 1 bits (of 9) from port A of cell hapi_bf16_mul.$add$../rtl/hapi_bf16_mul.sv:139$77 ($add).
+Removed top 8 bits (of 9) from port B of cell hapi_bf16_mul.$add$../rtl/hapi_bf16_mul.sv:139$77 ($add).
+Removed top 9 bits (of 10) from port B of cell hapi_bf16_mul.$add$../rtl/hapi_bf16_mul.sv:151$82 ($add).
+Removed top 2 bits (of 10) from port B of cell hapi_bf16_mul.$ge$../rtl/hapi_bf16_mul.sv:152$83 ($ge).
+Removed top 15 bits (of 16) from port B of cell hapi_bf16_mul.$procmux$103_CMP0 ($eq).
+Removed top 14 bits (of 15) from port B of cell hapi_bf16_mul.$procmux$104_CMP0 ($eq).
+Removed top 13 bits (of 14) from port B of cell hapi_bf16_mul.$procmux$105_CMP0 ($eq).
+Removed top 12 bits (of 13) from port B of cell hapi_bf16_mul.$procmux$106_CMP0 ($eq).
+Removed top 11 bits (of 12) from port B of cell hapi_bf16_mul.$procmux$107_CMP0 ($eq).
+Removed top 10 bits (of 11) from port B of cell hapi_bf16_mul.$procmux$108_CMP0 ($eq).
+Removed top 9 bits (of 10) from port B of cell hapi_bf16_mul.$procmux$109_CMP0 ($eq).
+Removed top 8 bits (of 9) from port B of cell hapi_bf16_mul.$procmux$110_CMP0 ($eq).
+Removed top 7 bits (of 8) from port B of cell hapi_bf16_mul.$procmux$111_CMP0 ($eq).
+Removed top 6 bits (of 7) from port B of cell hapi_bf16_mul.$procmux$112_CMP0 ($eq).
+Removed top 5 bits (of 6) from port B of cell hapi_bf16_mul.$procmux$113_CMP0 ($eq).
+Removed top 4 bits (of 5) from port B of cell hapi_bf16_mul.$procmux$114_CMP0 ($eq).
+Removed top 3 bits (of 4) from port B of cell hapi_bf16_mul.$procmux$115_CMP0 ($eq).
+Removed top 2 bits (of 3) from port B of cell hapi_bf16_mul.$procmux$116_CMP0 ($eq).
+Removed top 1 bits (of 2) from port B of cell hapi_bf16_mul.$procmux$117_CMP0 ($eq).
+Removed top 1 bits (of 16) from mux cell hapi_bf16_mul.$procmux$143 ($mux).
+Removed top 8 bits (of 16) from mux cell hapi_bf16_mul.$procmux$162 ($mux).
+Removed top 1 bits (of 16) from mux cell hapi_bf16_mul.$procmux$170 ($mux).
+Removed top 1 bits (of 16) from mux cell hapi_bf16_mul.$procmux$182 ($mux).
+Removed top 1 bits (of 16) from mux cell hapi_bf16_mul.$procmux$125 ($mux).
+Removed top 1 bits (of 16) from mux cell hapi_bf16_mul.$procmux$134 ($mux).
+Removed top 3 bits (of 12) from wire hapi_bf16_mul.$add$../rtl/hapi_bf16_mul.sv:98$35_Y.
+Removed top 16 bits (of 32) from wire hapi_bf16_mul.$shr$../rtl/hapi_bf16_mul.sv:130$65_Y.
+Removed top 1 bits (of 9) from wire hapi_bf16_mul.expb.
+Removed top 1 bits (of 9) from wire hapi_bf16_mul.expa.
+
+2.10. Executing PEEPOPT pass (run peephole optimizers).
+
+2.11. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \hapi_bf16_mul..
+Removed 0 unused cells and 4 unused wires.
+
+2.12. Executing ALUMACC pass (create $alu and $macc cells).
+Extracting $alu and $macc cells in module hapi_bf16_mul:
+  creating $macc model for $add$../rtl/hapi_bf16_mul.sv:151$82 ($add).
+  creating $macc model for $add$../rtl/hapi_bf16_mul.sv:139$77 ($add).
+  creating $macc model for $sub$../rtl/hapi_bf16_mul.sv:135$68 ($sub).
+  creating $macc model for $sub$../rtl/hapi_bf16_mul.sv:108$39 ($sub).
+  creating $macc model for $sub$../rtl/hapi_bf16_mul.sv:98$37 ($sub).
+  creating $macc model for $sub$../rtl/hapi_bf16_mul.sv:98$36 ($sub).
+  creating $macc model for $add$../rtl/hapi_bf16_mul.sv:98$35 ($add).
+  creating $macc model for $mul$../rtl/hapi_bf16_mul.sv:54$33 ($mul).
+  merging $macc model for $add$../rtl/hapi_bf16_mul.sv:98$35 into $sub$../rtl/hapi_bf16_mul.sv:98$36.
+  creating $alu model for $macc $sub$../rtl/hapi_bf16_mul.sv:98$37.
+  creating $alu model for $macc $sub$../rtl/hapi_bf16_mul.sv:108$39.
+  creating $alu model for $macc $sub$../rtl/hapi_bf16_mul.sv:135$68.
+  creating $alu model for $macc $add$../rtl/hapi_bf16_mul.sv:139$77.
+  creating $alu model for $macc $add$../rtl/hapi_bf16_mul.sv:151$82.
+  creating $macc cell for $sub$../rtl/hapi_bf16_mul.sv:98$36: $auto$alumacc.cc:382:replace_macc$221
+  creating $macc cell for $mul$../rtl/hapi_bf16_mul.sv:54$33: $auto$alumacc.cc:382:replace_macc$222
+  creating $alu model for $ge$../rtl/hapi_bf16_mul.sv:152$83 ($ge): new $alu
+  creating $alu model for $ge$../rtl/hapi_bf16_mul.sv:124$53 ($ge): new $alu
+  creating $alu model for $le$../rtl/hapi_bf16_mul.sv:107$38 ($le): new $alu
+  creating $alu cell for $le$../rtl/hapi_bf16_mul.sv:107$38: $auto$alumacc.cc:512:replace_alu$226
+  creating $alu cell for $ge$../rtl/hapi_bf16_mul.sv:124$53: $auto$alumacc.cc:512:replace_alu$237
+  creating $alu cell for $ge$../rtl/hapi_bf16_mul.sv:152$83: $auto$alumacc.cc:512:replace_alu$250
+  creating $alu cell for $add$../rtl/hapi_bf16_mul.sv:151$82: $auto$alumacc.cc:512:replace_alu$263
+  creating $alu cell for $add$../rtl/hapi_bf16_mul.sv:139$77: $auto$alumacc.cc:512:replace_alu$266
+  creating $alu cell for $sub$../rtl/hapi_bf16_mul.sv:135$68: $auto$alumacc.cc:512:replace_alu$269
+  creating $alu cell for $sub$../rtl/hapi_bf16_mul.sv:108$39: $auto$alumacc.cc:512:replace_alu$272
+  creating $alu cell for $sub$../rtl/hapi_bf16_mul.sv:98$37: $auto$alumacc.cc:512:replace_alu$275
+  created 8 $alu and 2 $macc cells.
+
+2.13. Executing SHARE pass (SAT-based resource sharing).
+Found 3 cells in module hapi_bf16_mul that may be considered for resource sharing.
+  Analyzing resource sharing options for $shl$../rtl/hapi_bf16_mul.sv:93$34 ($shl):
+    Found 3 activation_patterns using ctrl signal { $logic_or$../rtl/hapi_bf16_mul.sv:166$91_Y $logic_or$../rtl/hapi_bf16_mul.sv:164$90_Y $logic_or$../rtl/hapi_bf16_mul.sv:162$89_Y $auto$rtlil.cc:3259:ReduceOr$236 $auto$rtlil.cc:3259:ReduceOr$249 $auto$rtlil.cc:3259:ReduceOr$262 }.
+    No candidates found.
+  Analyzing resource sharing options for $shr$../rtl/hapi_bf16_mul.sv:130$65 ($shr):
+    Found 3 activation_patterns using ctrl signal { $logic_or$../rtl/hapi_bf16_mul.sv:166$91_Y $logic_or$../rtl/hapi_bf16_mul.sv:164$90_Y $logic_or$../rtl/hapi_bf16_mul.sv:162$89_Y $auto$rtlil.cc:3259:ReduceOr$236 $auto$rtlil.cc:3259:ReduceOr$249 $auto$rtlil.cc:3259:ReduceOr$262 }.
+    No candidates found.
+  Analyzing resource sharing options for $shl$../rtl/hapi_bf16_mul.sv:135$67 ($shl):
+    Found 3 activation_patterns using ctrl signal { $logic_or$../rtl/hapi_bf16_mul.sv:166$91_Y $logic_or$../rtl/hapi_bf16_mul.sv:164$90_Y $logic_or$../rtl/hapi_bf16_mul.sv:162$89_Y $eq$../rtl/hapi_bf16_mul.sv:135$66_Y $auto$rtlil.cc:3259:ReduceOr$236 $auto$rtlil.cc:3259:ReduceOr$249 $auto$rtlil.cc:3259:ReduceOr$262 }.
+    No candidates found.
+
+2.14. Executing OPT pass (performing simple optimizations).
+
+2.14.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module hapi_bf16_mul.
+
+2.14.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\hapi_bf16_mul'.
+Computing hashes of 92 cells of `\hapi_bf16_mul'.
+Finding duplicate cells in `\hapi_bf16_mul'.
+Removed a total of 0 cells.
+
+2.14.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \hapi_bf16_mul..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+
+2.14.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \hapi_bf16_mul.
+Performed a total of 0 changes.
+
+2.14.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\hapi_bf16_mul'.
+Computing hashes of 92 cells of `\hapi_bf16_mul'.
+Finding duplicate cells in `\hapi_bf16_mul'.
+Removed a total of 0 cells.
+
+2.14.6. Executing OPT_DFF pass (perform DFF optimizations).
+
+2.14.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \hapi_bf16_mul..
+Removed 1 unused cells and 9 unused wires.
+
+2.14.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module hapi_bf16_mul.
+
+2.14.9. Rerunning OPT passes. (Maybe there is more to do..)
+
+2.14.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \hapi_bf16_mul..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+
+2.14.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \hapi_bf16_mul.
+Performed a total of 0 changes.
+
+2.14.12. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\hapi_bf16_mul'.
+Computing hashes of 90 cells of `\hapi_bf16_mul'.
+Finding duplicate cells in `\hapi_bf16_mul'.
+Removed a total of 0 cells.
+
+2.14.13. Executing OPT_DFF pass (perform DFF optimizations).
+
+2.14.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \hapi_bf16_mul..
+
+2.14.15. Executing OPT_EXPR pass (perform const folding).
+Optimizing module hapi_bf16_mul.
+
+2.14.16. Finished fast OPT passes. (There is nothing left to do.)
+
+2.15. Executing MEMORY pass.
+
+2.15.1. Executing OPT_MEM pass (optimize memories).
+Performed a total of 0 transformations.
+
+2.15.2. Executing OPT_MEM_PRIORITY pass (removing unnecessary memory write priority relations).
+Performed a total of 0 transformations.
+
+2.15.3. Executing OPT_MEM_FEEDBACK pass (finding memory read-to-write feedback paths).
+
+2.15.4. Executing MEMORY_BMUX2ROM pass (converting muxes to ROMs).
+
+2.15.5. Executing MEMORY_DFF pass (merging $dff cells to $memrd).
+
+2.15.6. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \hapi_bf16_mul..
+
+2.15.7. Executing MEMORY_SHARE pass (consolidating $memrd/$memwr cells).
+
+2.15.8. Executing OPT_MEM_WIDEN pass (optimize memories where all ports are wide).
+Performed a total of 0 transformations.
+
+2.15.9. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \hapi_bf16_mul..
+
+2.15.10. Executing MEMORY_COLLECT pass (generating $mem cells).
+
+2.16. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \hapi_bf16_mul..
+
+2.17. Executing OPT pass (performing simple optimizations).
+
+2.17.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module hapi_bf16_mul.
+
+2.17.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\hapi_bf16_mul'.
+Computing hashes of 92 cells of `\hapi_bf16_mul'.
+Finding duplicate cells in `\hapi_bf16_mul'.
+Removed a total of 0 cells.
+
+2.17.3. Executing OPT_DFF pass (perform DFF optimizations).
+
+2.17.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \hapi_bf16_mul..
+Removed 0 unused cells and 7 unused wires.
+
+2.17.5. Finished fast OPT passes.
+
+2.18. Executing MEMORY_MAP pass (converting memories to logic and flip-flops).
+
+2.19. Executing OPT pass (performing simple optimizations).
+
+2.19.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module hapi_bf16_mul.
+
+2.19.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\hapi_bf16_mul'.
+Computing hashes of 92 cells of `\hapi_bf16_mul'.
+Finding duplicate cells in `\hapi_bf16_mul'.
+Removed a total of 0 cells.
+
+2.19.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \hapi_bf16_mul..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+
+2.19.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \hapi_bf16_mul.
+    Consolidated identical input bits for $mux cell $ternary$../rtl/hapi_bf16_mul.sv:48$30:
+      Old ports: A={ 1'1 \b [6:0] }, B={ 1'0 \b [6:0] }, Y=\sigb
+      New ports: A=1'1, B=1'0, Y=\sigb [7]
+      New connections: \sigb [6:0] = \b [6:0]
+    Consolidated identical input bits for $mux cell $ternary$../rtl/hapi_bf16_mul.sv:47$29:
+      Old ports: A={ 1'1 \a [6:0] }, B={ 1'0 \a [6:0] }, Y=\siga
+      New ports: A=1'1, B=1'0, Y=\siga [7]
+      New connections: \siga [6:0] = \a [6:0]
+    Consolidated identical input bits for $mux cell $procmux$162:
+      Old ports: A={ 1'0 $add$../rtl/hapi_bf16_mul.sv:139$77_Y [6:0] }, B={ 1'1 $add$../rtl/hapi_bf16_mul.sv:139$77_Y [6:0] }, Y=$3\result_bits[15:0] [7:0]
+      New ports: A=1'0, B=1'1, Y=$3\result_bits[15:0] [7]
+      New connections: $3\result_bits[15:0] [6:0] = $add$../rtl/hapi_bf16_mul.sv:139$77_Y [6:0]
+  Optimizing cells in module \hapi_bf16_mul.
+Performed a total of 3 changes.
+
+2.19.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\hapi_bf16_mul'.
+Computing hashes of 92 cells of `\hapi_bf16_mul'.
+Finding duplicate cells in `\hapi_bf16_mul'.
+Removed a total of 0 cells.
+
+2.19.6. Executing OPT_SHARE pass.
+
+2.19.7. Executing OPT_DFF pass (perform DFF optimizations).
+
+2.19.8. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \hapi_bf16_mul..
+
+2.19.9. Executing OPT_EXPR pass (perform const folding).
+Optimizing module hapi_bf16_mul.
+
+2.19.10. Rerunning OPT passes. (Maybe there is more to do..)
+
+2.19.11. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \hapi_bf16_mul..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+
+2.19.12. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \hapi_bf16_mul.
+Performed a total of 0 changes.
+
+2.19.13. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\hapi_bf16_mul'.
+Computing hashes of 91 cells of `\hapi_bf16_mul'.
+Finding duplicate cells in `\hapi_bf16_mul'.
+Removed a total of 0 cells.
+
+2.19.14. Executing OPT_SHARE pass.
+
+2.19.15. Executing OPT_DFF pass (perform DFF optimizations).
+
+2.19.16. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \hapi_bf16_mul..
+
+2.19.17. Executing OPT_EXPR pass (perform const folding).
+Optimizing module hapi_bf16_mul.
+
+2.19.18. Finished fast OPT passes. (There is nothing left to do.)
+
+2.20. Executing TECHMAP pass (map to technology primitives).
+
+2.20.1. Executing Verilog-2005 frontend: /home/lordegypt/miniconda3/envs/eda/bin/../share/yosys/techmap.v
+Parsing Verilog input from `/home/lordegypt/miniconda3/envs/eda/bin/../share/yosys/techmap.v' to AST representation.
+Generating RTLIL representation for module `\_90_simplemap_bool_ops'.
+Generating RTLIL representation for module `\_90_simplemap_reduce_ops'.
+Generating RTLIL representation for module `\_90_simplemap_logic_ops'.
+Generating RTLIL representation for module `\_90_simplemap_compare_ops'.
+Generating RTLIL representation for module `\_90_simplemap_various'.
+Generating RTLIL representation for module `\_90_simplemap_registers'.
+Generating RTLIL representation for module `\_90_shift_ops_shr_shl_sshl_sshr'.
+Generating RTLIL representation for module `\_90_shift_shiftx'.
+Generating RTLIL representation for module `\_90_fa'.
+Generating RTLIL representation for module `\_90_lcu_brent_kung'.
+Generating RTLIL representation for module `\_90_alu'.
+Generating RTLIL representation for module `\_90_macc'.
+Generating RTLIL representation for module `\_90_alumacc'.
+Generating RTLIL representation for module `$__div_mod_u'.
+Generating RTLIL representation for module `$__div_mod_trunc'.
+Generating RTLIL representation for module `\_90_div'.
+Generating RTLIL representation for module `\_90_mod'.
+Generating RTLIL representation for module `$__div_mod_floor'.
+Generating RTLIL representation for module `\_90_divfloor'.
+Generating RTLIL representation for module `\_90_modfloor'.
+Generating RTLIL representation for module `\_90_pow'.
+Generating RTLIL representation for module `\_90_demux'.
+Generating RTLIL representation for module `\_90_lut'.
+Generating RTLIL representation for module `$connect'.
+Generating RTLIL representation for module `$input_port'.
+Successfully finished Verilog frontend.
+
+2.20.2. Continuing TECHMAP pass.
+Using extmapper simplemap for cells of type $not.
+Using extmapper simplemap for cells of type $and.
+Using template $paramod$f6b150f99cedb4600d58783d72c448748bc1d18b\_90_alu for cells of type $alu.
+Using template $paramod$d397c0c70d101de41e717eb2706cb4780269823b\_90_alu for cells of type $alu.
+Using template $paramod$constmap:a41b8f4040b87ae5d920b3d7ca07fea41b6d39cd$paramod$3bf4391c2edcd7fdc564361d03ba2cf3a33c67d4\_90_shift_ops_shr_shl_sshl_sshr for cells of type $shl.
+Using template $paramod$c04af8dbf0e5d1d69bbccb2c7bd8a93fc9ef54dc\_90_alu for cells of type $alu.
+Using template $paramod$constmap:c3f9db2ed086131a46ea635902d682d06f2a96c0$paramod$7354c247b305eda7a69b0d7d9e3b06c015b65190\_90_shift_ops_shr_shl_sshl_sshr for cells of type $shl.
+Using template $paramod$constmap:c3f9db2ed086131a46ea635902d682d06f2a96c0$paramod$f32fe74d2f8ab5a9d1f90720afb1f17fabd90573\_90_shift_ops_shr_shl_sshl_sshr for cells of type $shr.
+Using template $paramod$a2af9b43308e3114c3b5dd3f4dc3329b2387395d\_90_alu for cells of type $alu.
+Using template $paramod$754650b284649a026620fc6856e5b6886cbfe794\_90_alu for cells of type $alu.
+Using extmapper simplemap for cells of type $reduce_or.
+Using extmapper simplemap for cells of type $or.
+Using extmapper simplemap for cells of type $reduce_and.
+Using template $paramod$0bf21d6ba6357507623b189abbc1d6f284d75c81\_90_alu for cells of type $alu.
+Using template $paramod$694f8aada8e1d2b9d9b778ffe851c169b50bc07c\_90_alu for cells of type $alu.
+Using extmapper maccmap for cells of type $macc_v2.
+  add { \siga [7] \a [6:0] } * { \sigb [7] \b [6:0] } (8x8 bits, unsigned)
+  add \expa (8 bits, unsigned)
+  add \expb (8 bits, unsigned)
+  add 10'1110000010 (10 bits, unsigned)
+Using extmapper simplemap for cells of type $xor.
+Using extmapper simplemap for cells of type $logic_and.
+Using extmapper simplemap for cells of type $logic_not.
+Using extmapper simplemap for cells of type $eq.
+Using extmapper simplemap for cells of type $reduce_bool.
+Using extmapper simplemap for cells of type $logic_or.
+Using extmapper simplemap for cells of type $pmux.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000001010 for cells of type $fa.
+Using template $paramod$484d51534650924b7ed4c69e46eed3a56904771f\_90_alu for cells of type $alu.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000010000 for cells of type $fa.
+Using template $paramod$6df0329addda9228fcc2546de2aaf14ad26c98e1\_90_alu for cells of type $alu.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000001011 for cells of type $fa.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000001011 for cells of type $lcu.
+Using extmapper simplemap for cells of type $pos.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000100000 for cells of type $fa.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000100000 for cells of type $lcu.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000001001 for cells of type $fa.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000001001 for cells of type $lcu.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000001010 for cells of type $lcu.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000010000 for cells of type $lcu.
+No more expansions possible.
+
+2.21. Executing OPT pass (performing simple optimizations).
+
+2.21.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module hapi_bf16_mul.
+
+2.21.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\hapi_bf16_mul'.
+Computing hashes of 1691 cells of `\hapi_bf16_mul'.
+Finding duplicate cells in `\hapi_bf16_mul'.
+Computing hashes of 1609 cells of `\hapi_bf16_mul'.
+Finding duplicate cells in `\hapi_bf16_mul'.
+Computing hashes of 1590 cells of `\hapi_bf16_mul'.
+Finding duplicate cells in `\hapi_bf16_mul'.
+Computing hashes of 1586 cells of `\hapi_bf16_mul'.
+Finding duplicate cells in `\hapi_bf16_mul'.
+Computing hashes of 1585 cells of `\hapi_bf16_mul'.
+Finding duplicate cells in `\hapi_bf16_mul'.
+Removed a total of 106 cells.
+
+2.21.3. Executing OPT_DFF pass (perform DFF optimizations).
+
+2.21.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \hapi_bf16_mul..
+Removed 233 unused cells and 829 unused wires.
+
+2.21.5. Finished fast OPT passes.
+
+2.22. Executing ABC pass (technology mapping using ABC).
+
+2.22.1. Extracting gate netlist of module `\hapi_bf16_mul' to `<abc-temp-dir>/input.blif'..
+
+2.22.1.1. Executed ABC.
+Extracted 1352 gates and 1386 wires to a netlist network with 32 inputs and 16 outputs.
+Running ABC script: <abc-temp-dir>/abc.script
+ABC: UC Berkeley, ABC 1.01 (compiled May 12 2026 13:26:50)
+ABC: abc 01> empty
+ABC: abc 01> source <abc-temp-dir>/abc.script
+ABC: + read_blif <abc-temp-dir>/input.blif 
+ABC: + read_library <abc-temp-dir>/stdcells.genlib 
+ABC: + strash 
+ABC: + &get -n 
+ABC: + &fraig -x 
+ABC: + &put 
+ABC: + scorr 
+ABC: Warning: The network is combinational (run "fraig" or "fraig_sweep").
+ABC: + dc2 
+ABC: + dretime 
+ABC: + strash 
+ABC: + &get -n 
+ABC: + &dch -f 
+ABC: + &nf 
+ABC: + &put 
+ABC: + write_blif <abc-temp-dir>/output.blif 
+ABC: 
+ABC: YOSYS_ABC_DONE 
+
+2.22.1.2. Re-integrating ABC results.
+ABC RESULTS:               AND cells:      238
+ABC RESULTS:            ANDNOT cells:       22
+ABC RESULTS:               MUX cells:       56
+ABC RESULTS:              NAND cells:      291
+ABC RESULTS:               NOR cells:       31
+ABC RESULTS:               NOT cells:       20
+ABC RESULTS:                OR cells:       32
+ABC RESULTS:             ORNOT cells:       23
+ABC RESULTS:              XNOR cells:       37
+ABC RESULTS:               XOR cells:      123
+ABC RESULTS:        internal signals:     1338
+ABC RESULTS:           input signals:       32
+ABC RESULTS:          output signals:       16
+Removing temp directory.
+Removing global temp directory.
+
+2.23. Executing OPT pass (performing simple optimizations).
+
+2.23.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module hapi_bf16_mul.
+
+2.23.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\hapi_bf16_mul'.
+Computing hashes of 873 cells of `\hapi_bf16_mul'.
+Finding duplicate cells in `\hapi_bf16_mul'.
+Removed a total of 0 cells.
+
+2.23.3. Executing OPT_DFF pass (perform DFF optimizations).
+
+2.23.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \hapi_bf16_mul..
+Removed 0 unused cells and 465 unused wires.
+
+2.23.5. Finished fast OPT passes.
+
+2.24. Executing HIERARCHY pass (managing design hierarchy).
+Attribute `top' found on module `hapi_bf16_mul'. Setting top module to hapi_bf16_mul.
+
+2.24.1. Analyzing design hierarchy..
+Top module:  \hapi_bf16_mul
+
+2.24.2. Analyzing design hierarchy..
+Top module:  \hapi_bf16_mul
+Removed 0 unused modules.
+
+2.25. Printing statistics.
+
+=== hapi_bf16_mul ===
+
+        +----------Local Count, excluding submodules.
+        | 
+      871 wires
+      986 wire bits
+       14 public wires
+      129 public wire bits
+        3 ports
+       48 port bits
+      873 cells
+       22   $_ANDNOT_
+      238   $_AND_
+       56   $_MUX_
+      291   $_NAND_
+       31   $_NOR_
+       20   $_NOT_
+       23   $_ORNOT_
+       32   $_OR_
+       37   $_XNOR_
+      123   $_XOR_
+
+2.26. Executing CHECK pass (checking for obvious problems).
+Checking module hapi_bf16_mul...
+Found and reported 0 problems.
+
+3. Printing statistics.
+
+=== hapi_bf16_mul ===
+
+        +----------Local Count, excluding submodules.
+        | 
+      871 wires
+      986 wire bits
+       14 public wires
+      129 public wire bits
+        3 ports
+       48 port bits
+      873 cells
+       22   $_ANDNOT_
+      238   $_AND_
+       56   $_MUX_
+      291   $_NAND_
+       31   $_NOR_
+       20   $_NOT_
+       23   $_ORNOT_
+       32   $_OR_
+       37   $_XNOR_
+      123   $_XOR_
+
+End of script. Logfile hash: 6b36c1230f, time: 0.64s, user: 0.30s, system: 0.02s, MEM: 33.88 MB peak
+Yosys 0.65 (git sha1 aec814bdf3071f7e0fd0fbe43f7f711e99d01e24, g++ 14.3.0-19 -fvisibility-inlines-hidden -fmessage-length=0 -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/yosys_1778591527500/work=/usr/local/src/conda/yosys-0.65 -fdebug-prefix-map=/home/lordegypt/miniconda3/envs/eda=/usr/local/src/conda-prefix -fPIC -O3) [conda-forge/yosys-feedstock]
+Time spent: 58% 1x abc (0 sec), 9% 32x opt_expr (0 sec), ...
