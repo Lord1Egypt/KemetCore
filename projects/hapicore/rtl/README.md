@@ -18,6 +18,18 @@ with guard/round/sticky, effective add/subtract, leading-zero normalise + RNE.
 Handles cancellation (`x + (-x) = +0`), signed-zero rules, Inf+Inf(opposite) → NaN,
 subnormals, and overflow/underflow.
 
+`hapi_fp32_fma.sv` — single-cycle **fused** multiply-add `y = round(a*b + c)` with a
+*single* final rounding (the true ML MAC primitive, not mul-then-add). The exact
+48-bit product and 24-bit addend are aligned by their true exponents into a **128-bit
+window** anchored at the larger operand's MSB — wide enough to hold the entire
+rounding-relevant range exactly (full product width + cancellation headroom + guard);
+bits that fall past the window (only when one operand is too small to reach the round
+bit) are OR-collected into a single sticky, with a sticky-borrow on effective
+subtraction. One leading-one normalise (for-loop priority encoder) + RNE; subnormal
+in/out, overflow → Inf, underflow → signed zero, and fused specials (`0·Inf → NaN`,
+`Inf + (−Inf) → NaN`, signed-zero). Bit-exact against the single-rounded golden
+(`fp_fma`, which rounds the exact rational `a*b+c` once) — 190k+ FMAs verified.
+
 ## Interfaces
 | Core | Inputs | Output |
 |------|--------|--------|
@@ -33,6 +45,7 @@ cd projects/hapicore/rtl/tb
 ./run_sim.sh CORE=add        # bf16 adder
 ./run_sim.sh CORE=fp32mul    # fp32 multiplier
 ./run_sim.sh CORE=fp32add    # fp32 adder
+./run_sim.sh CORE=fp32fma    # fp32 fused multiply-add
 ```
 `run_sim.sh` forces a single consistent Python (handles conda-cocotb vs
 system-verilator). All four are verified **bit-exact** against the Python golden /
@@ -42,7 +55,8 @@ add over 625 + 6,000 + ~5,954 cancellation + 392 edges; fp32 mul over 576 + 40,0
 compared by class (payload bits are not architectural); the sign of zero **is** checked.
 
 ## Status
-- ✅ Phase 2: bf16 + fp32 multiplier RTL + cocotb (Verilator 5.020)
-- ✅ Phase 2: bf16 + fp32 adder RTL + cocotb
+- ✅ Phase 2: fp16 + bf16 + fp32 multiplier RTL + cocotb (Verilator 5.020)
+- ✅ Phase 2: fp16 + bf16 + fp32 adder RTL + cocotb
+- ✅ Phase 2: fp32 **fused** multiply-add (`hapi_fp32_fma`) + cocotb — 54K+ FMAs bit-exact
 - ✅ Phase 3: Yosys synthesis (gate count + 0-latch check) — see `../synth/`
-- ⬜ Next: fp16 datapath, fused multiply-add, divide (Goldschmidt), then ASAP7
+- ⬜ Next: divide (Goldschmidt), bf16/fp16 FMA, then ASAP7
