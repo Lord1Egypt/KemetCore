@@ -18,14 +18,26 @@ for core in hapi_bf16_mul hapi_bf16_add hapi_fp32_mul hapi_fp32_add hapi_fp16_mu
     echo "  -> reports/${core}.stat (0 latches asserted)"
 done
 
-# hapi_fp32_fma is a large combinational FMA (128-bit alignment window + 129-bit
-# priority encoder + sticky/borrow). The stock apt Yosys on the CI runner is very
-# slow / memory-hungry on that wide cloud, so the FMA synth is skipped under CI
-# ($CI is set by GitHub Actions); reports/hapi_fp32_fma.stat is the committed
-# evidence (0 latches, ~686 coarse cells; locally `abc -fast -g AND` ~= 43.5K
-# AND/NOT gates). The design is purely combinational (Verilator confirms no
-# latch), and gate-level area/timing is a Phase-4 PDK-mapping concern.
+# The FMA cores (hapi_fp32_fma + the parameterized hapi_fma_core wrappers
+# hapi_bf16_fma / hapi_fp16_fma) have a leading-one priority-encoder + barrel-shift
+# alignment cloud that the stock apt Yosys on the CI runner chokes on (OOM-killed
+# after minutes — even for the small bf16/fp16 cores), although the dev Yosys
+# synthesises them fine. So ALL FMA synth is skipped under CI ($CI is set by GitHub
+# Actions); the committed reports/*.stat are the evidence (0 latches; full-ABC gate
+# counts bf16 ~2961, fp16 ~3411; fp32 coarse ~686 cells / abc -fast ~43.5K AND/NOT).
+# These cores are purely combinational (Verilator confirms no latch) and gate-level
+# area/timing is a Phase-4 PDK-mapping concern.
 if [ -z "${CI:-}" ]; then
+    for top in hapi_bf16_fma hapi_fp16_fma; do
+        echo "=== synthesizing $top ==="
+        "$YOSYS" -ql "reports/${top}.log" -p "
+            read_verilog -sv ../rtl/hapi_fma_core.sv;
+            synth -top ${top};
+            select -assert-none t:\$_DLATCH_* t:\$dlatch;
+            tee -o reports/${top}.stat stat
+        "
+        echo "  -> reports/${top}.stat (0 latches asserted)"
+    done
     echo "=== synthesizing hapi_fp32_fma (coarse, 0-latch check) ==="
     "$YOSYS" -ql "reports/hapi_fp32_fma.log" -p "
         read_verilog -sv ../rtl/hapi_fp32_fma.sv;
@@ -35,6 +47,6 @@ if [ -z "${CI:-}" ]; then
     "
     echo "  -> reports/hapi_fp32_fma.stat (0 latches asserted)"
 else
-    echo "=== skipping hapi_fp32_fma synth under CI (see committed reports/hapi_fp32_fma.stat) ==="
+    echo "=== skipping FMA synth under CI (see committed reports/hapi_{bf16,fp16,fp32}_fma.stat) ==="
 fi
 echo "ALL SYNTHESIZED ✅ (no latches)"

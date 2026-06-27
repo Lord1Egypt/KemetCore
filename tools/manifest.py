@@ -53,8 +53,14 @@ PROJECTS = [
                  "(corners+random+cancellation+opposite-sign far-tail+subnormal/overflow); "
                  "Yosys 0-latch via coarse synth (~686 word-level cells; ABC gate-mapping "
                  "the wide alignment cloud is very slow, so it is deferred to Phase-4 PDK "
-                 "mapping — locally abc -fast gives ~43.5K AND/NOT gates). "
-                 "fp16 div/sqrt (Goldschmidt), bf16/fp16 fma, ASAP7 + P&R (Phase 4) pending.",
+                 "mapping — locally abc -fast gives ~43.5K AND/NOT gates). The FMA datapath "
+                 "was then GENERALISED into a parameterized hapi_fma_core (EXP_W/MANT_W/BIAS/W) "
+                 "with thin wrappers hapi_bf16_fma (W=48) + hapi_fp16_fma (W=48): each cocotb "
+                 "bit-exact vs the single-rounded golden on 150K+ FMAs, Yosys 0-latch full ABC "
+                 "(bf16 ~2961 / fp16 ~3411 gates locally). cocotb for all FMAs runs in CI, but "
+                 "FMA SYNTH is skipped under CI (apt-yosys OOMs on the priority-encoder/shifter "
+                 "cloud even for the small cores; committed .stat = evidence). FMA now complete "
+                 "across bf16/fp16/fp32. fp_div/sqrt (Goldschmidt), ASAP7 + P&R (Phase 4) pending.",
         "checkpoints": [
             ("HA.1", "Golden: fp16/bf16/fp32 add", 0, "done"),
             ("HA.2", "Golden: mul + fma", 0, "done"),
@@ -68,6 +74,8 @@ PROJECTS = [
             ("HA.12a", "RTL: fp16 multiplier (hapi_fp16_mul) + cocotb vs golden/numpy", 2, "done"),
             ("HA.12b", "RTL: fp16 adder (hapi_fp16_add) + cocotb vs golden/numpy", 2, "done"),
             ("HA.12c", "RTL: fp32 FMA (hapi_fp32_fma) + cocotb vs single-rounded golden", 2, "done"),
+            ("HA.12d", "RTL: bf16 FMA (hapi_bf16_fma via parameterized hapi_fma_core)", 2, "done"),
+            ("HA.12e", "RTL: fp16 FMA (hapi_fp16_fma via parameterized hapi_fma_core)", 2, "done"),
             ("HA.12", "RTL: fp_div (Goldschmidt)", 2, "todo"),
             ("HA.13", "Synthesis: generic Yosys, 0 latches + gate count", 3, "done"),
             ("HA.14", "Synthesis: ASAP7 liberty tech-mapping", 3, "todo"),
@@ -89,6 +97,8 @@ PROJECTS = [
             ("rtl: test_fp32_mul (cocotb)", "hapi_fp32_mul == numpy fp32 on 40K+ products", "pass"),
             ("rtl: test_fp32_add (cocotb)", "hapi_fp32_add == numpy fp32 on 70K+ sums", "pass"),
             ("rtl: test_fp32_fma (cocotb)", "hapi_fp32_fma == single-rounded golden on 54K+ FMAs", "pass"),
+            ("rtl: test_bf16_fma (cocotb)", "hapi_bf16_fma == single-rounded golden on 150K+ FMAs", "pass"),
+            ("rtl: test_fp16_fma (cocotb)", "hapi_fp16_fma == single-rounded golden on 150K+ FMAs", "pass"),
         ],
     },
     {

@@ -6,6 +6,8 @@
 #   make CORE=fp16mul             -> hapi_fp16_mul
 #   make CORE=fp16add             -> hapi_fp16_add
 #   make CORE=fp32fma             -> hapi_fp32_fma
+#   make CORE=bf16fma             -> hapi_bf16_fma (hapi_fma_core)
+#   make CORE=fp16fma             -> hapi_fp16_fma (hapi_fma_core)
 TOPLEVEL_LANG = verilog
 SIM ?= verilator
 CORE ?= mul
@@ -36,6 +38,14 @@ else ifeq ($(CORE),fp32fma)
   VERILOG_SOURCES = $(PWD)/../hapi_fp32_fma.sv
   TOPLEVEL = hapi_fp32_fma
   MODULE   = test_fp32_fma
+else ifeq ($(CORE),bf16fma)
+  VERILOG_SOURCES = $(PWD)/../hapi_fma_core.sv
+  TOPLEVEL = hapi_bf16_fma
+  MODULE   = test_bf16_fma
+else ifeq ($(CORE),fp16fma)
+  VERILOG_SOURCES = $(PWD)/../hapi_fma_core.sv
+  TOPLEVEL = hapi_fp16_fma
+  MODULE   = test_fp16_fma
 else
   VERILOG_SOURCES = $(PWD)/../hapi_bf16_mul.sv
   TOPLEVEL = hapi_bf16_mul

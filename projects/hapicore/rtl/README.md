@@ -30,6 +30,15 @@ in/out, overflow → Inf, underflow → signed zero, and fused specials (`0·Inf
 `Inf + (−Inf) → NaN`, signed-zero). Bit-exact against the single-rounded golden
 (`fp_fma`, which rounds the exact rational `a*b+c` once) — 190k+ FMAs verified.
 
+`hapi_fma_core.sv` — the **parameterized** version of that same FMA datapath
+(`EXP_W`/`MANT_W`/`BIAS`/`W`), with thin wrappers **`hapi_bf16_fma`** and
+**`hapi_fp16_fma`** (both `W=48`). One core, three formats; each wrapper is bit-exact
+against the single-rounded golden (150k+ FMAs each); full-ABC Yosys gives 0 latches
+at bf16 ~2961 / fp16 ~3411 gates. (Their cocotb runs in CI; like fp32 the FMA
+*synth* is skipped under CI — the apt Yosys there OOMs on the FMA priority-encoder
+cloud even for the small cores — with the committed `.stat` as evidence.) FMA is
+now complete across bf16/fp16/fp32.
+
 ## Interfaces
 | Core | Inputs | Output |
 |------|--------|--------|
@@ -46,6 +55,8 @@ cd projects/hapicore/rtl/tb
 ./run_sim.sh CORE=fp32mul    # fp32 multiplier
 ./run_sim.sh CORE=fp32add    # fp32 adder
 ./run_sim.sh CORE=fp32fma    # fp32 fused multiply-add
+./run_sim.sh CORE=bf16fma    # bf16 fused multiply-add (hapi_fma_core)
+./run_sim.sh CORE=fp16fma    # fp16 fused multiply-add (hapi_fma_core)
 ```
 `run_sim.sh` forces a single consistent Python (handles conda-cocotb vs
 system-verilator). All four are verified **bit-exact** against the Python golden /
@@ -57,6 +68,7 @@ compared by class (payload bits are not architectural); the sign of zero **is** 
 ## Status
 - ✅ Phase 2: fp16 + bf16 + fp32 multiplier RTL + cocotb (Verilator 5.020)
 - ✅ Phase 2: fp16 + bf16 + fp32 adder RTL + cocotb
-- ✅ Phase 2: fp32 **fused** multiply-add (`hapi_fp32_fma`) + cocotb — 54K+ FMAs bit-exact
+- ✅ Phase 2: **fused** multiply-add across all 3 formats — `hapi_fp32_fma` + parameterized
+  `hapi_fma_core` wrappers `hapi_bf16_fma`/`hapi_fp16_fma`, each cocotb bit-exact
 - ✅ Phase 3: Yosys synthesis (gate count + 0-latch check) — see `../synth/`
-- ⬜ Next: divide (Goldschmidt), bf16/fp16 FMA, then ASAP7
+- ⬜ Next: divide / sqrt (Goldschmidt), then ASAP7
