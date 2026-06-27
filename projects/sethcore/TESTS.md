@@ -15,5 +15,6 @@ Run: `pytest projects/sethcore/tests -v`
 | `rtl: test_alu (cocotb)` | seth_alu.sv == golden _alu_r on all ops | ✅ |
 | `rtl: test_muldiv (cocotb)` | seth_muldiv.sv == golden _muldiv (incl edges) | ✅ |
 | `rtl: test_imm (cocotb)` | seth_imm.sv == golden.decode_imm on 70K+ words | ✅ |
+| `rtl: test_regfile (cocotb)` | seth_regfile.sv == reference on 20K+ rw cycles, x0=0 | ✅ |
 
-**9/9 tests passing.**
+**10/10 tests passing.**

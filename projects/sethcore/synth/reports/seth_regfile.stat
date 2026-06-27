@@ -1,0 +1,23 @@
+
+3. Printing statistics.
+
+=== seth_regfile ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     2751 wires
+     3848 wire bits
+       40 public wires
+     1137 public wire bits
+        8 ports
+      113 port bits
+     3767 cells
+       42   $_ANDNOT_
+      500   $_AND_
+      992   $_DFFE_PP_
+     1548   $_MUX_
+      623   $_NAND_
+       28   $_NOR_
+       13   $_ORNOT_
+       21   $_OR_
+
