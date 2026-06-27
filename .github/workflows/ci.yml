@@ -51,6 +51,8 @@ jobs:
         run: ./projects/neithcore/rtl/tb/run_sim.sh CORE=modmul
       - name: Run NeithCore NTT butterfly testbench
         run: ./projects/neithcore/rtl/tb/run_sim.sh CORE=butterfly
+      - name: Run BastCore MAC testbench
+        run: ./projects/bastcore/rtl/tb/run_sim.sh CORE=mac
 
   synth-yosys:
     name: Phase 3 synthesis (Yosys, 0-latch check)
@@ -67,3 +69,5 @@ jobs:
         run: YOSYS=yosys ./projects/hapicore/synth/run_synth.sh
       - name: Synthesize NeithCore NTT primitives (asserts no latches)
         run: YOSYS=yosys ./projects/neithcore/synth/run_synth.sh
+      - name: Synthesize BastCore MAC (asserts no latches)
+        run: YOSYS=yosys ./projects/bastcore/synth/run_synth.sh

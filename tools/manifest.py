@@ -100,20 +100,28 @@ PROJECTS = [
     {
         "key": "bastcore", "num": "05", "name": "BastCore", "deity": "Bastet (protection)",
         "domain": "BF16 tensor core", "doc": "docs/05_BastCore_BF16Tensor.md",
-        "depends": ["hapicore"], "phase": P01,
-        "scope": "Phase 0/1 implements bf16 matmul (bf16 inputs, fp32 accumulate) and a "
-                 "16x16 systolic dataflow pymodel.",
+        "depends": ["hapicore"],
+        "phase": _ph("done", "done", "partial", "partial", "todo", "todo"),
+        "scope": "Phase 0/1: bf16 matmul (bf16 inputs, fp32 accumulate) + 16x16 systolic "
+                 "dataflow pymodel. Phase 2 IN PROGRESS: bast_mac.sv — the MAC processing "
+                 "element (bf16 multiply -> exact bf16->fp32 widen -> registered fp32 "
+                 "accumulate) composing the verified HapiCore hapi_bf16_mul + hapi_fp32_add; "
+                 "cocotb-verified bit-exact vs golden.matmul on 400 variable-length dot "
+                 "products. Phase 3: generic Yosys synth 0 latches (~2729 cells incl. "
+                 "submodules, 32 acc flip-flops). 16x16 mac_grid + ASAP7 pending.",
         "checkpoints": [
             ("B2.1", "Golden: bf16 matmul (fp32 accumulate)", 0, "done"),
             ("B2.2", "pymodel: systolic MAC array", 1, "done"),
-            ("B2.5", "RTL: mac_cell (bf16)", 2, "todo"),
-            ("B2.6", "RTL: mac_grid 16x16", 2, "todo"),
+            ("B2.5", "RTL: mac_cell (bf16 mul + fp32 accumulate) + cocotb vs golden", 2, "done"),
+            ("B2.6", "RTL: mac_grid 16x16 (systolic)", 2, "todo"),
+            ("B2.8", "Synthesis: generic Yosys, 0 latches + gate count", 3, "done"),
             ("B2.9", "P&R: full array GDSII", 4, "todo"),
         ],
         "tests": [
             ("test_matmul_vs_numpy", "bf16 matmul within bf16 tolerance of fp32 ref", "pass"),
             ("test_identity", "A @ I == A (bf16 representable)", "pass"),
             ("test_pymodel_equals_golden", "systolic pymodel == golden matmul", "pass"),
+            ("rtl: test_mac (cocotb)", "bast_mac == golden.matmul on 400 dot products", "pass"),
         ],
     },
     {
