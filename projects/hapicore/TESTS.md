@@ -21,5 +21,7 @@ Run: `pytest projects/hapicore/tests -v`
 | `rtl: test_fp32_mul (cocotb)` | hapi_fp32_mul == numpy fp32 on 40K+ products | ✅ |
 | `rtl: test_fp32_add (cocotb)` | hapi_fp32_add == numpy fp32 on 70K+ sums | ✅ |
 | `rtl: test_fp32_fma (cocotb)` | hapi_fp32_fma == single-rounded golden on 54K+ FMAs | ✅ |
+| `rtl: test_bf16_fma (cocotb)` | hapi_bf16_fma == single-rounded golden on 150K+ FMAs | ✅ |
+| `rtl: test_fp16_fma (cocotb)` | hapi_fp16_fma == single-rounded golden on 150K+ FMAs | ✅ |
 
-**15/15 tests passing.**
+**17/17 tests passing.**

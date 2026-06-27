@@ -1,0 +1,70 @@
+
+3. Printing statistics.
+
+=== hapi_bf16_fma ===
+
+        +----------Local Count, excluding submodules.
+        | 
+        4 wires
+       64 wire bits
+        4 public wires
+       64 public wire bits
+        4 ports
+       64 port bits
+        1 submodules
+        1   $paramod$bf160196480e773e7d49fdf689477c6a9fa1704f\hapi_fma_core
+
+=== $paramod$bf160196480e773e7d49fdf689477c6a9fa1704f\hapi_fma_core ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     2981 wires
+     3379 wire bits
+       36 public wires
+      434 public wire bits
+        4 ports
+       64 port bits
+     2961 cells
+      136   $_ANDNOT_
+      756   $_AND_
+      352   $_MUX_
+      863   $_NAND_
+       80   $_NOR_
+       69   $_NOT_
+      170   $_ORNOT_
+      132   $_OR_
+      188   $_XNOR_
+      215   $_XOR_
+
+=== design hierarchy ===
+
+        +----------Count including submodules.
+        | 
+     2961 hapi_bf16_fma
+     2961 $paramod$bf160196480e773e7d49fdf689477c6a9fa1704f\hapi_fma_core
+
+        +----------Count including submodules.
+        | 
+     2985 wires
+     3443 wire bits
+       40 public wires
+      498 public wire bits
+        8 ports
+      128 port bits
+        - memories
+        - memory bits
+        - processes
+     2961 cells
+      136   $_ANDNOT_
+      756   $_AND_
+      352   $_MUX_
+      863   $_NAND_
+       80   $_NOR_
+       69   $_NOT_
+      170   $_ORNOT_
+      132   $_OR_
+      188   $_XNOR_
+      215   $_XOR_
+        1 submodules
+        1   $paramod$bf160196480e773e7d49fdf689477c6a9fa1704f\hapi_fma_core
+
