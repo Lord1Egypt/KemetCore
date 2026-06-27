@@ -1,0 +1,25 @@
+
+3. Printing statistics.
+
+=== neith_modmul ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     1420 wires
+     1534 wire bits
+        6 public wires
+      120 public wire bits
+        3 ports
+       39 port bits
+     1427 cells
+        9   $_ANDNOT_
+      309   $_AND_
+        3   $_MUX_
+      564   $_NAND_
+        8   $_NOR_
+        2   $_NOT_
+       26   $_ORNOT_
+       26   $_OR_
+       96   $_XNOR_
+      384   $_XOR_
+

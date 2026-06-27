@@ -1,0 +1,81 @@
+
+4. Printing statistics.
+
+=== neith_butterfly ===
+
+        +----------Local Count, excluding submodules.
+        | 
+      205 wires
+      303 wire bits
+        8 public wires
+      106 public wire bits
+        5 ports
+       65 port bits
+      223 cells
+       18   $_ANDNOT_
+       62   $_AND_
+        2   $_MUX_
+       48   $_NAND_
+        2   $_NOR_
+        2   $_NOT_
+        7   $_ORNOT_
+       14   $_OR_
+       49   $_XNOR_
+       19   $_XOR_
+        1 submodules
+        1   neith_modmul
+
+=== neith_modmul ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     1420 wires
+     1534 wire bits
+        6 public wires
+      120 public wire bits
+        3 ports
+       39 port bits
+     1427 cells
+        9   $_ANDNOT_
+      309   $_AND_
+        3   $_MUX_
+      564   $_NAND_
+        8   $_NOR_
+        2   $_NOT_
+       26   $_ORNOT_
+       26   $_OR_
+       96   $_XNOR_
+      384   $_XOR_
+
+=== design hierarchy ===
+
+        +----------Count including submodules.
+        | 
+     1650 neith_butterfly
+     1427 neith_modmul
+
+        +----------Count including submodules.
+        | 
+     1625 wires
+     1837 wire bits
+       14 public wires
+      226 public wire bits
+        8 ports
+      104 port bits
+        - memories
+        - memory bits
+        - processes
+     1650 cells
+       27   $_ANDNOT_
+      371   $_AND_
+        5   $_MUX_
+      612   $_NAND_
+       10   $_NOR_
+        4   $_NOT_
+       33   $_ORNOT_
+       40   $_OR_
+      145   $_XNOR_
+      403   $_XOR_
+        1 submodules
+        1   neith_modmul
+

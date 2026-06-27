@@ -19,7 +19,7 @@ Legend: ✅ done · 🔧 in progress · ⬜ todo
 | 04 | **GebCore** | 2:4 structured sparse matmul | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | 33% | [steps](projects/gebcore/STEPS.md) · [chk](projects/gebcore/CHECKPOINTS.md) · [tests](projects/gebcore/TESTS.md) |
 | 05 | **BastCore** | BF16 tensor core | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | 33% | [steps](projects/bastcore/STEPS.md) · [chk](projects/bastcore/CHECKPOINTS.md) · [tests](projects/bastcore/TESTS.md) |
 | 06 | **AnubisCore** | SHA-256 / SHA-3 hash engine | ✅ | ✅ | ✅ | 🔧 | ⬜ | ⬜ | 50% | [steps](projects/anubiscore/STEPS.md) · [chk](projects/anubiscore/CHECKPOINTS.md) · [tests](projects/anubiscore/TESTS.md) |
-| 07 | **NeithCore** | ML-KEM (Kyber) lattice KEM | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | 33% | [steps](projects/neithcore/STEPS.md) · [chk](projects/neithcore/CHECKPOINTS.md) · [tests](projects/neithcore/TESTS.md) |
+| 07 | **NeithCore** | ML-KEM (Kyber) lattice KEM | ✅ | ✅ | 🔧 | 🔧 | ⬜ | ⬜ | 33% | [steps](projects/neithcore/STEPS.md) · [chk](projects/neithcore/CHECKPOINTS.md) · [tests](projects/neithcore/TESTS.md) |
 | 08 | **SobekCore** | Ray-triangle intersector | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | 33% | [steps](projects/sobekcore/STEPS.md) · [chk](projects/sobekcore/CHECKPOINTS.md) · [tests](projects/sobekcore/TESTS.md) |
 | 09 | **HapiCore** | IEEE-754 FPU library | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | 33% | [steps](projects/hapicore/STEPS.md) · [chk](projects/hapicore/CHECKPOINTS.md) · [tests](projects/hapicore/TESTS.md) |
 | 10 | **AtumCore** | RISC-V Vector (RVV) unit | ✅ | ✅ | ⬜ | ⬜ | ⬜ | ⬜ | 33% | [steps](projects/atumcore/STEPS.md) · [chk](projects/atumcore/CHECKPOINTS.md) · [tests](projects/atumcore/TESTS.md) |

@@ -10,5 +10,7 @@ Run: `pytest projects/neithcore/tests -v`
 | `test_ntt_polymult` | NTT product == negacyclic schoolbook | ✅ |
 | `test_kem_correctness` | decaps(encaps) == shared secret over many trials | ✅ |
 | `test_pymodel_ntt` | staged butterfly == golden NTT | ✅ |
+| `rtl: test_modmul (cocotb)` | neith_modmul == (a*b)%7681 on 31K+ vectors | ✅ |
+| `rtl: test_butterfly (cocotb)` | neith_butterfly == golden CT butterfly on 32K+ | ✅ |
 
-**4/4 tests passing.**
+**6/6 tests passing.**
