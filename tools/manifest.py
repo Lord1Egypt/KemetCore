@@ -40,8 +40,11 @@ PROJECTS = [
                  "the bf16 multiplier widened to 11-bit significands / 22-bit product / biased "
                  "exp = expa+expb-14-lz, cocotb bit-exact vs golden.fp_mul(.,.,'fp16') (numpy "
                  "float16) on corners + 8K random + subnormal/overflow edges, Yosys 0-latch "
-                 "~1390 cells. fp32 add unblocks the BastCore tensor-core accumulate. fp16 "
-                 "add, div/sqrt (Goldschmidt), fma, ASAP7 + P&R (Phase 4) pending.",
+                 "~1390 cells. AND hapi_fp16_add (bf16 adder widened: 20-bit align frame, "
+                 "11-bit keep, overflow exp>=31), cocotb bit-exact vs golden.fp_add fp16 on "
+                 "corners + 8K random + 3K cancellation + edges, Yosys 0-latch ~733 cells. "
+                 "fp32 add unblocks the BastCore tensor-core accumulate. fp16 div/sqrt "
+                 "(Goldschmidt), fma, ASAP7 + P&R (Phase 4) pending.",
         "checkpoints": [
             ("HA.1", "Golden: fp16/bf16/fp32 add", 0, "done"),
             ("HA.2", "Golden: mul + fma", 0, "done"),
@@ -53,7 +56,8 @@ PROJECTS = [
             ("HA.10", "RTL: fp32 adder (hapi_fp32_add) + cocotb vs golden/numpy", 2, "done"),
             ("HA.11", "RTL: fp32 multiplier (hapi_fp32_mul) + cocotb vs golden/numpy", 2, "done"),
             ("HA.12a", "RTL: fp16 multiplier (hapi_fp16_mul) + cocotb vs golden/numpy", 2, "done"),
-            ("HA.12", "RTL: fp16 adder + fp_div (Goldschmidt) + fma", 2, "todo"),
+            ("HA.12b", "RTL: fp16 adder (hapi_fp16_add) + cocotb vs golden/numpy", 2, "done"),
+            ("HA.12", "RTL: fp_div (Goldschmidt) + fma", 2, "todo"),
             ("HA.13", "Synthesis: generic Yosys, 0 latches + gate count", 3, "done"),
             ("HA.14", "Synthesis: ASAP7 liberty tech-mapping", 3, "todo"),
             ("HA.15", "P&R: bf16/fp32 add+mul GDSII", 4, "todo"),
@@ -66,6 +70,7 @@ PROJECTS = [
             ("test_specials", "NaN/Inf propagation + signed zero", "pass"),
             ("test_pymodel_latency", "pipeline reports correct cycle latency", "pass"),
             ("rtl: test_fp16_mul (cocotb)", "hapi_fp16_mul == golden.fp_mul fp16 on corners+8K+edges", "pass"),
+            ("rtl: test_fp16_add (cocotb)", "hapi_fp16_add == golden.fp_add fp16 on corners+8K+3K-cancel+edges", "pass"),
             ("rtl: test_bf16_mul (cocotb)", "hapi_bf16_mul == golden on 7K+ products", "pass"),
             ("rtl: test_bf16_add (cocotb)", "hapi_bf16_add == golden on 12K+ sums", "pass"),
             ("rtl: test_fp32_mul (cocotb)", "hapi_fp32_mul == numpy fp32 on 40K+ products", "pass"),

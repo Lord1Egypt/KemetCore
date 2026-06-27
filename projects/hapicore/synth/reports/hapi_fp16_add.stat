@@ -1,0 +1,25 @@
+
+3. Printing statistics.
+
+=== hapi_fp16_add ===
+
+        +----------Local Count, excluding submodules.
+        | 
+      735 wires
+      940 wire bits
+       18 public wires
+      223 public wire bits
+        3 ports
+       48 port bits
+      733 cells
+       42   $_ANDNOT_
+      175   $_AND_
+      119   $_MUX_
+      191   $_NAND_
+       27   $_NOR_
+       15   $_NOT_
+       71   $_ORNOT_
+       50   $_OR_
+       29   $_XNOR_
+       14   $_XOR_
+
