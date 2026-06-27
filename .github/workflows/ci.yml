@@ -43,6 +43,10 @@ jobs:
         run: ./projects/hapicore/rtl/tb/run_sim.sh CORE=mul
       - name: Run HapiCore bf16 adder testbench
         run: ./projects/hapicore/rtl/tb/run_sim.sh CORE=add
+      - name: Run NeithCore modular multiplier testbench
+        run: ./projects/neithcore/rtl/tb/run_sim.sh CORE=modmul
+      - name: Run NeithCore NTT butterfly testbench
+        run: ./projects/neithcore/rtl/tb/run_sim.sh CORE=butterfly
 
   synth-yosys:
     name: Phase 3 synthesis (Yosys, 0-latch check)
@@ -57,3 +61,5 @@ jobs:
         run: YOSYS=yosys ./projects/sethcore/synth/run_synth.sh
       - name: Synthesize HapiCore bf16 (asserts no latches)
         run: YOSYS=yosys ./projects/hapicore/synth/run_synth.sh
+      - name: Synthesize NeithCore NTT primitives (asserts no latches)
+        run: YOSYS=yosys ./projects/neithcore/synth/run_synth.sh
