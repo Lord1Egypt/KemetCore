@@ -13,12 +13,13 @@ The script asserts there are **no latches** (`$_DLATCH_*`/`$dlatch`) — it fail
 loudly if synthesis infers any. Cell-count reports land in `reports/<core>.stat`.
 
 ## Results (generic synth, `synth` flow)
-| Core | Cells (incl. submodules) | Latches | Notes |
-|------|------:|:-------:|-------|
-| `neith_modmul`   | ~1,427 | **0** | two integer multipliers + Barrett reduce |
-| `neith_butterfly`| ~1,650 | **0** | modmul submodule + mod add/sub |
+| Core | Cells (incl. submodules) | Flip-flops | Latches | Notes |
+|------|------:|:----------:|:-------:|-------|
+| `neith_modmul`   | ~1,427 | 0 | **0** | two integer multipliers + Barrett reduce |
+| `neith_butterfly`| ~1,650 | 0 | **0** | modmul submodule + mod add/sub |
+| `neith_ntt`      | ~45,658 | ~3,363 | **0** | 256×13 in-place memory + FSM + butterfly + twiddle modmul |
 
-Counts are generic gates (not ASAP7-mapped); the modmul's two array multipliers
-dominate. Both blocks are combinational (0 flip-flops). A multicycle 256-point NTT
-engine that schedules one butterfly/cycle over a twiddle ROM + ping-pong RAM is the
-natural Phase 2 follow-on. See `reports/*.stat` for the full breakdown.
+Counts are generic gates (not ASAP7-mapped). The `neith_ntt` flip-flops are the
+256×13-bit coefficient memory (3,328) plus a little control; Yosys lowers that array
+to registers (no SRAM macro yet — an ASAP7 SRAM macro is the Phase 3/4 follow-on).
+See `reports/*.stat` for the full breakdown.

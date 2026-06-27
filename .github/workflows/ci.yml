@@ -51,6 +51,8 @@ jobs:
         run: ./projects/neithcore/rtl/tb/run_sim.sh CORE=modmul
       - name: Run NeithCore NTT butterfly testbench
         run: ./projects/neithcore/rtl/tb/run_sim.sh CORE=butterfly
+      - name: Run NeithCore 256-point NTT engine testbench
+        run: ./projects/neithcore/rtl/tb/run_sim.sh CORE=ntt
       - name: Run BastCore MAC testbench
         run: ./projects/bastcore/rtl/tb/run_sim.sh CORE=mac
 

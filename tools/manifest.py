@@ -221,10 +221,13 @@ PROJECTS = [
                  "Kyber-512-style module-LWE KEM that is self-consistent (decaps recovers the "
                  "encaps shared secret). Phase 2 IN PROGRESS: neith_modmul (Barrett mult "
                  "mod 7681) and neith_butterfly (Cooley-Tukey butterfly) RTL, both "
-                 "cocotb-verified bit-exact vs the golden. Phase 3: generic Yosys synth 0 "
-                 "latches (modmul ~1.4K, butterfly ~1.65K cells). Multicycle 256-pt NTT "
-                 "engine + FIPS-203 exact params (q=3329, incomplete NTT) + ASAP7 pending. "
-                 "NOTE: reference model, not FIPS-203 certified.",
+                 "cocotb-verified bit-exact vs the golden, PLUS neith_ntt — a multicycle "
+                 "256-point in-place radix-2 forward NTT engine (bit-reversed load, 8 stages "
+                 "x 128 butterflies, twiddle ROM + modmul w-update) bit-exact vs "
+                 "golden.ntt_cyclic on directed + 24 random transforms. Phase 3: generic "
+                 "Yosys synth 0 latches (modmul ~1.4K, butterfly ~1.65K, ntt ~45.7K cells / "
+                 "~3.4K FFs). Inverse NTT + psi-wrap (full ntt()), FIPS-203 exact params "
+                 "(q=3329), SRAM macro + ASAP7 pending. NOTE: reference model, not FIPS-203 certified.",
         "checkpoints": [
             ("N.1", "Golden: NTT mod 7681 + inverse (roundtrip)", 0, "done"),
             ("N.2", "Golden: NTT polymult == schoolbook", 0, "done"),
@@ -232,10 +235,11 @@ PROJECTS = [
             ("N.4", "pymodel: NTT butterfly stages", 1, "done"),
             ("N.5", "RTL: modular multiplier (Barrett) + cocotb vs golden", 2, "done"),
             ("N.6", "RTL: Cooley-Tukey butterfly + cocotb vs golden", 2, "done"),
-            ("N.7", "RTL: multicycle 256-point NTT engine", 2, "todo"),
-            ("N.8", "Synthesis: generic Yosys, 0 latches + gate count", 3, "done"),
-            ("N.9", "Synthesis: ASAP7 liberty tech-mapping", 3, "todo"),
-            ("N.10", "P&R: GDSII", 4, "todo"),
+            ("N.7", "RTL: multicycle 256-point NTT engine + cocotb vs golden", 2, "done"),
+            ("N.8", "RTL: inverse NTT + psi-wrap (full negacyclic ntt())", 2, "todo"),
+            ("N.9", "Synthesis: generic Yosys, 0 latches + gate count", 3, "done"),
+            ("N.10", "Synthesis: ASAP7 liberty tech-mapping + SRAM macro", 3, "todo"),
+            ("N.11", "P&R: GDSII", 4, "todo"),
         ],
         "tests": [
             ("test_ntt_roundtrip", "intt(ntt(p)) == p", "pass"),
@@ -244,6 +248,7 @@ PROJECTS = [
             ("test_pymodel_ntt", "staged butterfly == golden NTT", "pass"),
             ("rtl: test_modmul (cocotb)", "neith_modmul == (a*b)%7681 on 31K+ vectors", "pass"),
             ("rtl: test_butterfly (cocotb)", "neith_butterfly == golden CT butterfly on 32K+", "pass"),
+            ("rtl: test_ntt (cocotb)", "neith_ntt == golden.ntt_cyclic on 28 transforms", "pass"),
         ],
     },
     {

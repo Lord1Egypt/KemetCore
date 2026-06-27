@@ -926,6 +926,6 @@ Found and reported 0 problems.
         1 submodules
         1   neith_modmul
 
-End of script. Logfile hash: ec8b3e3e52, time: 6.67s, user: 0.36s, system: 0.05s, MEM: 40.12 MB peak
+End of script. Logfile hash: ec8b3e3e52, time: 6.27s, user: 0.34s, system: 0.02s, MEM: 40.50 MB peak
 Yosys 0.65 (git sha1 aec814bdf3071f7e0fd0fbe43f7f711e99d01e24, g++ 14.3.0-19 -fvisibility-inlines-hidden -fmessage-length=0 -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/yosys_1778591527500/work=/usr/local/src/conda/yosys-0.65 -fdebug-prefix-map=/home/lordegypt/miniconda3/envs/eda=/usr/local/src/conda-prefix -fPIC -O3) [conda-forge/yosys-feedstock]
-Time spent: 94% 1x abc (6 sec), 1% 24x opt_expr (0 sec), ...
+Time spent: 94% 1x abc (5 sec), 1% 24x opt_expr (0 sec), ...
