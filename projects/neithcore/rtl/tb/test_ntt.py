@@ -22,6 +22,7 @@ N = golden.N  # 256
 
 async def reset(dut):
     dut.start.value = 0
+    dut.mode.value = 0
     dut.in_valid.value = 0
     dut.in_data.value = 0
     dut.rd_addr.value = 0
@@ -32,9 +33,10 @@ async def reset(dut):
     await RisingEdge(dut.clk)
 
 
-async def run_ntt(dut, vec):
-    # start pulse (engine -> LOAD)
+async def run_ntt(dut, vec, mode=0):
+    # start pulse (engine -> LOAD), latch the transform direction
     dut.start.value = 1
+    dut.mode.value = mode
     dut.in_valid.value = 0
     await RisingEdge(dut.clk)
     dut.start.value = 0
@@ -59,37 +61,70 @@ async def run_ntt(dut, vec):
     return out
 
 
-async def check(dut, vec):
-    got = await run_ntt(dut, vec)
+def inv_cyclic_ref(A):
+    """Cyclic inverse: ntt_cyclic(A, OMEGA_INV) scaled by N_INV."""
+    y = golden.ntt_cyclic(A, golden.OMEGA_INV)
+    return [(y[i] * golden.N_INV) % Q for i in range(N)]
+
+
+async def check_fwd(dut, vec):
+    got = await run_ntt(dut, vec, mode=0)
     exp = golden.ntt_cyclic(vec, golden.OMEGA)
     assert got == exp, (
-        f"NTT mismatch (first differing index): "
+        f"forward NTT mismatch: "
+        f"{next((i, got[i], exp[i]) for i in range(N) if got[i] != exp[i])}")
+
+
+async def check_inv(dut, vec):
+    got = await run_ntt(dut, vec, mode=1)
+    exp = inv_cyclic_ref(vec)
+    assert got == exp, (
+        f"inverse NTT mismatch: "
         f"{next((i, got[i], exp[i]) for i in range(N) if got[i] != exp[i])}")
 
 
 @cocotb.test()
-async def test_directed(dut):
+async def test_directed_forward(dut):
     cocotb.start_soon(Clock(dut.clk, 10, units="ns").start())
     await reset(dut)
-
-    # impulse -> NTT is all-ones * a[0]
-    await check(dut, [5] + [0] * (N - 1))
-    # constant
-    await check(dut, [3] * N)
-    # ramp mod Q
-    await check(dut, [(i * 37) % Q for i in range(N)])
-    # all max
-    await check(dut, [Q - 1] * N)
-    dut._log.info("neith_ntt: directed vectors (impulse/const/ramp/max) verified bit-exact")
+    await check_fwd(dut, [5] + [0] * (N - 1))        # impulse
+    await check_fwd(dut, [3] * N)                     # constant
+    await check_fwd(dut, [(i * 37) % Q for i in range(N)])  # ramp
+    await check_fwd(dut, [Q - 1] * N)                 # all max
+    dut._log.info("neith_ntt: forward directed vectors verified bit-exact")
 
 
 @cocotb.test()
-async def test_random(dut):
+async def test_random_forward(dut):
     cocotb.start_soon(Clock(dut.clk, 10, units="ns").start())
     await reset(dut)
     rng = random.Random(0x117700)
-    ntrans = 24
-    for t in range(ntrans):
-        vec = [rng.randrange(Q) for _ in range(N)]
-        await check(dut, vec)
-    dut._log.info(f"neith_ntt: {ntrans} random 256-point transforms verified bit-exact")
+    for _ in range(16):
+        await check_fwd(dut, [rng.randrange(Q) for _ in range(N)])
+    dut._log.info("neith_ntt: 16 random forward transforms verified bit-exact")
+
+
+@cocotb.test()
+async def test_inverse(dut):
+    cocotb.start_soon(Clock(dut.clk, 10, units="ns").start())
+    await reset(dut)
+    rng = random.Random(0x90D0C)
+    for _ in range(16):
+        await check_inv(dut, [rng.randrange(Q) for _ in range(N)])
+    dut._log.info("neith_ntt: 16 random inverse transforms verified bit-exact")
+
+
+@cocotb.test()
+async def test_roundtrip(dut):
+    """inverse(forward(a)) == a for random vectors — exercises both modes on the HW."""
+    cocotb.start_soon(Clock(dut.clk, 10, units="ns").start())
+    await reset(dut)
+    rng = random.Random(0x5EED)
+    for _ in range(12):
+        a = [rng.randrange(Q) for _ in range(N)]
+        fwd = await run_ntt(dut, a, mode=0)
+        rt = await run_ntt(dut, fwd, mode=1)
+        assert rt == a, (
+            f"roundtrip mismatch: "
+            f"{next((i, rt[i], a[i]) for i in range(N) if rt[i] != a[i])}")
+    dut._log.info("neith_ntt: 12 forward->inverse roundtrips recovered the input")

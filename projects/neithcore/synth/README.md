@@ -17,7 +17,7 @@ loudly if synthesis infers any. Cell-count reports land in `reports/<core>.stat`
 |------|------:|:----------:|:-------:|-------|
 | `neith_modmul`   | ~1,427 | 0 | **0** | two integer multipliers + Barrett reduce |
 | `neith_butterfly`| ~1,650 | 0 | **0** | modmul submodule + mod add/sub |
-| `neith_ntt`      | ~45,658 | ~3,363 | **0** | 256×13 in-place memory + FSM + butterfly + twiddle modmul |
+| `neith_ntt`      | ~54,662 | ~3,373 | **0** | fwd+inv: 256×13 in-place memory + FSM + butterfly + 2 twiddle/scale modmuls |
 
 Counts are generic gates (not ASAP7-mapped). The `neith_ntt` flip-flops are the
 256×13-bit coefficient memory (3,328) plus a little control; Yosys lowers that array
