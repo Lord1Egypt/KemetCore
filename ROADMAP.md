@@ -41,7 +41,13 @@ Phase 4 — Advanced (graphics + post-quantum + vector)
   08. SobekCore ← independent, uses HapiCore
   07. NeithCore ← independent, standalone arithmetic
   10. AtumCore ← depends on SethCore (adds vector to scalar core)
+
+Phase 5 — Capstone (integrate everything)
+  00. RaCore ← depends on ALL blocks at Phase 2+; KAI-conformant
+              RaCore-Lite first (laptop-feasible), then RaCore-Full
 ```
+
+> **Cross-cutting from day one:** The **KAI (Kemet Accelerator Interface)** spec — the register/DMA contract every block implements — is frozen in Phase 0 of RaCore and becomes a per-block exit gate (`test_kai_conformance`). Retrofitting the existing **PtahCore** to KAI is the first integration milestone and validates the methodology before any new block is built.
 
 ---
 
@@ -59,6 +65,7 @@ Phase 4 — Advanced (graphics + post-quantum + vector)
 | 08 | [SobekCore](docs/08_SobekCore_RayTrace.md) | 0 | 📋 Planning | 35 | 8 | 30K |
 | 07 | [NeithCore](docs/07_NeithCore_MLKEM.md) | 0 | 📋 Planning | 50 | 15 | 100K |
 | 10 | [AtumCore](docs/10_AtumCore_RVV.md) | 0 | 📋 Planning | 100+ | 20+ | 100K+ |
+| 00 | [**RaCore** (capstone)](docs/00_RaCore_SoC.md) | 0 | 📋 Planning | 40+ | 6 (NoC/DMA/SRAM/PLIC) | 1.5M (Lite) / 26M (Full) |
 
 **Legend:** 📋 Planning | 🔧 In Progress | ✅ Complete
 
@@ -178,6 +185,27 @@ These build on PtahCore + BastCore to create a complete ML inference pipeline.
 
 ---
 
+### Phase 5 — Capstone (Project 00: RaCore)
+
+The integration project. Depends on all blocks being KAI-conformant and at Phase 2+. Built Lite-first so it closes on hardware a single developer owns.
+
+| Checkpoint | Description | Est. Effort |
+|------------|-------------|:-----------:|
+| RA.1 | Freeze KAI spec + conformance suite | 3 days |
+| RA.2 | Retrofit PtahCore to KAI (proof) | 4 days |
+| RA.3 | Golden: NoC + DMA contention model | 4 days |
+| RA.4 | Golden: end-to-end axpy (host→DMA→Atum→host) | 3 days |
+| RA.5 | RTL: NoC crossbar + descriptor DMA | 8 days |
+| RA.6 | RTL: banked scratchpad + PLIC | 4 days |
+| RA.7 | RTL: RaCore-Lite top integration | 6 days |
+| RA.8 | Secure-boot enclave (Anubis + Neith) | 5 days |
+| RA.9 | Synthesis: Lite ≤1.5M gates, 0 latches | 2 days |
+| RA.10 | P&R: Lite hierarchical GDSII (macro-abutment) | 6 days |
+| RA.11 | Flagship demo: CNN inference + attestation | 4 days |
+| RA.12 | RaCore-Full floorplan (documented, real-iron target) | 3 days |
+
+---
+
 ## Milestone Timeline
 
 ```
@@ -193,8 +221,9 @@ These build on PtahCore + BastCore to create a complete ML inference pipeline.
 08. SobekCore     │ ■■■■     ■■■■■    ■■■■■    ■■■■     ■■■      ■■
 07. NeithCore     │ ■■■■■    ■■■■■■■  ■■■■■■■  ■■■■■    ■■■■■    ■■■■
 10. AtumCore      │ ■■■■■    ■■■■■■■  ■■■■■■■  ■■■■■    ■■■■■    ■■■■■
+00. RaCore (cap)  │ ■■■■■    (gated on all blocks reaching Phase 2) ─▶ ■■■■■■■  ■■■■■
 ```
-*Each ■ ≈ 20% of the phase. Actual durations depend on complexity.*
+*Each ■ ≈ 20% of the phase. Actual durations depend on complexity. RaCore's Phase 0 (KAI spec) runs in parallel from the start; its build phases unlock only once its building blocks are KAI-conformant.*
 
 ---
 
@@ -210,6 +239,10 @@ These build on PtahCore + BastCore to create a complete ML inference pipeline.
 | BVH traversal has unpredictable latency | High | Medium | Implement as a pipelined state machine with stall output |
 | Sparse matmul throughput gain is less than expected | Medium | Medium | Benchmark on real model weights before committing to P&R |
 | Single developer, projects take time | High | Medium | Prioritize by dependency graph; each project is independently shippable |
+| RaCore-Full detail route exceeds laptop RAM (PtahCore's exact wall) | High | High | Ship **RaCore-Lite** as the real deliverable; harden each block to a macro and route only top-level fabric (cost is O(blocks), not O(gates)); document Full as a real-iron target |
+| KAI spec churns after blocks are built | Medium | High | Freeze KAI in Phase 0; gate every block on `test_kai_conformance` before it claims "done" |
+| Inter-block NoC contention starves the CPU | Medium | Medium | Model arbitration in the Python pymodel first; bank the scratchpad per-port |
+| CDC bugs at the 1 GHz crypto-enclave boundary | Medium | High | Async FIFOs only at the boundary; CDC lint + golden handshake test |
 
 ---
 
@@ -225,7 +258,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        project: [hapi, anubis, bast, seth, ptahconv, geb, imentet, sobek, neith, atum]
+        project: [hapi, anubis, bast, seth, ptahconv, geb, imentet, sobek, neith, atum, racore]
     steps:
       - uses: actions/checkout@v4
       - run: pip install numpy pytest
@@ -278,6 +311,7 @@ Each project will eventually live in its own repository under the Lord1Egypt Git
 | Project | Status | Repository |
 |---------|--------|------------|
 | PtahCore | ✅ Complete | [Lord1Egypt/PtahCore](https://github.com/Lord1Egypt/PtahCore) |
+| 00 RaCore (capstone) | 📋 Planning | _integrates all of the below_ |
 | 09 HapiCore | 📋 Planning | _not yet created_ |
 | 06 AnubisCore | 📋 Planning | _not yet created_ |
 | 05 BastCore | 📋 Planning | _not yet created_ |

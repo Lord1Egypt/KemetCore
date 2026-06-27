@@ -1,0 +1,28 @@
+
+3. Printing statistics.
+
+=== sha3_256_core ===
+
+        +----------Local Count, excluding submodules.
+        | 
+    12660 wires
+    19083 wire bits
+       66 public wires
+     4910 public wire bits
+        8 ports
+     1350 port bits
+    15783 cells
+     1187   $_ANDNOT_
+     1767   $_AND_
+     1606   $_DFFE_PN0P_
+        3   $_DFF_PN0_
+        1   $_DFF_PN1_
+      467   $_MUX_
+     2688   $_NAND_
+      368   $_NOR_
+        3   $_NOT_
+     1517   $_ORNOT_
+     1603   $_OR_
+     3932   $_XNOR_
+      641   $_XOR_
+

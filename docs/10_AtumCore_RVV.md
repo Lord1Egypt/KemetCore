@@ -303,7 +303,9 @@ loop:
     bnez    a0, loop                     # Repeat
 ```
 
-AtumCore processes **8 float32 elements per iteration** with fully pipelined FMA — effectively **4 GFLOPS at 500 MHz per lane × 8 lanes = 16 GFLOPS peak**.
+AtumCore processes **8 float32 elements per iteration** with fully pipelined FMA. Each lane retires 1 FMA/cycle = 2 FLOP/cycle, so peak throughput is **2 FLOP × 8 lanes × 500 MHz = 8 GFLOPS (FP32)**. (A 512-bit / 16-lane configuration — see the scaling note below — doubles this to 16 GFLOPS at the same clock.)
+
+> **Scaling note:** VLEN and lane count are parameters. The 256-bit/8-lane point is the laptop-tapeout-feasible default; `VLEN=512, LANES=16` (~0.9 mm², ~16 GFLOPS) is a drop-in scale-up once the lane group passes timing, and is the configuration RaCore-Full targets.
 
 ---
 

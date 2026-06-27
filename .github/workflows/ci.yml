@@ -1,0 +1,52 @@
+name: kemetcore-ci
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+jobs:
+  golden-pymodel:
+    name: Phase 0/1 tests (golden + pymodel)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install numpy pytest
+      - name: Run all project tests
+        run: pytest projects/ -q
+
+  rtl-cocotb:
+    name: Phase 2 RTL (SHA-256 cocotb + Verilator)
+    runs-on: ubuntu-24.04   # ships Verilator 5.x, matching local
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Verilator + cocotb (same system Python)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y verilator python3-pip
+          verilator --version
+          # cocotb 1.9.x supports Verilator 5.020 (ubuntu-24.04); 2.x needs 5.036+
+          pip3 install --break-system-packages 'cocotb==1.9.2'
+      - name: Run SHA-256 testbench
+        run: ./projects/anubiscore/rtl/tb/run_sim.sh CORE=sha256
+      - name: Run SHA3-256 testbench
+        run: ./projects/anubiscore/rtl/tb/run_sim.sh CORE=sha3
+      - name: Run SethCore ALU testbench
+        run: ./projects/sethcore/rtl/tb/run_sim.sh CORE=alu
+      - name: Run SethCore mul/div testbench
+        run: ./projects/sethcore/rtl/tb/run_sim.sh CORE=muldiv
+
+  synth-yosys:
+    name: Phase 3 synthesis (Yosys, 0-latch check)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Yosys
+        run: sudo apt-get update && sudo apt-get install -y yosys
+      - name: Synthesize AnubisCore (asserts no latches)
+        run: YOSYS=yosys ./projects/anubiscore/synth/run_synth.sh
+      - name: Synthesize SethCore ALU (asserts no latches)
+        run: YOSYS=yosys ./projects/sethcore/synth/run_synth.sh
