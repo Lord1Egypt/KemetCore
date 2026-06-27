@@ -12,6 +12,8 @@ Run: `pytest projects/hapicore/tests -v`
 | `test_fma_more_accurate` | fma beats separate mul+add on a known case | ✅ |
 | `test_fma_single_rounded` | fma == nearest fp32 of exact a*b+c (4K random) | ✅ |
 | `test_fma_specials` | fma 0*Inf/Inf-Inf->NaN, overflow, exact subnormal | ✅ |
+| `test_div_single_rounded` | div == nearest fp32 of exact a/b (4K random) | ✅ |
+| `test_div_specials` | div x/0->Inf, 0/0 & Inf/Inf->NaN, finite/Inf->signed 0 | ✅ |
 | `test_specials` | NaN/Inf propagation + signed zero | ✅ |
 | `test_pymodel_latency` | pipeline reports correct cycle latency | ✅ |
 | `rtl: test_fp16_mul (cocotb)` | hapi_fp16_mul == golden.fp_mul fp16 on corners+8K+edges | ✅ |
@@ -23,5 +25,6 @@ Run: `pytest projects/hapicore/tests -v`
 | `rtl: test_fp32_fma (cocotb)` | hapi_fp32_fma == single-rounded golden on 54K+ FMAs | ✅ |
 | `rtl: test_bf16_fma (cocotb)` | hapi_bf16_fma == single-rounded golden on 150K+ FMAs | ✅ |
 | `rtl: test_fp16_fma (cocotb)` | hapi_fp16_fma == single-rounded golden on 150K+ FMAs | ✅ |
+| `rtl: test_fp32_div (cocotb)` | hapi_fp32_div == correctly-rounded golden on 165K+ divisions | ✅ |
 
-**17/17 tests passing.**
+**20/20 tests passing.**

@@ -59,8 +59,15 @@ PROJECTS = [
                  "bit-exact vs the single-rounded golden on 150K+ FMAs, Yosys 0-latch full ABC "
                  "(bf16 ~2961 / fp16 ~3411 gates locally). cocotb for all FMAs runs in CI, but "
                  "FMA SYNTH is skipped under CI (apt-yosys OOMs on the priority-encoder/shifter "
-                 "cloud even for the small cores; committed .stat = evidence). FMA now complete "
-                 "across bf16/fp16/fp32. fp_div/sqrt (Goldschmidt), ASAP7 + P&R (Phase 4) pending.",
+                 "cloud even for the small cores; committed .stat = evidence). FMA complete "
+                 "across bf16/fp16/fp32. PLUS hapi_fp32_div (correctly-rounded fp32 divide): "
+                 "normalise both significands to [2^23,2^24), one exact integer divide of a "
+                 "51-bit dividend (Sa<<27) by the 24-bit divisor — quotient gives 24 sig bits + "
+                 "guard, the DIVISION REMAINDER is the exact sticky — then the FMA-style "
+                 "magnitude round (RNE, subnormal, overflow). Golden fp_div = _round_frac of "
+                 "exact Fraction(a)/Fraction(b). cocotb bit-exact on 165K+ divisions; Yosys "
+                 "0-latch (coarse ~265 cells; abc-fast ~41.4K gates via $div, so div synth is "
+                 "also CI-skipped). fp_sqrt (Goldschmidt), ASAP7 + P&R (Phase 4) pending.",
         "checkpoints": [
             ("HA.1", "Golden: fp16/bf16/fp32 add", 0, "done"),
             ("HA.2", "Golden: mul + fma", 0, "done"),
@@ -76,7 +83,7 @@ PROJECTS = [
             ("HA.12c", "RTL: fp32 FMA (hapi_fp32_fma) + cocotb vs single-rounded golden", 2, "done"),
             ("HA.12d", "RTL: bf16 FMA (hapi_bf16_fma via parameterized hapi_fma_core)", 2, "done"),
             ("HA.12e", "RTL: fp16 FMA (hapi_fp16_fma via parameterized hapi_fma_core)", 2, "done"),
-            ("HA.12", "RTL: fp_div (Goldschmidt)", 2, "todo"),
+            ("HA.12", "RTL: fp32 divide (hapi_fp32_div) + cocotb vs correctly-rounded golden", 2, "done"),
             ("HA.13", "Synthesis: generic Yosys, 0 latches + gate count", 3, "done"),
             ("HA.14", "Synthesis: ASAP7 liberty tech-mapping", 3, "todo"),
             ("HA.15", "P&R: bf16/fp32 add+mul GDSII", 4, "todo"),
@@ -88,6 +95,8 @@ PROJECTS = [
             ("test_fma_more_accurate", "fma beats separate mul+add on a known case", "pass"),
             ("test_fma_single_rounded", "fma == nearest fp32 of exact a*b+c (4K random)", "pass"),
             ("test_fma_specials", "fma 0*Inf/Inf-Inf->NaN, overflow, exact subnormal", "pass"),
+            ("test_div_single_rounded", "div == nearest fp32 of exact a/b (4K random)", "pass"),
+            ("test_div_specials", "div x/0->Inf, 0/0 & Inf/Inf->NaN, finite/Inf->signed 0", "pass"),
             ("test_specials", "NaN/Inf propagation + signed zero", "pass"),
             ("test_pymodel_latency", "pipeline reports correct cycle latency", "pass"),
             ("rtl: test_fp16_mul (cocotb)", "hapi_fp16_mul == golden.fp_mul fp16 on corners+8K+edges", "pass"),
@@ -99,6 +108,7 @@ PROJECTS = [
             ("rtl: test_fp32_fma (cocotb)", "hapi_fp32_fma == single-rounded golden on 54K+ FMAs", "pass"),
             ("rtl: test_bf16_fma (cocotb)", "hapi_bf16_fma == single-rounded golden on 150K+ FMAs", "pass"),
             ("rtl: test_fp16_fma (cocotb)", "hapi_fp16_fma == single-rounded golden on 150K+ FMAs", "pass"),
+            ("rtl: test_fp32_div (cocotb)", "hapi_fp32_div == correctly-rounded golden on 165K+ divisions", "pass"),
         ],
     },
     {
