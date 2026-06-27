@@ -2,6 +2,7 @@
 #   make CORE=alu      (default) -> seth_alu
 #   make CORE=muldiv             -> seth_muldiv
 #   make CORE=imm                -> seth_imm
+#   make CORE=regfile            -> seth_regfile
 TOPLEVEL_LANG = verilog
 SIM ?= verilator
 CORE ?= alu
@@ -15,6 +16,10 @@ else ifeq ($(CORE),imm)
   VERILOG_SOURCES = $(PWD)/../seth_imm.sv
   TOPLEVEL = seth_imm
   MODULE   = test_imm
+else ifeq ($(CORE),regfile)
+  VERILOG_SOURCES = $(PWD)/../seth_regfile.sv
+  TOPLEVEL = seth_regfile
+  MODULE   = test_regfile
 else
   VERILOG_SOURCES = $(PWD)/../seth_alu.sv
   TOPLEVEL = seth_alu
