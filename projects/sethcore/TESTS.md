@@ -12,5 +12,6 @@ Run: `pytest projects/sethcore/tests -v`
 | `test_branches` | beq/bne/blt/bge taken correctly | ✅ |
 | `test_pymodel_equals_golden` | pipeline result == ISA sim | ✅ |
 | `rtl: test_alu (cocotb)` | seth_alu.sv == golden _alu_r on all ops | ✅ |
+| `rtl: test_muldiv (cocotb)` | seth_muldiv.sv == golden _muldiv (incl edges) | ✅ |
 
-**6/6 tests passing.**
+**7/7 tests passing.**

@@ -109,16 +109,18 @@ PROJECTS = [
         "depends": ["hapicore"],
         "phase": _ph("done", "done", "partial", "partial", "todo", "todo"),
         "scope": "Phase 0/1: RV32I+M ISA sim + 5-stage pymodel. Phase 2 IN PROGRESS: "
-                 "seth_alu.sv (combinational RV32 ALU) cocotb-verified bit-exact vs golden; "
-                 "full fetch/decode/pipeline RTL pending. Phase 3: generic Yosys synth of "
-                 "the ALU passes with 0 latches.",
+                 "seth_alu.sv (RV32 ALU) and seth_muldiv.sv (RV32M mul/div/rem) both "
+                 "cocotb-verified bit-exact vs golden; fetch/decode/pipeline RTL pending. "
+                 "Phase 3: ALU Yosys-synthesized 0 latches; combinational divider synth "
+                 "deferred (needs a sequential/iterative divider — generic synth explodes).",
         "checkpoints": [
             ("S2.1", "Golden: RV32I ISA simulator", 0, "done"),
             ("S2.2", "Golden: M-extension (mul/div/rem)", 0, "done"),
             ("S2.3", "pymodel: 5-stage pipeline", 1, "done"),
             ("S2.4", "pymodel: hazard forwarding", 1, "done"),
             ("S2.7", "RTL: ALU (seth_alu) + cocotb vs golden", 2, "done"),
-            ("S2.8", "RTL: fetch/decode/regfile/pipeline", 2, "todo"),
+            ("S2.8", "RTL: mul/div (seth_muldiv) + cocotb vs golden", 2, "done"),
+            ("S2.10", "RTL: fetch/decode/regfile/pipeline", 2, "todo"),
             ("S2.9", "Synthesis: ALU Yosys, 0 latches", 3, "done"),
             ("S2.11", "cocotb: per-instruction vs Spike", 2, "todo"),
             ("S2.14", "P&R: core macro", 4, "todo"),
@@ -130,6 +132,7 @@ PROJECTS = [
             ("test_branches", "beq/bne/blt/bge taken correctly", "pass"),
             ("test_pymodel_equals_golden", "pipeline result == ISA sim", "pass"),
             ("rtl: test_alu (cocotb)", "seth_alu.sv == golden _alu_r on all ops", "pass"),
+            ("rtl: test_muldiv (cocotb)", "seth_muldiv.sv == golden _muldiv (incl edges)", "pass"),
         ],
     },
     {

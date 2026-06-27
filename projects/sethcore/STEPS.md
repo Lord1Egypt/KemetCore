@@ -4,7 +4,7 @@
 
 _Auto-generated from `tools/manifest.py` — do not edit by hand; edit the manifest and run `python tools/gen_tracking.py`._
 
-**Scope (current):** Phase 0/1: RV32I+M ISA sim + 5-stage pymodel. Phase 2 IN PROGRESS: seth_alu.sv (combinational RV32 ALU) cocotb-verified bit-exact vs golden; full fetch/decode/pipeline RTL pending. Phase 3: generic Yosys synth of the ALU passes with 0 latches.
+**Scope (current):** Phase 0/1: RV32I+M ISA sim + 5-stage pymodel. Phase 2 IN PROGRESS: seth_alu.sv (RV32 ALU) and seth_muldiv.sv (RV32M mul/div/rem) both cocotb-verified bit-exact vs golden; fetch/decode/pipeline RTL pending. Phase 3: ALU Yosys-synthesized 0 latches; combinational divider synth deferred (needs a sequential/iterative divider — generic synth explodes).
 
 ## Ordered steps (6-phase lifecycle)
 

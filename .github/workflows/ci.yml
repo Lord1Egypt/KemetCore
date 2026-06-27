@@ -35,7 +35,9 @@ jobs:
       - name: Run SHA3-256 testbench
         run: ./projects/anubiscore/rtl/tb/run_sim.sh CORE=sha3
       - name: Run SethCore ALU testbench
-        run: ./projects/sethcore/rtl/tb/run_sim.sh
+        run: ./projects/sethcore/rtl/tb/run_sim.sh CORE=alu
+      - name: Run SethCore mul/div testbench
+        run: ./projects/sethcore/rtl/tb/run_sim.sh CORE=muldiv
 
   synth-yosys:
     name: Phase 3 synthesis (Yosys, 0-latch check)
