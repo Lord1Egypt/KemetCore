@@ -9,5 +9,6 @@ Run: `pytest projects/gebcore/tests -v`
 | `test_sparse_equals_dense` | sparse matmul == dense matmul on 2:4 weights | ✅ |
 | `test_compression_metadata` | 2-of-4 selection + indices correct | ✅ |
 | `test_macs_halved` | pymodel performs ~50% of dense MACs | ✅ |
+| `rtl: test_spmac (cocotb)` | geb_spmac == golden.sparse_matmul on 412 elements | ✅ |
 
-**3/3 tests passing.**
+**4/4 tests passing.**

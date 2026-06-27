@@ -184,19 +184,33 @@ PROJECTS = [
     {
         "key": "gebcore", "num": "04", "name": "GebCore", "deity": "Geb (earth)",
         "domain": "2:4 structured sparse matmul", "doc": "docs/04_GebCore_SparseMatmul.md",
-        "depends": ["bastcore"], "phase": P01,
+        "depends": ["bastcore"],
+        "phase": _ph("done", "done", "partial", "partial", "todo", "todo"),
         "scope": "Phase 0/1 implements 2:4 structured-sparse matmul (compress to 2-of-4 + "
-                 "metadata) and a pymodel that skips pruned MACs, with a dense cross-check.",
+                 "metadata) and a pymodel that skips pruned MACs. Phase 2 IN PROGRESS: "
+                 "geb_spmac.sv — the sparse-MAC processing element: a 2-bit lane index (the "
+                 "2:4 metadata) selects one of the group's 4 fp32 activations, multiplies by "
+                 "the kept weight (fp32), and fp32-accumulates, composing the verified HapiCore "
+                 "hapi_fp32_mul + hapi_fp32_add. So it performs exactly ONE MAC per kept lane "
+                 "(half a dense matmul). cocotb-verified bit-exact vs golden.sparse_matmul on "
+                 "412 output elements (random pruned matrices, K up to 20). NB: golden's "
+                 "dense_matmul cross-check is only ~equal, not bit-identical, since fp32 sums "
+                 "are non-associative and use a different lane order — the HW target is "
+                 "sparse_matmul. Phase 3: generic Yosys synth 0 latches (~7130 cells). "
+                 "Sparse PE array (abut) + ASAP7 pending.",
         "checkpoints": [
             ("G.1", "Golden: 2:4 compress + sparse matmul", 0, "done"),
             ("G.2", "pymodel: metadata-driven MAC", 1, "done"),
-            ("G.3", "RTL: sparse datapath", 2, "todo"),
-            ("G.4", "P&R: GDSII", 4, "todo"),
+            ("G.3", "RTL: sparse-MAC cell (lane-select + fp32 MAC) + cocotb vs golden", 2, "done"),
+            ("G.4", "Synthesis: generic Yosys, 0 latches + gate count", 3, "done"),
+            ("G.5", "RTL: sparse PE array (abuttable)", 2, "todo"),
+            ("G.6", "P&R: GDSII", 4, "todo"),
         ],
         "tests": [
             ("test_sparse_equals_dense", "sparse matmul == dense matmul on 2:4 weights", "pass"),
             ("test_compression_metadata", "2-of-4 selection + indices correct", "pass"),
             ("test_macs_halved", "pymodel performs ~50% of dense MACs", "pass"),
+            ("rtl: test_spmac (cocotb)", "geb_spmac == golden.sparse_matmul on 412 elements", "pass"),
         ],
     },
     {
