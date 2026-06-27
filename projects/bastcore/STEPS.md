@@ -4,7 +4,7 @@
 
 _Auto-generated from `tools/manifest.py` — do not edit by hand; edit the manifest and run `python tools/gen_tracking.py`._
 
-**Scope (current):** Phase 0/1: bf16 matmul (bf16 inputs, fp32 accumulate) + 16x16 systolic dataflow pymodel. Phase 2 IN PROGRESS: bast_mac.sv — the MAC processing element (bf16 multiply -> exact bf16->fp32 widen -> registered fp32 accumulate) composing the verified HapiCore hapi_bf16_mul + hapi_fp32_add; cocotb-verified bit-exact vs golden.matmul on 400 variable-length dot products. Phase 3: generic Yosys synth 0 latches (~2729 cells incl. submodules, 32 acc flip-flops). 16x16 mac_grid + ASAP7 pending.
+**Scope (current):** Phase 0/1: bf16 matmul (bf16 inputs, fp32 accumulate) + 16x16 systolic dataflow pymodel. Phase 2 IN PROGRESS: bast_mac.sv — the MAC processing element (bf16 multiply -> exact bf16->fp32 widen -> registered fp32 accumulate) composing the verified HapiCore hapi_bf16_mul + hapi_fp32_add; cocotb-verified bit-exact vs golden.matmul on 400 variable-length dot products. bast_mac_grid.sv — a parametric RxC output-stationary SYSTOLIC array of bast_mac PEs (a flows east, b flows south, one neighbour hop/cycle, stationary fp32 accumulators) that ABUTS (PtahCore tile methodology) to 16x16; fed by skewed zero-padded streams so every PE accumulates in golden k-order, cocotb-verified bit-exact vs golden.matmul on the 4x4 default (directed + 60 random, K up to 24). Phase 3: generic Yosys synth 0 latches (bast_mac ~2729 cells; 4x4 grid ~45K cells). 16x16 grid is the same module (R=C=16, RAM-heavy -> deferred to a big box) + ASAP7 pending.
 
 ## Ordered steps (6-phase lifecycle)
 

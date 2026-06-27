@@ -55,6 +55,8 @@ jobs:
         run: ./projects/neithcore/rtl/tb/run_sim.sh CORE=ntt
       - name: Run BastCore MAC testbench
         run: ./projects/bastcore/rtl/tb/run_sim.sh CORE=mac
+      - name: Run BastCore MAC grid (systolic array) testbench
+        run: ./projects/bastcore/rtl/tb/run_sim.sh CORE=grid
 
   synth-yosys:
     name: Phase 3 synthesis (Yosys, 0-latch check)
