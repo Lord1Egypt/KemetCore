@@ -49,6 +49,15 @@ vs `golden.fp_div` (exact rational `a/b`, one rounding) — 165k+ divisions veri
 (Its `$div`/`$mod` expand to a ~41K-gate divider, so like the FMAs the *synth* is
 CI-skipped; coarse 0-latch `.stat` is committed.)
 
+`hapi_fp32_sqrt.sv` — single-cycle **correctly-rounded** fp32 square root. Every
+fp32 sqrt result is a *normal* number (√ of the smallest subnormal ≈ 2⁻⁷⁴·⁵, √ of
+the max ≈ 2⁶⁴), so there is no subnormal/overflow handling. Normalize `x = M·2ᴳ`,
+pick radicand `F = M` (G even) or `2M` (G odd) so the exponent is even, then one
+exact **unrolled bit-by-bit integer sqrt** of `F << 28` gives 24 significand bits +
+guard, with the sqrt **remainder** as the exact sticky. Same magnitude round (RNE).
+Bit-exact vs `golden.fp_sqrt` (exact `math.isqrt` intermediate) — 210k+ roots
+verified (incl. perfect squares). (~27K gates, synth CI-skipped like div/fma.)
+
 ## Interfaces
 | Core | Inputs | Output |
 |------|--------|--------|
@@ -68,6 +77,7 @@ cd projects/hapicore/rtl/tb
 ./run_sim.sh CORE=bf16fma    # bf16 fused multiply-add (hapi_fma_core)
 ./run_sim.sh CORE=fp16fma    # fp16 fused multiply-add (hapi_fma_core)
 ./run_sim.sh CORE=fp32div    # fp32 correctly-rounded divide
+./run_sim.sh CORE=fp32sqrt   # fp32 correctly-rounded square root
 ```
 `run_sim.sh` forces a single consistent Python (handles conda-cocotb vs
 system-verilator). All four are verified **bit-exact** against the Python golden /
@@ -82,5 +92,6 @@ compared by class (payload bits are not architectural); the sign of zero **is** 
 - ✅ Phase 2: **fused** multiply-add across all 3 formats — `hapi_fp32_fma` + parameterized
   `hapi_fma_core` wrappers `hapi_bf16_fma`/`hapi_fp16_fma`, each cocotb bit-exact
 - ✅ Phase 2: fp32 **correctly-rounded divide** (`hapi_fp32_div`) + cocotb — 165K+ verified
+- ✅ Phase 2: fp32 **correctly-rounded sqrt** (`hapi_fp32_sqrt`) + cocotb — 210K+ verified
 - ✅ Phase 3: Yosys synthesis (gate count + 0-latch check) — see `../synth/`
-- ⬜ Next: sqrt (Newton/Goldschmidt), then ASAP7
+- ⬜ Next: ASAP7 tech-mapping + P&R (Phase 4)

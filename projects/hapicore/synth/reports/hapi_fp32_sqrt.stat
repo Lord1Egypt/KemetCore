@@ -1,0 +1,30 @@
+
+3. Printing statistics.
+
+=== hapi_fp32_sqrt ===
+
+        +----------Local Count, excluding submodules.
+        | 
+      486 wires
+    11865 wire bits
+       32 public wires
+      710 public wire bits
+        2 ports
+       64 port bits
+      381 cells
+       58   $alu
+        2   $and
+        1   $eq
+       27   $logic_and
+       26   $logic_not
+        1   $macc_v2
+      110   $mux
+       54   $not
+       41   $or
+       27   $reduce_and
+        1   $reduce_bool
+       29   $reduce_or
+        1   $shiftx
+        2   $shl
+        1   $shr
+

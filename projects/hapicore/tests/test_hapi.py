@@ -100,6 +100,38 @@ def test_div_specials():
     assert math.copysign(1.0, g.fp_div(-1.0, math.inf, "fp32")) < 0  # -0
 
 
+def test_sqrt_single_rounded():
+    """fp_sqrt is exactly the nearest fp32 to the real sqrt(x) (correctly rounded)."""
+    from fractions import Fraction
+    rng = np.random.default_rng(13)
+    for _ in range(4000):
+        x = float(abs(np.float32(rng.standard_normal() * 1e3)))
+        if x == 0.0:
+            continue
+        r = g.fp_sqrt(x, "fp32")
+        ex = Fraction(x)
+        rr = Fraction(r)
+        lo = float(np.nextafter(np.float32(r), np.float32(-np.inf)))
+        hi = float(np.nextafter(np.float32(r), np.float32(np.inf)))
+        if math.isfinite(lo):
+            mid = (Fraction(lo) + rr) / 2
+            assert mid * mid <= ex                 # sqrt(x) >= midpoint to lower neighbor
+        if math.isfinite(hi):
+            mid = (rr + Fraction(hi)) / 2
+            assert ex <= mid * mid                 # sqrt(x) <= midpoint to upper neighbor
+
+
+def test_sqrt_specials():
+    assert g.fp_sqrt(4.0, "fp32") == 2.0
+    assert g.fp_sqrt(9.0, "fp32") == 3.0
+    assert g.fp_sqrt(0.0, "fp32") == 0.0
+    assert math.copysign(1.0, g.fp_sqrt(-0.0, "fp32")) < 0      # sqrt(-0) = -0
+    assert math.isnan(g.fp_sqrt(-2.0, "fp32"))                  # sqrt(<0) = NaN
+    assert math.isnan(g.fp_sqrt(-math.inf, "fp32"))
+    assert g.fp_sqrt(math.inf, "fp32") == math.inf
+    assert g.fp_sqrt(2.0 ** -149, "fp32") > 0                   # subnormal in -> normal out
+
+
 def test_fma_specials():
     assert math.isnan(g.fp_fma(0.0, math.inf, 1.0, "fp32"))      # 0*Inf -> NaN
     assert math.isnan(g.fp_fma(math.inf, 1.0, -math.inf, "fp32"))  # Inf-Inf -> NaN
