@@ -18,16 +18,16 @@ for core in hapi_bf16_mul hapi_bf16_add hapi_fp32_mul hapi_fp32_add hapi_fp16_mu
     echo "  -> reports/${core}.stat (0 latches asserted)"
 done
 
-# The FMA cores (hapi_fp32_fma + parameterized hapi_fma_core wrappers
-# hapi_bf16_fma / hapi_fp16_fma) and the divider (hapi_fp32_div, whose $div/$mod
-# expand to a ~41K-gate restoring divider) have a big combinational cloud that the
-# stock apt Yosys on the CI runner chokes on (OOM-killed after minutes), although
-# the dev Yosys synthesises them fine. So this heavy FPU synth is skipped under CI
-# ($CI is set by GitHub Actions); the committed reports/*.stat are the evidence
-# (0 latches; full-ABC gate counts bf16 ~2961, fp16 ~3411, fp32-fma abc-fast ~43.5K,
-# fp32-div abc-fast ~41.4K; fp32-fma/div coarse stats committed). These cores are
-# purely combinational (Verilator confirms no latch) and gate-level area/timing is
-# a Phase-4 PDK-mapping concern.
+# The heavy FPU cores — FMA (hapi_fp32_fma + parameterized hapi_fma_core wrappers
+# hapi_bf16_fma / hapi_fp16_fma), the divider (hapi_fp32_div, $div/$mod -> ~41K
+# gates) and the square root (hapi_fp32_sqrt, unrolled digit-recurrence -> ~27K
+# gates) — have a big combinational cloud the stock apt Yosys on the CI runner
+# chokes on (OOM-killed after minutes), although the dev Yosys synthesises them
+# fine. So this heavy FPU synth is skipped under CI ($CI is set by GitHub Actions);
+# the committed reports/*.stat are the evidence (0 latches; full-ABC gate counts
+# bf16 ~2961, fp16 ~3411; abc-fast fp32-fma ~43.5K, fp32-div ~41.4K, fp32-sqrt
+# ~27K; fma/div/sqrt coarse stats committed). These cores are purely combinational
+# (Verilator confirms no latch) and gate-level area/timing is a Phase-4 PDK concern.
 if [ -z "${CI:-}" ]; then
     for top in hapi_bf16_fma hapi_fp16_fma; do
         echo "=== synthesizing $top ==="
@@ -39,7 +39,7 @@ if [ -z "${CI:-}" ]; then
         "
         echo "  -> reports/${top}.stat (0 latches asserted)"
     done
-    for spec in "hapi_fp32_fma:hapi_fp32_fma.sv" "hapi_fp32_div:hapi_fp32_div.sv"; do
+    for spec in "hapi_fp32_fma:hapi_fp32_fma.sv" "hapi_fp32_div:hapi_fp32_div.sv" "hapi_fp32_sqrt:hapi_fp32_sqrt.sv"; do
         top="${spec%%:*}"; src="${spec##*:}"
         echo "=== synthesizing $top (coarse, 0-latch check) ==="
         "$YOSYS" -ql "reports/${top}.log" -p "
@@ -51,6 +51,6 @@ if [ -z "${CI:-}" ]; then
         echo "  -> reports/${top}.stat (0 latches asserted)"
     done
 else
-    echo "=== skipping heavy FPU synth (fma/div) under CI (see committed reports/*.stat) ==="
+    echo "=== skipping heavy FPU synth (fma/div/sqrt) under CI (see committed reports/*.stat) ==="
 fi
 echo "ALL SYNTHESIZED ✅ (no latches)"

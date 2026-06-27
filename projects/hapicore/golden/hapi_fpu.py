@@ -146,6 +146,50 @@ def fp_div(a, b, fmt="fp32"):
     return _round_frac(abs(Fraction(a) / Fraction(b)), sign, fmt)
 
 
+def _round_sqrt_int(s):
+    """Round sqrt(s) to the nearest integer, ties-to-even. s is a Fraction >= 0."""
+    p, q = s.numerator, s.denominator
+    n0 = math.isqrt(p * q) // q                   # floor(sqrt(s))
+    lhs = 4 * p                                    # compare s vs (n0+0.5)**2
+    rhs = (2 * n0 + 1) ** 2 * q
+    if lhs > rhs:
+        return n0 + 1
+    if lhs < rhs:
+        return n0
+    return n0 if (n0 & 1) == 0 else n0 + 1         # exact tie -> even
+
+
+def fp_sqrt(x, fmt="fp32"):
+    """Correctly-rounded square root (exact integer-sqrt intermediate)."""
+    x = cast(x, fmt)
+    if math.isnan(x):
+        return float("nan")
+    if x == 0.0:
+        return x                                   # +0 -> +0, -0 -> -0
+    if x < 0.0:
+        return float("nan")                        # sqrt of negative (incl -Inf)
+    if math.isinf(x):
+        return math.inf
+    p, _emin, _emax = _FMT[fmt]
+    fx = Fraction(x)
+    e = fx.numerator.bit_length() - fx.denominator.bit_length() - 1
+    if Fraction(2) ** e > fx:
+        e -= 1
+    elif Fraction(2) ** (e + 1) <= fx:
+        e += 1
+    eres = e >> 1                                  # floor(e/2)
+    qe = eres - (p - 1)                            # tentative quantum exponent
+    for _ in range(3):                             # settle the binade (round-up carry)
+        n = _round_sqrt_int(fx / (Fraction(2) ** (2 * qe)))
+        if n >= (1 << p):
+            qe += 1
+        elif n < (1 << (p - 1)):
+            qe -= 1
+        else:
+            break
+    return float(n * (Fraction(2) ** qe))          # always a normal, exactly representable
+
+
 def fp_cmp(a, b, fmt="fp32"):
     """Return -1/0/1, or None if unordered (NaN operand)."""
     a, b = cast(a, fmt), cast(b, fmt)

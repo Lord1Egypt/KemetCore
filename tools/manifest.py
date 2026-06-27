@@ -67,7 +67,14 @@ PROJECTS = [
                  "magnitude round (RNE, subnormal, overflow). Golden fp_div = _round_frac of "
                  "exact Fraction(a)/Fraction(b). cocotb bit-exact on 165K+ divisions; Yosys "
                  "0-latch (coarse ~265 cells; abc-fast ~41.4K gates via $div, so div synth is "
-                 "also CI-skipped). fp_sqrt (Goldschmidt), ASAP7 + P&R (Phase 4) pending.",
+                 "also CI-skipped). PLUS hapi_fp32_sqrt (correctly-rounded sqrt): every fp32 "
+                 "sqrt is NORMAL (no subnormal/overflow), so normalise x=M*2^G, set radicand "
+                 "F=M or 2M for even exponent, one exact unrolled integer sqrt of F<<28 -> 24 "
+                 "sig bits + guard, the sqrt REMAINDER = sticky, then the same magnitude round. "
+                 "Golden fp_sqrt rounds the exact real sqrt via math.isqrt with exact tie "
+                 "detection. cocotb bit-exact on 210K+ roots (incl 4K perfect squares); 0-latch "
+                 "(coarse ~381 cells; abc-fast ~27K gates, sqrt synth also CI-skipped). HapiCore "
+                 "FPU now has mul+add+fma(x3 fmts)+div+sqrt. ASAP7 + P&R (Phase 4) pending.",
         "checkpoints": [
             ("HA.1", "Golden: fp16/bf16/fp32 add", 0, "done"),
             ("HA.2", "Golden: mul + fma", 0, "done"),
@@ -84,6 +91,7 @@ PROJECTS = [
             ("HA.12d", "RTL: bf16 FMA (hapi_bf16_fma via parameterized hapi_fma_core)", 2, "done"),
             ("HA.12e", "RTL: fp16 FMA (hapi_fp16_fma via parameterized hapi_fma_core)", 2, "done"),
             ("HA.12", "RTL: fp32 divide (hapi_fp32_div) + cocotb vs correctly-rounded golden", 2, "done"),
+            ("HA.17", "RTL: fp32 sqrt (hapi_fp32_sqrt) + cocotb vs correctly-rounded golden", 2, "done"),
             ("HA.13", "Synthesis: generic Yosys, 0 latches + gate count", 3, "done"),
             ("HA.14", "Synthesis: ASAP7 liberty tech-mapping", 3, "todo"),
             ("HA.15", "P&R: bf16/fp32 add+mul GDSII", 4, "todo"),
@@ -97,6 +105,8 @@ PROJECTS = [
             ("test_fma_specials", "fma 0*Inf/Inf-Inf->NaN, overflow, exact subnormal", "pass"),
             ("test_div_single_rounded", "div == nearest fp32 of exact a/b (4K random)", "pass"),
             ("test_div_specials", "div x/0->Inf, 0/0 & Inf/Inf->NaN, finite/Inf->signed 0", "pass"),
+            ("test_sqrt_single_rounded", "sqrt == nearest fp32 of real sqrt(x) (4K random)", "pass"),
+            ("test_sqrt_specials", "sqrt(4)=2, sqrt(-x)=NaN, sqrt(-0)=-0, sqrt(Inf)=Inf", "pass"),
             ("test_specials", "NaN/Inf propagation + signed zero", "pass"),
             ("test_pymodel_latency", "pipeline reports correct cycle latency", "pass"),
             ("rtl: test_fp16_mul (cocotb)", "hapi_fp16_mul == golden.fp_mul fp16 on corners+8K+edges", "pass"),
@@ -109,6 +119,7 @@ PROJECTS = [
             ("rtl: test_bf16_fma (cocotb)", "hapi_bf16_fma == single-rounded golden on 150K+ FMAs", "pass"),
             ("rtl: test_fp16_fma (cocotb)", "hapi_fp16_fma == single-rounded golden on 150K+ FMAs", "pass"),
             ("rtl: test_fp32_div (cocotb)", "hapi_fp32_div == correctly-rounded golden on 165K+ divisions", "pass"),
+            ("rtl: test_fp32_sqrt (cocotb)", "hapi_fp32_sqrt == correctly-rounded golden on 210K+ roots", "pass"),
         ],
     },
     {

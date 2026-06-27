@@ -36,6 +36,10 @@ class FpuPipeline:
         self._tick("div")
         return g.fp_div(a, b, self.fmt)
 
+    def sqrt(self, a):
+        self._tick("sqrt")
+        return g.fp_sqrt(a, self.fmt)
+
     def cmp(self, a, b):
         self._tick("cmp")
         return g.fp_cmp(a, b, self.fmt)
