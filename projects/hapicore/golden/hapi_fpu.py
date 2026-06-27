@@ -2,18 +2,33 @@
 
 The golden model IS the specification. fp16 and fp32 use numpy's IEEE-754
 dtypes directly (these are correctly-rounded hardware semantics); bf16 is
-implemented as round-to-nearest-even truncation of fp32. fma uses an fp64
-intermediate so it is single-rounded relative to the target format.
+implemented as round-to-nearest-even truncation of fp32. fma is *genuinely*
+single-rounded: the exact real value a*b+c is formed with rational
+(fractions.Fraction) arithmetic — so no precision is lost — and rounded once
+into the target format. This matches a real fused hardware unit (and the RTL
+hapi_fp32_fma), unlike the naive `cast(a*b+c)` which double-rounds.
 
 Supported here (Phase 0): add, sub, mul, fma, cmp, classify, cast for
 fp16 / bf16 / fp32. div/sqrt and fp64 arrive with the RTL (Phase 2).
 """
 import math
+from fractions import Fraction
 
 import numpy as np
 
 _DT = {"fp16": np.float16, "fp32": np.float32}
 FORMATS = ("fp16", "bf16", "fp32")
+
+# Per-format IEEE parameters: (significand bits incl. implicit, min normal
+# unbiased exponent, max biased exponent value used to detect overflow->Inf).
+#   value = significand(1.f) * 2**e,  emin <= e <= emax  for normals;
+#   smallest subnormal = 2**(emin - (p-1)).
+_FMT = {
+    #            p   emin  emax
+    "fp16": (11, -14, 15),
+    "bf16": (8, -126, 127),
+    "fp32": (24, -126, 127),
+}
 
 
 def round_bf16(x):
@@ -58,10 +73,58 @@ def fp_mul(a, b, fmt="fp32"):
         return float(dt(dt(a) * dt(b)))
 
 
+def _round_frac(frac, sign, fmt):
+    """Round an exact non-negative rational magnitude to `fmt`, applying `sign`.
+
+    Round-to-nearest, ties-to-even. Handles normals, subnormals (gradual
+    underflow) and overflow -> Inf. `frac` is a fractions.Fraction >= 0.
+    """
+    p, emin, emax = _FMT[fmt]
+    if frac == 0:
+        return -0.0 if sign else 0.0
+    # leading binade exponent e: 2**e <= frac < 2**(e+1)
+    e = frac.numerator.bit_length() - frac.denominator.bit_length()
+    if Fraction(2) ** e > frac:
+        e -= 1
+    elif Fraction(2) ** (e + 1) <= frac:
+        e += 1
+    # quantum exponent: ULP = 2**qe.  Clamp to the subnormal grid at emin.
+    qe = max(e - (p - 1), emin - (p - 1))
+    scaled = frac / (Fraction(2) ** qe)          # exact; ideal integer mantissa
+    num, den = scaled.numerator, scaled.denominator
+    n = num // den
+    rem2 = 2 * (num - n * den)
+    if rem2 > den or (rem2 == den and (n & 1)):  # round half to even
+        n += 1
+    value = n * (Fraction(2) ** qe)
+    if value >= Fraction(2) ** (emax + 1):       # overflow -> Inf
+        out = math.inf
+    else:
+        out = float(value)                       # exact: n*2**qe is representable
+    return -out if sign else out
+
+
 def fp_fma(a, b, c, fmt="fp32"):
-    """Fused multiply-add a*b+c with a single final rounding (fp64 intermediate)."""
+    """Fused multiply-add a*b+c with a single final rounding (exact intermediate)."""
     a, b, c = cast(a, fmt), cast(b, fmt), cast(c, fmt)
-    return cast((a * b) + c, fmt)
+    # Special operands first (NaN/Inf), mirroring real fused hardware.
+    if math.isnan(a) or math.isnan(b) or math.isnan(c):
+        return float("nan")
+    prod = a * b                                  # inf*finite=inf, inf*0 below
+    if math.isnan(prod):                          # 0 * Inf -> invalid -> NaN
+        return float("nan")
+    if math.isinf(prod) or math.isinf(c):
+        s = prod + c                              # Inf + (-Inf) -> NaN
+        return cast(s, fmt)
+    # Both prod and c finite: form a*b+c EXACTLY, then round exactly once.
+    exact = Fraction(a) * Fraction(b) + Fraction(c)
+    if exact == 0:
+        # IEEE: a sum that is exactly zero is +0 except -0 + -0 -> -0.
+        ab_neg = math.copysign(1.0, a) * math.copysign(1.0, b) < 0
+        c_neg = math.copysign(1.0, c) < 0
+        both_zero = (a == 0.0 or b == 0.0) and c == 0.0
+        return -0.0 if (both_zero and ab_neg and c_neg) else 0.0
+    return _round_frac(abs(exact), exact < 0, fmt)
 
 
 def fp_cmp(a, b, fmt="fp32"):

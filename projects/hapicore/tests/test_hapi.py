@@ -47,6 +47,35 @@ def test_fma_more_accurate():
     assert abs(fused - true) <= abs(separate - true)
 
 
+def test_fma_single_rounded():
+    """fp_fma is exactly the nearest fp32 to the real value a*b+c (one rounding)."""
+    from fractions import Fraction
+    rng = np.random.default_rng(7)
+    for _ in range(4000):
+        a, b, c = (rng.standard_normal(3).astype(np.float32) * 10).tolist()
+        a, b, c = float(np.float32(a)), float(np.float32(b)), float(np.float32(c))
+        got = g.fp_fma(a, b, c, "fp32")
+        exact = Fraction(a) * Fraction(b) + Fraction(c)
+        if exact == 0:
+            assert got == 0.0
+            continue
+        # no representable fp32 is strictly closer to the exact value than `got`
+        d = abs(Fraction(got) - exact)
+        lo = float(np.nextafter(np.float32(got), np.float32(-np.inf)))
+        hi = float(np.nextafter(np.float32(got), np.float32(np.inf)))
+        assert abs(Fraction(lo) - exact) >= d
+        assert abs(Fraction(hi) - exact) >= d
+
+
+def test_fma_specials():
+    assert math.isnan(g.fp_fma(0.0, math.inf, 1.0, "fp32"))      # 0*Inf -> NaN
+    assert math.isnan(g.fp_fma(math.inf, 1.0, -math.inf, "fp32"))  # Inf-Inf -> NaN
+    assert math.isinf(g.fp_fma(3.0e38, 3.0e38, 0.0, "fp32"))      # overflow -> Inf
+    assert g.fp_fma(2.0, 3.0, 1.0, "fp32") == 7.0
+    # exact subnormal product survives single rounding (no flush)
+    assert g.fp_fma(2.0 ** -74, 2.0 ** -75, 0.0, "fp32") == 2.0 ** -149
+
+
 def test_specials():
     inf, nan = float("inf"), float("nan")
     assert math.isnan(g.fp_add(inf, -inf, "fp32"))

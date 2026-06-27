@@ -17,4 +17,24 @@ for core in hapi_bf16_mul hapi_bf16_add hapi_fp32_mul hapi_fp32_add hapi_fp16_mu
     "
     echo "  -> reports/${core}.stat (0 latches asserted)"
 done
+
+# hapi_fp32_fma is a large combinational FMA (128-bit alignment window + 129-bit
+# priority encoder + sticky/borrow). The stock apt Yosys on the CI runner is very
+# slow / memory-hungry on that wide cloud, so the FMA synth is skipped under CI
+# ($CI is set by GitHub Actions); reports/hapi_fp32_fma.stat is the committed
+# evidence (0 latches, ~686 coarse cells; locally `abc -fast -g AND` ~= 43.5K
+# AND/NOT gates). The design is purely combinational (Verilator confirms no
+# latch), and gate-level area/timing is a Phase-4 PDK-mapping concern.
+if [ -z "${CI:-}" ]; then
+    echo "=== synthesizing hapi_fp32_fma (coarse, 0-latch check) ==="
+    "$YOSYS" -ql "reports/hapi_fp32_fma.log" -p "
+        read_verilog -sv ../rtl/hapi_fp32_fma.sv;
+        synth -top hapi_fp32_fma -run :fine;
+        select -assert-none t:\$_DLATCH_* t:\$dlatch;
+        tee -o reports/hapi_fp32_fma.stat stat
+    "
+    echo "  -> reports/hapi_fp32_fma.stat (0 latches asserted)"
+else
+    echo "=== skipping hapi_fp32_fma synth under CI (see committed reports/hapi_fp32_fma.stat) ==="
+fi
 echo "ALL SYNTHESIZED ✅ (no latches)"

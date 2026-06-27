@@ -43,8 +43,18 @@ PROJECTS = [
                  "~1390 cells. AND hapi_fp16_add (bf16 adder widened: 20-bit align frame, "
                  "11-bit keep, overflow exp>=31), cocotb bit-exact vs golden.fp_add fp16 on "
                  "corners + 8K random + 3K cancellation + edges, Yosys 0-latch ~733 cells. "
-                 "fp32 add unblocks the BastCore tensor-core accumulate. fp16 div/sqrt "
-                 "(Goldschmidt), fma, ASAP7 + P&R (Phase 4) pending.",
+                 "fp32 add unblocks the BastCore tensor-core accumulate. PLUS hapi_fp32_fma "
+                 "(fused multiply-add, the headline ML MAC): exact 48-bit product + 24-bit "
+                 "addend aligned into a 128-bit window (full product width + cancellation "
+                 "headroom + guard) with sticky tail + sticky-borrow on effective subtract, "
+                 "one RNE; the GOLDEN fp_fma was upgraded to a genuine single rounding "
+                 "(exact rational a*b+c via fractions.Fraction, fulfilling its docstring — "
+                 "the old fp64 intermediate double-rounded). cocotb bit-exact on 190K+ FMAs "
+                 "(corners+random+cancellation+opposite-sign far-tail+subnormal/overflow); "
+                 "Yosys 0-latch via coarse synth (~686 word-level cells; ABC gate-mapping "
+                 "the wide alignment cloud is very slow, so it is deferred to Phase-4 PDK "
+                 "mapping — locally abc -fast gives ~43.5K AND/NOT gates). "
+                 "fp16 div/sqrt (Goldschmidt), bf16/fp16 fma, ASAP7 + P&R (Phase 4) pending.",
         "checkpoints": [
             ("HA.1", "Golden: fp16/bf16/fp32 add", 0, "done"),
             ("HA.2", "Golden: mul + fma", 0, "done"),
@@ -57,7 +67,8 @@ PROJECTS = [
             ("HA.11", "RTL: fp32 multiplier (hapi_fp32_mul) + cocotb vs golden/numpy", 2, "done"),
             ("HA.12a", "RTL: fp16 multiplier (hapi_fp16_mul) + cocotb vs golden/numpy", 2, "done"),
             ("HA.12b", "RTL: fp16 adder (hapi_fp16_add) + cocotb vs golden/numpy", 2, "done"),
-            ("HA.12", "RTL: fp_div (Goldschmidt) + fma", 2, "todo"),
+            ("HA.12c", "RTL: fp32 FMA (hapi_fp32_fma) + cocotb vs single-rounded golden", 2, "done"),
+            ("HA.12", "RTL: fp_div (Goldschmidt)", 2, "todo"),
             ("HA.13", "Synthesis: generic Yosys, 0 latches + gate count", 3, "done"),
             ("HA.14", "Synthesis: ASAP7 liberty tech-mapping", 3, "todo"),
             ("HA.15", "P&R: bf16/fp32 add+mul GDSII", 4, "todo"),
@@ -67,6 +78,8 @@ PROJECTS = [
             ("test_bf16_round_cases", "hand-computed bf16 RNE cases", "pass"),
             ("test_mul_commutative", "a*b == b*a across formats", "pass"),
             ("test_fma_more_accurate", "fma beats separate mul+add on a known case", "pass"),
+            ("test_fma_single_rounded", "fma == nearest fp32 of exact a*b+c (4K random)", "pass"),
+            ("test_fma_specials", "fma 0*Inf/Inf-Inf->NaN, overflow, exact subnormal", "pass"),
             ("test_specials", "NaN/Inf propagation + signed zero", "pass"),
             ("test_pymodel_latency", "pipeline reports correct cycle latency", "pass"),
             ("rtl: test_fp16_mul (cocotb)", "hapi_fp16_mul == golden.fp_mul fp16 on corners+8K+edges", "pass"),
@@ -75,6 +88,7 @@ PROJECTS = [
             ("rtl: test_bf16_add (cocotb)", "hapi_bf16_add == golden on 12K+ sums", "pass"),
             ("rtl: test_fp32_mul (cocotb)", "hapi_fp32_mul == numpy fp32 on 40K+ products", "pass"),
             ("rtl: test_fp32_add (cocotb)", "hapi_fp32_add == numpy fp32 on 70K+ sums", "pass"),
+            ("rtl: test_fp32_fma (cocotb)", "hapi_fp32_fma == single-rounded golden on 54K+ FMAs", "pass"),
         ],
     },
     {
