@@ -38,6 +38,10 @@ jobs:
         run: ./projects/sethcore/rtl/tb/run_sim.sh CORE=alu
       - name: Run SethCore mul/div testbench
         run: ./projects/sethcore/rtl/tb/run_sim.sh CORE=muldiv
+      - name: Run HapiCore bf16 multiplier testbench
+        run: ./projects/hapicore/rtl/tb/run_sim.sh CORE=mul
+      - name: Run HapiCore bf16 adder testbench
+        run: ./projects/hapicore/rtl/tb/run_sim.sh CORE=add
 
   synth-yosys:
     name: Phase 3 synthesis (Yosys, 0-latch check)
@@ -50,3 +54,5 @@ jobs:
         run: YOSYS=yosys ./projects/anubiscore/synth/run_synth.sh
       - name: Synthesize SethCore ALU (asserts no latches)
         run: YOSYS=yosys ./projects/sethcore/synth/run_synth.sh
+      - name: Synthesize HapiCore bf16 (asserts no latches)
+        run: YOSYS=yosys ./projects/hapicore/synth/run_synth.sh
