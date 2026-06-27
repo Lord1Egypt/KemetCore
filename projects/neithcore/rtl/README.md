@@ -13,19 +13,21 @@ number of conditional `−Q` subtractions restores the canonical residue. No div
 instantiates `neith_modmul` for the twiddle multiply and does the mod add/sub with
 single conditional subtractions.
 
-`neith_ntt.sv` — the **multicycle 256-point forward NTT engine**. An FSM streams 256
-coefficients in (each stored at its **bit-reversed** index), then runs 8 radix-2
-stages × 128 in-place butterflies (one `neith_butterfly` per cycle, ~1024 cycles),
-with the twiddle `w` advanced by a second `neith_modmul` (`w *= wlen`, reset to 1 at
-each block; `wlen` is a per-stage ROM). Results are read out by address. Matches
-`golden.ntt_cyclic(a, OMEGA)`.
+`neith_ntt.sv` — the **multicycle 256-point NTT engine**, forward **and** inverse. An
+FSM streams 256 coefficients in (each stored at its **bit-reversed** index), then runs
+8 radix-2 stages × 128 in-place butterflies (one `neith_butterfly` per cycle, ~1024
+cycles), with the twiddle `w` advanced by a second `neith_modmul` (`w *= wlen`, reset
+to 1 at each block; `wlen` is a per-stage ROM). `mode` (latched at `start`) selects
+forward (`root = OMEGA`, matches `golden.ntt_cyclic(a, OMEGA)`) or inverse
+(`root = OMEGA_INV` + a final `×N_INV` scaling pass, matching
+`ntt_cyclic(A, OMEGA_INV)·N_INV`). Results are read out by address.
 
 ## Interfaces
 | Module | Inputs | Outputs |
 |--------|--------|---------|
 | `neith_modmul`   | `a[12:0]`, `b[12:0]` | `r[12:0]` = `(a·b) mod Q` |
 | `neith_butterfly`| `u[12:0]`, `v[12:0]`, `w[12:0]` | `lo` = `(u+v·w) mod Q`, `hi` = `(u−v·w) mod Q` |
-| `neith_ntt`      | `clk,rst_n,start,in_valid,in_data[12:0],rd_addr[7:0]` | `out_data[12:0]`, `busy`, `done` |
+| `neith_ntt`      | `clk,rst_n,start,mode,in_valid,in_data[12:0],rd_addr[7:0]` | `out_data[12:0]`, `busy`, `done` |
 
 ## Run the testbenches (cocotb + Verilator)
 ```bash
@@ -37,11 +39,12 @@ cd projects/neithcore/rtl/tb
 All verified **bit-exact** vs the Python golden (`golden/neith_mlkem.py`):
 `neith_modmul` over 121 corners + 30,000 random + 1,600 near-modulus worst cases;
 `neith_butterfly` over 729 corners + 30,000 random + 2,048 real-`OMEGA^k`-twiddle
-butterflies; `neith_ntt` over directed vectors (impulse/const/ramp/max) + 24 random
-256-point transforms vs `golden.ntt_cyclic`.
+butterflies; `neith_ntt` over directed vectors + 16 random **forward** + 16 random
+**inverse** transforms vs `golden.ntt_cyclic`, plus 12 forward→inverse **roundtrips**
+that recover the original input.
 
 ## Status
 - ✅ Phase 2: modular multiplier + CT butterfly RTL + cocotb (Verilator 5.020)
-- ✅ Phase 2: 256-point NTT engine RTL + cocotb
+- ✅ Phase 2: 256-point NTT engine RTL (forward + inverse + 1/N scale) + cocotb
 - ✅ Phase 3: Yosys synthesis (gate count + 0-latch check) — see `../synth/`
-- ⬜ Next: inverse NTT + psi-wrap (full negacyclic `ntt()`), SRAM macro, then ASAP7
+- ⬜ Next: psi pre/post-multiply for the full negacyclic `ntt()`/`intt()`, SRAM macro, then ASAP7
