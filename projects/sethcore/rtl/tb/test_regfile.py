@@ -50,10 +50,21 @@ async def do_write(dut, ref, we, waddr, wdata):
     await settle()                      # let async reads re-evaluate after the edge
 
 
+async def reset(dut):
+    """Pulse the synchronous reset: clears all registers to 0."""
+    dut.rst.value = 1
+    dut.we.value = 0; dut.waddr.value = 0; dut.wdata.value = 0
+    dut.raddr1.value = 0; dut.raddr2.value = 0
+    await RisingEdge(dut.clk)
+    dut.rst.value = 0
+    await settle()
+
+
 @cocotb.test()
 async def test_write_then_read_all(dut):
     cocotb.start_soon(Clock(dut.clk, 10, units="ns").start())
     ref = RefRegfile()
+    await reset(dut)
     dut.we.value = 0; dut.waddr.value = 0; dut.wdata.value = 0
     dut.raddr1.value = 0; dut.raddr2.value = 0
     await RisingEdge(dut.clk)
@@ -68,6 +79,7 @@ async def test_write_then_read_all(dut):
 async def test_x0_hardwired(dut):
     cocotb.start_soon(Clock(dut.clk, 10, units="ns").start())
     ref = RefRegfile()
+    await reset(dut)
     await do_write(dut, ref, 1, 0, 0xDEADBEEF)     # write to x0 -> ignored
     await do_read(dut, ref, 0, 0)
     assert int(dut.rdata1.value) == 0 and int(dut.rdata2.value) == 0
@@ -78,6 +90,7 @@ async def test_x0_hardwired(dut):
 async def test_random_stream(dut):
     cocotb.start_soon(Clock(dut.clk, 10, units="ns").start())
     ref = RefRegfile()
+    await reset(dut)
     rng = random.Random(0x5E7DEAD)
     # prime every register so reads compare against known data
     for i in range(1, 32):

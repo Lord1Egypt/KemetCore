@@ -8,12 +8,15 @@
 // Spec (deliberate, standard): write commits on the rising clock edge; reads are
 // combinational over the *committed* state (no internal write-to-read bypass) —
 // same-cycle WB->ID forwarding is the hazard unit's job, kept out of the regfile.
+// A synchronous reset clears all registers to 0 so an integrated core boots from a
+// deterministic architectural state.
 //
 // Verified against a Python reference model — see tb/test_regfile.py.
 // Yosys-portable; the only sequential state is the register array.
 
 module seth_regfile (
     input  logic        clk,
+    input  logic        rst,
     input  logic        we,
     input  logic [4:0]  waddr,
     input  logic [31:0] wdata,
@@ -25,7 +28,10 @@ module seth_regfile (
     logic [31:0] regs [0:31];
 
     always_ff @(posedge clk)
-        if (we && waddr != 5'd0)
+        if (rst)
+            for (int i = 0; i < 32; i++)
+                regs[i] <= 32'd0;
+        else if (we && waddr != 5'd0)
             regs[waddr] <= wdata;
 
     assign rdata1 = (raddr1 == 5'd0) ? 32'd0 : regs[raddr1];
