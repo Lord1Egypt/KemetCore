@@ -49,6 +49,8 @@ jobs:
         run: ./projects/hapicore/rtl/tb/run_sim.sh CORE=fp32add
       - name: Run HapiCore fp16 multiplier testbench
         run: ./projects/hapicore/rtl/tb/run_sim.sh CORE=fp16mul
+      - name: Run HapiCore fp16 adder testbench
+        run: ./projects/hapicore/rtl/tb/run_sim.sh CORE=fp16add
       - name: Run NeithCore modular multiplier testbench
         run: ./projects/neithcore/rtl/tb/run_sim.sh CORE=modmul
       - name: Run NeithCore NTT butterfly testbench
