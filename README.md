@@ -151,11 +151,23 @@ openroad        # Place & route (via ORFS Docker)
 git clone https://github.com/Lord1Egypt/KemetCore.git
 cd KemetCore
 
-# Each project has its own quick-start (see docs/)
-# Example: run all pymodel tests for SethCore
-cd projects/sethcore/pymodel
-python -m pytest -v
+# Run every project's Phase 0/1 golden+pymodel tests (pure Python, <0.5 GB RAM)
+pip install numpy pytest
+pytest projects/ -q                # 54 tests across all 11 cores
+python tools/test_all.py           # same, with a per-run summary
+
+# Track / resume work
+cat PROGRESS.md                    # master roadmap + mapping + RAM budget + resume guide
+python tools/gen_tracking.py       # regenerate all tracking docs from tools/manifest.py
 ```
+
+## Status: Phase 0/1 is live (Python), Phase 2+ (RTL→GDSII) is planned
+
+Every one of the 11 cores has a **bit-exact golden reference** and a **cycle/lane/round
+pymodel** implemented in pure Python with passing tests — RAM-trivial and runnable today.
+The RAM-heavy RTL→GDSII phases are mapped but not started. See **[PROGRESS.md](PROGRESS.md)**
+for the full matrix, per-project `STEPS.md` / `CHECKPOINTS.md` / `TESTS.md`, and the
+per-phase RAM budget.
 
 ---
 
