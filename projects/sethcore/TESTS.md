@@ -11,5 +11,6 @@ Run: `pytest projects/sethcore/tests -v`
 | `test_mul_div` | mul/div/rem match Python semantics | ✅ |
 | `test_branches` | beq/bne/blt/bge taken correctly | ✅ |
 | `test_pymodel_equals_golden` | pipeline result == ISA sim | ✅ |
+| `rtl: test_alu (cocotb)` | seth_alu.sv == golden _alu_r on all ops | ✅ |
 
-**5/5 tests passing.**
+**6/6 tests passing.**

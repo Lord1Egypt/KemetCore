@@ -106,16 +106,20 @@ PROJECTS = [
     {
         "key": "sethcore", "num": "01", "name": "SethCore", "deity": "Seth (strength)",
         "domain": "RV32IM pipelined CPU", "doc": "docs/01_SethCore_RV32IM_CPU.md",
-        "depends": ["hapicore"], "phase": P01,
-        "scope": "Phase 0/1 implements an RV32I + M-extension subset ISA simulator "
-                 "(arith/logic/shift/load/store/branch/jal/jalr/mul/div) and a 5-stage "
-                 "functional pymodel with forwarding. Full CSR/traps land in RTL.",
+        "depends": ["hapicore"],
+        "phase": _ph("done", "done", "partial", "partial", "todo", "todo"),
+        "scope": "Phase 0/1: RV32I+M ISA sim + 5-stage pymodel. Phase 2 IN PROGRESS: "
+                 "seth_alu.sv (combinational RV32 ALU) cocotb-verified bit-exact vs golden; "
+                 "full fetch/decode/pipeline RTL pending. Phase 3: generic Yosys synth of "
+                 "the ALU passes with 0 latches.",
         "checkpoints": [
             ("S2.1", "Golden: RV32I ISA simulator", 0, "done"),
             ("S2.2", "Golden: M-extension (mul/div/rem)", 0, "done"),
             ("S2.3", "pymodel: 5-stage pipeline", 1, "done"),
             ("S2.4", "pymodel: hazard forwarding", 1, "done"),
-            ("S2.7", "RTL: execute + ALU", 2, "todo"),
+            ("S2.7", "RTL: ALU (seth_alu) + cocotb vs golden", 2, "done"),
+            ("S2.8", "RTL: fetch/decode/regfile/pipeline", 2, "todo"),
+            ("S2.9", "Synthesis: ALU Yosys, 0 latches", 3, "done"),
             ("S2.11", "cocotb: per-instruction vs Spike", 2, "todo"),
             ("S2.14", "P&R: core macro", 4, "todo"),
         ],
@@ -125,6 +129,7 @@ PROJECTS = [
             ("test_mul_div", "mul/div/rem match Python semantics", "pass"),
             ("test_branches", "beq/bne/blt/bge taken correctly", "pass"),
             ("test_pymodel_equals_golden", "pipeline result == ISA sim", "pass"),
+            ("rtl: test_alu (cocotb)", "seth_alu.sv == golden _alu_r on all ops", "pass"),
         ],
     },
     {
