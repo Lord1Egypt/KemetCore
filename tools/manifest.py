@@ -36,8 +36,12 @@ PROJECTS = [
                  "+ adder RTL (hapi_bf16_mul/add, hapi_fp32_mul/add), each cocotb-verified "
                  "bit-exact vs the golden/numpy (subnormals in+out, RNE, Inf/NaN/signed-zero, "
                  "cancellation). Phase 3: generic Yosys synth 0 latches (bf16 mul ~873/add "
-                 "~650; fp32 mul ~5046/add ~1792 cells). fp32 add unblocks the BastCore "
-                 "tensor-core accumulate. fp16 datapath, div/sqrt, ASAP7 + P&R (Phase 4) pending.",
+                 "~650; fp32 mul ~5046/add ~1792 cells). PLUS hapi_fp16_mul (IEEE half, 1/5/10): "
+                 "the bf16 multiplier widened to 11-bit significands / 22-bit product / biased "
+                 "exp = expa+expb-14-lz, cocotb bit-exact vs golden.fp_mul(.,.,'fp16') (numpy "
+                 "float16) on corners + 8K random + subnormal/overflow edges, Yosys 0-latch "
+                 "~1390 cells. fp32 add unblocks the BastCore tensor-core accumulate. fp16 "
+                 "add, div/sqrt (Goldschmidt), fma, ASAP7 + P&R (Phase 4) pending.",
         "checkpoints": [
             ("HA.1", "Golden: fp16/bf16/fp32 add", 0, "done"),
             ("HA.2", "Golden: mul + fma", 0, "done"),
@@ -48,7 +52,8 @@ PROJECTS = [
             ("HA.9", "RTL: bf16 multiplier (hapi_bf16_mul) + cocotb vs golden", 2, "done"),
             ("HA.10", "RTL: fp32 adder (hapi_fp32_add) + cocotb vs golden/numpy", 2, "done"),
             ("HA.11", "RTL: fp32 multiplier (hapi_fp32_mul) + cocotb vs golden/numpy", 2, "done"),
-            ("HA.12", "RTL: fp16 add+mul + fp_div (Goldschmidt) + fma", 2, "todo"),
+            ("HA.12a", "RTL: fp16 multiplier (hapi_fp16_mul) + cocotb vs golden/numpy", 2, "done"),
+            ("HA.12", "RTL: fp16 adder + fp_div (Goldschmidt) + fma", 2, "todo"),
             ("HA.13", "Synthesis: generic Yosys, 0 latches + gate count", 3, "done"),
             ("HA.14", "Synthesis: ASAP7 liberty tech-mapping", 3, "todo"),
             ("HA.15", "P&R: bf16/fp32 add+mul GDSII", 4, "todo"),
@@ -60,6 +65,7 @@ PROJECTS = [
             ("test_fma_more_accurate", "fma beats separate mul+add on a known case", "pass"),
             ("test_specials", "NaN/Inf propagation + signed zero", "pass"),
             ("test_pymodel_latency", "pipeline reports correct cycle latency", "pass"),
+            ("rtl: test_fp16_mul (cocotb)", "hapi_fp16_mul == golden.fp_mul fp16 on corners+8K+edges", "pass"),
             ("rtl: test_bf16_mul (cocotb)", "hapi_bf16_mul == golden on 7K+ products", "pass"),
             ("rtl: test_bf16_add (cocotb)", "hapi_bf16_add == golden on 12K+ sums", "pass"),
             ("rtl: test_fp32_mul (cocotb)", "hapi_fp32_mul == numpy fp32 on 40K+ products", "pass"),

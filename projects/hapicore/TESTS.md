@@ -12,9 +12,10 @@ Run: `pytest projects/hapicore/tests -v`
 | `test_fma_more_accurate` | fma beats separate mul+add on a known case | ✅ |
 | `test_specials` | NaN/Inf propagation + signed zero | ✅ |
 | `test_pymodel_latency` | pipeline reports correct cycle latency | ✅ |
+| `rtl: test_fp16_mul (cocotb)` | hapi_fp16_mul == golden.fp_mul fp16 on corners+8K+edges | ✅ |
 | `rtl: test_bf16_mul (cocotb)` | hapi_bf16_mul == golden on 7K+ products | ✅ |
 | `rtl: test_bf16_add (cocotb)` | hapi_bf16_add == golden on 12K+ sums | ✅ |
 | `rtl: test_fp32_mul (cocotb)` | hapi_fp32_mul == numpy fp32 on 40K+ products | ✅ |
 | `rtl: test_fp32_add (cocotb)` | hapi_fp32_add == numpy fp32 on 70K+ sums | ✅ |
 
-**10/10 tests passing.**
+**11/11 tests passing.**
