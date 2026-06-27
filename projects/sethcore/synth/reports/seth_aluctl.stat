@@ -1,0 +1,22 @@
+
+3. Printing statistics.
+
+=== seth_aluctl ===
+
+        +----------Local Count, excluding submodules.
+        | 
+       38 wires
+       55 wire bits
+        4 public wires
+       21 public wire bits
+        4 ports
+       21 port bits
+       38 cells
+        8   $_ANDNOT_
+       12   $_AND_
+        2   $_MUX_
+       10   $_NAND_
+        4   $_NOR_
+        1   $_ORNOT_
+        1   $_OR_
+

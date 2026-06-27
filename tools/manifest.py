@@ -196,11 +196,13 @@ PROJECTS = [
                  "seth_alu.sv (RV32 ALU), seth_muldiv.sv (RV32M mul/div/rem) and seth_imm.sv "
                  "(RV32 immediate generator: I/S/B/U/J formats, sign-extended per ISA) and "
                  "seth_regfile.sv (32x32 register file: 2 async read ports + 1 sync write port, "
-                 "x0 hardwired 0) all cocotb-verified vs golden/reference (decode_imm added to "
-                 "the golden); fetch/decode + pipeline RTL pending. "
-                 "Phase 3: ALU + imm + regfile Yosys-synthesized 0 latches (imm ~92 cells, "
-                 "regfile ~3.8K cells/992 DFFs); combinational divider synth deferred (needs a "
-                 "sequential/iterative divider — generic synth explodes).",
+                 "x0 hardwired 0) and seth_aluctl.sv (ALU-control decoder: opcode/funct3/funct7 "
+                 "-> 4-bit ALU select) all cocotb-verified vs golden/reference (decode_imm + "
+                 "decode_aluop added to the golden; aluctl swept EXHAUSTIVELY over all 2^17 "
+                 "inputs); fetch/decode + pipeline datapath RTL pending. "
+                 "Phase 3: ALU + imm + regfile + aluctl Yosys-synthesized 0 latches (imm ~92, "
+                 "regfile ~3.8K/992 DFFs, aluctl ~38 cells); combinational divider synth deferred "
+                 "(needs a sequential/iterative divider — generic synth explodes).",
         "checkpoints": [
             ("S2.1", "Golden: RV32I ISA simulator", 0, "done"),
             ("S2.2", "Golden: M-extension (mul/div/rem)", 0, "done"),
@@ -210,6 +212,7 @@ PROJECTS = [
             ("S2.8", "RTL: mul/div (seth_muldiv) + cocotb vs golden", 2, "done"),
             ("S2.12", "RTL: immediate generator (seth_imm) + cocotb vs golden", 2, "done"),
             ("S2.13", "RTL: register file (seth_regfile) + cocotb vs reference", 2, "done"),
+            ("S2.15", "RTL: ALU-control decoder (seth_aluctl) + exhaustive cocotb", 2, "done"),
             ("S2.10", "RTL: fetch/decode + pipeline datapath", 2, "todo"),
             ("S2.9", "Synthesis: ALU Yosys, 0 latches", 3, "done"),
             ("S2.11", "cocotb: per-instruction vs Spike", 2, "todo"),
@@ -226,6 +229,7 @@ PROJECTS = [
             ("rtl: test_muldiv (cocotb)", "seth_muldiv.sv == golden _muldiv (incl edges)", "pass"),
             ("rtl: test_imm (cocotb)", "seth_imm.sv == golden.decode_imm on 70K+ words", "pass"),
             ("rtl: test_regfile (cocotb)", "seth_regfile.sv == reference on 20K+ rw cycles, x0=0", "pass"),
+            ("rtl: test_aluctl (cocotb)", "seth_aluctl.sv == golden.decode_aluop, all 2^17 inputs", "pass"),
         ],
     },
     {

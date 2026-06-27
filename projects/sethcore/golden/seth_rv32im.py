@@ -145,6 +145,35 @@ def decode_imm(ins):
     return 0
 
 
+def decode_aluop(op, f3, f7):
+    """4-bit integer-ALU select for an instruction, matching seth_alu's encoding
+    (0 ADD, 1 SUB, 2 SLL, 3 SLT, 4 SLTU, 5 XOR, 6 SRL, 7 SRA, 8 OR, 9 AND).
+
+    R-type (0x33) decodes by funct3 with funct7=0x20 selecting SUB/SRA; the
+    M-extension (funct7=0x01) doesn't use this ALU -> ADD. I-type ALU (0x13)
+    decodes by funct3, with SRLI/SRAI distinguished by ins[30] (funct7=0x20). All
+    other opcodes (loads/stores/branch/jalr/lui/auipc/jal/system) use the ALU only
+    for address/PC arithmetic -> ADD."""
+    op &= 0x7F
+    f3 &= 0x7
+    f7 &= 0x7F
+    if op == 0x33:
+        if f7 == 0x01:
+            return 0
+        if f3 == 0x0:
+            return 1 if f7 == 0x20 else 0
+        if f3 == 0x5:
+            return 7 if f7 == 0x20 else 6
+        return {0x1: 2, 0x2: 3, 0x3: 4, 0x4: 5, 0x6: 8, 0x7: 9}[f3]
+    if op == 0x13:
+        if f3 == 0x0:
+            return 0
+        if f3 == 0x5:
+            return 7 if f7 == 0x20 else 6
+        return {0x1: 2, 0x2: 3, 0x3: 4, 0x4: 5, 0x6: 8, 0x7: 9}[f3]
+    return 0
+
+
 class Cpu:
     def __init__(self):
         self.x = [0] * 32
