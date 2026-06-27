@@ -57,6 +57,8 @@ jobs:
         run: ./projects/bastcore/rtl/tb/run_sim.sh CORE=mac
       - name: Run BastCore MAC grid (systolic array) testbench
         run: ./projects/bastcore/rtl/tb/run_sim.sh CORE=grid
+      - name: Run GebCore 2:4 sparse-MAC testbench
+        run: ./projects/gebcore/rtl/tb/run_sim.sh CORE=spmac
 
   synth-yosys:
     name: Phase 3 synthesis (Yosys, 0-latch check)
@@ -75,3 +77,5 @@ jobs:
         run: YOSYS=yosys ./projects/neithcore/synth/run_synth.sh
       - name: Synthesize BastCore MAC (asserts no latches)
         run: YOSYS=yosys ./projects/bastcore/synth/run_synth.sh
+      - name: Synthesize GebCore sparse-MAC (asserts no latches)
+        run: YOSYS=yosys ./projects/gebcore/synth/run_synth.sh
