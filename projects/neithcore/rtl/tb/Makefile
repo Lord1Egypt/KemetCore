@@ -1,6 +1,7 @@
-# cocotb + Verilator testbenches for NeithCore NTT primitives.
-#   make CORE=modmul   (default)   -> neith_modmul
-#   make CORE=butterfly            -> neith_butterfly (+ neith_modmul)
+# cocotb + Verilator testbenches for NeithCore NTT.
+#   make CORE=modmul    (default)   -> neith_modmul
+#   make CORE=butterfly             -> neith_butterfly (+ neith_modmul)
+#   make CORE=ntt                   -> neith_ntt 256-pt engine (+ butterfly + modmul)
 TOPLEVEL_LANG = verilog
 SIM ?= verilator
 CORE ?= modmul
@@ -11,6 +12,10 @@ ifeq ($(CORE),butterfly)
   VERILOG_SOURCES = $(PWD)/../neith_butterfly.sv $(PWD)/../neith_modmul.sv
   TOPLEVEL = neith_butterfly
   MODULE   = test_butterfly
+else ifeq ($(CORE),ntt)
+  VERILOG_SOURCES = $(PWD)/../neith_ntt.sv $(PWD)/../neith_butterfly.sv $(PWD)/../neith_modmul.sv
+  TOPLEVEL = neith_ntt
+  MODULE   = test_ntt
 else
   VERILOG_SOURCES = $(PWD)/../neith_modmul.sv
   TOPLEVEL = neith_modmul

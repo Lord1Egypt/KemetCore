@@ -4,7 +4,7 @@
 
 _Auto-generated from `tools/manifest.py` — do not edit by hand; edit the manifest and run `python tools/gen_tracking.py`._
 
-**Scope (current):** Phase 0/1: negacyclic NTT over Z_q (q=7681, NTT-friendly) plus a Kyber-512-style module-LWE KEM that is self-consistent (decaps recovers the encaps shared secret). Phase 2 IN PROGRESS: neith_modmul (Barrett mult mod 7681) and neith_butterfly (Cooley-Tukey butterfly) RTL, both cocotb-verified bit-exact vs the golden. Phase 3: generic Yosys synth 0 latches (modmul ~1.4K, butterfly ~1.65K cells). Multicycle 256-pt NTT engine + FIPS-203 exact params (q=3329, incomplete NTT) + ASAP7 pending. NOTE: reference model, not FIPS-203 certified.
+**Scope (current):** Phase 0/1: negacyclic NTT over Z_q (q=7681, NTT-friendly) plus a Kyber-512-style module-LWE KEM that is self-consistent (decaps recovers the encaps shared secret). Phase 2 IN PROGRESS: neith_modmul (Barrett mult mod 7681) and neith_butterfly (Cooley-Tukey butterfly) RTL, both cocotb-verified bit-exact vs the golden, PLUS neith_ntt — a multicycle 256-point in-place radix-2 forward NTT engine (bit-reversed load, 8 stages x 128 butterflies, twiddle ROM + modmul w-update) bit-exact vs golden.ntt_cyclic on directed + 24 random transforms. Phase 3: generic Yosys synth 0 latches (modmul ~1.4K, butterfly ~1.65K, ntt ~45.7K cells / ~3.4K FFs). Inverse NTT + psi-wrap (full ntt()), FIPS-203 exact params (q=3329), SRAM macro + ASAP7 pending. NOTE: reference model, not FIPS-203 certified.
 
 ## Ordered steps (6-phase lifecycle)
 

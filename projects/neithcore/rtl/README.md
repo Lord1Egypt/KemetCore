@@ -13,25 +13,35 @@ number of conditional `−Q` subtractions restores the canonical residue. No div
 instantiates `neith_modmul` for the twiddle multiply and does the mod add/sub with
 single conditional subtractions.
 
+`neith_ntt.sv` — the **multicycle 256-point forward NTT engine**. An FSM streams 256
+coefficients in (each stored at its **bit-reversed** index), then runs 8 radix-2
+stages × 128 in-place butterflies (one `neith_butterfly` per cycle, ~1024 cycles),
+with the twiddle `w` advanced by a second `neith_modmul` (`w *= wlen`, reset to 1 at
+each block; `wlen` is a per-stage ROM). Results are read out by address. Matches
+`golden.ntt_cyclic(a, OMEGA)`.
+
 ## Interfaces
 | Module | Inputs | Outputs |
 |--------|--------|---------|
 | `neith_modmul`   | `a[12:0]`, `b[12:0]` | `r[12:0]` = `(a·b) mod Q` |
-| `neith_butterfly`| `u[12:0]`, `v[12:0]`, `w[12:0]` | `lo[12:0]` = `(u+v·w) mod Q`, `hi[12:0]` = `(u−v·w) mod Q` |
+| `neith_butterfly`| `u[12:0]`, `v[12:0]`, `w[12:0]` | `lo` = `(u+v·w) mod Q`, `hi` = `(u−v·w) mod Q` |
+| `neith_ntt`      | `clk,rst_n,start,in_valid,in_data[12:0],rd_addr[7:0]` | `out_data[12:0]`, `busy`, `done` |
 
 ## Run the testbenches (cocotb + Verilator)
 ```bash
 cd projects/neithcore/rtl/tb
 ./run_sim.sh CORE=modmul       # modular multiplier
 ./run_sim.sh CORE=butterfly    # CT butterfly (+ modmul)
+./run_sim.sh CORE=ntt          # 256-point engine (+ butterfly + modmul)
 ```
-Both verified **bit-exact** vs the Python golden (`golden/neith_mlkem.py`):
+All verified **bit-exact** vs the Python golden (`golden/neith_mlkem.py`):
 `neith_modmul` over 121 corners + 30,000 random + 1,600 near-modulus worst cases;
 `neith_butterfly` over 729 corners + 30,000 random + 2,048 real-`OMEGA^k`-twiddle
-butterflies.
+butterflies; `neith_ntt` over directed vectors (impulse/const/ramp/max) + 24 random
+256-point transforms vs `golden.ntt_cyclic`.
 
 ## Status
-- ✅ Phase 2: modular multiplier RTL + cocotb (Verilator 5.020)
-- ✅ Phase 2: CT butterfly RTL + cocotb
+- ✅ Phase 2: modular multiplier + CT butterfly RTL + cocotb (Verilator 5.020)
+- ✅ Phase 2: 256-point NTT engine RTL + cocotb
 - ✅ Phase 3: Yosys synthesis (gate count + 0-latch check) — see `../synth/`
-- ⬜ Next: multicycle 256-point NTT engine (twiddle ROM + ping-pong RAM), then ASAP7
+- ⬜ Next: inverse NTT + psi-wrap (full negacyclic `ntt()`), SRAM macro, then ASAP7

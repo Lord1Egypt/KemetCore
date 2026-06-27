@@ -25,4 +25,13 @@ echo "=== synthesizing neith_butterfly ==="
     tee -o reports/neith_butterfly.stat stat
 "
 echo "  -> reports/neith_butterfly.stat (0 latches asserted)"
+
+echo "=== synthesizing neith_ntt (256-point engine) ==="
+"$YOSYS" -ql "reports/neith_ntt.log" -p "
+    read_verilog -sv ../rtl/neith_modmul.sv ../rtl/neith_butterfly.sv ../rtl/neith_ntt.sv;
+    synth -top neith_ntt;
+    select -assert-none t:\$_DLATCH_* t:\$dlatch;
+    tee -o reports/neith_ntt.stat stat
+"
+echo "  -> reports/neith_ntt.stat (0 latches asserted)"
 echo "ALL SYNTHESIZED ✅ (no latches)"
