@@ -17,5 +17,6 @@ Run: `pytest projects/sethcore/tests -v`
 | `rtl: test_imm (cocotb)` | seth_imm.sv == golden.decode_imm on 70K+ words | ✅ |
 | `rtl: test_regfile (cocotb)` | seth_regfile.sv == reference on 20K+ rw cycles, x0=0 | ✅ |
 | `rtl: test_aluctl (cocotb)` | seth_aluctl.sv == golden.decode_aluop, all 2^17 inputs | ✅ |
+| `rtl: test_decode (cocotb)` | seth_decode.sv == golden.decode_ctrl on opcode sweep + 50K random | ✅ |
 
-**11/11 tests passing.**
+**12/12 tests passing.**
