@@ -11,9 +11,9 @@ _Auto-generated from `tools/manifest.py`._
 | N.5 | P2 | RTL: modular multiplier (Barrett) + cocotb vs golden | ✅ |
 | N.6 | P2 | RTL: Cooley-Tukey butterfly + cocotb vs golden | ✅ |
 | N.7 | P2 | RTL: 256-pt NTT engine, forward + inverse (+1/N scale) + cocotb | ✅ |
-| N.8 | P2 | RTL: psi pre/post-multiply for full negacyclic ntt()/intt() | ⬜ |
+| N.8 | P2 | RTL: psi pre/post-multiply for full negacyclic ntt()/intt() | ✅ |
 | N.9 | P3 | Synthesis: generic Yosys, 0 latches + gate count | ✅ |
 | N.10 | P3 | Synthesis: ASAP7 liberty tech-mapping + SRAM macro | ⬜ |
 | N.11 | P4 | P&R: GDSII | ⬜ |
 
-**Progress:** 8/11 checkpoints complete (33% of phases).
+**Progress:** 9/11 checkpoints complete (33% of phases).

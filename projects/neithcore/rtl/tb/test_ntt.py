@@ -23,6 +23,7 @@ N = golden.N  # 256
 async def reset(dut):
     dut.start.value = 0
     dut.mode.value = 0
+    dut.nega.value = 0
     dut.in_valid.value = 0
     dut.in_data.value = 0
     dut.rd_addr.value = 0
@@ -33,10 +34,11 @@ async def reset(dut):
     await RisingEdge(dut.clk)
 
 
-async def run_ntt(dut, vec, mode=0):
-    # start pulse (engine -> LOAD), latch the transform direction
+async def run_ntt(dut, vec, mode=0, nega=0):
+    # start pulse (engine -> LOAD), latch the transform direction + cyclic/negacyclic
     dut.start.value = 1
     dut.mode.value = mode
+    dut.nega.value = nega
     dut.in_valid.value = 0
     await RisingEdge(dut.clk)
     dut.start.value = 0
@@ -128,3 +130,56 @@ async def test_roundtrip(dut):
             f"roundtrip mismatch: "
             f"{next((i, rt[i], a[i]) for i in range(N) if rt[i] != a[i])}")
     dut._log.info("neith_ntt: 12 forward->inverse roundtrips recovered the input")
+
+
+@cocotb.test()
+async def test_negacyclic_forward(dut):
+    """nega=1 forward must equal golden.ntt (psi pre-multiply + cyclic forward)."""
+    cocotb.start_soon(Clock(dut.clk, 10, units="ns").start())
+    await reset(dut)
+    rng = random.Random(0xACED)
+    vecs = [[5] + [0] * (N - 1), [3] * N, [(i * 37) % Q for i in range(N)]]
+    vecs += [[rng.randrange(Q) for _ in range(N)] for _ in range(16)]
+    for vec in vecs:
+        got = await run_ntt(dut, vec, mode=0, nega=1)
+        exp = golden.ntt(vec)
+        assert got == exp, (
+            f"negacyclic forward mismatch: "
+            f"{next((i, got[i], exp[i]) for i in range(N) if got[i] != exp[i])}")
+    dut._log.info("neith_ntt: negacyclic forward (golden.ntt) verified bit-exact")
+
+
+@cocotb.test()
+async def test_negacyclic_inverse(dut):
+    """nega=1 inverse must equal golden.intt (cyclic inverse + 1/N + psi^-i)."""
+    cocotb.start_soon(Clock(dut.clk, 10, units="ns").start())
+    await reset(dut)
+    rng = random.Random(0xBEEF)
+    for _ in range(16):
+        A = [rng.randrange(Q) for _ in range(N)]
+        got = await run_ntt(dut, A, mode=1, nega=1)
+        exp = golden.intt(A)
+        assert got == exp, (
+            f"negacyclic inverse mismatch: "
+            f"{next((i, got[i], exp[i]) for i in range(N) if got[i] != exp[i])}")
+    dut._log.info("neith_ntt: negacyclic inverse (golden.intt) verified bit-exact")
+
+
+@cocotb.test()
+async def test_negacyclic_polymul(dut):
+    """The point of the negacyclic transform: intt(ntt(a)*ntt(b)) == schoolbook mod x^N+1."""
+    cocotb.start_soon(Clock(dut.clk, 10, units="ns").start())
+    await reset(dut)
+    rng = random.Random(0xF00D)
+    for _ in range(8):
+        a = [rng.randrange(Q) for _ in range(N)]
+        b = [rng.randrange(Q) for _ in range(N)]
+        A = await run_ntt(dut, a, mode=0, nega=1)
+        B = await run_ntt(dut, b, mode=0, nega=1)
+        C = [(A[i] * B[i]) % Q for i in range(N)]
+        got = await run_ntt(dut, C, mode=1, nega=1)
+        exp = golden.poly_mul_schoolbook(a, b)
+        assert got == exp, (
+            f"negacyclic poly-mul mismatch: "
+            f"{next((i, got[i], exp[i]) for i in range(N) if got[i] != exp[i])}")
+    dut._log.info("neith_ntt: HW negacyclic poly-mul matches schoolbook (mod x^256+1)")
