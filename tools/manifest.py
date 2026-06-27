@@ -193,10 +193,12 @@ PROJECTS = [
         "depends": ["hapicore"],
         "phase": _ph("done", "done", "partial", "partial", "todo", "todo"),
         "scope": "Phase 0/1: RV32I+M ISA sim + 5-stage pymodel. Phase 2 IN PROGRESS: "
-                 "seth_alu.sv (RV32 ALU) and seth_muldiv.sv (RV32M mul/div/rem) both "
-                 "cocotb-verified bit-exact vs golden; fetch/decode/pipeline RTL pending. "
-                 "Phase 3: ALU Yosys-synthesized 0 latches; combinational divider synth "
-                 "deferred (needs a sequential/iterative divider — generic synth explodes).",
+                 "seth_alu.sv (RV32 ALU), seth_muldiv.sv (RV32M mul/div/rem) and seth_imm.sv "
+                 "(RV32 immediate generator: I/S/B/U/J formats, sign-extended per ISA — the "
+                 "first datapath block) all cocotb-verified bit-exact vs golden (decode_imm "
+                 "added to the golden); fetch/decode/regfile/pipeline RTL pending. "
+                 "Phase 3: ALU + imm Yosys-synthesized 0 latches (imm ~92 cells); combinational "
+                 "divider synth deferred (needs a sequential/iterative divider — generic synth explodes).",
         "checkpoints": [
             ("S2.1", "Golden: RV32I ISA simulator", 0, "done"),
             ("S2.2", "Golden: M-extension (mul/div/rem)", 0, "done"),
@@ -204,6 +206,7 @@ PROJECTS = [
             ("S2.4", "pymodel: hazard forwarding", 1, "done"),
             ("S2.7", "RTL: ALU (seth_alu) + cocotb vs golden", 2, "done"),
             ("S2.8", "RTL: mul/div (seth_muldiv) + cocotb vs golden", 2, "done"),
+            ("S2.12", "RTL: immediate generator (seth_imm) + cocotb vs golden", 2, "done"),
             ("S2.10", "RTL: fetch/decode/regfile/pipeline", 2, "todo"),
             ("S2.9", "Synthesis: ALU Yosys, 0 latches", 3, "done"),
             ("S2.11", "cocotb: per-instruction vs Spike", 2, "todo"),
@@ -215,8 +218,10 @@ PROJECTS = [
             ("test_mul_div", "mul/div/rem match Python semantics", "pass"),
             ("test_branches", "beq/bne/blt/bge taken correctly", "pass"),
             ("test_pymodel_equals_golden", "pipeline result == ISA sim", "pass"),
+            ("test_decode_imm_formats", "decode_imm sign-extends I/S/B/U/J correctly", "pass"),
             ("rtl: test_alu (cocotb)", "seth_alu.sv == golden _alu_r on all ops", "pass"),
             ("rtl: test_muldiv (cocotb)", "seth_muldiv.sv == golden _muldiv (incl edges)", "pass"),
+            ("rtl: test_imm (cocotb)", "seth_imm.sv == golden.decode_imm on 70K+ words", "pass"),
         ],
     },
     {

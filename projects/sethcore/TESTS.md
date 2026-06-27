@@ -11,7 +11,9 @@ Run: `pytest projects/sethcore/tests -v`
 | `test_mul_div` | mul/div/rem match Python semantics | ✅ |
 | `test_branches` | beq/bne/blt/bge taken correctly | ✅ |
 | `test_pymodel_equals_golden` | pipeline result == ISA sim | ✅ |
+| `test_decode_imm_formats` | decode_imm sign-extends I/S/B/U/J correctly | ✅ |
 | `rtl: test_alu (cocotb)` | seth_alu.sv == golden _alu_r on all ops | ✅ |
 | `rtl: test_muldiv (cocotb)` | seth_muldiv.sv == golden _muldiv (incl edges) | ✅ |
+| `rtl: test_imm (cocotb)` | seth_imm.sv == golden.decode_imm on 70K+ words | ✅ |
 
-**7/7 tests passing.**
+**9/9 tests passing.**
