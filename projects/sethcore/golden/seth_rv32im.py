@@ -125,6 +125,26 @@ def _sext(v, bits):
     return (v ^ m) - m
 
 
+def decode_imm(ins):
+    """RV32 immediate generator: the 32-bit immediate for `ins`, selected by its
+    opcode/format and sign-extended where the ISA requires it. R-type and system
+    instructions carry no immediate -> 0. Matches the extractions in Cpu.step."""
+    op = ins & 0x7F
+    if op in (0x13, 0x03, 0x67):                 # I-type (ALU-imm, load, jalr)
+        return u32(_sext(ins >> 20, 12))
+    if op == 0x23:                               # S-type (store)
+        return u32(_sext((((ins >> 25) & 0x7F) << 5) | ((ins >> 7) & 0x1F), 12))
+    if op == 0x63:                               # B-type (branch)
+        return u32(_sext(((ins >> 31) << 12) | (((ins >> 7) & 1) << 11) |
+                         (((ins >> 25) & 0x3F) << 5) | (((ins >> 8) & 0xF) << 1), 13))
+    if op in (0x37, 0x17):                       # U-type (lui, auipc)
+        return u32(ins & 0xFFFFF000)
+    if op == 0x6F:                               # J-type (jal)
+        return u32(_sext(((ins >> 31) << 20) | (((ins >> 12) & 0xFF) << 12) |
+                         (((ins >> 20) & 1) << 11) | (((ins >> 21) & 0x3FF) << 1), 21))
+    return 0
+
+
 class Cpu:
     def __init__(self):
         self.x = [0] * 32

@@ -115,3 +115,23 @@ def test_pymodel_equals_golden():
     assert p.regs[1] == 55
     # cycles must exceed instruction count (branch bubbles add overhead)
     assert p.cycles > p.instructions
+
+
+def test_decode_imm_formats():
+    """decode_imm yields the correct sign-extended immediate per RV32 format,
+    using the low-level field encoders to build instructions with raw immediates."""
+    for imm in (0, 1, -1, 2047, -2048, 1365, -1366):
+        assert g.decode_imm(g._I(imm, 1, 0x0, 5, 0x13)) == g.u32(imm)   # addi
+        assert g.decode_imm(g._I(imm, 2, 0x2, 6, 0x03)) == g.u32(imm)   # lw
+        assert g.decode_imm(g._I(imm, 2, 0x0, 1, 0x67)) == g.u32(imm)   # jalr
+        assert g.decode_imm(g._S(imm, 7, 2, 0x2, 0x23)) == g.u32(imm)   # sw
+    for imm in (0, 2, -2, 4094, -4096, 1024, -2048):                    # B: even, 13-bit
+        assert g.decode_imm(g._B(imm, 2, 1, 0x0, 0x63)) == g.u32(imm)
+    for imm in (0x00000000, 0x12345000, 0xABCDE000, 0xFFFFF000):        # U: upper 20
+        assert g.decode_imm(g._U(imm, 5, 0x37)) == g.u32(imm)
+        assert g.decode_imm(g._U(imm, 5, 0x17)) == g.u32(imm)
+    for imm in (0, 2, -2, 0xFFFFE, -0x100000, 2048, -2048):             # J: even, 21-bit
+        assert g.decode_imm(g._J(imm, 1, 0x6F)) == g.u32(imm)
+    # R-type / system carry no immediate
+    assert g.decode_imm(g._R(0, 3, 2, 0x0, 1, 0x33)) == 0
+    assert g.decode_imm(g.assemble([("ecall",)])[0]) == 0

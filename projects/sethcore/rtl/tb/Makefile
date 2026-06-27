@@ -1,6 +1,7 @@
 # cocotb + Verilator testbenches for SethCore.
 #   make CORE=alu      (default) -> seth_alu
 #   make CORE=muldiv             -> seth_muldiv
+#   make CORE=imm                -> seth_imm
 TOPLEVEL_LANG = verilog
 SIM ?= verilator
 CORE ?= alu
@@ -10,6 +11,10 @@ ifeq ($(CORE),muldiv)
   VERILOG_SOURCES = $(PWD)/../seth_muldiv.sv
   TOPLEVEL = seth_muldiv
   MODULE   = test_muldiv
+else ifeq ($(CORE),imm)
+  VERILOG_SOURCES = $(PWD)/../seth_imm.sv
+  TOPLEVEL = seth_imm
+  MODULE   = test_imm
 else
   VERILOG_SOURCES = $(PWD)/../seth_alu.sv
   TOPLEVEL = seth_alu

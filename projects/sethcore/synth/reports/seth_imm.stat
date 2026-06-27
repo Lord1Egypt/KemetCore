@@ -1,0 +1,22 @@
+
+3. Printing statistics.
+
+=== seth_imm ===
+
+        +----------Local Count, excluding submodules.
+        | 
+       67 wires
+      189 wire bits
+        7 public wires
+      129 public wire bits
+        2 ports
+       64 port bits
+       92 cells
+        4   $_ANDNOT_
+       17   $_AND_
+       60   $_NAND_
+        3   $_NOR_
+        1   $_NOT_
+        4   $_ORNOT_
+        3   $_OR_
+

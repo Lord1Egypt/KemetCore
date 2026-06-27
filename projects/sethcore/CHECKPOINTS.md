@@ -10,9 +10,10 @@ _Auto-generated from `tools/manifest.py`._
 | S2.4 | P1 | pymodel: hazard forwarding | ✅ |
 | S2.7 | P2 | RTL: ALU (seth_alu) + cocotb vs golden | ✅ |
 | S2.8 | P2 | RTL: mul/div (seth_muldiv) + cocotb vs golden | ✅ |
+| S2.12 | P2 | RTL: immediate generator (seth_imm) + cocotb vs golden | ✅ |
 | S2.10 | P2 | RTL: fetch/decode/regfile/pipeline | ⬜ |
 | S2.9 | P3 | Synthesis: ALU Yosys, 0 latches | ✅ |
 | S2.11 | P2 | cocotb: per-instruction vs Spike | ⬜ |
 | S2.14 | P4 | P&R: core macro | ⬜ |
 
-**Progress:** 7/10 checkpoints complete (33% of phases).
+**Progress:** 8/11 checkpoints complete (33% of phases).

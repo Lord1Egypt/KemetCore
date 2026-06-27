@@ -7,7 +7,7 @@ mkdir -p reports
 # NOTE: seth_muldiv is intentionally excluded — a purely combinational 32-bit
 # divider explodes under generic Yosys synth (minutes+). A real flow uses a
 # sequential/iterative divider or a DesignWare-style macro; tracked for Phase 3.
-for core in seth_alu; do
+for core in seth_alu seth_imm; do
     "$YOSYS" -ql "reports/${core}.log" -p "
         read_verilog -sv ../rtl/${core}.sv;
         synth -top ${core};
