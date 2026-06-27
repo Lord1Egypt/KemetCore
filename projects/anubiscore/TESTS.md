@@ -10,5 +10,6 @@ Run: `pytest projects/anubiscore/tests -v`
 | `test_sha3_256_vs_hashlib` | == hashlib.sha3_256 | ✅ |
 | `test_known_vectors` | empty/'abc' digests match published values | ✅ |
 | `test_pymodel_rounds` | round engine reproduces one-shot digest | ✅ |
+| `rtl: test_vectors (cocotb)` | sha256_core.sv digest == golden on 9 msgs | ✅ |
 
-**4/4 tests passing.**
+**5/5 tests passing.**

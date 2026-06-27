@@ -56,24 +56,29 @@ PROJECTS = [
     {
         "key": "anubiscore", "num": "06", "name": "AnubisCore", "deity": "Anubis (embalming)",
         "domain": "SHA-256 / SHA-3 hash engine", "doc": "docs/06_AnubisCore_HashEngine.md",
-        "depends": [], "phase": P01,
-        "scope": "Phase 0/1 implements full SHA-256 and Keccak-f[1600]/SHA3-256 in pure Python, "
-                 "verified bit-exact against hashlib.",
+        "depends": [],
+        "phase": _ph("done", "done", "partial", "todo", "todo", "todo"),
+        "scope": "Phase 0/1: full SHA-256 + Keccak/SHA3-256 in pure Python vs hashlib. "
+                 "Phase 2 IN PROGRESS: synthesizable SHA-256 RTL (sha256_core.sv) verified "
+                 "bit-exact in cocotb/Verilator on 9 messages; Keccak RTL still pending. "
+                 "Phase 3+ (Yosys/OpenROAD) not started — no synth toolchain locally.",
         "checkpoints": [
             ("A1.1", "Golden: SHA-256 vs hashlib", 0, "done"),
             ("A1.2", "Golden: Keccak-f[1600] / SHA3-256 vs hashlib", 0, "done"),
             ("A1.3", "Golden: NIST-style vectors (empty/abc/long)", 0, "done"),
             ("A1.4", "pymodel: SHA-256 round engine (64 rounds)", 1, "done"),
             ("A1.5", "pymodel: Keccak round engine (24 rounds)", 1, "done"),
-            ("A1.6", "RTL: SHA-256 datapath", 2, "todo"),
+            ("A1.6", "RTL: SHA-256 datapath + cocotb (Verilator)", 2, "done"),
             ("A1.7", "RTL: Keccak-f[1600]", 2, "todo"),
-            ("A1.10", "Synthesis + P&R", 4, "todo"),
+            ("A1.8", "Synthesis: Yosys gate count, 0 latches", 3, "todo"),
+            ("A1.10", "P&R: GDSII", 4, "todo"),
         ],
         "tests": [
             ("test_sha256_vs_hashlib", "random + fixed messages == hashlib.sha256", "pass"),
             ("test_sha3_256_vs_hashlib", "== hashlib.sha3_256", "pass"),
             ("test_known_vectors", "empty/'abc' digests match published values", "pass"),
             ("test_pymodel_rounds", "round engine reproduces one-shot digest", "pass"),
+            ("rtl: test_vectors (cocotb)", "sha256_core.sv digest == golden on 9 msgs", "pass"),
         ],
     },
     {

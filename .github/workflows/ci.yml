@@ -1,0 +1,33 @@
+name: kemetcore-ci
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+jobs:
+  golden-pymodel:
+    name: Phase 0/1 tests (golden + pymodel)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install numpy pytest
+      - name: Run all project tests
+        run: pytest projects/ -q
+
+  rtl-cocotb:
+    name: Phase 2 RTL (SHA-256 cocotb + Verilator)
+    runs-on: ubuntu-24.04   # ships Verilator 5.x, matching local
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Verilator + cocotb (same system Python)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y verilator python3-pip
+          verilator --version
+          pip3 install --break-system-packages cocotb
+      - name: Run SHA-256 testbench
+        run: ./projects/anubiscore/rtl/tb/run_sim.sh

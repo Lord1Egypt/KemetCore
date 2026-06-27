@@ -1,0 +1,10 @@
+# cocotb / Verilator build artifacts
+sim_build/
+results.xml
+*.vcd
+*.fst
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
