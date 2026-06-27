@@ -32,11 +32,12 @@ PROJECTS = [
         "depends": [],
         "phase": _ph("done", "done", "partial", "partial", "todo", "todo"),
         "scope": "Phase 0/1: fp16/bf16/fp32 add, mul, fma, cmp, classify with correct "
-                 "bf16 round-to-nearest-even. Phase 2 IN PROGRESS: bf16 multiplier "
-                 "(hapi_bf16_mul) and bf16 adder (hapi_bf16_add) RTL, each cocotb-verified "
-                 "bit-exact vs the golden (subnormals, RNE, Inf/NaN/signed-zero). Phase 3: "
-                 "generic Yosys synth passes 0 latches (mul ~873 / add ~650 cells). "
-                 "fp32/fp16 datapaths, div/sqrt, ASAP7 tech-mapping + P&R (Phase 4) pending.",
+                 "bf16 round-to-nearest-even. Phase 2 IN PROGRESS: bf16 AND fp32 multiplier "
+                 "+ adder RTL (hapi_bf16_mul/add, hapi_fp32_mul/add), each cocotb-verified "
+                 "bit-exact vs the golden/numpy (subnormals in+out, RNE, Inf/NaN/signed-zero, "
+                 "cancellation). Phase 3: generic Yosys synth 0 latches (bf16 mul ~873/add "
+                 "~650; fp32 mul ~5046/add ~1792 cells). fp32 add unblocks the BastCore "
+                 "tensor-core accumulate. fp16 datapath, div/sqrt, ASAP7 + P&R (Phase 4) pending.",
         "checkpoints": [
             ("HA.1", "Golden: fp16/bf16/fp32 add", 0, "done"),
             ("HA.2", "Golden: mul + fma", 0, "done"),
@@ -45,10 +46,12 @@ PROJECTS = [
             ("HA.5", "pymodel: pipelined add/mul/fma (latency model)", 1, "done"),
             ("HA.8", "RTL: bf16 adder (hapi_bf16_add) + cocotb vs golden", 2, "done"),
             ("HA.9", "RTL: bf16 multiplier (hapi_bf16_mul) + cocotb vs golden", 2, "done"),
-            ("HA.10", "RTL: fp32/fp16 add+mul + fp_div (Goldschmidt)", 2, "todo"),
+            ("HA.10", "RTL: fp32 adder (hapi_fp32_add) + cocotb vs golden/numpy", 2, "done"),
+            ("HA.11", "RTL: fp32 multiplier (hapi_fp32_mul) + cocotb vs golden/numpy", 2, "done"),
+            ("HA.12", "RTL: fp16 add+mul + fp_div (Goldschmidt) + fma", 2, "todo"),
             ("HA.13", "Synthesis: generic Yosys, 0 latches + gate count", 3, "done"),
             ("HA.14", "Synthesis: ASAP7 liberty tech-mapping", 3, "todo"),
-            ("HA.15", "P&R: bf16 add/mul GDSII", 4, "todo"),
+            ("HA.15", "P&R: bf16/fp32 add+mul GDSII", 4, "todo"),
         ],
         "tests": [
             ("test_add_matches_numpy", "fp16/fp32 add == numpy IEEE result", "pass"),
@@ -59,6 +62,8 @@ PROJECTS = [
             ("test_pymodel_latency", "pipeline reports correct cycle latency", "pass"),
             ("rtl: test_bf16_mul (cocotb)", "hapi_bf16_mul == golden on 7K+ products", "pass"),
             ("rtl: test_bf16_add (cocotb)", "hapi_bf16_add == golden on 12K+ sums", "pass"),
+            ("rtl: test_fp32_mul (cocotb)", "hapi_fp32_mul == numpy fp32 on 40K+ products", "pass"),
+            ("rtl: test_fp32_add (cocotb)", "hapi_fp32_add == numpy fp32 on 70K+ sums", "pass"),
         ],
     },
     {

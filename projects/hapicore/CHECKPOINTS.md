@@ -11,9 +11,11 @@ _Auto-generated from `tools/manifest.py`._
 | HA.5 | P1 | pymodel: pipelined add/mul/fma (latency model) | ✅ |
 | HA.8 | P2 | RTL: bf16 adder (hapi_bf16_add) + cocotb vs golden | ✅ |
 | HA.9 | P2 | RTL: bf16 multiplier (hapi_bf16_mul) + cocotb vs golden | ✅ |
-| HA.10 | P2 | RTL: fp32/fp16 add+mul + fp_div (Goldschmidt) | ⬜ |
+| HA.10 | P2 | RTL: fp32 adder (hapi_fp32_add) + cocotb vs golden/numpy | ✅ |
+| HA.11 | P2 | RTL: fp32 multiplier (hapi_fp32_mul) + cocotb vs golden/numpy | ✅ |
+| HA.12 | P2 | RTL: fp16 add+mul + fp_div (Goldschmidt) + fma | ⬜ |
 | HA.13 | P3 | Synthesis: generic Yosys, 0 latches + gate count | ✅ |
 | HA.14 | P3 | Synthesis: ASAP7 liberty tech-mapping | ⬜ |
-| HA.15 | P4 | P&R: bf16 add/mul GDSII | ⬜ |
+| HA.15 | P4 | P&R: bf16/fp32 add+mul GDSII | ⬜ |
 
-**Progress:** 8/11 checkpoints complete (33% of phases).
+**Progress:** 10/13 checkpoints complete (33% of phases).
