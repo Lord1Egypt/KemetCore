@@ -107,13 +107,19 @@ PROJECTS = [
                  "element (bf16 multiply -> exact bf16->fp32 widen -> registered fp32 "
                  "accumulate) composing the verified HapiCore hapi_bf16_mul + hapi_fp32_add; "
                  "cocotb-verified bit-exact vs golden.matmul on 400 variable-length dot "
-                 "products. Phase 3: generic Yosys synth 0 latches (~2729 cells incl. "
-                 "submodules, 32 acc flip-flops). 16x16 mac_grid + ASAP7 pending.",
+                 "products. bast_mac_grid.sv — a parametric RxC output-stationary SYSTOLIC "
+                 "array of bast_mac PEs (a flows east, b flows south, one neighbour hop/cycle, "
+                 "stationary fp32 accumulators) that ABUTS (PtahCore tile methodology) to 16x16; "
+                 "fed by skewed zero-padded streams so every PE accumulates in golden k-order, "
+                 "cocotb-verified bit-exact vs golden.matmul on the 4x4 default (directed + 60 "
+                 "random, K up to 24). Phase 3: generic Yosys synth 0 latches (bast_mac ~2729 "
+                 "cells; 4x4 grid ~45K cells). 16x16 grid is the same module (R=C=16, RAM-heavy "
+                 "-> deferred to a big box) + ASAP7 pending.",
         "checkpoints": [
             ("B2.1", "Golden: bf16 matmul (fp32 accumulate)", 0, "done"),
             ("B2.2", "pymodel: systolic MAC array", 1, "done"),
             ("B2.5", "RTL: mac_cell (bf16 mul + fp32 accumulate) + cocotb vs golden", 2, "done"),
-            ("B2.6", "RTL: mac_grid 16x16 (systolic)", 2, "todo"),
+            ("B2.6", "RTL: mac_grid RxC systolic array (abuttable to 16x16) + cocotb", 2, "done"),
             ("B2.8", "Synthesis: generic Yosys, 0 latches + gate count", 3, "done"),
             ("B2.9", "P&R: full array GDSII", 4, "todo"),
         ],
@@ -122,6 +128,7 @@ PROJECTS = [
             ("test_identity", "A @ I == A (bf16 representable)", "pass"),
             ("test_pymodel_equals_golden", "systolic pymodel == golden matmul", "pass"),
             ("rtl: test_mac (cocotb)", "bast_mac == golden.matmul on 400 dot products", "pass"),
+            ("rtl: test_mac_grid (cocotb)", "bast_mac_grid 4x4 == golden.matmul (directed + 60 random, K<=24)", "pass"),
         ],
     },
     {

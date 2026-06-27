@@ -1,0 +1,118 @@
+
+6. Printing statistics.
+
+=== bast_mac_grid ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     1065 wires
+     2572 wire bits
+       81 public wires
+     1588 public wire bits
+        9 ports
+      180 port bits
+     1400 cells
+        4   $_ANDNOT_
+      466   $_AND_
+      384   $_DFFE_PN0P_
+      544   $_NAND_
+        2   $_NOR_
+       16 submodules
+       16   bast_mac
+
+=== bast_mac ===
+
+        +----------Local Count, excluding submodules.
+        | 
+       11 wires
+      180 wire bits
+       11 public wires
+      180 public wire bits
+        7 ports
+       68 port bits
+       64 cells
+       32   $_ANDNOT_
+       32   $_DFFE_PN0P_
+        2 submodules
+        1   hapi_bf16_mul
+        1   hapi_fp32_add
+
+=== hapi_fp32_add ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     1778 wires
+     2228 wire bits
+       18 public wires
+      468 public wire bits
+        3 ports
+       96 port bits
+     1792 cells
+       97   $_ANDNOT_
+      486   $_AND_
+      342   $_MUX_
+      415   $_NAND_
+       68   $_NOR_
+       43   $_NOT_
+      156   $_ORNOT_
+      114   $_OR_
+       49   $_XNOR_
+       22   $_XOR_
+
+=== hapi_bf16_mul ===
+
+        +----------Local Count, excluding submodules.
+        | 
+      871 wires
+      986 wire bits
+       14 public wires
+      129 public wire bits
+        3 ports
+       48 port bits
+      873 cells
+       22   $_ANDNOT_
+      238   $_AND_
+       56   $_MUX_
+      291   $_NAND_
+       31   $_NOR_
+       20   $_NOT_
+       23   $_ORNOT_
+       32   $_OR_
+       37   $_XNOR_
+      123   $_XOR_
+
+=== design hierarchy ===
+
+        +----------Count including submodules.
+        | 
+    45064 bast_mac_grid
+       64 bast_mac
+      873   hapi_bf16_mul
+     1792   hapi_fp32_add
+
+        +----------Count including submodules.
+        | 
+    43625 wires
+    56876 wire bits
+      769 public wires
+    14020 public wire bits
+      217 ports
+     3572 port bits
+        - memories
+        - memory bits
+        - processes
+    45064 cells
+     2420   $_ANDNOT_
+    12050   $_AND_
+      896   $_DFFE_PN0P_
+     6368   $_MUX_
+    11840   $_NAND_
+     1586   $_NOR_
+     1008   $_NOT_
+     2864   $_ORNOT_
+     2336   $_OR_
+     1376   $_XNOR_
+     2320   $_XOR_
+       16 submodules
+       16   bast_mac
+

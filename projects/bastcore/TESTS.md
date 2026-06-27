@@ -10,5 +10,6 @@ Run: `pytest projects/bastcore/tests -v`
 | `test_identity` | A @ I == A (bf16 representable) | ✅ |
 | `test_pymodel_equals_golden` | systolic pymodel == golden matmul | ✅ |
 | `rtl: test_mac (cocotb)` | bast_mac == golden.matmul on 400 dot products | ✅ |
+| `rtl: test_mac_grid (cocotb)` | bast_mac_grid 4x4 == golden.matmul (directed + 60 random, K<=24) | ✅ |
 
-**4/4 tests passing.**
+**5/5 tests passing.**
