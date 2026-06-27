@@ -13,9 +13,10 @@ _Auto-generated from `tools/manifest.py`._
 | HA.9 | P2 | RTL: bf16 multiplier (hapi_bf16_mul) + cocotb vs golden | ✅ |
 | HA.10 | P2 | RTL: fp32 adder (hapi_fp32_add) + cocotb vs golden/numpy | ✅ |
 | HA.11 | P2 | RTL: fp32 multiplier (hapi_fp32_mul) + cocotb vs golden/numpy | ✅ |
-| HA.12 | P2 | RTL: fp16 add+mul + fp_div (Goldschmidt) + fma | ⬜ |
+| HA.12a | P2 | RTL: fp16 multiplier (hapi_fp16_mul) + cocotb vs golden/numpy | ✅ |
+| HA.12 | P2 | RTL: fp16 adder + fp_div (Goldschmidt) + fma | ⬜ |
 | HA.13 | P3 | Synthesis: generic Yosys, 0 latches + gate count | ✅ |
 | HA.14 | P3 | Synthesis: ASAP7 liberty tech-mapping | ⬜ |
 | HA.15 | P4 | P&R: bf16/fp32 add+mul GDSII | ⬜ |
 
-**Progress:** 10/13 checkpoints complete (33% of phases).
+**Progress:** 11/14 checkpoints complete (33% of phases).
