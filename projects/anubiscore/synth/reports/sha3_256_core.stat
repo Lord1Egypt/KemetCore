@@ -6,9 +6,9 @@
         +----------Local Count, excluding submodules.
         | 
     12660 wires
-    19083 wire bits
+    19056 wire bits
        66 public wires
-     4910 public wire bits
+     4883 public wire bits
         8 ports
      1350 port bits
     15783 cells

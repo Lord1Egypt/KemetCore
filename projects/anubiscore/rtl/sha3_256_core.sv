@@ -38,7 +38,7 @@ module sha3_256_core (
         endcase
     endfunction
 
-    function automatic logic [63:0] rc(input int r);
+    function automatic logic [63:0] rc(input logic [4:0] r);
         case (r)
             0:  rc=64'h0000000000000001; 1:  rc=64'h0000000000008082;
             2:  rc=64'h800000000000808A; 3:  rc=64'h8000000080008000;
@@ -87,8 +87,8 @@ module sha3_256_core (
         for (y = 0; y < 5; y++)
             for (x = 0; x < 5; x++)
                 nxt[5*y+x] = bb[5*y+x] ^ ((~bb[5*y+((x+1)%5)]) & bb[5*y+((x+2)%5)]);
-        // iota
-        nxt[0] = nxt[0] ^ rc(int'(round));
+        // iota (rc() takes an int arg; pass round directly for older-Yosys portability)
+        nxt[0] = nxt[0] ^ rc(round);
     end
 
     always_ff @(posedge clk or negedge rst_n) begin
