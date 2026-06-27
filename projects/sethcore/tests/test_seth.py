@@ -135,3 +135,42 @@ def test_decode_imm_formats():
     # R-type / system carry no immediate
     assert g.decode_imm(g._R(0, 3, 2, 0x0, 1, 0x33)) == 0
     assert g.decode_imm(g.assemble([("ecall",)])[0]) == 0
+
+
+def _alu_sw(op, a, b):
+    """Software mirror of seth_alu's 4-bit op encoding."""
+    a &= 0xFFFFFFFF; b &= 0xFFFFFFFF; sh = b & 0x1F
+    return {
+        0: g.u32(a + b), 1: g.u32(a - b), 2: g.u32(a << sh),
+        3: 1 if g.s32(a) < g.s32(b) else 0, 4: 1 if a < b else 0,
+        5: g.u32(a ^ b), 6: g.u32(a >> sh), 7: g.u32(g.s32(a) >> sh),
+        8: g.u32(a | b), 9: g.u32(a & b),
+    }[op]
+
+
+def test_decode_aluop_matches_execution():
+    """decode_aluop + the ALU encoding reproduces the golden's R/I-type results."""
+    import random
+    rng = random.Random(9)
+    vals = [0, 1, 2, 0x7FFFFFFF, 0x80000000, 0xFFFFFFFF, 0xDEADBEEF, 1 << 20]
+    for a in vals:
+        for b in vals:
+            # R-type: all funct3 with funct7 in {0x00, 0x20}
+            for f3 in range(8):
+                for f7 in (0x00, 0x20):
+                    op = g.decode_aluop(0x33, f3, f7)
+                    assert _alu_sw(op, a, b) == g.u32(g.Cpu()._alu_r(f7, f3, a, b)), (f3, f7)
+            # I-type ALU: shift amount in b[4:0]; non-shift uses imm = b
+            for f3 in range(8):
+                if f3 in (0x1, 0x5):
+                    f7 = 0x20 if (f3 == 0x5 and (b & 1)) else 0x00
+                    op = g.decode_aluop(0x13, f3, f7)
+                    exp = g.u32(g.s32(a) >> (b & 0x1F)) if (f3 == 0x5 and f7 == 0x20) else (
+                        g.u32(a << (b & 0x1F)) if f3 == 0x1 else g.u32(a >> (b & 0x1F)))
+                    assert _alu_sw(op, a, b) == exp, ("I", f3, f7)
+                else:
+                    op = g.decode_aluop(0x13, f3, 0)
+                    assert _alu_sw(op, a, b) == g.u32(g.Cpu()._alu_i(f3, a, g.s32(b))), ("I", f3)
+    # non-ALU opcodes default to ADD
+    for op in (0x03, 0x23, 0x63, 0x67, 0x37, 0x17, 0x6F, 0x73):
+        assert g.decode_aluop(op, 0, 0) == 0
