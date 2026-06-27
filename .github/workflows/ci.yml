@@ -29,7 +29,8 @@ jobs:
           sudo apt-get install -y verilator python3-pip
           verilator --version
           # cocotb 1.9.x supports Verilator 5.020 (ubuntu-24.04); 2.x needs 5.036+
-          pip3 install --break-system-packages 'cocotb==1.9.2'
+          # numpy: the HapiCore golden (hapi_fpu.py) uses it for IEEE-754 reference math
+          pip3 install --break-system-packages 'cocotb==1.9.2' numpy
       - name: Run SHA-256 testbench
         run: ./projects/anubiscore/rtl/tb/run_sim.sh CORE=sha256
       - name: Run SHA3-256 testbench
@@ -38,6 +39,10 @@ jobs:
         run: ./projects/sethcore/rtl/tb/run_sim.sh CORE=alu
       - name: Run SethCore mul/div testbench
         run: ./projects/sethcore/rtl/tb/run_sim.sh CORE=muldiv
+      - name: Run HapiCore bf16 multiplier testbench
+        run: ./projects/hapicore/rtl/tb/run_sim.sh CORE=mul
+      - name: Run HapiCore bf16 adder testbench
+        run: ./projects/hapicore/rtl/tb/run_sim.sh CORE=add
       - name: Run NeithCore modular multiplier testbench
         run: ./projects/neithcore/rtl/tb/run_sim.sh CORE=modmul
       - name: Run NeithCore NTT butterfly testbench
@@ -54,5 +59,7 @@ jobs:
         run: YOSYS=yosys ./projects/anubiscore/synth/run_synth.sh
       - name: Synthesize SethCore ALU (asserts no latches)
         run: YOSYS=yosys ./projects/sethcore/synth/run_synth.sh
+      - name: Synthesize HapiCore bf16 (asserts no latches)
+        run: YOSYS=yosys ./projects/hapicore/synth/run_synth.sh
       - name: Synthesize NeithCore NTT primitives (asserts no latches)
         run: YOSYS=yosys ./projects/neithcore/synth/run_synth.sh
