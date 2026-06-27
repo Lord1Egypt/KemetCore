@@ -39,6 +39,16 @@ at bf16 ~2961 / fp16 ~3411 gates. (Their cocotb runs in CI; like fp32 the FMA
 cloud even for the small cores — with the committed `.stat` as evidence.) FMA is
 now complete across bf16/fp16/fp32.
 
+`hapi_fp32_div.sv` — single-cycle **correctly-rounded** fp32 divide. Both
+significands are normalised to `[2²³, 2²⁴)` (subnormals via a 24-bit CLZ), then one
+exact integer division of a 51-bit dividend (`Sa << 27`) by the 24-bit divisor
+yields 24 significand bits + guard, with the **division remainder** as the exact
+sticky bit. The normalise-and-round tail is the FMA's magnitude round (RNE,
+subnormal/underflow, overflow → Inf, `x/0 → Inf`, `0/0` & `Inf/Inf → NaN`). Bit-exact
+vs `golden.fp_div` (exact rational `a/b`, one rounding) — 165k+ divisions verified.
+(Its `$div`/`$mod` expand to a ~41K-gate divider, so like the FMAs the *synth* is
+CI-skipped; coarse 0-latch `.stat` is committed.)
+
 ## Interfaces
 | Core | Inputs | Output |
 |------|--------|--------|
@@ -57,6 +67,7 @@ cd projects/hapicore/rtl/tb
 ./run_sim.sh CORE=fp32fma    # fp32 fused multiply-add
 ./run_sim.sh CORE=bf16fma    # bf16 fused multiply-add (hapi_fma_core)
 ./run_sim.sh CORE=fp16fma    # fp16 fused multiply-add (hapi_fma_core)
+./run_sim.sh CORE=fp32div    # fp32 correctly-rounded divide
 ```
 `run_sim.sh` forces a single consistent Python (handles conda-cocotb vs
 system-verilator). All four are verified **bit-exact** against the Python golden /
@@ -70,5 +81,6 @@ compared by class (payload bits are not architectural); the sign of zero **is** 
 - ✅ Phase 2: fp16 + bf16 + fp32 adder RTL + cocotb
 - ✅ Phase 2: **fused** multiply-add across all 3 formats — `hapi_fp32_fma` + parameterized
   `hapi_fma_core` wrappers `hapi_bf16_fma`/`hapi_fp16_fma`, each cocotb bit-exact
+- ✅ Phase 2: fp32 **correctly-rounded divide** (`hapi_fp32_div`) + cocotb — 165K+ verified
 - ✅ Phase 3: Yosys synthesis (gate count + 0-latch check) — see `../synth/`
-- ⬜ Next: divide / sqrt (Goldschmidt), then ASAP7
+- ⬜ Next: sqrt (Newton/Goldschmidt), then ASAP7

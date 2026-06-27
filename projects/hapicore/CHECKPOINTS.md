@@ -18,9 +18,9 @@ _Auto-generated from `tools/manifest.py`._
 | HA.12c | P2 | RTL: fp32 FMA (hapi_fp32_fma) + cocotb vs single-rounded golden | ✅ |
 | HA.12d | P2 | RTL: bf16 FMA (hapi_bf16_fma via parameterized hapi_fma_core) | ✅ |
 | HA.12e | P2 | RTL: fp16 FMA (hapi_fp16_fma via parameterized hapi_fma_core) | ✅ |
-| HA.12 | P2 | RTL: fp_div (Goldschmidt) | ⬜ |
+| HA.12 | P2 | RTL: fp32 divide (hapi_fp32_div) + cocotb vs correctly-rounded golden | ✅ |
 | HA.13 | P3 | Synthesis: generic Yosys, 0 latches + gate count | ✅ |
 | HA.14 | P3 | Synthesis: ASAP7 liberty tech-mapping | ⬜ |
 | HA.15 | P4 | P&R: bf16/fp32 add+mul GDSII | ⬜ |
 
-**Progress:** 15/18 checkpoints complete (33% of phases).
+**Progress:** 16/18 checkpoints complete (33% of phases).

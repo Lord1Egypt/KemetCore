@@ -67,6 +67,39 @@ def test_fma_single_rounded():
         assert abs(Fraction(hi) - exact) >= d
 
 
+def test_div_single_rounded():
+    """fp_div is exactly the nearest fp32 to the real value a/b (one rounding)."""
+    from fractions import Fraction
+    rng = np.random.default_rng(11)
+    for _ in range(4000):
+        a, b = (rng.standard_normal(2).astype(np.float32) * 10).tolist()
+        a, b = float(np.float32(a)), float(np.float32(b))
+        if b == 0.0:
+            continue
+        got = g.fp_div(a, b, "fp32")
+        exact = Fraction(a) / Fraction(b)
+        if exact == 0:
+            assert got == 0.0
+            continue
+        if not math.isfinite(got):
+            continue
+        d = abs(Fraction(got) - exact)
+        lo = float(np.nextafter(np.float32(got), np.float32(-np.inf)))
+        hi = float(np.nextafter(np.float32(got), np.float32(np.inf)))
+        assert abs(Fraction(lo) - exact) >= d
+        assert abs(Fraction(hi) - exact) >= d
+
+
+def test_div_specials():
+    assert g.fp_div(1.0, 0.0, "fp32") == math.inf            # x/0 -> +Inf
+    assert g.fp_div(-1.0, 0.0, "fp32") == -math.inf
+    assert math.isnan(g.fp_div(0.0, 0.0, "fp32"))            # 0/0 -> NaN
+    assert math.isnan(g.fp_div(math.inf, math.inf, "fp32"))  # Inf/Inf -> NaN
+    assert g.fp_div(1.0, math.inf, "fp32") == 0.0            # finite/Inf -> 0
+    assert g.fp_div(7.0, 2.0, "fp32") == 3.5
+    assert math.copysign(1.0, g.fp_div(-1.0, math.inf, "fp32")) < 0  # -0
+
+
 def test_fma_specials():
     assert math.isnan(g.fp_fma(0.0, math.inf, 1.0, "fp32"))      # 0*Inf -> NaN
     assert math.isnan(g.fp_fma(math.inf, 1.0, -math.inf, "fp32"))  # Inf-Inf -> NaN

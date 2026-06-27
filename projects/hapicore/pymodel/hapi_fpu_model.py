@@ -32,6 +32,10 @@ class FpuPipeline:
         self._tick("fma")
         return g.fp_fma(a, b, c, self.fmt)
 
+    def div(self, a, b):
+        self._tick("div")
+        return g.fp_div(a, b, self.fmt)
+
     def cmp(self, a, b):
         self._tick("cmp")
         return g.fp_cmp(a, b, self.fmt)

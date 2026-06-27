@@ -127,6 +127,25 @@ def fp_fma(a, b, c, fmt="fp32"):
     return _round_frac(abs(exact), exact < 0, fmt)
 
 
+def fp_div(a, b, fmt="fp32"):
+    """Correctly-rounded division a/b (exact rational intermediate, one rounding)."""
+    a, b = cast(a, fmt), cast(b, fmt)
+    sign = (math.copysign(1.0, a) < 0) ^ (math.copysign(1.0, b) < 0)
+    if math.isnan(a) or math.isnan(b):
+        return float("nan")
+    if math.isinf(a) and math.isinf(b):
+        return float("nan")                       # Inf/Inf -> invalid
+    if b == 0.0:
+        if a == 0.0:
+            return float("nan")                   # 0/0 -> invalid
+        return -math.inf if sign else math.inf    # x/0 -> signed Inf
+    if math.isinf(a):
+        return -math.inf if sign else math.inf
+    if math.isinf(b) or a == 0.0:
+        return -0.0 if sign else 0.0              # finite/Inf or 0/finite -> signed 0
+    return _round_frac(abs(Fraction(a) / Fraction(b)), sign, fmt)
+
+
 def fp_cmp(a, b, fmt="fp32"):
     """Return -1/0/1, or None if unordered (NaN operand)."""
     a, b = cast(a, fmt), cast(b, fmt)
