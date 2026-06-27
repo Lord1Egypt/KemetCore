@@ -4,7 +4,7 @@
 
 _Auto-generated from `tools/manifest.py` — do not edit by hand; edit the manifest and run `python tools/gen_tracking.py`._
 
-**Scope (current):** Phase 0/1: fp16/bf16/fp32 add, mul, fma, cmp, classify with correct bf16 round-to-nearest-even. Phase 2 IN PROGRESS: bf16 multiplier (hapi_bf16_mul) and bf16 adder (hapi_bf16_add) RTL, each cocotb-verified bit-exact vs the golden (subnormals, RNE, Inf/NaN/signed-zero). Phase 3: generic Yosys synth passes 0 latches (mul ~873 / add ~650 cells). fp32/fp16 datapaths, div/sqrt, ASAP7 tech-mapping + P&R (Phase 4) pending.
+**Scope (current):** Phase 0/1: fp16/bf16/fp32 add, mul, fma, cmp, classify with correct bf16 round-to-nearest-even. Phase 2 IN PROGRESS: bf16 AND fp32 multiplier + adder RTL (hapi_bf16_mul/add, hapi_fp32_mul/add), each cocotb-verified bit-exact vs the golden/numpy (subnormals in+out, RNE, Inf/NaN/signed-zero, cancellation). Phase 3: generic Yosys synth 0 latches (bf16 mul ~873/add ~650; fp32 mul ~5046/add ~1792 cells). fp32 add unblocks the BastCore tensor-core accumulate. fp16 datapath, div/sqrt, ASAP7 + P&R (Phase 4) pending.
 
 ## Ordered steps (6-phase lifecycle)
 
