@@ -174,3 +174,45 @@ def test_decode_aluop_matches_execution():
     # non-ALU opcodes default to ADD
     for op in (0x03, 0x23, 0x63, 0x67, 0x37, 0x17, 0x6F, 0x73):
         assert g.decode_aluop(op, 0, 0) == 0
+
+
+def test_decode_ctrl_matches_step():
+    """decode_ctrl's reg_write/mem_write/branch/jump agree with Cpu.step behaviour."""
+    samples = {
+        0x33: g._R(0x00, 3, 2, 0x0, 5, 0x33),     # add  x5,x1?,..
+        0x13: g._I(7, 1, 0x0, 5, 0x13),           # addi x5,x1,7
+        0x03: g._I(4, 2, 0x2, 6, 0x03),           # lw   x6,4(x2)
+        0x23: g._S(8, 7, 2, 0x2, 0x23),           # sw   x7,8(x2)
+        0x63: g._B(0, 2, 1, 0x0, 0x63),           # beq  x1,x2
+        0x67: g._I(0, 2, 0x0, 1, 0x67),           # jalr x1,x2
+        0x6F: g._J(0, 1, 0x6F),                   # jal  x1
+        0x37: g._U(0x12345000, 5, 0x37),          # lui  x5
+        0x17: g._U(0x1000, 5, 0x17),              # auipc x5
+        0x73: g.assemble([("ecall",)])[0],        # system
+    }
+    for op, ins in samples.items():
+        c = g.decode_ctrl(ins)
+        rd = (ins >> 7) & 0x1F
+        # behavioural cross-checks against a fresh CPU executing this one instruction
+        cpu = g.Cpu(); cpu.mem[0:4] = ins.to_bytes(4, "little")
+        cpu.x[1] = 0x100; cpu.x[2] = 0x200; cpu.x[3] = 0x55
+        before = list(cpu.x)
+        try:
+            cpu.step()
+        except Exception:
+            pass
+        # no-write opcodes must leave every register untouched; the rest set reg_write
+        if op in (0x63, 0x23, 0x73):
+            assert c["reg_write"] == 0
+            assert cpu.x == before, f"op {op:#x} unexpectedly wrote a register"
+        else:
+            assert c["reg_write"] == 1
+    # field-level spot checks
+    assert g.decode_ctrl(samples[0x03])["mem_read"] == 1
+    assert g.decode_ctrl(samples[0x23])["mem_write"] == 1
+    assert g.decode_ctrl(samples[0x63])["branch"] == 1
+    assert g.decode_ctrl(samples[0x6F])["jump"] == 1 and g.decode_ctrl(samples[0x6F])["jalr"] == 0
+    assert g.decode_ctrl(samples[0x67])["jalr"] == 1
+    assert g.decode_ctrl(samples[0x37])["wb_sel"] == 3
+    assert g.decode_ctrl(samples[0x17])["a_src_pc"] == 1
+    assert g.decode_ctrl(g._R(0x01, 3, 2, 0x0, 5, 0x33))["is_mdu"] == 1   # M-ext

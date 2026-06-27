@@ -13,9 +13,10 @@ _Auto-generated from `tools/manifest.py`._
 | S2.12 | P2 | RTL: immediate generator (seth_imm) + cocotb vs golden | ✅ |
 | S2.13 | P2 | RTL: register file (seth_regfile) + cocotb vs reference | ✅ |
 | S2.15 | P2 | RTL: ALU-control decoder (seth_aluctl) + exhaustive cocotb | ✅ |
-| S2.10 | P2 | RTL: fetch/decode + pipeline datapath | ⬜ |
+| S2.16 | P2 | RTL: main control decoder (seth_decode) + cocotb vs golden | ✅ |
+| S2.10 | P2 | RTL: pipeline datapath integration (fetch + wiring + hazards) | ⬜ |
 | S2.9 | P3 | Synthesis: ALU Yosys, 0 latches | ✅ |
 | S2.11 | P2 | cocotb: per-instruction vs Spike | ⬜ |
 | S2.14 | P4 | P&R: core macro | ⬜ |
 
-**Progress:** 10/13 checkpoints complete (33% of phases).
+**Progress:** 11/14 checkpoints complete (33% of phases).

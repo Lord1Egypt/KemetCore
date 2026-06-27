@@ -45,6 +45,8 @@ jobs:
         run: ./projects/sethcore/rtl/tb/run_sim.sh CORE=regfile
       - name: Run SethCore ALU-control testbench
         run: ./projects/sethcore/rtl/tb/run_sim.sh CORE=aluctl
+      - name: Run SethCore decode/control testbench
+        run: ./projects/sethcore/rtl/tb/run_sim.sh CORE=decode
       - name: Run HapiCore bf16 multiplier testbench
         run: ./projects/hapicore/rtl/tb/run_sim.sh CORE=mul
       - name: Run HapiCore bf16 adder testbench

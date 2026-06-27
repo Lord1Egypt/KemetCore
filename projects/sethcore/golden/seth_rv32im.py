@@ -145,6 +145,42 @@ def decode_imm(ins):
     return 0
 
 
+#: control signals produced by decode_ctrl / seth_decode (datapath control word)
+CTRL_FIELDS = ("reg_write", "alu_src_imm", "a_src_pc", "mem_read", "mem_write",
+               "branch", "jump", "jalr", "is_mdu", "wb_sel")
+#: wb_sel: 0 = ALU/MDU compute, 1 = load data, 2 = PC+4 (link), 3 = immediate (LUI)
+
+
+def decode_ctrl(ins):
+    """Main control decoder: the datapath control word for `ins`, matching the
+    behaviour of Cpu.step. Returns a dict over CTRL_FIELDS. Unknown / system
+    opcodes produce an all-zero (no-op: no reg/mem write, no control transfer)
+    word so an unimplemented instruction is inert."""
+    op = ins & 0x7F
+    f7 = (ins >> 25) & 0x7F
+    c = dict.fromkeys(CTRL_FIELDS, 0)
+    if op == 0x33:                               # R-type (+ M-extension)
+        c["reg_write"] = 1
+        c["is_mdu"] = 1 if f7 == 0x01 else 0
+    elif op == 0x13:                             # I-type ALU
+        c["reg_write"] = 1; c["alu_src_imm"] = 1
+    elif op == 0x03:                             # load
+        c["reg_write"] = 1; c["alu_src_imm"] = 1; c["mem_read"] = 1; c["wb_sel"] = 1
+    elif op == 0x23:                             # store
+        c["alu_src_imm"] = 1; c["mem_write"] = 1
+    elif op == 0x63:                             # branch
+        c["branch"] = 1
+    elif op == 0x67:                             # jalr
+        c["reg_write"] = 1; c["alu_src_imm"] = 1; c["jump"] = 1; c["jalr"] = 1; c["wb_sel"] = 2
+    elif op == 0x6F:                             # jal
+        c["reg_write"] = 1; c["jump"] = 1; c["wb_sel"] = 2
+    elif op == 0x37:                             # lui
+        c["reg_write"] = 1; c["wb_sel"] = 3
+    elif op == 0x17:                             # auipc
+        c["reg_write"] = 1; c["a_src_pc"] = 1; c["alu_src_imm"] = 1
+    return c
+
+
 def decode_aluop(op, f3, f7):
     """4-bit integer-ALU select for an instruction, matching seth_alu's encoding
     (0 ADD, 1 SUB, 2 SLL, 3 SLT, 4 SLTU, 5 XOR, 6 SRL, 7 SRA, 8 OR, 9 AND).

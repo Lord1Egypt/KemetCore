@@ -199,10 +199,13 @@ PROJECTS = [
                  "x0 hardwired 0) and seth_aluctl.sv (ALU-control decoder: opcode/funct3/funct7 "
                  "-> 4-bit ALU select) all cocotb-verified vs golden/reference (decode_imm + "
                  "decode_aluop added to the golden; aluctl swept EXHAUSTIVELY over all 2^17 "
-                 "inputs); fetch/decode + pipeline datapath RTL pending. "
-                 "Phase 3: ALU + imm + regfile + aluctl Yosys-synthesized 0 latches (imm ~92, "
-                 "regfile ~3.8K/992 DFFs, aluctl ~38 cells); combinational divider synth deferred "
-                 "(needs a sequential/iterative divider — generic synth explodes).",
+                 "inputs) and seth_decode.sv (main control decoder: opcode/funct7 -> 10-signal "
+                 "datapath control word reg_write/alu_src_imm/a_src_pc/mem_read/mem_write/branch/"
+                 "jump/jalr/is_mdu/wb_sel, vs golden.decode_ctrl); the pipeline datapath "
+                 "integration (fetch + wiring + hazard/forwarding) is the remaining piece. "
+                 "Phase 3: ALU + imm + regfile + aluctl + decode Yosys-synthesized 0 latches (imm "
+                 "~92, regfile ~3.8K/992 DFFs, aluctl/decode ~38 cells); combinational divider synth "
+                 "deferred (needs a sequential/iterative divider — generic synth explodes).",
         "checkpoints": [
             ("S2.1", "Golden: RV32I ISA simulator", 0, "done"),
             ("S2.2", "Golden: M-extension (mul/div/rem)", 0, "done"),
@@ -213,7 +216,8 @@ PROJECTS = [
             ("S2.12", "RTL: immediate generator (seth_imm) + cocotb vs golden", 2, "done"),
             ("S2.13", "RTL: register file (seth_regfile) + cocotb vs reference", 2, "done"),
             ("S2.15", "RTL: ALU-control decoder (seth_aluctl) + exhaustive cocotb", 2, "done"),
-            ("S2.10", "RTL: fetch/decode + pipeline datapath", 2, "todo"),
+            ("S2.16", "RTL: main control decoder (seth_decode) + cocotb vs golden", 2, "done"),
+            ("S2.10", "RTL: pipeline datapath integration (fetch + wiring + hazards)", 2, "todo"),
             ("S2.9", "Synthesis: ALU Yosys, 0 latches", 3, "done"),
             ("S2.11", "cocotb: per-instruction vs Spike", 2, "todo"),
             ("S2.14", "P&R: core macro", 4, "todo"),
@@ -230,6 +234,7 @@ PROJECTS = [
             ("rtl: test_imm (cocotb)", "seth_imm.sv == golden.decode_imm on 70K+ words", "pass"),
             ("rtl: test_regfile (cocotb)", "seth_regfile.sv == reference on 20K+ rw cycles, x0=0", "pass"),
             ("rtl: test_aluctl (cocotb)", "seth_aluctl.sv == golden.decode_aluop, all 2^17 inputs", "pass"),
+            ("rtl: test_decode (cocotb)", "seth_decode.sv == golden.decode_ctrl on opcode sweep + 50K random", "pass"),
         ],
     },
     {
