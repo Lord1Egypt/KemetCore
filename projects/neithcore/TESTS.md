@@ -12,6 +12,6 @@ Run: `pytest projects/neithcore/tests -v`
 | `test_pymodel_ntt` | staged butterfly == golden NTT | ✅ |
 | `rtl: test_modmul (cocotb)` | neith_modmul == (a*b)%7681 on 31K+ vectors | ✅ |
 | `rtl: test_butterfly (cocotb)` | neith_butterfly == golden CT butterfly on 32K+ | ✅ |
-| `rtl: test_ntt (cocotb)` | neith_ntt fwd+inv == golden + roundtrips recover input | ✅ |
+| `rtl: test_ntt (cocotb)` | neith_ntt cyclic+negacyclic fwd+inv == golden, roundtrips + HW poly-mul == schoolbook mod x^256+1 | ✅ |
 
 **7/7 tests passing.**

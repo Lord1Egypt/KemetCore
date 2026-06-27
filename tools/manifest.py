@@ -222,14 +222,17 @@ PROJECTS = [
                  "encaps shared secret). Phase 2 IN PROGRESS: neith_modmul (Barrett mult "
                  "mod 7681) and neith_butterfly (Cooley-Tukey butterfly) RTL, both "
                  "cocotb-verified bit-exact vs the golden, PLUS neith_ntt — a multicycle "
-                 "256-point in-place radix-2 NTT engine doing BOTH forward and inverse "
-                 "(bit-reversed load, 8 stages x 128 butterflies, fwd/inv twiddle ROMs + "
-                 "modmul w-update, inverse 1/N scale pass), bit-exact vs golden.ntt_cyclic "
-                 "(both roots) on directed + random transforms AND forward->inverse "
-                 "roundtrips. Phase 3: generic Yosys synth 0 latches (modmul ~1.4K, butterfly "
-                 "~1.65K, ntt ~54.7K cells / ~3.4K FFs). psi pre/post-multiply for full "
-                 "negacyclic ntt()/intt(), FIPS-203 exact params (q=3329), SRAM macro + ASAP7 "
-                 "pending. NOTE: reference model, not FIPS-203 certified.",
+                 "256-point in-place radix-2 NTT engine doing BOTH forward and inverse, "
+                 "CYCLIC and full NEGACYCLIC (bit-reversed load, 8 stages x 128 butterflies, "
+                 "fwd/inv twiddle ROMs + modmul w-update, inverse 1/N scale pass; `nega` adds "
+                 "the psi=62 twist — forward pre-multiplies coeff i by psi^i on load, inverse "
+                 "folds psi^-i into the scale pass, both via a running product so no 256-entry "
+                 "ROM). Bit-exact vs golden.ntt_cyclic (both roots), golden.ntt/golden.intt, "
+                 "forward->inverse roundtrips, AND an end-to-end HW negacyclic poly-mul that "
+                 "matches schoolbook mod x^256+1. Phase 3: generic Yosys synth 0 latches "
+                 "(modmul ~1.4K, butterfly ~1.65K, ntt ~59K cells / ~3.4K FFs). FIPS-203 exact "
+                 "params (q=3329), SRAM macro + ASAP7 pending. NOTE: reference model, not "
+                 "FIPS-203 certified.",
         "checkpoints": [
             ("N.1", "Golden: NTT mod 7681 + inverse (roundtrip)", 0, "done"),
             ("N.2", "Golden: NTT polymult == schoolbook", 0, "done"),
@@ -238,7 +241,7 @@ PROJECTS = [
             ("N.5", "RTL: modular multiplier (Barrett) + cocotb vs golden", 2, "done"),
             ("N.6", "RTL: Cooley-Tukey butterfly + cocotb vs golden", 2, "done"),
             ("N.7", "RTL: 256-pt NTT engine, forward + inverse (+1/N scale) + cocotb", 2, "done"),
-            ("N.8", "RTL: psi pre/post-multiply for full negacyclic ntt()/intt()", 2, "todo"),
+            ("N.8", "RTL: psi pre/post-multiply for full negacyclic ntt()/intt()", 2, "done"),
             ("N.9", "Synthesis: generic Yosys, 0 latches + gate count", 3, "done"),
             ("N.10", "Synthesis: ASAP7 liberty tech-mapping + SRAM macro", 3, "todo"),
             ("N.11", "P&R: GDSII", 4, "todo"),
@@ -250,7 +253,7 @@ PROJECTS = [
             ("test_pymodel_ntt", "staged butterfly == golden NTT", "pass"),
             ("rtl: test_modmul (cocotb)", "neith_modmul == (a*b)%7681 on 31K+ vectors", "pass"),
             ("rtl: test_butterfly (cocotb)", "neith_butterfly == golden CT butterfly on 32K+", "pass"),
-            ("rtl: test_ntt (cocotb)", "neith_ntt fwd+inv == golden + roundtrips recover input", "pass"),
+            ("rtl: test_ntt (cocotb)", "neith_ntt cyclic+negacyclic fwd+inv == golden, roundtrips + HW poly-mul == schoolbook mod x^256+1", "pass"),
         ],
     },
     {

@@ -5,31 +5,30 @@
 
         +----------Local Count, excluding submodules.
         | 
-    43896 wires
-    50248 wire bits
-      283 public wires
-     3517 public wire bits
-       10 ports
-       41 port bits
-    50157 cells
-       92   $_ANDNOT_
-    18571   $_AND_
-       39   $_DFFE_PN0P_
-        1   $_DFFE_PN1P_
+    43961 wires
+    50397 wire bits
+      290 public wires
+     3584 public wire bits
+       11 ports
+       42 port bits
+    50266 cells
+       87   $_ANDNOT_
+    18617   $_AND_
+       64   $_DFFE_PN0P_
+        3   $_DFFE_PN1P_
      3328   $_DFFE_PP_
         4   $_DFF_PN0_
         1   $_DFF_PN1_
-       29   $_MUX_
-    20592   $_NAND_
-       35   $_NOR_
-        4   $_NOT_
-     3858   $_ORNOT_
-     3599   $_OR_
+       26   $_MUX_
+    20599   $_NAND_
+       39   $_NOR_
+        6   $_NOT_
+     3875   $_ORNOT_
+     3616   $_OR_
         1   $_XNOR_
-        3   $_XOR_
-        3 submodules
+        6 submodules
         1   neith_butterfly
-        2   neith_modmul
+        5   neith_modmul
 
 === neith_butterfly ===
 
@@ -81,39 +80,39 @@
 
         +----------Count including submodules.
         | 
-    54662 neith_ntt
+    59052 neith_ntt
       224 neith_butterfly
      1427   neith_modmul
      1427 neith_modmul
 
         +----------Count including submodules.
         | 
-    48362 wires
-    55154 wire bits
-      309 public wires
-     3983 public wire bits
-       24 ports
-      223 port bits
+    52687 wires
+    59905 wire bits
+      334 public wires
+     4410 public wire bits
+       34 ports
+      341 port bits
         - memories
         - memory bits
         - processes
-    54662 cells
-      138   $_ANDNOT_
-    19554   $_AND_
-       39   $_DFFE_PN0P_
-        1   $_DFFE_PN1P_
+    59052 cells
+      160   $_ANDNOT_
+    20527   $_AND_
+       64   $_DFFE_PN0P_
+        3   $_DFFE_PN1P_
      3328   $_DFFE_PP_
         4   $_DFF_PN0_
         1   $_DFF_PN1_
-       40   $_MUX_
-    22337   $_NAND_
-       61   $_NOR_
-       12   $_NOT_
-     3944   $_ORNOT_
-     3692   $_OR_
-      337   $_XNOR_
-     1174   $_XOR_
-        3 submodules
+       46   $_MUX_
+    24036   $_NAND_
+       89   $_NOR_
+       20   $_NOT_
+     4039   $_ORNOT_
+     3787   $_OR_
+      625   $_XNOR_
+     2323   $_XOR_
+        6 submodules
         1   neith_butterfly
-        2   neith_modmul
+        5   neith_modmul
 
