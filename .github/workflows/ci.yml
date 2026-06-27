@@ -29,7 +29,8 @@ jobs:
           sudo apt-get install -y verilator python3-pip
           verilator --version
           # cocotb 1.9.x supports Verilator 5.020 (ubuntu-24.04); 2.x needs 5.036+
-          pip3 install --break-system-packages 'cocotb==1.9.2'
+          # numpy: the HapiCore golden (hapi_fpu.py) uses it for IEEE-754 reference math
+          pip3 install --break-system-packages 'cocotb==1.9.2' numpy
       - name: Run SHA-256 testbench
         run: ./projects/anubiscore/rtl/tb/run_sim.sh CORE=sha256
       - name: Run SHA3-256 testbench
