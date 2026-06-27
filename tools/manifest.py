@@ -206,11 +206,16 @@ PROJECTS = [
                  "branch/jump control flow + load/store byte/half/word); the register file gained "
                  "a synchronous reset for deterministic boot. seth_core runs the golden's programs "
                  "(sum, fibonacci, mul/div + load/store + lui/auipc) and 40 randomised ALU/M "
-                 "programs with the FULL final register file matching the ISA sim. Remaining: "
-                 "PIPELINING (5-stage + hazard/forwarding) on top of this baseline. "
+                 "programs with the FULL final register file matching the ISA sim. PIPELINED into "
+                 "seth_pipeline.sv — a 5-stage IF/ID/EX/MEM/WB core with full INTERLOCK STALLS "
+                 "(no forwarding yet; ID stalls until a needed source reg's producer leaves the "
+                 "EX/MEM/WB window) + branch/jump flush in EX (2-cycle penalty); the same programs "
+                 "plus a dependent-chain + branch-flush stress + 120 random programs all match the "
+                 "ISA sim. Remaining: add FORWARDING (performance only; results identical). "
                  "Phase 3: ALU + imm + regfile + aluctl + decode full-synth 0 latches (imm ~92, "
-                 "regfile ~3.8K/992 DFFs, aluctl/decode ~38 cells); seth_core coarse 0-latch (memory "
-                 "-> $mem); combinational divider full synth deferred (generic synth explodes).",
+                 "regfile ~3.8K/992 DFFs, aluctl/decode ~38 cells); seth_core + seth_pipeline coarse "
+                 "0-latch (memory -> $mem, CPU synth CI-skipped); combinational divider full synth "
+                 "deferred (generic synth explodes).",
         "checkpoints": [
             ("S2.1", "Golden: RV32I ISA simulator", 0, "done"),
             ("S2.2", "Golden: M-extension (mul/div/rem)", 0, "done"),
@@ -223,7 +228,8 @@ PROJECTS = [
             ("S2.15", "RTL: ALU-control decoder (seth_aluctl) + exhaustive cocotb", 2, "done"),
             ("S2.16", "RTL: main control decoder (seth_decode) + cocotb vs golden", 2, "done"),
             ("S2.17", "RTL: integrated single-cycle core (seth_core) + cocotb vs ISA sim", 2, "done"),
-            ("S2.10", "RTL: pipeline the core (5-stage + hazard/forwarding)", 2, "todo"),
+            ("S2.18", "RTL: 5-stage interlocked pipeline (seth_pipeline) + cocotb vs ISA sim", 2, "done"),
+            ("S2.10", "RTL: add forwarding to the pipeline (performance; result-invariant)", 2, "todo"),
             ("S2.9", "Synthesis: ALU Yosys, 0 latches", 3, "done"),
             ("S2.11", "cocotb: per-instruction vs Spike", 2, "todo"),
             ("S2.14", "P&R: core macro", 4, "todo"),
@@ -242,6 +248,7 @@ PROJECTS = [
             ("rtl: test_aluctl (cocotb)", "seth_aluctl.sv == golden.decode_aluop, all 2^17 inputs", "pass"),
             ("rtl: test_decode (cocotb)", "seth_decode.sv == golden.decode_ctrl on opcode sweep + 50K random", "pass"),
             ("rtl: test_core (cocotb)", "seth_core final regfile == ISA sim on real + 40 random programs", "pass"),
+            ("rtl: test_pipeline (cocotb)", "seth_pipeline final regfile == ISA sim (hazards/flush + 120 random)", "pass"),
         ],
     },
     {
