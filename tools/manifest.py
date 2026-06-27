@@ -57,11 +57,12 @@ PROJECTS = [
         "key": "anubiscore", "num": "06", "name": "AnubisCore", "deity": "Anubis (embalming)",
         "domain": "SHA-256 / SHA-3 hash engine", "doc": "docs/06_AnubisCore_HashEngine.md",
         "depends": [],
-        "phase": _ph("done", "done", "partial", "todo", "todo", "todo"),
+        "phase": _ph("done", "done", "done", "partial", "todo", "todo"),
         "scope": "Phase 0/1: full SHA-256 + Keccak/SHA3-256 in pure Python vs hashlib. "
-                 "Phase 2 IN PROGRESS: synthesizable SHA-256 RTL (sha256_core.sv) verified "
-                 "bit-exact in cocotb/Verilator on 9 messages; Keccak RTL still pending. "
-                 "Phase 3+ (Yosys/OpenROAD) not started — no synth toolchain locally.",
+                 "Phase 2 DONE: SHA-256 + SHA3-256/Keccak RTL, each verified bit-exact in "
+                 "cocotb/Verilator 5.020. Phase 3 IN PROGRESS: generic Yosys synth passes "
+                 "with 0 latches (sha256 ~6.4K cells, sha3 ~15.8K cells); ASAP7 liberty "
+                 "tech-mapping + OpenROAD P&R (Phase 4) pending (no PDK/OpenROAD locally).",
         "checkpoints": [
             ("A1.1", "Golden: SHA-256 vs hashlib", 0, "done"),
             ("A1.2", "Golden: Keccak-f[1600] / SHA3-256 vs hashlib", 0, "done"),
@@ -69,8 +70,9 @@ PROJECTS = [
             ("A1.4", "pymodel: SHA-256 round engine (64 rounds)", 1, "done"),
             ("A1.5", "pymodel: Keccak round engine (24 rounds)", 1, "done"),
             ("A1.6", "RTL: SHA-256 datapath + cocotb (Verilator)", 2, "done"),
-            ("A1.7", "RTL: Keccak-f[1600]", 2, "todo"),
-            ("A1.8", "Synthesis: Yosys gate count, 0 latches", 3, "todo"),
+            ("A1.7", "RTL: Keccak-f[1600] + cocotb (Verilator)", 2, "done"),
+            ("A1.8", "Synthesis: generic Yosys, 0 latches + gate count", 3, "done"),
+            ("A1.9", "Synthesis: ASAP7 liberty tech-mapping", 3, "todo"),
             ("A1.10", "P&R: GDSII", 4, "todo"),
         ],
         "tests": [
@@ -78,7 +80,8 @@ PROJECTS = [
             ("test_sha3_256_vs_hashlib", "== hashlib.sha3_256", "pass"),
             ("test_known_vectors", "empty/'abc' digests match published values", "pass"),
             ("test_pymodel_rounds", "round engine reproduces one-shot digest", "pass"),
-            ("rtl: test_vectors (cocotb)", "sha256_core.sv digest == golden on 9 msgs", "pass"),
+            ("rtl: test_sha256 (cocotb)", "sha256_core.sv digest == golden on 9 msgs", "pass"),
+            ("rtl: test_sha3 (cocotb)", "sha3_256_core.sv digest == golden on 9 msgs", "pass"),
         ],
     },
     {

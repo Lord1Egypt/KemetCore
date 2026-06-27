@@ -31,4 +31,16 @@ jobs:
           # cocotb 1.9.x supports Verilator 5.020 (ubuntu-24.04); 2.x needs 5.036+
           pip3 install --break-system-packages 'cocotb==1.9.2'
       - name: Run SHA-256 testbench
-        run: ./projects/anubiscore/rtl/tb/run_sim.sh
+        run: ./projects/anubiscore/rtl/tb/run_sim.sh CORE=sha256
+      - name: Run SHA3-256 testbench
+        run: ./projects/anubiscore/rtl/tb/run_sim.sh CORE=sha3
+
+  synth-yosys:
+    name: Phase 3 synthesis (Yosys, 0-latch check)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Yosys
+        run: sudo apt-get update && sudo apt-get install -y yosys
+      - name: Synthesize AnubisCore (asserts no latches)
+        run: YOSYS=yosys ./projects/anubiscore/synth/run_synth.sh

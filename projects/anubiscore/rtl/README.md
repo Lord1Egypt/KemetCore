@@ -14,17 +14,21 @@ for multi-block messages.
 | `busy` / `done` | out | 1 | `done` pulses when the block is absorbed |
 | `hash` | out | 256 | `{H0..H7}`, valid the cycle after `done` |
 
-## Run the testbench (cocotb + Verilator)
+`sha3_256_core.sv` — synthesizable SHA3-256 (Keccak-f[1600]): absorb 1088-bit rate
+blocks, 24-round permutation (1 round/cycle), `init`/chain; digest = first 4 state
+lanes. Host pre-packs each rate lane little-endian.
+
+## Run the testbenches (cocotb + Verilator)
 ```bash
 cd projects/anubiscore/rtl/tb
-./run_sim.sh        # forces a single consistent Python (conda cocotb + system verilator)
-# or, on a single-Python machine:
-make
+./run_sim.sh CORE=sha256    # SHA-256
+./run_sim.sh CORE=sha3      # SHA3-256 / Keccak
 ```
-Verified bit-exact against the Python golden + hashlib on 9 messages
+`run_sim.sh` forces a single consistent Python (handles conda-cocotb vs system-verilator).
+Both verified bit-exact against the Python golden + hashlib on 9 messages each
 (empty, "abc", block-boundary lengths, multi-block, random).
 
 ## Status
 - ✅ Phase 2: SHA-256 RTL + cocotb (Verilator 5.020)
-- ⬜ Keccak-f[1600] RTL
-- ⬜ Phase 3 Yosys synthesis (no synth toolchain locally; runs on a box with Yosys)
+- ✅ Phase 2: SHA3-256 / Keccak-f[1600] RTL + cocotb
+- ⬜ Phase 3 Yosys synthesis (gate count + 0-latch check)

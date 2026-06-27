@@ -1,5 +1,9 @@
 # cocotb / Verilator build artifacts
 sim_build/
+sim_build_*/
+
+# Yosys logs (keep the .stat gate-count reports as evidence)
+projects/*/synth/reports/*.log
 results.xml
 *.vcd
 *.fst
