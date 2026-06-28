@@ -1,12 +1,19 @@
 # cocotb + Verilator testbenches for AtumCore (RVV).
 #   make CORE=valu   (default)   -> atum_valu (vector integer ALU lane array)
+#   make CORE=vfpu               -> atum_vfpu (fp32 vector lane: vfadd/vfmul)
 TOPLEVEL_LANG = verilog
 SIM ?= verilator
 CORE ?= valu
 
 PWD := $(shell pwd)
+HAPI := $(PWD)/../../../hapicore/rtl
 
-ifeq ($(CORE),valu)
+ifeq ($(CORE),vfpu)
+  VERILOG_SOURCES = $(HAPI)/hapi_fp32_mul.sv $(HAPI)/hapi_fp32_add.sv \
+                    $(PWD)/../atum_vfpu.sv
+  TOPLEVEL = atum_vfpu
+  MODULE   = test_vfpu
+else ifeq ($(CORE),valu)
   VERILOG_SOURCES = $(PWD)/../atum_valu.sv
   TOPLEVEL = atum_valu
   MODULE   = test_valu

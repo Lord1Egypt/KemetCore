@@ -404,14 +404,17 @@ PROJECTS = [
                  "is undisturbed; operands packed little-endian by lane. Bit-exact vs the golden "
                  "VectorUnit on directed corners + 6000 random ops (all ops/VL/mask). Phase 3: "
                  "atum_valu full-synth 0 latches (~33K cells, eight 32-bit multipliers; CI uses a "
-                 "coarse 0-latch check, committed .stat is the full gate-level evidence).",
+                 "coarse 0-latch check, committed .stat is the full gate-level evidence). atum_vfpu.sv "
+                 "— the fp32 vector lane (vfadd/vfmul) composing the bit-exact HapiCore fp32 cores "
+                 "(hapi_fp32_add/mul) per lane with the same active-element write; bit-exact vs golden "
+                 "on fp corners (zeros/inf/nan/subnormal/overflow) + 5000 random; 0-latch (CI coarse).",
         "checkpoints": [
             ("AT.1", "Golden: RVV subset + vsetvl semantics", 0, "done"),
             ("AT.2", "Golden: masked ops + reductions", 0, "done"),
             ("AT.3", "pymodel: 8 ALU lanes", 1, "done"),
             ("AT.4", "pymodel: strip-mined axpy", 1, "done"),
             ("AT.6", "RTL: vector integer ALU lane array (atum_valu) + cocotb vs golden", 2, "done"),
-            ("AT.8", "RTL: fp vector lane (vfadd/vfmul over HapiCore fp32)", 2, "todo"),
+            ("AT.8", "RTL: fp32 vector lane (atum_vfpu, vfadd/vfmul over HapiCore fp32) + cocotb", 2, "done"),
             ("AT.13", "P&R: GDSII at 500 MHz", 4, "todo"),
         ],
         "tests": [
@@ -422,6 +425,7 @@ PROJECTS = [
             ("test_vfmul_fp", "fp32 vector mul == numpy", "pass"),
             ("test_axpy_stripmined", "strip-mined axpy == a*x+y", "pass"),
             ("rtl: test_valu (cocotb)", "atum_valu.sv == golden VectorUnit on corners + 6000 random (all ops/vl/mask)", "pass"),
+            ("rtl: test_vfpu (cocotb)", "atum_vfpu.sv (fp32 vfadd/vfmul) == golden on fp corners + 5000 random", "pass"),
         ],
     },
     {
