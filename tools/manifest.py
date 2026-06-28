@@ -397,13 +397,21 @@ PROJECTS = [
         "domain": "RISC-V Vector (RVV) unit", "doc": "docs/10_AtumCore_RVV.md",
         "depends": ["sethcore", "hapicore"], "phase": P01,
         "scope": "Phase 0/1 implements an RVV-subset golden (vsetvl, vadd/vsub/vmul/vmacc, "
-                 "logic/shift, masked ops, vfadd/vfmul, vredsum) and an 8-lane pymodel.",
+                 "logic/shift, masked ops, vfadd/vfmul, vredsum) and an 8-lane pymodel. Phase 2 "
+                 "IN PROGRESS: atum_valu.sv — a VLMAX(=8)-lane combinational vector integer ALU "
+                 "(add/sub/mul/and/or/xor/sll/srl) with full RVV active-element semantics: a lane "
+                 "writes only when body-active (i<vl) AND mask-active, else the destination element "
+                 "is undisturbed; operands packed little-endian by lane. Bit-exact vs the golden "
+                 "VectorUnit on directed corners + 6000 random ops (all ops/VL/mask). Phase 3: "
+                 "atum_valu full-synth 0 latches (~33K cells, eight 32-bit multipliers; CI uses a "
+                 "coarse 0-latch check, committed .stat is the full gate-level evidence).",
         "checkpoints": [
             ("AT.1", "Golden: RVV subset + vsetvl semantics", 0, "done"),
             ("AT.2", "Golden: masked ops + reductions", 0, "done"),
             ("AT.3", "pymodel: 8 ALU lanes", 1, "done"),
             ("AT.4", "pymodel: strip-mined axpy", 1, "done"),
-            ("AT.6", "RTL: ALU lane group", 2, "todo"),
+            ("AT.6", "RTL: vector integer ALU lane array (atum_valu) + cocotb vs golden", 2, "done"),
+            ("AT.8", "RTL: fp vector lane (vfadd/vfmul over HapiCore fp32)", 2, "todo"),
             ("AT.13", "P&R: GDSII at 500 MHz", 4, "todo"),
         ],
         "tests": [
@@ -413,6 +421,7 @@ PROJECTS = [
             ("test_vredsum", "reduction == numpy sum", "pass"),
             ("test_vfmul_fp", "fp32 vector mul == numpy", "pass"),
             ("test_axpy_stripmined", "strip-mined axpy == a*x+y", "pass"),
+            ("rtl: test_valu (cocotb)", "atum_valu.sv == golden VectorUnit on corners + 6000 random (all ops/vl/mask)", "pass"),
         ],
     },
     {
