@@ -19,7 +19,7 @@ module atum_vredu #(
     input  logic [VLMAX*ELEN-1:0]      vs,
     input  logic [VLMAX-1:0]           mask,
     input  logic [$clog2(VLMAX+1)-1:0] vl,
-    input  logic                       redop,   // 0 = vredsum, 1 = vredmax
+    input  logic [2:0]                 redop,   // 0=sum 1=max 2=and 3=or 4=xor
     output logic [ELEN-1:0]            result
 );
     localparam int VLW = $clog2(VLMAX+1);
@@ -27,16 +27,27 @@ module atum_vredu #(
 
     always_comb begin
         logic [SW-1:0]   sum;
-        logic [ELEN-1:0] mx, v;
+        logic [ELEN-1:0] mx, andv, orv, xorv, lane;
         logic            active;
         sum = '0;
         mx  = '0;                                 // identity for an unsigned max
+        andv = '1;                                // identity for AND (all ones)
+        orv = '0; xorv = '0;                      // identity for OR/XOR
         for (int i = 0; i < VLMAX; i++) begin
             active = mask[i] & (VLW'(i) < vl);
-            v = active ? vs[i*ELEN +: ELEN] : '0;
-            sum = sum + {{(SW-ELEN){1'b0}}, v};
-            if (v > mx) mx = v;                   // unsigned compare
+            lane = vs[i*ELEN +: ELEN];
+            sum  = sum + {{(SW-ELEN){1'b0}}, (active ? lane : '0)};
+            if (active && lane > mx) mx = lane;   // unsigned compare
+            andv = andv & (active ? lane : '1);
+            orv  = orv  | (active ? lane : '0);
+            xorv = xorv ^ (active ? lane : '0);
         end
-        result = redop ? mx : sum[ELEN-1:0];
+        unique case (redop)
+            3'd0:    result = sum[ELEN-1:0];
+            3'd1:    result = mx;
+            3'd2:    result = andv;
+            3'd3:    result = orv;
+            default: result = xorv;
+        endcase
     end
 endmodule

@@ -4,7 +4,7 @@
 // seth_core integrates the SethCore blocks:
 //   vclass 0 (ALU) -> atum_valu  : integer element ops incl vmacc (subop = valu op)
 //   vclass 1 (FP)  -> atum_vfpu  : fp32 vfadd/vfmul          (subop[0] = fop)
-//   vclass 2 (RED) -> atum_vredu : vredsum/vredmax over vs1  (subop[0] = redop)
+//   vclass 2 (RED) -> atum_vredu : vredsum/max/and/or/xor over vs1 (subop[2:0]=redop)
 //
 // The result is always a vector vd_new. For a reduction the scalar lands in element
 // 0 and the remaining elements keep vd_old (the usual RVV "scalar into vd[0]"
@@ -36,7 +36,7 @@ module atum_vexec #(
         .mask(mask), .vl(vl), .vd_new(fp_vd));
 
     atum_vredu #(.VLMAX(VLMAX), .ELEN(ELEN)) u_vredu (
-        .vs(vs1), .mask(mask), .vl(vl), .redop(subop[0]), .result(red_scalar));
+        .vs(vs1), .mask(mask), .vl(vl), .redop(subop[2:0]), .result(red_scalar));
 
     // reduction scalar -> element 0; elements 1..VLMAX-1 keep vd_old
     assign red_vd = {vd_old[VLMAX*ELEN-1:ELEN], red_scalar};

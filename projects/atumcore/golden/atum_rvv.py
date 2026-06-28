@@ -149,3 +149,20 @@ class VectorUnit:
         act = self._active(mask)[:self.vl]
         vals = self.vreg[vs][:self.vl].astype(np.int64)[act]
         return int(vals.max())
+
+    def _vredbit(self, vs, mask, op, ident):
+        act = self._active(mask)[:self.vl]
+        vals = self.vreg[vs][:self.vl][act]
+        acc = ident
+        for v in vals:
+            acc = op(acc, int(v))
+        return acc & U32
+
+    def vredand(self, vs, mask=None):
+        return self._vredbit(vs, mask, lambda a, b: a & b, U32)
+
+    def vredor(self, vs, mask=None):
+        return self._vredbit(vs, mask, lambda a, b: a | b, 0)
+
+    def vredxor(self, vs, mask=None):
+        return self._vredbit(vs, mask, lambda a, b: a ^ b, 0)
