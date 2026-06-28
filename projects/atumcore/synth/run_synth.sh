@@ -140,6 +140,16 @@ echo "=== synthesizing atum_viota (mask iota / index unit, full) ==="
 "
 echo "  -> reports/atum_viota.stat (0 latches asserted)"
 
+# atum_vcompress is a mask-driven gather (mux tree, no arithmetic) -> always full.
+echo "=== synthesizing atum_vcompress (stream compaction unit, full) ==="
+"$YOSYS" -ql "reports/atum_vcompress.log" -p "
+    read_verilog -sv ../rtl/atum_vcompress.sv;
+    synth -top atum_vcompress;
+    select -assert-none t:\$_DLATCH_* t:\$dlatch;
+    tee -o reports/atum_vcompress.stat stat
+"
+echo "  -> reports/atum_vcompress.stat (0 latches asserted)"
+
 # atum_vcore embeds the whole vexec datapath (fp32 multipliers) + vreg array. Full
 # ABC mapping is large; under $CI stop at the coarse 0-latch netlist, committed .stat full.
 VC_SRCS="../rtl/atum_valu.sv ../rtl/atum_vfpu.sv ../rtl/atum_vredu.sv \

@@ -158,6 +158,20 @@ def test_viota_vid():
                          mask=[1, 0, 1, 1, 1, 1, 1, 1])) == [0, 0, 1, 2, 3, 3, 3, 3]
 
 
+def test_vcompress():
+    vu = g.VectorUnit()
+    vu.load(1, [10, 11, 12, 13, 14, 15, 16, 17])
+    # keep lanes 1,3,5,7 -> packed to front, rest 0
+    assert list(vu.vcompress(1, [0, 1, 0, 1, 0, 1, 0, 1])) == [11, 13, 15, 17, 0, 0, 0, 0]
+    # keep all -> unchanged
+    assert list(vu.vcompress(1, [1] * 8)) == [10, 11, 12, 13, 14, 15, 16, 17]
+    # keep none -> all zero
+    assert list(vu.vcompress(1, [0] * 8)) == [0] * 8
+    # vl gating: mask bits beyond vl are ignored
+    vu.vl = 4
+    assert list(vu.vcompress(1, [1, 0, 1, 0, 1, 1, 1, 1])) == [10, 12, 0, 0, 0, 0, 0, 0]
+
+
 def test_vredsum():
     vu = g.VectorUnit()
     data = [3, 1, 4, 1, 5, 9, 2, 6]
