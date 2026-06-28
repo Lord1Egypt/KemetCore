@@ -269,6 +269,33 @@ def test_vfminmax():
     assert list(vu.vfmin(1, 2)) == [0x7FC00000] * 8
 
 
+def test_vfclass():
+    vu = g.VectorUnit()
+    #     +0          -0          +1(norm)    -1(norm)
+    a = [0x00000000, 0x80000000, 0x3F800000, 0xBF800000,
+         0x00000001, 0x80000001, 0x7F800000, 0xFF800000]   # +sub,-sub,+inf,-inf
+    vu.load(1, a)
+    out = list(vu.vfclass(1))
+    assert out[0] == (1 << 4)    # +0
+    assert out[1] == (1 << 3)    # -0
+    assert out[2] == (1 << 6)    # +normal
+    assert out[3] == (1 << 1)    # -normal
+    assert out[4] == (1 << 5)    # +subnormal
+    assert out[5] == (1 << 2)    # -subnormal
+    assert out[6] == (1 << 7)    # +inf
+    assert out[7] == (1 << 0)    # -inf
+    # NaNs: sNaN (bit8) vs qNaN (bit9)
+    vu.load(1, [0x7F800001, 0x7FC00000, 0xFF800001, 0xFFC00001, 0, 0, 0, 0])
+    out = list(vu.vfclass(1))
+    assert out[0] == (1 << 8)    # sNaN (mant MSB 0)
+    assert out[1] == (1 << 9)    # qNaN (mant MSB 1)
+    assert out[2] == (1 << 8)    # -sNaN still classed as sNaN bit
+    assert out[3] == (1 << 9)    # -qNaN
+    # vl gating
+    vu.vl = 2
+    assert list(vu.vfclass(1))[2:] == [0] * 6
+
+
 def test_vredsum():
     vu = g.VectorUnit()
     data = [3, 1, 4, 1, 5, 9, 2, 6]
