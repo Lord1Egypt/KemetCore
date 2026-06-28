@@ -16,6 +16,22 @@ def test_vadd_vmul():
     assert list(vu.read(4)) == [x * y for x, y in zip(a, b)]
 
 
+def test_vminmax():
+    vu = g.VectorUnit()
+    a = [1, -5 & 0xFFFFFFFF, 0x7FFFFFFF, 0x80000000, 100, 0, 0xFFFFFFFF, 7]
+    b = [2, 3, 0x7FFFFFFE, 1, 100, 0xFFFFFFFF, 0, 7]
+    vu.load(1, a); vu.load(2, b)
+    vu.vminu(3, 1, 2); vu.vmaxu(4, 1, 2)
+    vu.vmin(5, 1, 2);  vu.vmax(6, 1, 2)
+    import numpy as np
+    A = np.array(a, np.uint32); B = np.array(b, np.uint32)
+    assert list(vu.read(3)) == list(np.where(A < B, A, B))
+    assert list(vu.read(4)) == list(np.where(A > B, A, B))
+    As = A.astype(np.int32); Bs = B.astype(np.int32)
+    assert list(vu.read(5)) == list(np.where(As < Bs, A, B))
+    assert list(vu.read(6)) == list(np.where(As > Bs, A, B))
+
+
 def test_vmacc():
     vu = g.VectorUnit()
     vu.load(1, [2, 3, 4, 5, 6, 7, 8, 9])
