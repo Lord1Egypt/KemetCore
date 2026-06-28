@@ -18,5 +18,6 @@ Run: `pytest projects/atumcore/tests -v`
 | `rtl: test_vexec (cocotb)` | atum_vexec.sv integrated unit == golden on directed + 6000 random mixed ALU/FP/RED ops | ✅ |
 | `rtl: test_vregfile (cocotb)` | atum_vregfile.sv == model on 4000 rw cycles + reset | ✅ |
 | `rtl: test_vsetvl (cocotb)` | atum_vsetvl.sv VL=min(avl,VLMAX) == golden on edges + 2000 random | ✅ |
+| `rtl: test_vcore (cocotb)` | atum_vcore.sv final vregfile == golden runner on directed + 40 random micro-programs | ✅ |
 
-**12/12 tests passing.**
+**13/13 tests passing.**
