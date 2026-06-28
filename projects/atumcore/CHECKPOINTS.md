@@ -11,6 +11,7 @@ _Auto-generated from `tools/manifest.py`._
 | AT.6 | P2 | RTL: vector integer ALU lane array (atum_valu, incl vmacc) + cocotb vs golden | ✅ |
 | AT.8 | P2 | RTL: fp32 vector lane (atum_vfpu, vfadd/vfmul over HapiCore fp32) + cocotb | ✅ |
 | AT.9 | P2 | RTL: vector reduction unit (atum_vredu, vredsum/vredmax) + cocotb | ✅ |
+| AT.10 | P2 | RTL: integrated vector execute unit (atum_vexec) + cocotb vs golden | ✅ |
 | AT.13 | P4 | P&R: GDSII at 500 MHz | ⬜ |
 
-**Progress:** 7/8 checkpoints complete (33% of phases).
+**Progress:** 8/9 checkpoints complete (33% of phases).

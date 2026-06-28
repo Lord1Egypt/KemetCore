@@ -411,7 +411,12 @@ PROJECTS = [
                  "atum_vredu.sv — the vector reduction unit (vredsum = 32-bit wrapping sum, vredmax) "
                  "over active lanes (i<vl AND mask), scalar result; note the golden widens uint32->int64 "
                  "so vredmax is an UNSIGNED max (identity 0) — matched bit-for-bit. Bit-exact vs golden "
-                 "on directed + 6000 random vredsum+vredmax; full-synth 0 latches (~3.1K cells).",
+                 "on directed + 6000 random vredsum+vredmax; full-synth 0 latches (~3.1K cells). "
+                 "atum_vexec.sv — the integrated vector execute unit: decodes a vclass (0=ALU->atum_valu, "
+                 "1=FP->atum_vfpu, 2=RED->atum_vredu) + subop and muxes to one uniform vector output "
+                 "(a reduction scalar lands in element 0, the rest keep vd_old). AtumCore's integration "
+                 "capstone (like seth_core for SethCore). Bit-exact vs golden on directed + 6000 random "
+                 "MIXED ops (int incl vmacc / fp vfadd-vfmul / vredsum-vredmax); 0-latch (CI coarse).",
         "checkpoints": [
             ("AT.1", "Golden: RVV subset + vsetvl semantics", 0, "done"),
             ("AT.2", "Golden: masked ops + reductions", 0, "done"),
@@ -420,6 +425,7 @@ PROJECTS = [
             ("AT.6", "RTL: vector integer ALU lane array (atum_valu, incl vmacc) + cocotb vs golden", 2, "done"),
             ("AT.8", "RTL: fp32 vector lane (atum_vfpu, vfadd/vfmul over HapiCore fp32) + cocotb", 2, "done"),
             ("AT.9", "RTL: vector reduction unit (atum_vredu, vredsum/vredmax) + cocotb", 2, "done"),
+            ("AT.10", "RTL: integrated vector execute unit (atum_vexec) + cocotb vs golden", 2, "done"),
             ("AT.13", "P&R: GDSII at 500 MHz", 4, "todo"),
         ],
         "tests": [
@@ -432,6 +438,7 @@ PROJECTS = [
             ("rtl: test_valu (cocotb)", "atum_valu.sv (add/sub/mul/logic/shift + vmacc) == golden on corners + 6000 random (all ops/vl/mask)", "pass"),
             ("rtl: test_vfpu (cocotb)", "atum_vfpu.sv (fp32 vfadd/vfmul) == golden on fp corners + 5000 random", "pass"),
             ("rtl: test_vredu (cocotb)", "atum_vredu.sv (vredsum/vredmax) == golden on directed + 6000 random", "pass"),
+            ("rtl: test_vexec (cocotb)", "atum_vexec.sv integrated unit == golden on directed + 6000 random mixed ALU/FP/RED ops", "pass"),
         ],
     },
     {

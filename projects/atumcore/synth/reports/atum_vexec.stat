@@ -1,0 +1,171 @@
+
+8. Printing statistics.
+
+=== atum_vexec ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     1104 wires
+     2934 wire bits
+       12 public wires
+     1842 public wire bits
+        8 ports
+     1042 port bits
+     1348 cells
+        2   $_ANDNOT_
+      289   $_AND_
+     1056   $_NAND_
+        1   $_NOR_
+        3 submodules
+        1   $paramod$ce95fb3197394d89d03e6b2f027cf8da2381778a\atum_valu
+        1   $paramod$ce95fb3197394d89d03e6b2f027cf8da2381778a\atum_vfpu
+        1   $paramod$ce95fb3197394d89d03e6b2f027cf8da2381778a\atum_vredu
+
+=== hapi_fp32_add ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     1778 wires
+     2228 wire bits
+       18 public wires
+      468 public wire bits
+        3 ports
+       96 port bits
+     1792 cells
+       97   $_ANDNOT_
+      486   $_AND_
+      342   $_MUX_
+      415   $_NAND_
+       68   $_NOR_
+       43   $_NOT_
+      156   $_ORNOT_
+      114   $_OR_
+       49   $_XNOR_
+       22   $_XOR_
+
+=== hapi_fp32_mul ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     5028 wires
+     5288 wire bits
+       14 public wires
+      274 public wire bits
+        3 ports
+       96 port bits
+     5046 cells
+       96   $_ANDNOT_
+     1282   $_AND_
+      290   $_MUX_
+     1871   $_NAND_
+       53   $_NOR_
+       98   $_NOT_
+       74   $_ORNOT_
+       82   $_OR_
+      119   $_XNOR_
+     1081   $_XOR_
+
+=== $paramod$ce95fb3197394d89d03e6b2f027cf8da2381778a\atum_valu ===
+
+        +----------Local Count, excluding submodules.
+        | 
+    34468 wires
+    35501 wire bits
+        7 public wires
+     1040 public wire bits
+        7 ports
+     1040 port bits
+    34717 cells
+      271   $_ANDNOT_
+     7722   $_AND_
+     1837   $_MUX_
+    13946   $_NAND_
+      173   $_NOR_
+       67   $_NOT_
+      311   $_ORNOT_
+     1183   $_OR_
+     1563   $_XNOR_
+     7644   $_XOR_
+
+=== $paramod$ce95fb3197394d89d03e6b2f027cf8da2381778a\atum_vfpu ===
+
+        +----------Local Count, excluding submodules.
+        | 
+      300 wires
+     1826 wire bits
+       23 public wires
+     1549 public wire bits
+        7 ports
+     1037 port bits
+      533 cells
+        1   $_ANDNOT_
+       11   $_AND_
+      512   $_MUX_
+        3   $_NAND_
+        1   $_NOR_
+        2   $_ORNOT_
+        3   $_OR_
+       16 submodules
+        8   hapi_fp32_add
+        8   hapi_fp32_mul
+
+=== $paramod$ce95fb3197394d89d03e6b2f027cf8da2381778a\atum_vredu ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     3077 wires
+     3373 wire bits
+        5 public wires
+      301 public wire bits
+        5 ports
+      301 port bits
+     3104 cells
+       73   $_ANDNOT_
+      690   $_AND_
+      190   $_MUX_
+     1168   $_NAND_
+       31   $_NOR_
+      123   $_NOT_
+      126   $_ORNOT_
+      217   $_OR_
+      247   $_XNOR_
+      239   $_XOR_
+
+=== design hierarchy ===
+
+        +----------Count including submodules.
+        | 
+    94406 atum_vexec
+    34717 $paramod$ce95fb3197394d89d03e6b2f027cf8da2381778a\atum_valu
+      533 $paramod$ce95fb3197394d89d03e6b2f027cf8da2381778a\atum_vfpu
+     1792   hapi_fp32_add
+     5046   hapi_fp32_mul
+     3104 $paramod$ce95fb3197394d89d03e6b2f027cf8da2381778a\atum_vredu
+
+        +----------Count including submodules.
+        | 
+    93397 wires
+   103762 wire bits
+      303 public wires
+    10668 public wire bits
+       75 ports
+     4956 port bits
+        - memories
+        - memory bits
+        - processes
+    94406 cells
+     1891   $_ANDNOT_
+    22856   $_AND_
+     7595   $_MUX_
+    34461   $_NAND_
+     1174   $_NOR_
+     1318   $_NOT_
+     2279   $_ORNOT_
+     2971   $_OR_
+     3154   $_XNOR_
+    16707   $_XOR_
+        3 submodules
+        1   $paramod$ce95fb3197394d89d03e6b2f027cf8da2381778a\atum_valu
+        1   $paramod$ce95fb3197394d89d03e6b2f027cf8da2381778a\atum_vfpu
+        1   $paramod$ce95fb3197394d89d03e6b2f027cf8da2381778a\atum_vredu
+
