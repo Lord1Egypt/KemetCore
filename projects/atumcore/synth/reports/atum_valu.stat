@@ -5,21 +5,21 @@
 
         +----------Local Count, excluding submodules.
         | 
-    38216 wires
-    39249 wire bits
+    39457 wires
+    40490 wire bits
         7 public wires
      1040 public wire bits
         7 ports
      1040 port bits
-    38465 cells
-      542   $_ANDNOT_
-     9432   $_AND_
-     1829   $_MUX_
-    15359   $_NAND_
-      115   $_NOR_
-       59   $_NOT_
-      650   $_ORNOT_
-     1506   $_OR_
-     1343   $_XNOR_
-     7630   $_XOR_
+    39706 cells
+      399   $_ANDNOT_
+     9740   $_AND_
+     1836   $_MUX_
+    15655   $_NAND_
+      103   $_NOR_
+       48   $_NOT_
+      663   $_ORNOT_
+     1780   $_OR_
+     1617   $_XNOR_
+     7865   $_XOR_
 

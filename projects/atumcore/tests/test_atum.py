@@ -32,6 +32,15 @@ def test_vminmax():
     assert list(vu.read(6)) == list(np.where(As > Bs, A, B))
 
 
+def test_vrsub():
+    vu = g.VectorUnit()
+    a = [1, 100, 0xFFFFFFFF, 5, 0, 0x80000000, 7, 9]
+    b = [2, 3, 0, 5, 9, 1, 0, 8]
+    vu.load(1, a); vu.load(2, b)
+    vu.vrsub(3, 1, 2)
+    assert list(vu.read(3)) == [(y - x) & 0xFFFFFFFF for x, y in zip(a, b)]
+
+
 def test_vsra():
     import numpy as np
     vu = g.VectorUnit()
