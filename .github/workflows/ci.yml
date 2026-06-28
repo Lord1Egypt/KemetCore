@@ -111,6 +111,8 @@ jobs:
         run: ./projects/atumcore/rtl/tb/run_sim.sh CORE=viota
       - name: Run AtumCore vector compress testbench
         run: ./projects/atumcore/rtl/tb/run_sim.sh CORE=vcompress
+      - name: Run AtumCore vector gather testbench
+        run: ./projects/atumcore/rtl/tb/run_sim.sh CORE=vrgather
 
   synth-yosys:
     name: Phase 3 synthesis (Yosys, 0-latch check)

@@ -1,0 +1,20 @@
+
+3. Printing statistics.
+
+=== atum_vrgather ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     4279 wires
+     5047 wire bits
+        4 public wires
+      772 public wire bits
+        4 ports
+      772 port bits
+     4531 cells
+       24   $_ANDNOT_
+     2068   $_AND_
+     2304   $_NAND_
+      128   $_NOR_
+        7   $_OR_
+

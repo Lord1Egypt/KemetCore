@@ -256,6 +256,20 @@ class VectorUnit:
                 j += 1
         return out
 
+    # -- gather ------------------------------------------------------------ #
+    def vrgather(self, vs, idxreg):
+        """Vector register gather (arbitrary permutation): vd[i] = vs[idx[i]] where
+        idx = vreg[idxreg]. An index >= vl reads 0; tail lanes (i >= vl) read 0.
+        General data-motion primitive (table lookup / permute / shuffle)."""
+        src = self.vreg[vs]
+        idx = self.vreg[idxreg]
+        out = np.zeros(VLMAX, dtype=np.uint32)
+        for i in range(VLMAX):
+            if i < self.vl:
+                k = int(idx[i])
+                out[i] = src[k] if k < self.vl else 0
+        return out
+
     # -- fp ops ------------------------------------------------------------ #
     def vfadd(self, vd, vs1, vs2, mask=None):
         a = self.vreg[vs1].view(np.float32)
