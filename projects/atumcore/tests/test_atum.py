@@ -411,3 +411,16 @@ def test_vfsub_fp():
     assert np.allclose(vu.read_f32(3), x - y)
     vu.vfrsub(4, 1, 2)
     assert np.allclose(vu.read_f32(4), y - x)        # reverse operand order
+
+
+def test_vmfcmp_fp():
+    vu = g.VectorUnit()
+    x = np.array([1.0, 2.0, np.nan, 0.0, -0.0, np.inf, -1.0, 3.0], np.float32)
+    y = np.array([1.0, 1.0, 1.0, -0.0, 0.0, np.inf, 1.0, 3.0], np.float32)
+    vu.load_f32(1, x)
+    vu.load_f32(2, y)
+    assert list(vu.vmfeq(1, 2)) == [1, 0, 0, 1, 1, 1, 0, 1]   # +0==-0, NaN!=, inf==inf
+    assert list(vu.vmfne(1, 2)) == [0, 1, 1, 0, 0, 0, 1, 0]   # NaN -> ne true
+    assert list(vu.vmflt(1, 2)) == [0, 0, 0, 0, 0, 0, 1, 0]
+    assert list(vu.vmfle(1, 2)) == [1, 0, 0, 1, 1, 1, 1, 1]
+    assert list(vu.vmfge(1, 2)) == [1, 1, 0, 1, 1, 1, 0, 1]
