@@ -54,4 +54,14 @@ else
     "
 fi
 echo "  -> reports/atum_vfpu.stat (0 latches asserted)"
+
+# atum_vredu is light (adders + comparators, no multipliers) -> full synth always.
+echo "=== synthesizing atum_vredu (vector reduction unit) ==="
+"$YOSYS" -ql "reports/atum_vredu.log" -p "
+    read_verilog -sv ../rtl/atum_vredu.sv;
+    synth -top atum_vredu;
+    select -assert-none t:\$_DLATCH_* t:\$dlatch;
+    tee -o reports/atum_vredu.stat stat
+"
+echo "  -> reports/atum_vredu.stat (0 latches asserted)"
 echo "ALL SYNTHESIZED ✅ (no latches)"
