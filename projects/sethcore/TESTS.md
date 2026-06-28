@@ -19,5 +19,6 @@ Run: `pytest projects/sethcore/tests -v`
 | `rtl: test_aluctl (cocotb)` | seth_aluctl.sv == golden.decode_aluop, all 2^17 inputs | ✅ |
 | `rtl: test_decode (cocotb)` | seth_decode.sv == golden.decode_ctrl on opcode sweep + 50K random | ✅ |
 | `rtl: test_core (cocotb)` | seth_core final regfile == ISA sim on real + 40 random programs | ✅ |
+| `rtl: test_pipeline (cocotb)` | seth_pipeline final regfile == ISA sim (hazards/flush + 120 random) | ✅ |
 
-**13/13 tests passing.**
+**14/14 tests passing.**

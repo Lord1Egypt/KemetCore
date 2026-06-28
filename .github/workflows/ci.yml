@@ -49,6 +49,8 @@ jobs:
         run: ./projects/sethcore/rtl/tb/run_sim.sh CORE=decode
       - name: Run SethCore integrated single-cycle core testbench
         run: ./projects/sethcore/rtl/tb/run_sim.sh CORE=core
+      - name: Run SethCore 5-stage pipeline testbench
+        run: ./projects/sethcore/rtl/tb/run_sim.sh CORE=pipeline
       - name: Run HapiCore bf16 multiplier testbench
         run: ./projects/hapicore/rtl/tb/run_sim.sh CORE=mul
       - name: Run HapiCore bf16 adder testbench

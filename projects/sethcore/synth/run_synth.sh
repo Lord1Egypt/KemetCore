@@ -17,24 +17,26 @@ for core in seth_alu seth_imm seth_regfile seth_aluctl seth_decode; do
     echo "  -> reports/${core}.stat (0 latches asserted)"
 done
 
-# seth_core is the full integrated single-cycle CPU. It embeds seth_muldiv (whose
-# combinational divider explodes under full ABC), so we stop at the coarse netlist:
-# that proves the Phase-3 exit gate (0 latches; memory inferred as $mem, not flops)
-# deterministically in <1s. Skipped under CI (the stock apt Yosys is slow on the
-# muldiv cloud); reports/seth_core.stat is the committed evidence.
+# seth_core (single-cycle) and seth_pipeline (5-stage) are full integrated CPUs.
+# Both embed seth_muldiv (whose combinational divider explodes under full ABC), so
+# we stop at the coarse netlist: that proves the Phase-3 exit gate (0 latches;
+# memory inferred as $mem, not flops) deterministically in <1s. Skipped under CI
+# (the stock apt Yosys is slow on the muldiv cloud); reports/*.stat are the evidence.
+SUBS="../rtl/seth_decode.sv ../rtl/seth_imm.sv ../rtl/seth_aluctl.sv \
+      ../rtl/seth_alu.sv ../rtl/seth_muldiv.sv ../rtl/seth_regfile.sv"
 if [ -z "${CI:-}" ]; then
-    SRCS="../rtl/seth_decode.sv ../rtl/seth_imm.sv ../rtl/seth_aluctl.sv \
-          ../rtl/seth_alu.sv ../rtl/seth_muldiv.sv ../rtl/seth_regfile.sv ../rtl/seth_core.sv"
-    echo "=== synthesizing seth_core (coarse, 0-latch check) ==="
-    "$YOSYS" -ql "reports/seth_core.log" -p "
-        read_verilog -sv $SRCS;
-        hierarchy -top seth_core;
-        synth -top seth_core -run :fine;
-        select -assert-none t:\$_DLATCH_* t:\$dlatch;
-        tee -o reports/seth_core.stat stat
-    "
-    echo "  -> reports/seth_core.stat (0 latches asserted)"
+    for top in seth_core seth_pipeline; do
+        echo "=== synthesizing $top (coarse, 0-latch check) ==="
+        "$YOSYS" -ql "reports/${top}.log" -p "
+            read_verilog -sv $SUBS ../rtl/${top}.sv;
+            hierarchy -top ${top};
+            synth -top ${top} -run :fine;
+            select -assert-none t:\$_DLATCH_* t:\$dlatch;
+            tee -o reports/${top}.stat stat
+        "
+        echo "  -> reports/${top}.stat (0 latches asserted)"
+    done
 else
-    echo "=== skipping seth_core synth under CI (see committed reports/seth_core.stat) ==="
+    echo "=== skipping CPU synth (seth_core/seth_pipeline) under CI (see committed reports/*.stat) ==="
 fi
 echo "ALL SYNTHESIZED ✅ (no latches)"
