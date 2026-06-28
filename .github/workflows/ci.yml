@@ -101,6 +101,8 @@ jobs:
         run: ./projects/atumcore/rtl/tb/run_sim.sh CORE=vsetvl
       - name: Run AtumCore single-cycle vector core testbench
         run: ./projects/atumcore/rtl/tb/run_sim.sh CORE=vcore
+      - name: Run AtumCore compare-to-mask testbench
+        run: ./projects/atumcore/rtl/tb/run_sim.sh CORE=vmask
 
   synth-yosys:
     name: Phase 3 synthesis (Yosys, 0-latch check)
