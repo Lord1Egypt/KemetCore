@@ -12,6 +12,7 @@
 #   make CORE=viota              -> atum_viota (mask->index: viota/vid)
 #   make CORE=vcompress          -> atum_vcompress (stream compaction / filter)
 #   make CORE=vrgather           -> atum_vrgather (register gather / permute)
+#   make CORE=vslide             -> atum_vslide (slideup / slidedown)
 TOPLEVEL_LANG = verilog
 SIM ?= verilator
 CORE ?= valu
@@ -51,6 +52,10 @@ else ifeq ($(CORE),vrgather)
   VERILOG_SOURCES = $(PWD)/../atum_vrgather.sv
   TOPLEVEL = atum_vrgather
   MODULE   = test_vrgather
+else ifeq ($(CORE),vslide)
+  VERILOG_SOURCES = $(PWD)/../atum_vslide.sv
+  TOPLEVEL = atum_vslide
+  MODULE   = test_vslide
 else ifeq ($(CORE),vregfile)
   VERILOG_SOURCES = $(PWD)/../atum_vregfile.sv
   TOPLEVEL = atum_vregfile

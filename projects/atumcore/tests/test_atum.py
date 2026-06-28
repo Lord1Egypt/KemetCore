@@ -186,6 +186,23 @@ def test_vrgather():
     assert list(vu.vrgather(1, 2)) == [13, 12, 11, 10, 0, 0, 0, 0]
 
 
+def test_vslide():
+    vu = g.VectorUnit()
+    vu.load(1, [10, 11, 12, 13, 14, 15, 16, 17])
+    # slideup by 2: lanes 0,1 -> 0; lane i -> src[i-2]
+    assert list(vu.vslideup(1, 2)) == [0, 0, 10, 11, 12, 13, 14, 15]
+    # slidedown by 2: lane i -> src[i+2]; lanes sliding past vl -> 0
+    assert list(vu.vslidedown(1, 2)) == [12, 13, 14, 15, 16, 17, 0, 0]
+    # offset 0 = identity within vl
+    assert list(vu.vslideup(1, 0)) == [10, 11, 12, 13, 14, 15, 16, 17]
+    # offset >= vl -> all 0
+    assert list(vu.vslidedown(1, 8)) == [0] * 8
+    # vl gating
+    vu.vl = 4
+    assert list(vu.vslideup(1, 1)) == [0, 10, 11, 12, 0, 0, 0, 0]
+    assert list(vu.vslidedown(1, 1)) == [11, 12, 13, 0, 0, 0, 0, 0]
+
+
 def test_vredsum():
     vu = g.VectorUnit()
     data = [3, 1, 4, 1, 5, 9, 2, 6]
