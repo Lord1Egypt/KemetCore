@@ -16,5 +16,7 @@ Run: `pytest projects/atumcore/tests -v`
 | `rtl: test_vfpu (cocotb)` | atum_vfpu.sv (fp32 vfadd/vfmul) == golden on fp corners + 5000 random | ✅ |
 | `rtl: test_vredu (cocotb)` | atum_vredu.sv (vredsum/vredmax) == golden on directed + 6000 random | ✅ |
 | `rtl: test_vexec (cocotb)` | atum_vexec.sv integrated unit == golden on directed + 6000 random mixed ALU/FP/RED ops | ✅ |
+| `rtl: test_vregfile (cocotb)` | atum_vregfile.sv == model on 4000 rw cycles + reset | ✅ |
+| `rtl: test_vsetvl (cocotb)` | atum_vsetvl.sv VL=min(avl,VLMAX) == golden on edges + 2000 random | ✅ |
 
-**10/10 tests passing.**
+**12/12 tests passing.**

@@ -3,6 +3,8 @@
 #   make CORE=vfpu               -> atum_vfpu (fp32 vector lane: vfadd/vfmul)
 #   make CORE=vredu              -> atum_vredu (vredsum/vredmax reduction)
 #   make CORE=vexec              -> atum_vexec (integrated vector execute unit)
+#   make CORE=vregfile           -> atum_vregfile (vector register file)
+#   make CORE=vsetvl             -> atum_vsetvl (VL = min(avl, VLMAX))
 TOPLEVEL_LANG = verilog
 SIM ?= verilator
 CORE ?= valu
@@ -10,7 +12,15 @@ CORE ?= valu
 PWD := $(shell pwd)
 HAPI := $(PWD)/../../../hapicore/rtl
 
-ifeq ($(CORE),vexec)
+ifeq ($(CORE),vregfile)
+  VERILOG_SOURCES = $(PWD)/../atum_vregfile.sv
+  TOPLEVEL = atum_vregfile
+  MODULE   = test_vregfile
+else ifeq ($(CORE),vsetvl)
+  VERILOG_SOURCES = $(PWD)/../atum_vsetvl.sv
+  TOPLEVEL = atum_vsetvl
+  MODULE   = test_vsetvl
+else ifeq ($(CORE),vexec)
   VERILOG_SOURCES = $(PWD)/../atum_valu.sv $(PWD)/../atum_vfpu.sv \
                     $(PWD)/../atum_vredu.sv $(HAPI)/hapi_fp32_mul.sv \
                     $(HAPI)/hapi_fp32_add.sv $(PWD)/../atum_vexec.sv
