@@ -345,6 +345,26 @@ class VectorUnit:
                 out[i] = src[j] if j < self.vl else 0
         return out
 
+    def vslide1up(self, vs, x):
+        """Slide up by 1, inserting scalar x at lane 0: vd[0]=x, vd[i]=vs[i-1]
+        for 0 < i < vl. Tail lanes read 0."""
+        src = self.vreg[vs]
+        out = np.zeros(VLMAX, dtype=np.uint32)
+        for i in range(VLMAX):
+            if i < self.vl:
+                out[i] = np.uint32(x & U32) if i == 0 else src[i - 1]
+        return out
+
+    def vslide1down(self, vs, x):
+        """Slide down by 1, inserting scalar x at the top active lane: vd[vl-1]=x,
+        vd[i]=vs[i+1] for i < vl-1. Tail lanes read 0."""
+        src = self.vreg[vs]
+        out = np.zeros(VLMAX, dtype=np.uint32)
+        for i in range(VLMAX):
+            if i < self.vl:
+                out[i] = np.uint32(x & U32) if i == self.vl - 1 else src[i + 1]
+        return out
+
     # -- merge / select ---------------------------------------------------- #
     def vmerge(self, vs1, vs2, m):
         """Mask-driven element select: vd[i] = vs1[i] if m[i] else vs2[i], for
