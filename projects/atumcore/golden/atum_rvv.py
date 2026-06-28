@@ -240,6 +240,22 @@ class VectorUnit:
                 out[i] = i
         return out
 
+    # -- compress ---------------------------------------------------------- #
+    def vcompress(self, vs, m):
+        """Pack the source elements whose compress-mask bit is set (among i < vl)
+        contiguously into the low lanes of the result, preserving order; the
+        remaining high lanes read 0. This is stream compaction / filter — the kept
+        element from source lane i lands at lane viota(m)[i]."""
+        m = np.asarray(m, dtype=np.uint8) & 1
+        src = self.vreg[vs]
+        out = np.zeros(VLMAX, dtype=np.uint32)
+        j = 0
+        for i in range(VLMAX):
+            if i < self.vl and m[i]:
+                out[j] = src[i]
+                j += 1
+        return out
+
     # -- fp ops ------------------------------------------------------------ #
     def vfadd(self, vd, vs1, vs2, mask=None):
         a = self.vreg[vs1].view(np.float32)

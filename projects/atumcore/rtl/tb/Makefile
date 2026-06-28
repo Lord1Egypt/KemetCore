@@ -10,6 +10,7 @@
 #   make CORE=vmlogic            -> atum_vmlogic (mask logic: vmand/vmor/vmxor/...)
 #   make CORE=vmpopc             -> atum_vmpopc (mask reduce: vcpop/vfirst)
 #   make CORE=viota              -> atum_viota (mask->index: viota/vid)
+#   make CORE=vcompress          -> atum_vcompress (stream compaction / filter)
 TOPLEVEL_LANG = verilog
 SIM ?= verilator
 CORE ?= valu
@@ -41,6 +42,10 @@ else ifeq ($(CORE),viota)
   VERILOG_SOURCES = $(PWD)/../atum_viota.sv
   TOPLEVEL = atum_viota
   MODULE   = test_viota
+else ifeq ($(CORE),vcompress)
+  VERILOG_SOURCES = $(PWD)/../atum_vcompress.sv
+  TOPLEVEL = atum_vcompress
+  MODULE   = test_vcompress
 else ifeq ($(CORE),vregfile)
   VERILOG_SOURCES = $(PWD)/../atum_vregfile.sv
   TOPLEVEL = atum_vregfile
