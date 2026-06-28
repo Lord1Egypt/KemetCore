@@ -65,6 +65,18 @@ echo "=== synthesizing atum_vredu (vector reduction unit) ==="
 "
 echo "  -> reports/atum_vredu.stat (0 latches asserted)"
 
+# atum_vregfile + atum_vsetvl are light (regs + a comparator) -> full synth always.
+for core in atum_vregfile atum_vsetvl; do
+    echo "=== synthesizing $core ==="
+    "$YOSYS" -ql "reports/${core}.log" -p "
+        read_verilog -sv ../rtl/${core}.sv;
+        synth -top ${core};
+        select -assert-none t:\$_DLATCH_* t:\$dlatch;
+        tee -o reports/${core}.stat stat
+    "
+    echo "  -> reports/${core}.stat (0 latches asserted)"
+done
+
 # atum_vexec integrates valu + vfpu (fp32 multipliers) + vredu. Like vfpu, full ABC
 # mapping is large; under $CI stop at the coarse 0-latch netlist, committed .stat full.
 if [ -z "${CI:-}" ]; then

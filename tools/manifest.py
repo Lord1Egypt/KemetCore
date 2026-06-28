@@ -416,7 +416,11 @@ PROJECTS = [
                  "1=FP->atum_vfpu, 2=RED->atum_vredu) + subop and muxes to one uniform vector output "
                  "(a reduction scalar lands in element 0, the rest keep vd_old). AtumCore's integration "
                  "capstone (like seth_core for SethCore). Bit-exact vs golden on directed + 6000 random "
-                 "MIXED ops (int incl vmacc / fp vfadd-vfmul / vredsum-vredmax); 0-latch (CI coarse).",
+                 "MIXED ops (int incl vmacc / fp vfadd-vfmul / vredsum-vredmax); 0-latch (CI coarse). "
+                 "atum_vregfile.sv — NREGS x VLEN vector register file (2 async read + 1 sync write, "
+                 "sync reset, no hardwired-zero since RVV v0 is a mask reg) verified on 4000 rw cycles; "
+                 "atum_vsetvl.sv — VL = min(AVL, VLMAX) combinational, vs golden on edges + 2000 random. "
+                 "Both full-synth 0 latches (vregfile ~40.8K cells DFF-heavy, vsetvl ~32).",
         "checkpoints": [
             ("AT.1", "Golden: RVV subset + vsetvl semantics", 0, "done"),
             ("AT.2", "Golden: masked ops + reductions", 0, "done"),
@@ -426,6 +430,8 @@ PROJECTS = [
             ("AT.8", "RTL: fp32 vector lane (atum_vfpu, vfadd/vfmul over HapiCore fp32) + cocotb", 2, "done"),
             ("AT.9", "RTL: vector reduction unit (atum_vredu, vredsum/vredmax) + cocotb", 2, "done"),
             ("AT.10", "RTL: integrated vector execute unit (atum_vexec) + cocotb vs golden", 2, "done"),
+            ("AT.11", "RTL: vector register file (atum_vregfile) + vsetvl (atum_vsetvl) + cocotb", 2, "done"),
+            ("AT.12", "RTL: single-cycle vector core (atum_vcore) running micro-programs", 2, "todo"),
             ("AT.13", "P&R: GDSII at 500 MHz", 4, "todo"),
         ],
         "tests": [
@@ -439,6 +445,8 @@ PROJECTS = [
             ("rtl: test_vfpu (cocotb)", "atum_vfpu.sv (fp32 vfadd/vfmul) == golden on fp corners + 5000 random", "pass"),
             ("rtl: test_vredu (cocotb)", "atum_vredu.sv (vredsum/vredmax) == golden on directed + 6000 random", "pass"),
             ("rtl: test_vexec (cocotb)", "atum_vexec.sv integrated unit == golden on directed + 6000 random mixed ALU/FP/RED ops", "pass"),
+            ("rtl: test_vregfile (cocotb)", "atum_vregfile.sv == model on 4000 rw cycles + reset", "pass"),
+            ("rtl: test_vsetvl (cocotb)", "atum_vsetvl.sv VL=min(avl,VLMAX) == golden on edges + 2000 random", "pass"),
         ],
     },
     {
