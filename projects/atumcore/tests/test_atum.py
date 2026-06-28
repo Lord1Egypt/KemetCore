@@ -439,3 +439,9 @@ def test_vfmacc_fp():
     vu.load_f32(3, acc)
     vu.vfmsac(3, 1, 2)                       # x*y - acc
     assert np.allclose(vu.read_f32(3), x * y - acc, atol=1e-5)
+    vu.load_f32(3, acc)
+    vu.vfnmacc(3, 1, 2)                      # -(x*y) - acc
+    assert np.allclose(vu.read_f32(3), -(x * y) - acc, atol=1e-5)
+    vu.load_f32(3, acc)
+    vu.vfnmsac(3, 1, 2)                      # -(x*y) + acc
+    assert np.allclose(vu.read_f32(3), -(x * y) + acc, atol=1e-5)

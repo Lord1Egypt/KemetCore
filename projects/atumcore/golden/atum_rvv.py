@@ -446,6 +446,24 @@ class VectorUnit:
                         for i in range(VLMAX)], dtype=np.uint32)
         self._wr_int(vd, res.astype(np.int64), mask)
 
+    def vfnmacc(self, vd, vs1, vs2, mask=None):
+        """vd = -(vs1*vs2) - vd (fused) == fma(-vs1, vs2, -vd)."""
+        a = self.vreg[vs1].astype(np.uint32) ^ np.uint32(0x80000000)
+        b = self.vreg[vs2].astype(np.uint32)
+        c = self.vreg[vd].astype(np.uint32) ^ np.uint32(0x80000000)
+        res = np.array([self._fma_bits(int(a[i]), int(b[i]), int(c[i]))
+                        for i in range(VLMAX)], dtype=np.uint32)
+        self._wr_int(vd, res.astype(np.int64), mask)
+
+    def vfnmsac(self, vd, vs1, vs2, mask=None):
+        """vd = -(vs1*vs2) + vd (fused) == fma(-vs1, vs2, vd)."""
+        a = self.vreg[vs1].astype(np.uint32) ^ np.uint32(0x80000000)
+        b = self.vreg[vs2].astype(np.uint32)
+        c = self.vreg[vd].astype(np.uint32)
+        res = np.array([self._fma_bits(int(a[i]), int(b[i]), int(c[i]))
+                        for i in range(VLMAX)], dtype=np.uint32)
+        self._wr_int(vd, res.astype(np.int64), mask)
+
     # -- fp compare (vd = mask, 1 bit per lane) ---------------------------- #
     def _fcmp(self, vs1, vs2, fn, mask):
         """Per-lane fp32 compare producing a length-VLMAX 0/1 mask. numpy fp compares

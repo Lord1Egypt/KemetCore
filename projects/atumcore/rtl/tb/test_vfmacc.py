@@ -57,7 +57,7 @@ def golden(op, vs1, vs2, vd_old, vl, mask_bits):
     vu.vreg[3] = np.array(vd_old, dtype=np.uint32)
     vu.vl = vl
     mask = [bool((mask_bits >> i) & 1) for i in range(VLMAX)]
-    (vu.vfmsac if op else vu.vfmacc)(3, 1, 2, mask=mask)
+    (vu.vfmacc, vu.vfmsac, vu.vfnmacc, vu.vfnmsac)[op](3, 1, 2, mask=mask)
     return [int(x) for x in vu.vreg[3].astype(np.uint32)]
 
 
@@ -71,7 +71,7 @@ async def check(dut, op, vs1, vs2, vd_old, vl, mask_bits):
     await Timer(1, units="ns")
     got = unpack(dut.vd_new.value)
     exp = golden(op, vs1, vs2, vd_old, vl, mask_bits)
-    name = "vfmsac" if op else "vfmacc"
+    name = ("vfmacc", "vfmsac", "vfnmacc", "vfnmsac")[op]
     for i in range(VLMAX):
         if is_nan(got[i]) and is_nan(exp[i]):
             continue
@@ -89,23 +89,23 @@ async def test_directed(dut):
          0x00800000, 0x40490FDB, 0x3F800000]
     c = [0x3F000000, 0x40400000, 0x3F800000, 0x3F800000, 0xFF800000,
          0x00000001, 0x40000000, 0xBF800000]
-    for op in (0, 1):
+    for op in (0, 1, 2, 3):
         await check(dut, op, a, b, c, 8, 0xFF)         # full
         await check(dut, op, a, b, c, 0, 0xFF)         # vl=0: accumulator untouched
         await check(dut, op, a, b, c, 5, 0b00101)      # partial vl + sparse mask
         await check(dut, op, a, b, c, 8, 0b10101010)
-    dut._log.info("atum_vfmacc: directed fma corners (zeros/inf/nan/cancel) match golden")
+    dut._log.info("atum_vfmacc: directed fma family corners (zeros/inf/nan/cancel) match golden")
 
 
 @cocotb.test()
 async def test_random(dut):
     rng = random.Random(0xFADDED)
     for _ in range(4000):
-        op = rng.randint(0, 1)
+        op = rng.randint(0, 3)
         vs1 = [rand_bits(rng) for _ in range(VLMAX)]
         vs2 = [rand_bits(rng) for _ in range(VLMAX)]
         old = [rand_bits(rng) for _ in range(VLMAX)]
         vl = rng.randint(0, VLMAX)
         mask = rng.getrandbits(VLMAX)
         await check(dut, op, vs1, vs2, old, vl, mask)
-    dut._log.info("atum_vfmacc: 4000 random fp32 FMAs match golden (vfmacc/vfmsac, all vl/mask)")
+    dut._log.info("atum_vfmacc: 4000 random fp32 FMAs match golden (macc/msac/nmacc/nmsac, all vl/mask)")
