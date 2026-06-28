@@ -4,6 +4,10 @@ A small length-agnostic vector machine: a vector register file, vsetvl semantics
 (VL = min(avl, VLMAX)), integer + fp element ops, masked execution, and reductions.
 Integer elements are 32-bit (wrap on overflow); fp ops use fp32.
 """
+import os
+import struct
+import sys
+
 import numpy as np
 
 VLEN = 256
@@ -11,6 +15,13 @@ ELEN = 32
 VLMAX = VLEN // ELEN          # 8 elements per vector at SEW=32
 NREGS = 32
 U32 = (1 << 32) - 1
+
+# Single-rounded fp32 FMA shared with HapiCore (the RTL composes the verified
+# hapi_fp32_fma, so the golden references the SAME reference to stay bit-exact).
+_HAPI_GOLDEN = os.path.join(os.path.dirname(__file__), '..', '..', 'hapicore', 'golden')
+if _HAPI_GOLDEN not in sys.path:
+    sys.path.insert(0, _HAPI_GOLDEN)
+from hapi_fpu import fp_fma as _hapi_fp_fma  # noqa: E402
 
 
 class VectorUnit:
@@ -407,6 +418,33 @@ class VectorUnit:
         out = self.vreg[vd].view(np.float32).copy()
         out[sel] = result.astype(np.float32)[sel]
         self.vreg[vd] = out.view(np.uint32)
+
+    # -- fp fused multiply-add (vd = vs1*vs2 +/- vd) ----------------------- #
+    @staticmethod
+    def _fma_bits(abits, bbits, cbits):
+        a = struct.unpack('<f', struct.pack('<I', abits & U32))[0]
+        b = struct.unpack('<f', struct.pack('<I', bbits & U32))[0]
+        c = struct.unpack('<f', struct.pack('<I', cbits & U32))[0]
+        r = _hapi_fp_fma(a, b, c, 'fp32')                 # single-rounded fp32
+        return struct.unpack('<I', struct.pack('<f', np.float32(r)))[0]
+
+    def vfmacc(self, vd, vs1, vs2, mask=None):
+        """vd = vs1*vs2 + vd (fused, one rounding). vd is the accumulator."""
+        a = self.vreg[vs1].astype(np.uint32)
+        b = self.vreg[vs2].astype(np.uint32)
+        c = self.vreg[vd].astype(np.uint32)
+        res = np.array([self._fma_bits(int(a[i]), int(b[i]), int(c[i]))
+                        for i in range(VLMAX)], dtype=np.uint32)
+        self._wr_int(vd, res.astype(np.int64), mask)
+
+    def vfmsac(self, vd, vs1, vs2, mask=None):
+        """vd = vs1*vs2 - vd (fused) == fma(vs1, vs2, -vd)."""
+        a = self.vreg[vs1].astype(np.uint32)
+        b = self.vreg[vs2].astype(np.uint32)
+        c = self.vreg[vd].astype(np.uint32) ^ np.uint32(0x80000000)
+        res = np.array([self._fma_bits(int(a[i]), int(b[i]), int(c[i]))
+                        for i in range(VLMAX)], dtype=np.uint32)
+        self._wr_int(vd, res.astype(np.int64), mask)
 
     # -- fp compare (vd = mask, 1 bit per lane) ---------------------------- #
     def _fcmp(self, vs1, vs2, fn, mask):

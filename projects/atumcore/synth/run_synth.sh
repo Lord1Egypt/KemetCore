@@ -262,6 +262,19 @@ else
 fi
 echo "  -> reports/atum_vfcvt.stat (0 latches asserted)"
 
+# atum_vfmacc embeds VLMAX hapi_fp32_fma cores (each a 128-bit-window fused MAC). Full
+# ABC mapping of 8 FMA cores is impractical (and apt-yosys OOMs on even one FMA), so we
+# always stop at the coarse 0-latch netlist; the per-core full gate-level is evidenced
+# in HapiCore's committed hapi_fp32_fma stat. Reports the coarse netlist either way.
+echo "=== synthesizing atum_vfmacc (fp32 fused multiply-add, coarse 0-latch) ==="
+"$YOSYS" -ql "reports/atum_vfmacc.log" -p "
+    read_verilog -sv $HAPI/hapi_fp32_fma.sv ../rtl/atum_vfmacc.sv;
+    synth -top atum_vfmacc -run :fine;
+    select -assert-none t:\$_DLATCH_* t:\$dlatch;
+    tee -o reports/atum_vfmacc.stat stat
+"
+echo "  -> reports/atum_vfmacc.stat (0 latches asserted)"
+
 # atum_vmfcmp is a VLMAX-wide fp comparator array (keys + compares, no multipliers) -> full.
 echo "=== synthesizing atum_vmfcmp (fp32 compare-to-mask unit, full) ==="
 "$YOSYS" -ql "reports/atum_vmfcmp.log" -p "

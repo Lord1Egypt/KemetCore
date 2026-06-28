@@ -23,6 +23,7 @@
 #   make CORE=vfcvt              -> atum_vfcvt (int<->fp32 convert: vfcvt.*)
 #   make CORE=vfsub              -> atum_vfsub (fp32 vfsub / vfrsub)
 #   make CORE=vmfcmp             -> atum_vmfcmp (fp32 compare->mask: vmfeq/vmflt/...)
+#   make CORE=vfmacc             -> atum_vfmacc (fp32 fused MAC: vfmacc / vfmsac)
 TOPLEVEL_LANG = verilog
 SIM ?= verilator
 CORE ?= valu
@@ -106,6 +107,10 @@ else ifeq ($(CORE),vmfcmp)
   VERILOG_SOURCES = $(PWD)/../atum_vmfcmp.sv
   TOPLEVEL = atum_vmfcmp
   MODULE   = test_vmfcmp
+else ifeq ($(CORE),vfmacc)
+  VERILOG_SOURCES = $(HAPI)/hapi_fp32_fma.sv $(PWD)/../atum_vfmacc.sv
+  TOPLEVEL = atum_vfmacc
+  MODULE   = test_vfmacc
 else ifeq ($(CORE),vregfile)
   VERILOG_SOURCES = $(PWD)/../atum_vregfile.sv
   TOPLEVEL = atum_vregfile
