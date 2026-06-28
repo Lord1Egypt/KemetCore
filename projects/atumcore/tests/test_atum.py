@@ -203,6 +203,19 @@ def test_vslide():
     assert list(vu.vslidedown(1, 1)) == [11, 12, 13, 0, 0, 0, 0, 0]
 
 
+def test_vmerge():
+    vu = g.VectorUnit()
+    vu.load(1, [10, 11, 12, 13, 14, 15, 16, 17])     # taken where mask=1
+    vu.load(2, [20, 21, 22, 23, 24, 25, 26, 27])     # taken where mask=0
+    m = [1, 0, 1, 0, 1, 0, 1, 0]
+    assert list(vu.vmerge(1, 2, m)) == [10, 21, 12, 23, 14, 25, 16, 27]
+    assert list(vu.vmerge(1, 2, [1] * 8)) == [10, 11, 12, 13, 14, 15, 16, 17]
+    assert list(vu.vmerge(1, 2, [0] * 8)) == [20, 21, 22, 23, 24, 25, 26, 27]
+    # vl gating
+    vu.vl = 3
+    assert list(vu.vmerge(1, 2, m)) == [10, 21, 12, 0, 0, 0, 0, 0]
+
+
 def test_vredsum():
     vu = g.VectorUnit()
     data = [3, 1, 4, 1, 5, 9, 2, 6]
