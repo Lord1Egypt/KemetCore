@@ -117,6 +117,8 @@ jobs:
         run: ./projects/atumcore/rtl/tb/run_sim.sh CORE=vrgather
       - name: Run AtumCore vector slide testbench
         run: ./projects/atumcore/rtl/tb/run_sim.sh CORE=vslide
+      - name: Run AtumCore vector merge testbench
+        run: ./projects/atumcore/rtl/tb/run_sim.sh CORE=vmerge
 
   synth-yosys:
     name: Phase 3 synthesis (Yosys, 0-latch check)

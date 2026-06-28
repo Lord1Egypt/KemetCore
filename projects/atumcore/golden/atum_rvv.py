@@ -294,6 +294,20 @@ class VectorUnit:
                 out[i] = src[j] if j < self.vl else 0
         return out
 
+    # -- merge / select ---------------------------------------------------- #
+    def vmerge(self, vs1, vs2, m):
+        """Mask-driven element select: vd[i] = vs1[i] if m[i] else vs2[i], for
+        i < vl (tail reads 0). The data consumer of the mask toolkit — picks
+        between two sources per lane (e.g. blend the result of a predicated op)."""
+        a = self.vreg[vs1]
+        b = self.vreg[vs2]
+        m = np.asarray(m, dtype=np.uint8) & 1
+        out = np.zeros(VLMAX, dtype=np.uint32)
+        for i in range(VLMAX):
+            if i < self.vl:
+                out[i] = a[i] if m[i] else b[i]
+        return out
+
     # -- fp ops ------------------------------------------------------------ #
     def vfadd(self, vd, vs1, vs2, mask=None):
         a = self.vreg[vs1].view(np.float32)
