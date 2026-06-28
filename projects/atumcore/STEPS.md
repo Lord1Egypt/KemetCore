@@ -4,7 +4,7 @@
 
 _Auto-generated from `tools/manifest.py` — do not edit by hand; edit the manifest and run `python tools/gen_tracking.py`._
 
-**Scope (current):** Phase 0/1 implements an RVV-subset golden (vsetvl, vadd/vsub/vmul/vmacc, logic/shift, masked ops, vfadd/vfmul, vredsum) and an 8-lane pymodel.
+**Scope (current):** Phase 0/1 implements an RVV-subset golden (vsetvl, vadd/vsub/vmul/vmacc, logic/shift, masked ops, vfadd/vfmul, vredsum) and an 8-lane pymodel. Phase 2 IN PROGRESS: atum_valu.sv — a VLMAX(=8)-lane combinational vector integer ALU (add/sub/mul/and/or/xor/sll/srl) with full RVV active-element semantics: a lane writes only when body-active (i<vl) AND mask-active, else the destination element is undisturbed; operands packed little-endian by lane. Bit-exact vs the golden VectorUnit on directed corners + 6000 random ops (all ops/VL/mask). Phase 3: atum_valu full-synth 0 latches (~33K cells, eight 32-bit multipliers; CI uses a coarse 0-latch check, committed .stat is the full gate-level evidence).
 
 ## Ordered steps (6-phase lifecycle)
 
