@@ -140,7 +140,7 @@
     <p class="lead muted">Each accelerator is named for a Kemetic god whose domain mirrors its function — and each targets a real workload in AI, cryptography, graphics, or general compute.</p>
     <div class="grid g3">
       <div class="card"><span class="num">00</span><div class="deity">Ra · the sun, creator</div><h3>RaCore</h3><div class="dom">Heterogeneous AI SoC — the capstone that integrates every other core.</div><span class="pill prog">P0·P1 ✓</span></div>
-      <div class="card"><span class="num">01</span><div class="deity">Seth · strength</div><h3>SethCore</h3><div class="dom">RV32IM CPU — now a working 5-stage pipeline.</div><span class="pill done">single-cycle + pipeline ✓</span></div>
+      <div class="card"><span class="num">01</span><div class="deity">Seth · strength</div><h3>SethCore</h3><div class="dom">RV32IM CPU — single-cycle, 5-stage pipeline + data forwarding.</div><span class="pill done">CPU + forwarding ✓</span></div>
       <div class="card"><span class="num">09</span><div class="deity">Hapi · the Nile flood</div><h3>HapiCore</h3><div class="dom">IEEE-754 FPU — mul, add, FMA (×3 formats), divide &amp; sqrt.</div><span class="pill done">FPU complete ✓</span></div>
       <div class="card"><span class="num">06</span><div class="deity">Anubis · the embalmer</div><h3>AnubisCore</h3><div class="dom">SHA-256 &amp; SHA-3 / Keccak hash engine.</div><span class="pill done">RTL verified ✓</span></div>
       <div class="card"><span class="num">07</span><div class="deity">Neith · weaver, war</div><h3>NeithCore</h3><div class="dom">ML-KEM (Kyber) lattice crypto — full NTT engine.</div><span class="pill prog">NTT verified</span></div>
@@ -149,7 +149,7 @@
       <div class="card"><span class="num">02</span><div class="deity">Ptah · the craftsman</div><h3>PtahConv</h3><div class="dom">Direct convolution accelerator.</div><span class="pill todo">golden + model</span></div>
       <div class="card"><span class="num">03</span><div class="deity">Imentet · the west</div><h3>ImentetCore</h3><div class="dom">Transformer attention unit.</div><span class="pill todo">golden + model</span></div>
       <div class="card"><span class="num">08</span><div class="deity">Sobek · the Nile, power</div><h3>SobekCore</h3><div class="dom">Ray–triangle intersector for graphics.</div><span class="pill todo">golden + model</span></div>
-      <div class="card"><span class="num">10</span><div class="deity">Atum · the complete one</div><h3>AtumCore</h3><div class="dom">RISC-V Vector (RVV) unit.</div><span class="pill todo">golden + model</span></div>
+      <div class="card"><span class="num">10</span><div class="deity">Atum · the complete one</div><h3>AtumCore</h3><div class="dom">RISC-V Vector (RVV) engine — integer + fp32 lanes, reductions.</div><span class="pill done">vector engine ✓</span></div>
     </div>
   </div>
 </section>
@@ -157,7 +157,7 @@
 <section id="built">
   <div class="wrap">
     <div class="kicker">Proven In Silicon-Ready RTL</div>
-    <h2>Two complete subsystems, built from first principles.</h2>
+    <h2>Three complete subsystems, built from first principles.</h2>
     <div class="grid g2">
       <div class="card">
         <h3>𓂧 HapiCore — a full IEEE-754 FPU</h3>
@@ -169,7 +169,13 @@
         <h3>𓁢 SethCore — a pipelined RV32IM CPU</h3>
         <p class="muted">A complete processor, assembled from individually-verified blocks:</p>
         <p style="margin:.2em 0"><b>ALU · mul/div · immediate-gen · register file · ALU-control · decode</b> → <b>single-cycle core</b> → <b>5-stage pipeline</b></p>
-        <p class="muted">The pipeline (IF/ID/EX/MEM/WB) uses hazard interlocks and branch flushing, and runs real programs — loops, recursion, memory, control flow — with its <b>full final register file matching the ISA simulator</b> bit-for-bit.</p>
+        <p class="muted">The pipeline (IF/ID/EX/MEM/WB) runs real programs — loops, recursion, memory, control flow — with its <b>full final register file matching the ISA simulator</b> bit-for-bit. A <b>data-forwarding</b> variant then bypasses results between stages, issuing dependent instructions back-to-back: identical architectural state in far fewer cycles (a dependent chain runs in <b>14 cycles instead of 44</b>), proven by running both pipelines side by side.</p>
+      </div>
+      <div class="card">
+        <h3>𓇋 AtumCore — a RISC-V vector engine</h3>
+        <p class="muted">A length-agnostic RVV datapath with full active-element semantics (per-lane mask + <code>vl</code>), composed from the verified primitives:</p>
+        <p style="margin:.2em 0"><b>integer lanes</b> (add/sub/mul/logic/shift · <b>vmacc</b>) · <b>fp32 lanes</b> (vfadd/vfmul over HapiCore) · <b>reductions</b> (vredsum/vredmax) → one <b>integrated execute unit</b></p>
+        <p class="muted">Every lane is bit-exact against the golden vector model across thousands of randomised ops, masks and vector lengths.</p>
       </div>
     </div>
   </div>
