@@ -88,6 +88,11 @@ class VectorUnit:
         self._binop(vd, vs1, vs2,
                     lambda a, b: (a & U32) >> (b & 31), mask)
 
+    def vsra(self, vd, vs1, vs2, mask=None):
+        a = self.vreg[vs1].astype(np.int32)                 # arithmetic shift
+        b = self.vreg[vs2]
+        self._wr_int(vd, (a >> (b & 31)).astype(np.uint32).astype(np.int64), mask)
+
     def vmacc(self, vd, vs1, vs2, mask=None):
         """vd += vs1 * vs2 (fused multiply-accumulate)."""
         a = self.vreg[vs1].astype(np.int64)

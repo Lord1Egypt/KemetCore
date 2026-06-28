@@ -32,6 +32,17 @@ def test_vminmax():
     assert list(vu.read(6)) == list(np.where(As > Bs, A, B))
 
 
+def test_vsra():
+    import numpy as np
+    vu = g.VectorUnit()
+    a = [0x80000000, 0xFFFFFFFF, 0x7FFFFFFF, 16, -8 & 0xFFFFFFFF, 1, 0, 0xDEADBEEF]
+    b = [1, 4, 1, 2, 3, 0, 31, 8]
+    vu.load(1, a); vu.load(2, b)
+    vu.vsra(3, 1, 2)
+    A = np.array(a, np.uint32).astype(np.int32); B = np.array(b, np.uint32)
+    assert list(vu.read(3)) == list((A >> (B & 31)).astype(np.uint32))
+
+
 def test_vmacc():
     vu = g.VectorUnit()
     vu.load(1, [2, 3, 4, 5, 6, 7, 8, 9])
