@@ -464,3 +464,23 @@ def test_vsadd_saturate():
     assert int(vu.vreg[5][0]) == 0xFFFFFFFE            # 0xFFFFFFFF - 1
     vu.vssub(6, 1, 2)
     assert int(vu.vreg[6][5]) == 0x80000000           # INT_MIN - 1 -> INT_MIN
+
+
+def test_vsmul_q31():
+    vu = g.VectorUnit()
+    vu.vreg[1] = np.array([0x80000000, 0x7FFFFFFF, 0x40000000, 0xC0000000,
+                           0, 0x7FFFFFFF, 0x40000000, 1], np.uint32)
+    vu.vreg[2] = np.array([0x80000000, 0x40000000, 0x40000000, 0x40000000,
+                           0x7FFFFFFF, 0x7FFFFFFF, 0x80000000, 1], np.uint32)
+    vu.vsmul(3, 1, 2)
+    # -1 * -1 (Q31) = +1.0 -> saturates to INT32_MAX
+    assert int(vu.vreg[3][0]) == 0x7FFFFFFF
+    # 0.5 * 0.5 (Q31) = 0.25 -> 0x20000000
+    assert int(vu.vreg[3][2]) == 0x20000000
+    # 0 * anything = 0
+    assert int(vu.vreg[3][4]) == 0
+    # cross-check against the golden roundoff formula on all lanes
+    a = vu.vreg[1].astype(np.int32).astype(np.int64)
+    b = vu.vreg[2].astype(np.int32).astype(np.int64)
+    exp = np.clip((a * b + (1 << 30)) >> 31, -(2**31), 2**31 - 1).astype(np.uint32)
+    assert list(vu.vreg[3]) == list(exp)

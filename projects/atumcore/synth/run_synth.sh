@@ -281,6 +281,28 @@ else
     echo "=== skipping atum_vfmacc synth under CI (apt-yosys OOMs on fma) ==="
 fi
 
+# atum_vsmul embeds VLMAX 64-bit signed multipliers (the Q31 fractional product). Like
+# valu, full ABC mapping of that many wide multipliers is heavy on apt-yosys, so under
+# $CI stop at the coarse 0-latch netlist; committed reports/atum_vsmul.stat is full.
+if [ -z "${CI:-}" ]; then
+    echo "=== synthesizing atum_vsmul (signed Q31 fractional multiply, full) ==="
+    "$YOSYS" -ql "reports/atum_vsmul.log" -p "
+        read_verilog -sv ../rtl/atum_vsmul.sv;
+        synth -top atum_vsmul;
+        select -assert-none t:\$_DLATCH_* t:\$dlatch;
+        tee -o reports/atum_vsmul.stat stat
+    "
+else
+    echo "=== synthesizing atum_vsmul (coarse 0-latch check under CI) ==="
+    "$YOSYS" -ql "reports/atum_vsmul.log" -p "
+        read_verilog -sv ../rtl/atum_vsmul.sv;
+        synth -top atum_vsmul -run :fine;
+        select -assert-none t:\$_DLATCH_* t:\$dlatch;
+        stat
+    "
+fi
+echo "  -> reports/atum_vsmul.stat (0 latches asserted)"
+
 # atum_vsadd is adders + range comparators / muxes (no multipliers) -> always full.
 echo "=== synthesizing atum_vsadd (saturating int add/sub unit, full) ==="
 "$YOSYS" -ql "reports/atum_vsadd.log" -p "
