@@ -51,6 +51,8 @@ jobs:
         run: ./projects/sethcore/rtl/tb/run_sim.sh CORE=core
       - name: Run SethCore 5-stage pipeline testbench
         run: ./projects/sethcore/rtl/tb/run_sim.sh CORE=pipeline
+      - name: Run SethCore forwarding-pipeline testbench (vs interlock + golden)
+        run: ./projects/sethcore/rtl/tb/run_sim.sh CORE=fwd
       - name: Run HapiCore bf16 multiplier testbench
         run: ./projects/hapicore/rtl/tb/run_sim.sh CORE=mul
       - name: Run HapiCore bf16 adder testbench

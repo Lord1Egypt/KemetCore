@@ -25,7 +25,7 @@ done
 SUBS="../rtl/seth_decode.sv ../rtl/seth_imm.sv ../rtl/seth_aluctl.sv \
       ../rtl/seth_alu.sv ../rtl/seth_muldiv.sv ../rtl/seth_regfile.sv"
 if [ -z "${CI:-}" ]; then
-    for top in seth_core seth_pipeline; do
+    for top in seth_core seth_pipeline seth_pipeline_fwd; do
         echo "=== synthesizing $top (coarse, 0-latch check) ==="
         "$YOSYS" -ql "reports/${top}.log" -p "
             read_verilog -sv $SUBS ../rtl/${top}.sv;
