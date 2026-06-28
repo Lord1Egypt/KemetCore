@@ -8,7 +8,7 @@ _Auto-generated from `tools/manifest.py`._
 | AT.2 | P0 | Golden: masked ops + reductions | ✅ |
 | AT.3 | P1 | pymodel: 8 ALU lanes | ✅ |
 | AT.4 | P1 | pymodel: strip-mined axpy | ✅ |
-| AT.6 | P2 | RTL: vector integer ALU lane array (atum_valu) + cocotb vs golden | ✅ |
+| AT.6 | P2 | RTL: vector integer ALU lane array (atum_valu, incl vmacc) + cocotb vs golden | ✅ |
 | AT.8 | P2 | RTL: fp32 vector lane (atum_vfpu, vfadd/vfmul over HapiCore fp32) + cocotb | ✅ |
 | AT.9 | P2 | RTL: vector reduction unit (atum_vredu, vredsum/vredmax) + cocotb | ✅ |
 | AT.13 | P4 | P&R: GDSII at 500 MHz | ⬜ |
