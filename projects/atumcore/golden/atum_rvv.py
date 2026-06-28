@@ -93,6 +93,9 @@ class VectorUnit:
         b = self.vreg[vs2]
         self._wr_int(vd, (a >> (b & 31)).astype(np.uint32).astype(np.int64), mask)
 
+    def vrsub(self, vd, vs1, vs2, mask=None):
+        self._binop(vd, vs1, vs2, lambda a, b: b - a, mask)
+
     def vmacc(self, vd, vs1, vs2, mask=None):
         """vd += vs1 * vs2 (fused multiply-accumulate)."""
         a = self.vreg[vs1].astype(np.int64)
