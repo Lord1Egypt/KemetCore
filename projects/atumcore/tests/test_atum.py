@@ -296,6 +296,23 @@ def test_vfclass():
     assert list(vu.vfclass(1))[2:] == [0] * 6
 
 
+def test_vmsbf():
+    vu = g.VectorUnit()
+    m = [0, 0, 1, 0, 1, 0, 0, 0]            # first set bit at lane 2
+    assert list(vu.vmsbf(m)) == [1, 1, 0, 0, 0, 0, 0, 0]   # before first
+    assert list(vu.vmsif(m)) == [1, 1, 1, 0, 0, 0, 0, 0]   # up to + incl first
+    assert list(vu.vmsof(m)) == [0, 0, 1, 0, 0, 0, 0, 0]   # only first
+    # empty mask: sbf/sif fill the body, sof all-0
+    z = [0] * 8
+    assert list(vu.vmsbf(z)) == [1] * 8
+    assert list(vu.vmsif(z)) == [1] * 8
+    assert list(vu.vmsof(z)) == [0] * 8
+    # vl gating: set bit beyond vl -> treated as empty body
+    vu.vl = 4
+    assert list(vu.vmsbf([0, 0, 0, 0, 1, 0, 0, 0])) == [1, 1, 1, 1, 0, 0, 0, 0]
+    assert list(vu.vmsof([0, 0, 0, 0, 1, 0, 0, 0])) == [0, 0, 0, 0, 0, 0, 0, 0]
+
+
 def test_vredsum():
     vu = g.VectorUnit()
     data = [3, 1, 4, 1, 5, 9, 2, 6]

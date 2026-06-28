@@ -1,0 +1,22 @@
+
+3. Printing statistics.
+
+=== atum_vmsbf ===
+
+        +----------Local Count, excluding submodules.
+        | 
+       88 wires
+      106 wire bits
+        4 public wires
+       22 public wire bits
+        4 ports
+       22 port bits
+       92 cells
+       13   $_ANDNOT_
+       34   $_AND_
+        1   $_MUX_
+       19   $_NAND_
+        2   $_NOR_
+        9   $_ORNOT_
+       14   $_OR_
+
