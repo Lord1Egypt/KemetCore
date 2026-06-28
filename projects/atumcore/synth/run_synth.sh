@@ -150,6 +150,16 @@ echo "=== synthesizing atum_vcompress (stream compaction unit, full) ==="
 "
 echo "  -> reports/atum_vcompress.stat (0 latches asserted)"
 
+# atum_vrgather is a VLMAX:1-per-lane mux tree (no arithmetic) -> always full.
+echo "=== synthesizing atum_vrgather (register gather unit, full) ==="
+"$YOSYS" -ql "reports/atum_vrgather.log" -p "
+    read_verilog -sv ../rtl/atum_vrgather.sv;
+    synth -top atum_vrgather;
+    select -assert-none t:\$_DLATCH_* t:\$dlatch;
+    tee -o reports/atum_vrgather.stat stat
+"
+echo "  -> reports/atum_vrgather.stat (0 latches asserted)"
+
 # atum_vcore embeds the whole vexec datapath (fp32 multipliers) + vreg array. Full
 # ABC mapping is large; under $CI stop at the coarse 0-latch netlist, committed .stat full.
 VC_SRCS="../rtl/atum_valu.sv ../rtl/atum_vfpu.sv ../rtl/atum_vredu.sv \

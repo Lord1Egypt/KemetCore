@@ -11,6 +11,7 @@
 #   make CORE=vmpopc             -> atum_vmpopc (mask reduce: vcpop/vfirst)
 #   make CORE=viota              -> atum_viota (mask->index: viota/vid)
 #   make CORE=vcompress          -> atum_vcompress (stream compaction / filter)
+#   make CORE=vrgather           -> atum_vrgather (register gather / permute)
 TOPLEVEL_LANG = verilog
 SIM ?= verilator
 CORE ?= valu
@@ -46,6 +47,10 @@ else ifeq ($(CORE),vcompress)
   VERILOG_SOURCES = $(PWD)/../atum_vcompress.sv
   TOPLEVEL = atum_vcompress
   MODULE   = test_vcompress
+else ifeq ($(CORE),vrgather)
+  VERILOG_SOURCES = $(PWD)/../atum_vrgather.sv
+  TOPLEVEL = atum_vrgather
+  MODULE   = test_vrgather
 else ifeq ($(CORE),vregfile)
   VERILOG_SOURCES = $(PWD)/../atum_vregfile.sv
   TOPLEVEL = atum_vregfile

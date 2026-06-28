@@ -172,6 +172,20 @@ def test_vcompress():
     assert list(vu.vcompress(1, [1, 0, 1, 0, 1, 1, 1, 1])) == [10, 12, 0, 0, 0, 0, 0, 0]
 
 
+def test_vrgather():
+    vu = g.VectorUnit()
+    vu.load(1, [10, 11, 12, 13, 14, 15, 16, 17])     # source
+    vu.load(2, [7, 6, 5, 4, 3, 2, 1, 0])             # reverse index
+    assert list(vu.vrgather(1, 2)) == [17, 16, 15, 14, 13, 12, 11, 10]
+    # broadcast lane0 + out-of-range index -> 0
+    vu.load(2, [0, 0, 99, 3, 8, 1, 2, 0xFFFF])
+    assert list(vu.vrgather(1, 2)) == [10, 10, 0, 13, 0, 11, 12, 0]
+    # vl gating: idx >= vl reads 0, tail lanes read 0
+    vu.vl = 4
+    vu.load(2, [3, 2, 1, 0, 0, 0, 0, 0])
+    assert list(vu.vrgather(1, 2)) == [13, 12, 11, 10, 0, 0, 0, 0]
+
+
 def test_vredsum():
     vu = g.VectorUnit()
     data = [3, 1, 4, 1, 5, 9, 2, 6]
