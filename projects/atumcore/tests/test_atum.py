@@ -141,6 +141,23 @@ def test_vmpopc():
     assert vu.vfirst(m, mask=[0, 1, 1, 1, 1, 1, 1, 1]) == -1
 
 
+def test_viota_vid():
+    vu = g.VectorUnit()
+    # viota = exclusive prefix sum of the mask
+    m = [1, 0, 1, 1, 0, 1, 0, 0]
+    assert list(vu.viota(m)) == [0, 1, 1, 2, 3, 3, 4, 4]
+    # vid = element index
+    assert list(vu.vid()) == [0, 1, 2, 3, 4, 5, 6, 7]
+    # vl gating: tail lanes read 0
+    vu.vl = 4
+    assert list(vu.vid()) == [0, 1, 2, 3, 0, 0, 0, 0]
+    assert list(vu.viota(m)) == [0, 1, 1, 2, 0, 0, 0, 0]
+    # v0.t-inactive source lanes don't advance the iota count
+    vu.vl = 8
+    assert list(vu.viota([1, 1, 1, 1, 0, 0, 0, 0],
+                         mask=[1, 0, 1, 1, 1, 1, 1, 1])) == [0, 0, 1, 2, 3, 3, 3, 3]
+
+
 def test_vredsum():
     vu = g.VectorUnit()
     data = [3, 1, 4, 1, 5, 9, 2, 6]
