@@ -327,6 +327,24 @@ class VectorUnit:
         out[sel] = result.astype(np.float32)[sel]
         self.vreg[vd] = out.view(np.uint32)
 
+    # -- fp sign injection ------------------------------------------------- #
+    def vfsgnj(self, vs1, vs2, op):
+        """Float sign injection: result = {sign, exponent+mantissa of vs1}, where the
+        sign comes from op: 0=sgnj (sign of vs2), 1=sgnjn (NOT sign of vs2),
+        2=sgnjx (sign(vs1) XOR sign(vs2)). Pure bit ops — the hardware behind fp
+        copysign / negate (sgnjn vs2=vs1) / abs (sgnjx vs2=vs1). Tail lanes read 0."""
+        a = self.vreg[vs1].astype(np.uint32)
+        b = self.vreg[vs2].astype(np.uint32)
+        out = np.zeros(VLMAX, dtype=np.uint32)
+        for i in range(VLMAX):
+            if i < self.vl:
+                mag = int(a[i]) & 0x7FFFFFFF
+                asign = (int(a[i]) >> 31) & 1
+                bsign = (int(b[i]) >> 31) & 1
+                s = (bsign, bsign ^ 1, asign ^ bsign)[op]
+                out[i] = (s << 31) | mag
+        return out
+
     # -- reductions -------------------------------------------------------- #
     def vredsum(self, vs, mask=None):
         act = self._active(mask)[:self.vl]
