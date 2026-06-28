@@ -158,6 +158,42 @@ class VectorUnit:
     def vmsle(self, vs1, vs2, mask=None):
         return self._cmp(vs1, vs2, lambda a, b: a <= b, True, mask)
 
+    # -- mask logical ops (mask = mask OP mask) ---------------------------- #
+    def _vmlogic(self, m1, m2, fn):
+        """Bitwise logic on two length-VLMAX 0/1 masks. Result bit i = fn(...) for
+        i < vl, else 0 (mask ops are unmasked; only the body is written here)."""
+        m1 = np.asarray(m1, dtype=np.uint8) & 1
+        m2 = np.asarray(m2, dtype=np.uint8) & 1
+        res = np.zeros(VLMAX, dtype=np.uint8)
+        for i in range(VLMAX):
+            if i < self.vl:
+                res[i] = fn(int(m1[i]), int(m2[i])) & 1
+        return res
+
+    def vmand(self, m1, m2):
+        return self._vmlogic(m1, m2, lambda a, b: a & b)
+
+    def vmor(self, m1, m2):
+        return self._vmlogic(m1, m2, lambda a, b: a | b)
+
+    def vmxor(self, m1, m2):
+        return self._vmlogic(m1, m2, lambda a, b: a ^ b)
+
+    def vmnand(self, m1, m2):
+        return self._vmlogic(m1, m2, lambda a, b: ~(a & b))
+
+    def vmnor(self, m1, m2):
+        return self._vmlogic(m1, m2, lambda a, b: ~(a | b))
+
+    def vmxnor(self, m1, m2):
+        return self._vmlogic(m1, m2, lambda a, b: ~(a ^ b))
+
+    def vmandn(self, m1, m2):
+        return self._vmlogic(m1, m2, lambda a, b: a & ~b)      # m1 AND NOT m2
+
+    def vmorn(self, m1, m2):
+        return self._vmlogic(m1, m2, lambda a, b: a | ~b)      # m1 OR  NOT m2
+
     # -- fp ops ------------------------------------------------------------ #
     def vfadd(self, vd, vs1, vs2, mask=None):
         a = self.vreg[vs1].view(np.float32)

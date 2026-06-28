@@ -102,6 +102,28 @@ def test_vmask_vl_and_mask():
     assert list(vu.vmsle(1, 2, mask=mask)) == [1, 0, 1, 1, 0, 0, 0, 0]
 
 
+def test_vmask_logic():
+    vu = g.VectorUnit()
+    m1 = [1, 1, 0, 0, 1, 0, 1, 0]
+    m2 = [1, 0, 1, 0, 1, 1, 0, 0]
+    assert list(vu.vmand(m1, m2))  == [a & b for a, b in zip(m1, m2)]
+    assert list(vu.vmor(m1, m2))   == [a | b for a, b in zip(m1, m2)]
+    assert list(vu.vmxor(m1, m2))  == [a ^ b for a, b in zip(m1, m2)]
+    assert list(vu.vmnand(m1, m2)) == [1 - (a & b) for a, b in zip(m1, m2)]
+    assert list(vu.vmnor(m1, m2))  == [1 - (a | b) for a, b in zip(m1, m2)]
+    assert list(vu.vmxnor(m1, m2)) == [1 - (a ^ b) for a, b in zip(m1, m2)]
+    assert list(vu.vmandn(m1, m2)) == [a & (1 - b) for a, b in zip(m1, m2)]
+    assert list(vu.vmorn(m1, m2))  == [a | (1 - b) for a, b in zip(m1, m2)]
+
+
+def test_vmask_logic_vl():
+    vu = g.VectorUnit()
+    vu.vl = 3
+    z = [0] * 8
+    # vmnand body would be 1 everywhere; only first vl=3 bits written, tail = 0
+    assert list(vu.vmnand(z, z)) == [1, 1, 1, 0, 0, 0, 0, 0]
+
+
 def test_vredsum():
     vu = g.VectorUnit()
     data = [3, 1, 4, 1, 5, 9, 2, 6]
