@@ -324,6 +324,21 @@ def test_vmv():
     assert list(vu.vmv_vv(1)) == [10, 11, 12, 0, 0, 0, 0, 0]
 
 
+def test_vslide1():
+    vu = g.VectorUnit()
+    vu.load(1, [10, 11, 12, 13, 14, 15, 16, 17])
+    assert list(vu.vslide1up(1, 99)) == [99, 10, 11, 12, 13, 14, 15, 16]
+    assert list(vu.vslide1down(1, 99)) == [11, 12, 13, 14, 15, 16, 17, 99]
+    # vl gating: slide1down inserts x at the top *active* lane (vl-1)
+    vu.vl = 4
+    assert list(vu.vslide1up(1, 99)) == [99, 10, 11, 12, 0, 0, 0, 0]
+    assert list(vu.vslide1down(1, 99)) == [11, 12, 13, 99, 0, 0, 0, 0]
+    # vl=1: both yield [x]
+    vu.vl = 1
+    assert list(vu.vslide1up(1, 99))[0] == 99
+    assert list(vu.vslide1down(1, 99))[0] == 99
+
+
 def test_vredsum():
     vu = g.VectorUnit()
     data = [3, 1, 4, 1, 5, 9, 2, 6]

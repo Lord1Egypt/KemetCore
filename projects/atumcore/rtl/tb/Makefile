@@ -19,6 +19,7 @@
 #   make CORE=vfclass            -> atum_vfclass (fp32 classify -> 10-bit class)
 #   make CORE=vmsbf              -> atum_vmsbf (mask set before/incl/only first)
 #   make CORE=vmv                -> atum_vmv (vmv.v.x splat / vmv.v.v copy)
+#   make CORE=vslide1            -> atum_vslide1 (vslide1up / vslide1down)
 TOPLEVEL_LANG = verilog
 SIM ?= verilator
 CORE ?= valu
@@ -86,6 +87,10 @@ else ifeq ($(CORE),vmv)
   VERILOG_SOURCES = $(PWD)/../atum_vmv.sv
   TOPLEVEL = atum_vmv
   MODULE   = test_vmv
+else ifeq ($(CORE),vslide1)
+  VERILOG_SOURCES = $(PWD)/../atum_vslide1.sv
+  TOPLEVEL = atum_vslide1
+  MODULE   = test_vslide1
 else ifeq ($(CORE),vregfile)
   VERILOG_SOURCES = $(PWD)/../atum_vregfile.sv
   TOPLEVEL = atum_vregfile
