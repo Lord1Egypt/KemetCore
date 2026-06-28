@@ -384,6 +384,33 @@ class VectorUnit:
     def vfmax(self, vs1, vs2):
         return self._vfmm(vs1, vs2, want_max=True)
 
+    # -- fp classify ------------------------------------------------------- #
+    @staticmethod
+    def _fp_class(x):
+        """RVV vfclass 10-bit class of an fp32 bit pattern:
+        bit0 -inf, 1 -normal, 2 -subnormal, 3 -0, 4 +0, 5 +subnormal,
+        6 +normal, 7 +inf, 8 signalling NaN, 9 quiet NaN."""
+        sign = (x >> 31) & 1
+        exp = (x >> 23) & 0xFF
+        mant = x & 0x7FFFFF
+        if exp == 0xFF:
+            if mant == 0:
+                return (1 << 0) if sign else (1 << 7)          # -inf / +inf
+            return (1 << 9) if (mant >> 22) & 1 else (1 << 8)  # qNaN / sNaN
+        if exp == 0:
+            if mant == 0:
+                return (1 << 3) if sign else (1 << 4)          # -0 / +0
+            return (1 << 2) if sign else (1 << 5)              # -sub / +sub
+        return (1 << 1) if sign else (1 << 6)                  # -normal / +normal
+
+    def vfclass(self, vs):
+        a = self.vreg[vs].astype(np.uint32)
+        out = np.zeros(VLMAX, dtype=np.uint32)
+        for i in range(VLMAX):
+            if i < self.vl:
+                out[i] = self._fp_class(int(a[i]))
+        return out
+
     # -- reductions -------------------------------------------------------- #
     def vredsum(self, vs, mask=None):
         act = self._active(mask)[:self.vl]
