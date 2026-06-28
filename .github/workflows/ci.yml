@@ -105,6 +105,8 @@ jobs:
         run: ./projects/atumcore/rtl/tb/run_sim.sh CORE=vmask
       - name: Run AtumCore mask logical testbench
         run: ./projects/atumcore/rtl/tb/run_sim.sh CORE=vmlogic
+      - name: Run AtumCore mask reduction testbench
+        run: ./projects/atumcore/rtl/tb/run_sim.sh CORE=vmpopc
 
   synth-yosys:
     name: Phase 3 synthesis (Yosys, 0-latch check)
