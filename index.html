@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KemetCore — Open-Silicon Lab 𓂀</title>
+<meta name="description" content="KemetCore: an 11-accelerator open-silicon lab. Eleven AI/security/CPU accelerators taken from pure-Python golden models all the way to GDSII — every block bit-exact against its reference.">
+<style>
+  :root{
+    --bg:#0a0e1a; --bg2:#0d1424; --ink:#eae3d2; --muted:#9aa6c0;
+    --gold:#e8b84b; --gold2:#f6d885; --lapis:#3a6ea5; --lapis2:#5b9bd5;
+    --carnelian:#c75b39; --green:#4caf7d; --line:rgba(232,184,75,.18);
+    --card:rgba(255,255,255,.03);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;background:
+      radial-gradient(1200px 600px at 80% -10%,rgba(58,110,165,.22),transparent 60%),
+      radial-gradient(900px 500px at 0% 10%,rgba(199,91,57,.14),transparent 55%),
+      linear-gradient(180deg,var(--bg),var(--bg2));
+    color:var(--ink);
+    font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+    line-height:1.65;-webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1080px;margin:0 auto;padding:0 22px}
+  a{color:var(--gold2);text-decoration:none}
+  a:hover{text-decoration:underline}
+  h1,h2,h3,.mono{font-family:"SF Mono",ui-monospace,"Cascadia Code",Menlo,Consolas,monospace}
+  .eye{font-family:serif}
+
+  /* hero */
+  header{position:relative;overflow:hidden;border-bottom:1px solid var(--line)}
+  .glyphrow{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    font-size:30vw;color:rgba(232,184,75,.04);letter-spacing:.1em;pointer-events:none;user-select:none}
+  .hero{position:relative;padding:96px 0 70px;text-align:center}
+  .eyebrow{letter-spacing:.42em;font-size:.74rem;color:var(--gold);text-transform:uppercase}
+  .hero h1{font-size:clamp(2.6rem,8vw,5.2rem);margin:.18em 0 .1em;
+    background:linear-gradient(120deg,var(--gold2),var(--gold) 45%,var(--lapis2));
+    -webkit-background-clip:text;background-clip:text;color:transparent;letter-spacing:-.02em}
+  .hero .glyph{font-size:1.1em;-webkit-text-fill-color:var(--gold)}
+  .tag{font-size:clamp(1.05rem,2.4vw,1.45rem);color:var(--ink);max-width:760px;margin:.2em auto 0}
+  .sub{color:var(--muted);max-width:680px;margin:18px auto 0;font-size:1.02rem}
+  .cta{margin-top:34px;display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+  .btn{display:inline-block;padding:12px 22px;border-radius:10px;font-family:inherit;font-size:.98rem;
+    border:1px solid var(--line);transition:.2s}
+  .btn.primary{background:linear-gradient(120deg,var(--gold),var(--gold2));color:#1a1406;border:none;font-weight:600}
+  .btn.primary:hover{transform:translateY(-2px);text-decoration:none;box-shadow:0 10px 30px rgba(232,184,75,.2)}
+  .btn.ghost:hover{border-color:var(--gold);text-decoration:none}
+
+  /* stat strip */
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);
+    border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .stat{background:var(--bg2);padding:24px 14px;text-align:center}
+  .stat b{display:block;font-family:"SF Mono",ui-monospace,monospace;font-size:1.9rem;color:var(--gold2)}
+  .stat span{color:var(--muted);font-size:.82rem;letter-spacing:.04em}
+
+  section{padding:68px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+  .kicker{color:var(--lapis2);letter-spacing:.28em;text-transform:uppercase;font-size:.74rem;font-family:"SF Mono",monospace}
+  h2{font-size:clamp(1.6rem,4vw,2.3rem);margin:.25em 0 .4em;letter-spacing:-.01em}
+  .lead{font-size:1.12rem;color:var(--ink);max-width:760px}
+  p{color:#d7d2c4}
+  .muted{color:var(--muted)}
+
+  .grid{display:grid;gap:18px;margin-top:30px}
+  .g2{grid-template-columns:repeat(2,1fr)}
+  .g3{grid-template-columns:repeat(3,1fr)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px;
+    transition:.2s;position:relative;overflow:hidden}
+  .card:hover{border-color:rgba(232,184,75,.5);transform:translateY(-3px);background:rgba(255,255,255,.05)}
+  .card h3{margin:.1em 0 .35em;font-size:1.05rem;color:var(--gold2)}
+  .card .dom{color:var(--muted);font-size:.9rem}
+  .deity{font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:var(--lapis2)}
+  .num{position:absolute;top:10px;right:16px;font-family:"SF Mono",monospace;color:rgba(232,184,75,.25);font-size:.85rem}
+  .pill{display:inline-block;font-size:.68rem;padding:2px 9px;border-radius:999px;margin-top:10px;
+    font-family:"SF Mono",monospace;letter-spacing:.03em}
+  .done{background:rgba(76,175,125,.16);color:#8fe3b8;border:1px solid rgba(76,175,125,.3)}
+  .prog{background:rgba(232,184,75,.14);color:var(--gold2);border:1px solid rgba(232,184,75,.3)}
+  .todo{background:rgba(154,166,192,.1);color:var(--muted);border:1px solid rgba(154,166,192,.2)}
+
+  .feat{display:flex;gap:16px;align-items:flex-start}
+  .feat .ic{font-size:1.5rem;flex:none;width:44px;height:44px;display:grid;place-items:center;
+    border-radius:10px;background:rgba(58,110,165,.16);border:1px solid var(--line)}
+  .feat h3{margin:.1em 0 .25em;font-size:1.02rem;color:var(--ink);font-family:inherit}
+
+  /* phases */
+  .flow{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-top:28px;counter-reset:p}
+  .phase{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 12px;position:relative}
+  .phase .p{font-family:"SF Mono",monospace;color:var(--gold);font-size:.78rem}
+  .phase b{display:block;margin-top:4px;font-size:.96rem}
+  .phase span{color:var(--muted);font-size:.78rem}
+
+  code,.k{font-family:"SF Mono",ui-monospace,monospace;background:rgba(255,255,255,.05);
+    padding:1px 7px;border-radius:6px;font-size:.88em;color:var(--gold2)}
+
+  footer{padding:54px 0 70px;text-align:center;color:var(--muted)}
+  footer .glyph{color:var(--gold);font-size:1.6rem}
+  .hr-egypt{height:2px;margin:0;border:0;background:
+    repeating-linear-gradient(90deg,var(--gold) 0 14px,transparent 14px 28px);opacity:.35}
+
+  @media(max-width:820px){.g3,.flow{grid-template-columns:repeat(2,1fr)}.stats{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:560px){.g2,.g3,.flow{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="glyphrow">𓂀</div>
+  <div class="wrap hero">
+    <div class="eyebrow">Open-Silicon Lab</div>
+    <h1><span class="glyph eye">𓂀</span> KemetCore</h1>
+    <p class="tag">Eleven AI, security &amp; CPU accelerators — taken from pure-Python golden models all the way to GDSII.</p>
+    <p class="sub">A clean-room, dependency-light hardware lab where <b>every</b> block is proven <b>bit-exact</b> against a mathematical reference before a single gate is placed. Named for the deities of Kemet (𓆎𓅓𓏏𓊖, ancient Egypt).</p>
+    <div class="cta">
+      <a class="btn primary" href="https://github.com/Lord1Egypt/KemetCore">View the Repository →</a>
+      <a class="btn ghost" href="#cores">Explore the 11 Cores</a>
+    </div>
+  </div>
+  <div class="stats">
+    <div class="stat"><b>11</b><span>ACCELERATORS</span></div>
+    <div class="stat"><b>6</b><span>PHASE LIFECYCLE</span></div>
+    <div class="stat"><b>100%</b><span>BIT-EXACT VERIFIED</span></div>
+    <div class="stat"><b>0</b><span>LATCHES IN SYNTH</span></div>
+  </div>
+</header>
+
+<section id="vision">
+  <div class="wrap">
+    <div class="kicker">The Vision</div>
+    <h2>One lab, eleven chips, from math to silicon.</h2>
+    <p class="lead">Modern silicon is locked behind seven-figure tools and NDAs. KemetCore is the opposite: a fully open, reproducible path from a few lines of Python to a tape-out-ready layout — repeated across eleven very different accelerators that together form a complete heterogeneous AI system-on-chip.</p>
+    <p class="muted">The thesis is simple and uncompromising: <b>if you can't describe a computation as exact, executable math, you have no business building hardware for it.</b> So each core begins life as a “golden model” — the specification, written as runnable code — and every later artifact (cycle model, RTL, gate netlist, layout) is checked against it, bit for bit.</p>
+  </div>
+</section>
+
+<section id="cores">
+  <div class="wrap">
+    <div class="kicker">The Pantheon</div>
+    <h2>Eleven cores, eleven deities.</h2>
+    <p class="lead muted">Each accelerator is named for a Kemetic god whose domain mirrors its function — and each targets a real workload in AI, cryptography, graphics, or general compute.</p>
+    <div class="grid g3">
+      <div class="card"><span class="num">00</span><div class="deity">Ra · the sun, creator</div><h3>RaCore</h3><div class="dom">Heterogeneous AI SoC — the capstone that integrates every other core.</div><span class="pill prog">P0·P1 ✓</span></div>
+      <div class="card"><span class="num">01</span><div class="deity">Seth · strength</div><h3>SethCore</h3><div class="dom">RV32IM CPU — now a working 5-stage pipeline.</div><span class="pill done">single-cycle + pipeline ✓</span></div>
+      <div class="card"><span class="num">09</span><div class="deity">Hapi · the Nile flood</div><h3>HapiCore</h3><div class="dom">IEEE-754 FPU — mul, add, FMA (×3 formats), divide &amp; sqrt.</div><span class="pill done">FPU complete ✓</span></div>
+      <div class="card"><span class="num">06</span><div class="deity">Anubis · the embalmer</div><h3>AnubisCore</h3><div class="dom">SHA-256 &amp; SHA-3 / Keccak hash engine.</div><span class="pill done">RTL verified ✓</span></div>
+      <div class="card"><span class="num">07</span><div class="deity">Neith · weaver, war</div><h3>NeithCore</h3><div class="dom">ML-KEM (Kyber) lattice crypto — full NTT engine.</div><span class="pill prog">NTT verified</span></div>
+      <div class="card"><span class="num">05</span><div class="deity">Bast · protection</div><h3>BastCore</h3><div class="dom">BF16 tensor core — MAC PE + systolic array.</div><span class="pill prog">MAC + grid ✓</span></div>
+      <div class="card"><span class="num">04</span><div class="deity">Geb · the earth</div><h3>GebCore</h3><div class="dom">2:4 structured-sparse matmul accelerator.</div><span class="pill prog">sparse-MAC ✓</span></div>
+      <div class="card"><span class="num">02</span><div class="deity">Ptah · the craftsman</div><h3>PtahConv</h3><div class="dom">Direct convolution accelerator.</div><span class="pill todo">golden + model</span></div>
+      <div class="card"><span class="num">03</span><div class="deity">Imentet · the west</div><h3>ImentetCore</h3><div class="dom">Transformer attention unit.</div><span class="pill todo">golden + model</span></div>
+      <div class="card"><span class="num">08</span><div class="deity">Sobek · the Nile, power</div><h3>SobekCore</h3><div class="dom">Ray–triangle intersector for graphics.</div><span class="pill todo">golden + model</span></div>
+      <div class="card"><span class="num">10</span><div class="deity">Atum · the complete one</div><h3>AtumCore</h3><div class="dom">RISC-V Vector (RVV) unit.</div><span class="pill todo">golden + model</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="built">
+  <div class="wrap">
+    <div class="kicker">Proven In Silicon-Ready RTL</div>
+    <h2>Two complete subsystems, built from first principles.</h2>
+    <div class="grid g2">
+      <div class="card">
+        <h3>𓂧 HapiCore — a full IEEE-754 FPU</h3>
+        <p class="muted">A complete single-precision floating-point unit, every operation <b>correctly rounded</b> and checked against an exact rational reference:</p>
+        <p style="margin:.2em 0"><b>multiply · add · fused-multiply-add</b> (bf16, fp16, fp32) · <b>divide</b> · <b>square root</b></p>
+        <p class="muted">The FMA fixed a latent double-rounding bug in its own reference and is exact to a single rounding; divide and sqrt use exact integer-division / integer-<code>isqrt</code> intermediates. Verified across <b>millions</b> of operands in cocotb / Verilator.</p>
+      </div>
+      <div class="card">
+        <h3>𓁢 SethCore — a pipelined RV32IM CPU</h3>
+        <p class="muted">A complete processor, assembled from individually-verified blocks:</p>
+        <p style="margin:.2em 0"><b>ALU · mul/div · immediate-gen · register file · ALU-control · decode</b> → <b>single-cycle core</b> → <b>5-stage pipeline</b></p>
+        <p class="muted">The pipeline (IF/ID/EX/MEM/WB) uses hazard interlocks and branch flushing, and runs real programs — loops, recursion, memory, control flow — with its <b>full final register file matching the ISA simulator</b> bit-for-bit.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="method">
+  <div class="wrap">
+    <div class="kicker">The Methodology</div>
+    <h2>A disciplined six-phase lifecycle.</h2>
+    <p class="lead muted">Every core walks the same path. Nothing advances a phase until the previous one is green.</p>
+    <div class="flow">
+      <div class="phase"><span class="p">P0</span><b>Golden</b><span>Pure-Python reference — the spec is runnable.</span></div>
+      <div class="phase"><span class="p">P1</span><b>Model</b><span>Cycle / lane model, equal to golden bit-for-bit.</span></div>
+      <div class="phase"><span class="p">P2</span><b>RTL</b><span>SystemVerilog + cocotb, bit-exact vs golden.</span></div>
+      <div class="phase"><span class="p">P3</span><b>Synth</b><span>Yosys — zero latches, gate counts recorded.</span></div>
+      <div class="phase"><span class="p">P4</span><b>P&amp;R</b><span>OpenROAD on ASAP7 → DRC-clean GDSII.</span></div>
+      <div class="phase"><span class="p">P5</span><b>Signoff</b><span>CI pipeline + docs; <code>make all</code> green.</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="why">
+  <div class="wrap">
+    <div class="kicker">Why It Matters</div>
+    <h2>The benefits — and the principles behind them.</h2>
+    <div class="grid g2">
+      <div class="feat"><div class="ic">✓</div><div><h3>Correct by construction</h3><p class="muted">A “golden model is the law” philosophy: hardware can only be wrong if the math is wrong, and the math is tested first. Bugs are caught in Python, not in silicon.</p></div></div>
+      <div class="feat"><div class="ic">𓍝</div><div><h3>Fully open &amp; reproducible</h3><p class="muted">Open tools end-to-end (Verilator, cocotb, Yosys, OpenROAD, ASAP7). Anyone can clone the repo and re-run the entire path from math to layout.</p></div></div>
+      <div class="feat"><div class="ic">⚡</div><div><h3>A complete AI system, not a toy</h3><p class="muted">Tensor cores, sparse matmul, attention, a vector unit, post-quantum crypto, hashing, ray-tracing and a CPU — the pieces of a real heterogeneous accelerator, unified by one capstone SoC.</p></div></div>
+      <div class="feat"><div class="ic">𓊪</div><div><h3>Educational by design</h3><p class="muted">Each core is a self-contained, readable lesson in how a real accelerator is specified, built, verified and hardened — from rounding modes to pipeline hazards.</p></div></div>
+      <div class="feat"><div class="ic">⊞</div><div><h3>Dependency-light</h3><p class="muted">Lean, portable tooling and zero needless dependencies — the same discipline applied to the build flow as to the hardware.</p></div></div>
+      <div class="feat"><div class="ic">𓋹</div><div><h3>Heritage as a north star</h3><p class="muted">Naming each block for a Kemetic deity isn’t decoration — it’s a map. The domain of the god tells you what the core does.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="verify">
+  <div class="wrap">
+    <div class="kicker">Verification Philosophy</div>
+    <h2>Bit-exact, or it didn’t happen.</h2>
+    <p class="lead">Floating-point cores are checked to the last ULP against exact rational arithmetic. The CPU is checked by running programs and comparing the entire register file to an instruction-set simulator. The ALU-control decoder is swept <b>exhaustively</b> over all 2<sup>17</sup> inputs. Synthesis asserts <span class="k">0 latches</span> on every block.</p>
+    <p class="muted">Nothing is “probably right.” Continuous integration re-runs the golden tests, the cocotb test-benches, and the Yosys latch checks on every change.</p>
+  </div>
+</section>
+
+<hr class="hr-egypt">
+<footer>
+  <div class="wrap">
+    <div class="glyph">𓂀</div>
+    <p><b>KemetCore</b> — an open-silicon lab · <a href="https://github.com/Lord1Egypt/KemetCore">github.com/Lord1Egypt/KemetCore</a></p>
+    <p class="muted" style="font-size:.85rem">From a few lines of Python to a tape-out-ready layout — eleven times over. 𓆎𓅓𓏏</p>
+  </div>
+</footer>
+
+</body>
+</html>
