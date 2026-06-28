@@ -1,0 +1,19 @@
+
+3. Printing statistics.
+
+=== atum_vfsgnj ===
+
+        +----------Local Count, excluding submodules.
+        | 
+       73 wires
+      842 wire bits
+        5 public wires
+      774 public wire bits
+        5 ports
+      774 port bits
+      324 cells
+      276   $_AND_
+       16   $_NAND_
+        9   $_ORNOT_
+       23   $_OR_
+

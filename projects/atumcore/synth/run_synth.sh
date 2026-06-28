@@ -180,6 +180,16 @@ echo "=== synthesizing atum_vmerge (vector merge / select unit, full) ==="
 "
 echo "  -> reports/atum_vmerge.stat (0 latches asserted)"
 
+# atum_vfsgnj is pure fp bit manipulation (no arithmetic) -> always full.
+echo "=== synthesizing atum_vfsgnj (fp sign-injection unit, full) ==="
+"$YOSYS" -ql "reports/atum_vfsgnj.log" -p "
+    read_verilog -sv ../rtl/atum_vfsgnj.sv;
+    synth -top atum_vfsgnj;
+    select -assert-none t:\$_DLATCH_* t:\$dlatch;
+    tee -o reports/atum_vfsgnj.stat stat
+"
+echo "  -> reports/atum_vfsgnj.stat (0 latches asserted)"
+
 # atum_vcore embeds the whole vexec datapath (fp32 multipliers) + vreg array. Full
 # ABC mapping is large; under $CI stop at the coarse 0-latch netlist, committed .stat full.
 VC_SRCS="../rtl/atum_valu.sv ../rtl/atum_vfpu.sv ../rtl/atum_vredu.sv \

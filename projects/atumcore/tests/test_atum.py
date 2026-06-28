@@ -216,6 +216,31 @@ def test_vmerge():
     assert list(vu.vmerge(1, 2, m)) == [10, 21, 12, 0, 0, 0, 0, 0]
 
 
+def test_vfsgnj():
+    vu = g.VectorUnit()
+    #     +1.0       -1.0        +0.0        -2.0
+    a = [0x3F800000, 0xBF800000, 0x00000000, 0xC0000000,
+         0x7F800000, 0xFF800000, 0x40490FDB, 0x80000000]
+    b = [0xBF800000, 0x3F800000, 0x80000000, 0x3F800000,
+         0x80000000, 0x00000000, 0xC0000000, 0x7F800000]
+    vu.load(1, a); vu.load(2, b)
+    # sgnj: sign from b, magnitude from a
+    out0 = list(vu.vfsgnj(1, 2, 0))
+    for i in range(8):
+        exp = (b[i] & 0x80000000) | (a[i] & 0x7FFFFFFF)
+        assert out0[i] == exp
+    # sgnjn with b==a -> negate a (flip sign of every element)
+    vu.load(2, a)
+    out1 = list(vu.vfsgnj(1, 2, 1))
+    assert out1 == [(x ^ 0x80000000) for x in a]
+    # sgnjx with b==a -> abs a (sign cleared)
+    out2 = list(vu.vfsgnj(1, 2, 2))
+    assert out2 == [(x & 0x7FFFFFFF) for x in a]
+    # vl gating
+    vu.vl = 4
+    assert list(vu.vfsgnj(1, 2, 2))[4:] == [0, 0, 0, 0]
+
+
 def test_vredsum():
     vu = g.VectorUnit()
     data = [3, 1, 4, 1, 5, 9, 2, 6]

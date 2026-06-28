@@ -14,6 +14,7 @@
 #   make CORE=vrgather           -> atum_vrgather (register gather / permute)
 #   make CORE=vslide             -> atum_vslide (slideup / slidedown)
 #   make CORE=vmerge             -> atum_vmerge (mask-driven element select)
+#   make CORE=vfsgnj             -> atum_vfsgnj (fp sign inject: copysign/neg/abs)
 TOPLEVEL_LANG = verilog
 SIM ?= verilator
 CORE ?= valu
@@ -61,6 +62,10 @@ else ifeq ($(CORE),vmerge)
   VERILOG_SOURCES = $(PWD)/../atum_vmerge.sv
   TOPLEVEL = atum_vmerge
   MODULE   = test_vmerge
+else ifeq ($(CORE),vfsgnj)
+  VERILOG_SOURCES = $(PWD)/../atum_vfsgnj.sv
+  TOPLEVEL = atum_vfsgnj
+  MODULE   = test_vfsgnj
 else ifeq ($(CORE),vregfile)
   VERILOG_SOURCES = $(PWD)/../atum_vregfile.sv
   TOPLEVEL = atum_vregfile
