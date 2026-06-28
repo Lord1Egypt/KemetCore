@@ -64,4 +64,27 @@ echo "=== synthesizing atum_vredu (vector reduction unit) ==="
     tee -o reports/atum_vredu.stat stat
 "
 echo "  -> reports/atum_vredu.stat (0 latches asserted)"
+
+# atum_vexec integrates valu + vfpu (fp32 multipliers) + vredu. Like vfpu, full ABC
+# mapping is large; under $CI stop at the coarse 0-latch netlist, committed .stat full.
+if [ -z "${CI:-}" ]; then
+    echo "=== synthesizing atum_vexec (integrated vector execute unit, full) ==="
+    "$YOSYS" -ql "reports/atum_vexec.log" -p "
+        read_verilog -sv ../rtl/atum_valu.sv ../rtl/atum_vfpu.sv ../rtl/atum_vredu.sv \
+            $HAPI/hapi_fp32_mul.sv $HAPI/hapi_fp32_add.sv ../rtl/atum_vexec.sv;
+        synth -top atum_vexec;
+        select -assert-none t:\$_DLATCH_* t:\$dlatch;
+        tee -o reports/atum_vexec.stat stat
+    "
+else
+    echo "=== synthesizing atum_vexec (coarse 0-latch check under CI) ==="
+    "$YOSYS" -ql "reports/atum_vexec.log" -p "
+        read_verilog -sv ../rtl/atum_valu.sv ../rtl/atum_vfpu.sv ../rtl/atum_vredu.sv \
+            $HAPI/hapi_fp32_mul.sv $HAPI/hapi_fp32_add.sv ../rtl/atum_vexec.sv;
+        synth -top atum_vexec -run :fine;
+        select -assert-none t:\$_DLATCH_* t:\$dlatch;
+        stat
+    "
+fi
+echo "  -> reports/atum_vexec.stat (0 latches asserted)"
 echo "ALL SYNTHESIZED ✅ (no latches)"
