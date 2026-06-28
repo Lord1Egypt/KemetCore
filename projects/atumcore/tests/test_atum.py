@@ -445,3 +445,22 @@ def test_vfmacc_fp():
     vu.load_f32(3, acc)
     vu.vfnmsac(3, 1, 2)                      # -(x*y) + acc
     assert np.allclose(vu.read_f32(3), -(x * y) + acc, atol=1e-5)
+
+
+def test_vsadd_saturate():
+    vu = g.VectorUnit()
+    vu.vreg[1] = np.array([0xFFFFFFFF, 0x7FFFFFFF, 0x80000000, 1,
+                           5, 0x80000000, 100, 0xFFFFFFFF], np.uint32)
+    vu.vreg[2] = np.array([1, 1, 0xFFFFFFFF, 2,
+                           3, 1, 0xFFFFFFFF, 0xFFFFFFFF], np.uint32)
+    vu.vsaddu(3, 1, 2)
+    assert int(vu.vreg[3][0]) == 0xFFFFFFFF          # unsigned overflow -> UMAX
+    assert int(vu.vreg[3][3]) == 3                    # 1+2, no sat
+    vu.vsadd(4, 1, 2)
+    assert int(vu.vreg[4][1]) == 0x7FFFFFFF           # INT_MAX + 1 -> INT_MAX
+    assert int(vu.vreg[4][2]) == 0x80000000           # INT_MIN + (-1) -> INT_MIN
+    vu.vssubu(5, 1, 2)
+    assert int(vu.vreg[5][3]) == 0                     # 1 - 2 -> 0 (clamp)
+    assert int(vu.vreg[5][0]) == 0xFFFFFFFE            # 0xFFFFFFFF - 1
+    vu.vssub(6, 1, 2)
+    assert int(vu.vreg[6][5]) == 0x80000000           # INT_MIN - 1 -> INT_MIN

@@ -139,6 +139,8 @@ jobs:
         run: ./projects/atumcore/rtl/tb/run_sim.sh CORE=vmfcmp
       - name: Run AtumCore fp32 fused multiply-add testbench
         run: ./projects/atumcore/rtl/tb/run_sim.sh CORE=vfmacc
+      - name: Run AtumCore saturating add/sub testbench
+        run: ./projects/atumcore/rtl/tb/run_sim.sh CORE=vsadd
 
   synth-yosys:
     name: Phase 3 synthesis (Yosys, 0-latch check)

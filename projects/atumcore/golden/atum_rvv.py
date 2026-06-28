@@ -132,6 +132,31 @@ class VectorUnit:
         b = self.vreg[vs2].astype(np.int32)
         self._wr_int(vd, np.where(a > b, self.vreg[vs1], self.vreg[vs2]).astype(np.int64), mask)
 
+    # -- saturating fixed-point add/sub ------------------------------------ #
+    def vsaddu(self, vd, vs1, vs2, mask=None):
+        """Unsigned saturating add: clamp a+b to 2**32-1."""
+        a = self.vreg[vs1].astype(np.int64)
+        b = self.vreg[vs2].astype(np.int64)
+        self._wr_int(vd, np.minimum(a + b, U32), mask)
+
+    def vsadd(self, vd, vs1, vs2, mask=None):
+        """Signed saturating add: clamp a+b to [-2**31, 2**31-1]."""
+        a = self.vreg[vs1].astype(np.int32).astype(np.int64)
+        b = self.vreg[vs2].astype(np.int32).astype(np.int64)
+        self._wr_int(vd, np.clip(a + b, -(2**31), 2**31 - 1), mask)
+
+    def vssubu(self, vd, vs1, vs2, mask=None):
+        """Unsigned saturating sub: clamp a-b low to 0."""
+        a = self.vreg[vs1].astype(np.int64)
+        b = self.vreg[vs2].astype(np.int64)
+        self._wr_int(vd, np.maximum(a - b, 0), mask)
+
+    def vssub(self, vd, vs1, vs2, mask=None):
+        """Signed saturating sub: clamp a-b to [-2**31, 2**31-1]."""
+        a = self.vreg[vs1].astype(np.int32).astype(np.int64)
+        b = self.vreg[vs2].astype(np.int32).astype(np.int64)
+        self._wr_int(vd, np.clip(a - b, -(2**31), 2**31 - 1), mask)
+
     # -- compare ops (vd = mask, 1 bit per lane) --------------------------- #
     def _cmp(self, vs1, vs2, fn, signed, mask):
         """Per-lane compare producing a length-VLMAX 0/1 mask. A lane bit is set

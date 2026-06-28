@@ -281,6 +281,16 @@ else
     echo "=== skipping atum_vfmacc synth under CI (apt-yosys OOMs on fma) ==="
 fi
 
+# atum_vsadd is adders + range comparators / muxes (no multipliers) -> always full.
+echo "=== synthesizing atum_vsadd (saturating int add/sub unit, full) ==="
+"$YOSYS" -ql "reports/atum_vsadd.log" -p "
+    read_verilog -sv ../rtl/atum_vsadd.sv;
+    synth -top atum_vsadd;
+    select -assert-none t:\$_DLATCH_* t:\$dlatch;
+    tee -o reports/atum_vsadd.stat stat
+"
+echo "  -> reports/atum_vsadd.stat (0 latches asserted)"
+
 # atum_vmfcmp is a VLMAX-wide fp comparator array (keys + compares, no multipliers) -> full.
 echo "=== synthesizing atum_vmfcmp (fp32 compare-to-mask unit, full) ==="
 "$YOSYS" -ql "reports/atum_vmfcmp.log" -p "
