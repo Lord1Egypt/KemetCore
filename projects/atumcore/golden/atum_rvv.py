@@ -213,6 +213,38 @@ class VectorUnit:
                 return i
         return -1
 
+    # -- mask set-before/including/only first ------------------------------ #
+    def _vmsbif(self, m, op):
+        """RVV mask manip relative to the first set bit f of m (within vl):
+        op=0 vmsbf (set bits before f), 1 vmsif (set up to and including f),
+        2 vmsof (set only f). If no bit is set: sbf/sif fill the body with 1,
+        sof yields all 0. Tail lanes read 0."""
+        m = np.asarray(m, dtype=np.uint8) & 1
+        out = np.zeros(VLMAX, dtype=np.uint8)
+        f = -1
+        for i in range(VLMAX):
+            if i < self.vl and m[i]:
+                f = i
+                break
+        for i in range(VLMAX):
+            if i < self.vl:
+                if op == 0:
+                    out[i] = 1 if (f == -1 or i < f) else 0
+                elif op == 1:
+                    out[i] = 1 if (f == -1 or i <= f) else 0
+                else:
+                    out[i] = 1 if (f != -1 and i == f) else 0
+        return out
+
+    def vmsbf(self, m):
+        return self._vmsbif(m, 0)
+
+    def vmsif(self, m):
+        return self._vmsbif(m, 1)
+
+    def vmsof(self, m):
+        return self._vmsbif(m, 2)
+
     # -- mask -> index vectors --------------------------------------------- #
     def viota(self, m, mask=None):
         """Exclusive prefix-sum of a mask: element i = number of set source-mask

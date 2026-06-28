@@ -125,6 +125,8 @@ jobs:
         run: ./projects/atumcore/rtl/tb/run_sim.sh CORE=vfminmax
       - name: Run AtumCore fp classify testbench
         run: ./projects/atumcore/rtl/tb/run_sim.sh CORE=vfclass
+      - name: Run AtumCore mask set-first testbench
+        run: ./projects/atumcore/rtl/tb/run_sim.sh CORE=vmsbf
 
   synth-yosys:
     name: Phase 3 synthesis (Yosys, 0-latch check)
