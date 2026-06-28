@@ -5,17 +5,18 @@
 
         +----------Local Count, excluding submodules.
         | 
-       95 wires
-     2437 wire bits
-       55 public wires
-     2325 public wire bits
+      113 wires
+     2704 wire bits
+       65 public wires
+     2584 public wire bits
         7 ports
-     1037 port bits
-       48 cells
+     1038 port bits
+       65 cells
         8   $alu
         8   $and
-       16   $mux
-       16   $not
+       24   $mux
+       24   $not
+        1   $xor
         8 submodules
         8   hapi_fp32_fma
 
@@ -53,21 +54,21 @@
 
         +----------Count including submodules.
         | 
-     5536 atum_vfmacc
+     5553 atum_vfmacc
       686 hapi_fp32_fma
 
         +----------Count including submodules.
         | 
-     6207 wires
-    55797 wire bits
-      599 public wires
-    13517 public wire bits
+     6225 wires
+    56064 wire bits
+      609 public wires
+    13776 public wire bits
        39 ports
-     2061 port bits
+     2062 port bits
         - memories
         - memory bits
         - processes
-     5536 cells
+     5553 cells
       216   $alu
        40   $and
        32   $eq
@@ -75,9 +76,9 @@
      1096   $logic_not
        48   $logic_or
        40   $macc_v2
-     2336   $mux
+     2344   $mux
         8   $ne
-      128   $not
+      136   $not
        88   $or
        72   $reduce_and
        24   $reduce_bool
@@ -85,7 +86,7 @@
         8   $shiftx
        40   $shl
        24   $shr
-       56   $xor
+       57   $xor
         8 submodules
         8   hapi_fp32_fma
 
