@@ -110,6 +110,16 @@ echo "=== synthesizing atum_vmask (compare-to-mask unit, full) ==="
 "
 echo "  -> reports/atum_vmask.stat (0 latches asserted)"
 
+# atum_vmlogic is trivial mask bit-logic (no arithmetic) -> always full.
+echo "=== synthesizing atum_vmlogic (mask logical unit, full) ==="
+"$YOSYS" -ql "reports/atum_vmlogic.log" -p "
+    read_verilog -sv ../rtl/atum_vmlogic.sv;
+    synth -top atum_vmlogic;
+    select -assert-none t:\$_DLATCH_* t:\$dlatch;
+    tee -o reports/atum_vmlogic.stat stat
+"
+echo "  -> reports/atum_vmlogic.stat (0 latches asserted)"
+
 # atum_vcore embeds the whole vexec datapath (fp32 multipliers) + vreg array. Full
 # ABC mapping is large; under $CI stop at the coarse 0-latch netlist, committed .stat full.
 VC_SRCS="../rtl/atum_valu.sv ../rtl/atum_vfpu.sv ../rtl/atum_vredu.sv \
