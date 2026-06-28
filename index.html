@@ -149,7 +149,7 @@
       <div class="card"><span class="num">02</span><div class="deity">Ptah · the craftsman</div><h3>PtahConv</h3><div class="dom">Direct convolution accelerator.</div><span class="pill todo">golden + model</span></div>
       <div class="card"><span class="num">03</span><div class="deity">Imentet · the west</div><h3>ImentetCore</h3><div class="dom">Transformer attention unit.</div><span class="pill todo">golden + model</span></div>
       <div class="card"><span class="num">08</span><div class="deity">Sobek · the Nile, power</div><h3>SobekCore</h3><div class="dom">Ray–triangle intersector for graphics.</div><span class="pill todo">golden + model</span></div>
-      <div class="card"><span class="num">10</span><div class="deity">Atum · the complete one</div><h3>AtumCore</h3><div class="dom">RISC-V Vector (RVV) processor — a single-cycle vector core.</div><span class="pill done">vector core ✓</span></div>
+      <div class="card"><span class="num">10</span><div class="deity">Atum · the complete one</div><h3>AtumCore</h3><div class="dom">RISC-V Vector (RVV) processor — single-cycle vector core + full mask/data-motion ISA.</div><span class="pill done">vector ISA ✓</span></div>
     </div>
   </div>
 </section>
@@ -174,8 +174,9 @@
       <div class="card">
         <h3>𓇋 AtumCore — a RISC-V vector processor</h3>
         <p class="muted">A length-agnostic RVV datapath with full active-element semantics (per-lane mask + <code>vl</code>), composed from the verified primitives:</p>
-        <p style="margin:.2em 0"><b>integer lanes</b> (add/sub/mul/logic/shift · <b>vmacc</b>) · <b>fp32 lanes</b> (vfadd/vfmul over HapiCore) · <b>reductions</b> (vredsum/vredmax) → <b>integrated execute unit</b> → register file + <code>vsetvl</code> → <b>single-cycle vector core</b></p>
-        <p class="muted">The core runs micro-programs (axpy, dot-product, reductions) with its <b>full vector register file matching the golden model</b> bit-for-bit — and every lane is checked across thousands of randomised ops, masks and vector lengths.</p>
+        <p style="margin:.2em 0"><b>integer lanes</b> (add/sub/mul/logic/shift · min/max · <b>vmacc</b>) · <b>fp32 lanes</b> (vfadd/vfmul over HapiCore · sign-inject · min/max with full NaN handling) · <b>reductions</b> (sum/max/and/or/xor) → <b>integrated execute unit</b> → register file + <code>vsetvl</code> → <b>single-cycle vector core</b> (with data memory + strip-mined unit-stride load/store).</p>
+        <p class="muted">A complete <b>mask &amp; data-motion toolkit</b> rounds out the ISA: <b>produce</b> masks (vmseq/vmslt/…), <b>combine</b> them (vmand/vmor/…), <b>reduce</b> (vcpop/vfirst), <b>index</b> (viota/vid), <b>compact</b> (vcompress), <b>permute</b> (vrgather), <b>slide</b> (vslideup/down) and <b>select</b> (vmerge) — the full predication and shuffle vocabulary.</p>
+        <p class="muted">The core runs micro-programs (axpy, dot-product, reductions) with its <b>full vector register file matching the golden model</b> bit-for-bit — and every block is checked across thousands of randomised ops, masks and vector lengths, each synthesising latch-free.</p>
       </div>
     </div>
   </div>
