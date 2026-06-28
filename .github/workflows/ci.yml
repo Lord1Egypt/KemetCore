@@ -143,6 +143,8 @@ jobs:
         run: ./projects/atumcore/rtl/tb/run_sim.sh CORE=vsadd
       - name: Run AtumCore Q31 fractional multiply testbench
         run: ./projects/atumcore/rtl/tb/run_sim.sh CORE=vsmul
+      - name: Run AtumCore rounding shift-right testbench
+        run: ./projects/atumcore/rtl/tb/run_sim.sh CORE=vssr
 
   synth-yosys:
     name: Phase 3 synthesis (Yosys, 0-latch check)

@@ -303,6 +303,16 @@ else
 fi
 echo "  -> reports/atum_vsmul.stat (0 latches asserted)"
 
+# atum_vssr is barrel shifters + a 1-bit round add (no multipliers) -> always full.
+echo "=== synthesizing atum_vssr (rounding shift-right unit, full) ==="
+"$YOSYS" -ql "reports/atum_vssr.log" -p "
+    read_verilog -sv ../rtl/atum_vssr.sv;
+    synth -top atum_vssr;
+    select -assert-none t:\$_DLATCH_* t:\$dlatch;
+    tee -o reports/atum_vssr.stat stat
+"
+echo "  -> reports/atum_vssr.stat (0 latches asserted)"
+
 # atum_vsadd is adders + range comparators / muxes (no multipliers) -> always full.
 echo "=== synthesizing atum_vsadd (saturating int add/sub unit, full) ==="
 "$YOSYS" -ql "reports/atum_vsadd.log" -p "

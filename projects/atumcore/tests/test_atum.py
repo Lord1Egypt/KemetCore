@@ -484,3 +484,20 @@ def test_vsmul_q31():
     b = vu.vreg[2].astype(np.int32).astype(np.int64)
     exp = np.clip((a * b + (1 << 30)) >> 31, -(2**31), 2**31 - 1).astype(np.uint32)
     assert list(vu.vreg[3]) == list(exp)
+
+
+def test_vssr_rounding():
+    vu = g.VectorUnit()
+    vu.vreg[1] = np.array([3, 1, 5, 0xFFFFFFFF, 0x80000000, 6, 2, 8], np.uint32)
+    vu.vreg[2] = np.array([1, 1, 1, 1, 2, 0, 1, 4], np.uint32)
+    vu.vssrl(3, 1, 2)
+    # rnu: 3>>1 -> 2, 1>>1 -> 1, 5>>1 -> 3, sh=0 -> identity(6)
+    assert int(vu.vreg[3][0]) == 2
+    assert int(vu.vreg[3][1]) == 1
+    assert int(vu.vreg[3][2]) == 3
+    assert int(vu.vreg[3][5]) == 6
+    assert int(vu.vreg[3][3]) == 0x80000000          # 0xFFFFFFFF>>1 rnu
+    vu.vssra(4, 1, 2)
+    # arithmetic: -1 (0xFFFFFFFF) >> 1 rnu -> 0; INT_MIN>>2 rnu
+    assert int(vu.vreg[4][3]) == 0
+    assert (int(vu.vreg[4][4]) & 0xFFFFFFFF) == ((-(2**31) >> 2) + ((-(2**31) >> 1) & 1)) & 0xFFFFFFFF
