@@ -1,8 +1,10 @@
 name: kemetcore-ci
 
 on:
+  # Feature branches are validated via the pull_request event (one run); restricting
+  # push to main avoids a duplicate concurrent run on every PR-branch push.
   push:
-    branches: ["**"]
+    branches: [main]
   pull_request:
 
 jobs:
@@ -113,6 +115,8 @@ jobs:
         run: ./projects/atumcore/rtl/tb/run_sim.sh CORE=vcompress
       - name: Run AtumCore vector gather testbench
         run: ./projects/atumcore/rtl/tb/run_sim.sh CORE=vrgather
+      - name: Run AtumCore vector slide testbench
+        run: ./projects/atumcore/rtl/tb/run_sim.sh CORE=vslide
 
   synth-yosys:
     name: Phase 3 synthesis (Yosys, 0-latch check)

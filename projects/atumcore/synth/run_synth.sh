@@ -160,6 +160,16 @@ echo "=== synthesizing atum_vrgather (register gather unit, full) ==="
 "
 echo "  -> reports/atum_vrgather.stat (0 latches asserted)"
 
+# atum_vslide is a VLMAX:1-per-lane mux + offset compares (no multipliers) -> full.
+echo "=== synthesizing atum_vslide (vector slide unit, full) ==="
+"$YOSYS" -ql "reports/atum_vslide.log" -p "
+    read_verilog -sv ../rtl/atum_vslide.sv;
+    synth -top atum_vslide;
+    select -assert-none t:\$_DLATCH_* t:\$dlatch;
+    tee -o reports/atum_vslide.stat stat
+"
+echo "  -> reports/atum_vslide.stat (0 latches asserted)"
+
 # atum_vcore embeds the whole vexec datapath (fp32 multipliers) + vreg array. Full
 # ABC mapping is large; under $CI stop at the coarse 0-latch netlist, committed .stat full.
 VC_SRCS="../rtl/atum_valu.sv ../rtl/atum_vfpu.sv ../rtl/atum_vredu.sv \

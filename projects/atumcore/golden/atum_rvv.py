@@ -270,6 +270,30 @@ class VectorUnit:
                 out[i] = src[k] if k < self.vl else 0
         return out
 
+    # -- slides ------------------------------------------------------------ #
+    def vslideup(self, vs, off):
+        """Slide elements toward higher lanes by a scalar offset: vd[i] = vs[i-off]
+        for off <= i < vl; lanes below off and the tail read 0."""
+        src = self.vreg[vs]
+        off = int(off)
+        out = np.zeros(VLMAX, dtype=np.uint32)
+        for i in range(VLMAX):
+            if off <= i < self.vl:
+                out[i] = src[i - off]
+        return out
+
+    def vslidedown(self, vs, off):
+        """Slide elements toward lower lanes by a scalar offset: vd[i] = vs[i+off]
+        for i < vl when i+off < vl, else 0 (elements slid in from past vl are 0)."""
+        src = self.vreg[vs]
+        off = int(off)
+        out = np.zeros(VLMAX, dtype=np.uint32)
+        for i in range(VLMAX):
+            if i < self.vl:
+                j = i + off
+                out[i] = src[j] if j < self.vl else 0
+        return out
+
     # -- fp ops ------------------------------------------------------------ #
     def vfadd(self, vd, vs1, vs2, mask=None):
         a = self.vreg[vs1].view(np.float32)
