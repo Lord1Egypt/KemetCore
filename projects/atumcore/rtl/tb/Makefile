@@ -20,6 +20,7 @@
 #   make CORE=vmsbf              -> atum_vmsbf (mask set before/incl/only first)
 #   make CORE=vmv                -> atum_vmv (vmv.v.x splat / vmv.v.v copy)
 #   make CORE=vslide1            -> atum_vslide1 (vslide1up / vslide1down)
+#   make CORE=vfcvt              -> atum_vfcvt (int<->fp32 convert: vfcvt.*)
 TOPLEVEL_LANG = verilog
 SIM ?= verilator
 CORE ?= valu
@@ -91,6 +92,10 @@ else ifeq ($(CORE),vslide1)
   VERILOG_SOURCES = $(PWD)/../atum_vslide1.sv
   TOPLEVEL = atum_vslide1
   MODULE   = test_vslide1
+else ifeq ($(CORE),vfcvt)
+  VERILOG_SOURCES = $(PWD)/../atum_vfcvt.sv
+  TOPLEVEL = atum_vfcvt
+  MODULE   = test_vfcvt
 else ifeq ($(CORE),vregfile)
   VERILOG_SOURCES = $(PWD)/../atum_vregfile.sv
   TOPLEVEL = atum_vregfile

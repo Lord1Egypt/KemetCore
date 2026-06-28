@@ -482,6 +482,98 @@ class VectorUnit:
                 out[i] = self._fp_class(int(a[i]))
         return out
 
+    # -- int <-> fp conversion (vfcvt) ------------------------------------- #
+    @staticmethod
+    def _i2f(x, signed):
+        """Convert a 32-bit integer (signed or unsigned per `signed`) to its fp32
+        bit pattern, rounding the magnitude to nearest, ties-to-even (RNE). Mirrors
+        the hardware: take |x|, find its MSB, keep 24 significant bits, RNE-round the
+        rest (carry may bump the exponent). 32-bit ints fit fp32's 8-bit exponent so
+        no overflow to Inf is possible. This is vfcvt.f.x (signed) / vfcvt.f.xu."""
+        x &= U32
+        if signed and (x >> 31) & 1:
+            sign = 1
+            mag = (-x) & U32          # 0x80000000 negates to itself = magnitude 2**31
+        else:
+            sign = 0
+            mag = x
+        if mag == 0:
+            return 0
+        msb = mag.bit_length() - 1    # 0..31
+        exp = msb
+        if msb <= 23:
+            frac = (mag << (23 - msb)) & 0x7FFFFF
+        else:
+            sh = msb - 23             # 1..8
+            keep = mag >> sh          # 24-bit significand (leading 1 + 23)
+            round_bit = (mag >> (sh - 1)) & 1
+            sticky = 1 if (mag & ((1 << (sh - 1)) - 1)) else 0
+            if round_bit and (sticky or (keep & 1)):
+                keep += 1
+                if keep == (1 << 24):  # rounding carried out -> renormalise
+                    keep >>= 1
+                    exp += 1
+            frac = keep & 0x7FFFFF
+        return ((sign << 31) | ((exp + 127) << 23) | frac) & U32
+
+    @staticmethod
+    def _f2i(bits, signed, truncate):
+        """Convert an fp32 bit pattern to a 32-bit integer (signed/unsigned per
+        `signed`), rounding to nearest-ties-to-even (or toward zero if `truncate`),
+        with out-of-range / NaN saturation per the RVV vfcvt rules: NaN -> the max
+        representable; +Inf / too-large positive -> max; -Inf / too-small negative ->
+        min (0 for unsigned). This is vfcvt[.rtz].x.f (signed) / .xu.f (unsigned)."""
+        from fractions import Fraction
+        sign = (bits >> 31) & 1
+        exp = (bits >> 23) & 0xFF
+        mant = bits & 0x7FFFFF
+        posmax = 0x7FFFFFFF if signed else 0xFFFFFFFF
+        negmax = 0x80000000 if signed else 0
+        if exp == 0xFF:
+            if mant != 0:
+                return posmax                      # NaN -> max for both
+            return negmax if sign else posmax      # +/- Inf
+        if exp == 0:
+            full, e = mant, -126                   # subnormal (or zero)
+        else:
+            full, e = (1 << 23) | mant, exp - 127
+        if full == 0:
+            return 0
+        val = Fraction(full, 1 << 23) * (Fraction(2) ** e)   # positive magnitude
+        m = int(val) if truncate else round(val)   # trunc-toward-0 / RNE
+        if signed:
+            if not sign:
+                return posmax if m > 0x7FFFFFFF else m
+            return negmax if m > 0x80000000 else ((-m) & U32)
+        if sign:
+            return 0                               # negative -> unsigned saturates to 0
+        return posmax if m > 0xFFFFFFFF else m
+
+    def vfcvt(self, vs, op):
+        """Vector int<->fp32 convert. op selects the variant:
+        0 vfcvt.f.x (int32->fp32), 1 vfcvt.f.xu (uint32->fp32),
+        2 vfcvt.x.f (fp32->int32 RNE), 3 vfcvt.xu.f (fp32->uint32 RNE),
+        4 vfcvt.rtz.x.f (fp32->int32 trunc), 5 vfcvt.rtz.xu.f (fp32->uint32 trunc).
+        Tail lanes (i >= vl) read 0."""
+        a = self.vreg[vs].astype(np.uint32)
+        out = np.zeros(VLMAX, dtype=np.uint32)
+        for i in range(VLMAX):
+            if i < self.vl:
+                x = int(a[i])
+                if op == 0:
+                    out[i] = self._i2f(x, signed=True)
+                elif op == 1:
+                    out[i] = self._i2f(x, signed=False)
+                elif op == 2:
+                    out[i] = self._f2i(x, signed=True, truncate=False)
+                elif op == 3:
+                    out[i] = self._f2i(x, signed=False, truncate=False)
+                elif op == 4:
+                    out[i] = self._f2i(x, signed=True, truncate=True)
+                elif op == 5:
+                    out[i] = self._f2i(x, signed=False, truncate=True)
+        return out
+
     # -- reductions -------------------------------------------------------- #
     def vredsum(self, vs, mask=None):
         act = self._active(mask)[:self.vl]

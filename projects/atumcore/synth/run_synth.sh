@@ -240,6 +240,28 @@ echo "=== synthesizing atum_vslide1 (slide-by-1 unit, full) ==="
 "
 echo "  -> reports/atum_vslide1.stat (0 latches asserted)"
 
+# atum_vfcvt is shifters + comparators + priority encoders (8 lanes, ~12.8K gates,
+# no multipliers). Full ABC mapping is heavy; like valu/vfpu, under $CI stop at the
+# coarse 0-latch netlist (committed reports/atum_vfcvt.stat = full gate-level evidence).
+if [ -z "${CI:-}" ]; then
+    echo "=== synthesizing atum_vfcvt (int<->fp32 convert unit, full) ==="
+    "$YOSYS" -ql "reports/atum_vfcvt.log" -p "
+        read_verilog -sv ../rtl/atum_vfcvt.sv;
+        synth -top atum_vfcvt;
+        select -assert-none t:\$_DLATCH_* t:\$dlatch;
+        tee -o reports/atum_vfcvt.stat stat
+    "
+else
+    echo "=== synthesizing atum_vfcvt (coarse 0-latch check under CI) ==="
+    "$YOSYS" -ql "reports/atum_vfcvt.log" -p "
+        read_verilog -sv ../rtl/atum_vfcvt.sv;
+        synth -top atum_vfcvt -run :fine;
+        select -assert-none t:\$_DLATCH_* t:\$dlatch;
+        stat
+    "
+fi
+echo "  -> reports/atum_vfcvt.stat (0 latches asserted)"
+
 # atum_vcore embeds the whole vexec datapath (fp32 multipliers) + vreg array. Full
 # ABC mapping is large; under $CI stop at the coarse 0-latch netlist, committed .stat full.
 VC_SRCS="../rtl/atum_valu.sv ../rtl/atum_vfpu.sv ../rtl/atum_vredu.sv \
