@@ -399,3 +399,15 @@ def test_vfcvt_roundtrip_and_saturate():
     assert int(u[2]) == 0 and int(u[4]) == 0
     t = vu.vfcvt(1, 4)                               # rtz signed
     assert int(t[1]) == 3 and int(t[6]) == 1        # 3.5 trunc -> 3, 1.4 -> 1
+
+
+def test_vfsub_fp():
+    vu = g.VectorUnit()
+    x = np.array([1.5, 2.5, -3.0, 0.25, 8.0, -1.0, 4.5, 100.0], np.float32)
+    y = np.array([2.0, 2.0, 2.0, 4.0, 0.5, 3.0, 2.0, 0.01], np.float32)
+    vu.load_f32(1, x)
+    vu.load_f32(2, y)
+    vu.vfsub(3, 1, 2)
+    assert np.allclose(vu.read_f32(3), x - y)
+    vu.vfrsub(4, 1, 2)
+    assert np.allclose(vu.read_f32(4), y - x)        # reverse operand order

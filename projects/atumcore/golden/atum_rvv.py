@@ -390,6 +390,16 @@ class VectorUnit:
         b = self.vreg[vs2].view(np.float32)
         self._wr_f32(vd, a * b, mask)
 
+    def vfsub(self, vd, vs1, vs2, mask=None):
+        a = self.vreg[vs1].view(np.float32)
+        b = self.vreg[vs2].view(np.float32)
+        self._wr_f32(vd, a - b, mask)
+
+    def vfrsub(self, vd, vs1, vs2, mask=None):
+        a = self.vreg[vs1].view(np.float32)
+        b = self.vreg[vs2].view(np.float32)
+        self._wr_f32(vd, b - a, mask)
+
     def _wr_f32(self, vd, result, mask):
         act = self._active(mask)
         idx = np.arange(VLMAX) < self.vl
