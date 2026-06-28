@@ -121,6 +121,43 @@ class VectorUnit:
         b = self.vreg[vs2].astype(np.int32)
         self._wr_int(vd, np.where(a > b, self.vreg[vs1], self.vreg[vs2]).astype(np.int64), mask)
 
+    # -- compare ops (vd = mask, 1 bit per lane) --------------------------- #
+    def _cmp(self, vs1, vs2, fn, signed, mask):
+        """Per-lane compare producing a length-VLMAX 0/1 mask. A lane bit is set
+        only when the lane is body-active (i < vl) AND mask-active and the
+        comparison holds; inactive/tail lanes read 0 (mask-undisturbed=0 here)."""
+        if signed:
+            a = self.vreg[vs1].astype(np.int32)
+            b = self.vreg[vs2].astype(np.int32)
+        else:
+            a = self.vreg[vs1]
+            b = self.vreg[vs2]
+        cmp = fn(a, b)
+        act = self._active(mask)
+        idx = np.arange(VLMAX) < self.vl
+        res = np.zeros(VLMAX, dtype=np.uint8)
+        sel = act & idx
+        res[sel] = cmp.astype(np.uint8)[sel]
+        return res
+
+    def vmseq(self, vs1, vs2, mask=None):
+        return self._cmp(vs1, vs2, lambda a, b: a == b, False, mask)
+
+    def vmsne(self, vs1, vs2, mask=None):
+        return self._cmp(vs1, vs2, lambda a, b: a != b, False, mask)
+
+    def vmsltu(self, vs1, vs2, mask=None):
+        return self._cmp(vs1, vs2, lambda a, b: a < b, False, mask)
+
+    def vmslt(self, vs1, vs2, mask=None):
+        return self._cmp(vs1, vs2, lambda a, b: a < b, True, mask)
+
+    def vmsleu(self, vs1, vs2, mask=None):
+        return self._cmp(vs1, vs2, lambda a, b: a <= b, False, mask)
+
+    def vmsle(self, vs1, vs2, mask=None):
+        return self._cmp(vs1, vs2, lambda a, b: a <= b, True, mask)
+
     # -- fp ops ------------------------------------------------------------ #
     def vfadd(self, vd, vs1, vs2, mask=None):
         a = self.vreg[vs1].view(np.float32)

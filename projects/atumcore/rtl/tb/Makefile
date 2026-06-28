@@ -6,6 +6,7 @@
 #   make CORE=vregfile           -> atum_vregfile (vector register file)
 #   make CORE=vsetvl             -> atum_vsetvl (VL = min(avl, VLMAX))
 #   make CORE=vcore              -> atum_vcore (single-cycle vector core)
+#   make CORE=vmask              -> atum_vmask (compare-to-mask: vmseq/vmslt/...)
 TOPLEVEL_LANG = verilog
 SIM ?= verilator
 CORE ?= valu
@@ -21,6 +22,10 @@ ifeq ($(CORE),vcore)
                     $(PWD)/../atum_vcore.sv
   TOPLEVEL = atum_vcore
   MODULE   = test_vcore
+else ifeq ($(CORE),vmask)
+  VERILOG_SOURCES = $(PWD)/../atum_vmask.sv
+  TOPLEVEL = atum_vmask
+  MODULE   = test_vmask
 else ifeq ($(CORE),vregfile)
   VERILOG_SOURCES = $(PWD)/../atum_vregfile.sv
   TOPLEVEL = atum_vregfile

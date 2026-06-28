@@ -74,6 +74,34 @@ def test_masked():
     assert out == [11, 0, 13, 0, 15, 0, 17, 0]
 
 
+def test_vmask_compare():
+    vu = g.VectorUnit()
+    #            eq   gt   lt(u) lt(s,neg) eq  gt    lt    eq
+    a = [5, 9, 1, 0x80000000, 7, 0x7FFFFFFF, 2, 5]
+    b = [5, 3, 4, 0x00000001, 7, 0x00000001, 9, 5]
+    vu.load(1, a); vu.load(2, b)
+    # vmseq: lanes equal -> 0,4,7
+    assert list(vu.vmseq(1, 2)) == [1, 0, 0, 0, 1, 0, 0, 1]
+    # vmsltu: unsigned a<b -> lane2 (1<4), lane6 (2<9); 0x80000000<1 unsigned false
+    assert list(vu.vmsltu(1, 2)) == [0, 0, 1, 0, 0, 0, 1, 0]
+    # vmslt: signed a<b -> lane2, lane3 (0x80000000 is negative < 1), lane6
+    assert list(vu.vmslt(1, 2)) == [0, 0, 1, 1, 0, 0, 1, 0]
+    # vmsne is the complement of vmseq
+    assert list(vu.vmsne(1, 2)) == [0, 1, 1, 1, 0, 1, 1, 0]
+
+
+def test_vmask_vl_and_mask():
+    vu = g.VectorUnit()
+    vu.load(1, [1, 1, 1, 1, 1, 1, 1, 1])
+    vu.load(2, [1, 1, 1, 1, 1, 1, 1, 1])
+    vu.vl = 4                              # only first 4 lanes are body-active
+    mask = [1, 0, 1, 1, 1, 1, 1, 1]        # lane1 masked off
+    # equal everywhere, but tail (>=vl) and masked lanes read 0
+    assert list(vu.vmseq(1, 2, mask=mask)) == [1, 0, 1, 1, 0, 0, 0, 0]
+    # vmsle <= holds on equal -> same active pattern
+    assert list(vu.vmsle(1, 2, mask=mask)) == [1, 0, 1, 1, 0, 0, 0, 0]
+
+
 def test_vredsum():
     vu = g.VectorUnit()
     data = [3, 1, 4, 1, 5, 9, 2, 6]
