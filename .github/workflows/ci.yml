@@ -89,6 +89,8 @@ jobs:
         run: ./projects/gebcore/rtl/tb/run_sim.sh CORE=spmac
       - name: Run AtumCore vector integer ALU testbench
         run: ./projects/atumcore/rtl/tb/run_sim.sh CORE=valu
+      - name: Run AtumCore fp32 vector lane testbench
+        run: ./projects/atumcore/rtl/tb/run_sim.sh CORE=vfpu
 
   synth-yosys:
     name: Phase 3 synthesis (Yosys, 0-latch check)

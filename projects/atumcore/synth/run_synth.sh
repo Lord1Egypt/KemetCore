@@ -31,4 +31,27 @@ else
     "
 fi
 echo "  -> reports/atum_valu.stat (0 latches asserted)"
+
+# atum_vfpu embeds VLMAX fp32 mul + fp32 add cores (each with a wide mantissa
+# multiplier). Full ABC gate-mapping is large; under $CI we stop at the coarse
+# netlist (0 latches; arithmetic inferred, not flops). Committed .stat is full.
+HAPI="../../hapicore/rtl"
+if [ -z "${CI:-}" ]; then
+    echo "=== synthesizing atum_vfpu (fp32 vector lane, full) ==="
+    "$YOSYS" -ql "reports/atum_vfpu.log" -p "
+        read_verilog -sv $HAPI/hapi_fp32_mul.sv $HAPI/hapi_fp32_add.sv ../rtl/atum_vfpu.sv;
+        synth -top atum_vfpu;
+        select -assert-none t:\$_DLATCH_* t:\$dlatch;
+        tee -o reports/atum_vfpu.stat stat
+    "
+else
+    echo "=== synthesizing atum_vfpu (coarse 0-latch check under CI) ==="
+    "$YOSYS" -ql "reports/atum_vfpu.log" -p "
+        read_verilog -sv $HAPI/hapi_fp32_mul.sv $HAPI/hapi_fp32_add.sv ../rtl/atum_vfpu.sv;
+        synth -top atum_vfpu -run :fine;
+        select -assert-none t:\$_DLATCH_* t:\$dlatch;
+        stat
+    "
+fi
+echo "  -> reports/atum_vfpu.stat (0 latches asserted)"
 echo "ALL SYNTHESIZED ✅ (no latches)"
