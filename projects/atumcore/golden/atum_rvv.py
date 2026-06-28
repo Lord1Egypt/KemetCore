@@ -157,6 +157,15 @@ class VectorUnit:
         b = self.vreg[vs2].astype(np.int32).astype(np.int64)
         self._wr_int(vd, np.clip(a - b, -(2**31), 2**31 - 1), mask)
 
+    def vsmul(self, vd, vs1, vs2, mask=None):
+        """Signed Q31 fractional multiply: roundoff_signed(a*b, 31) then saturate to
+        the signed 32-bit range (rounding = round-to-nearest, ties up)."""
+        a = self.vreg[vs1].astype(np.int32).astype(np.int64)
+        b = self.vreg[vs2].astype(np.int32).astype(np.int64)
+        prod = a * b
+        r = (prod + (1 << 30)) >> 31
+        self._wr_int(vd, np.clip(r, -(2**31), 2**31 - 1), mask)
+
     # -- compare ops (vd = mask, 1 bit per lane) --------------------------- #
     def _cmp(self, vs1, vs2, fn, signed, mask):
         """Per-lane compare producing a length-VLMAX 0/1 mask. A lane bit is set
