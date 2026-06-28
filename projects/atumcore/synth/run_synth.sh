@@ -120,6 +120,16 @@ echo "=== synthesizing atum_vmlogic (mask logical unit, full) ==="
 "
 echo "  -> reports/atum_vmlogic.stat (0 latches asserted)"
 
+# atum_vmpopc is a small mask reduction (adders + priority encode) -> always full.
+echo "=== synthesizing atum_vmpopc (mask reduction unit, full) ==="
+"$YOSYS" -ql "reports/atum_vmpopc.log" -p "
+    read_verilog -sv ../rtl/atum_vmpopc.sv;
+    synth -top atum_vmpopc;
+    select -assert-none t:\$_DLATCH_* t:\$dlatch;
+    tee -o reports/atum_vmpopc.stat stat
+"
+echo "  -> reports/atum_vmpopc.stat (0 latches asserted)"
+
 # atum_vcore embeds the whole vexec datapath (fp32 multipliers) + vreg array. Full
 # ABC mapping is large; under $CI stop at the coarse 0-latch netlist, committed .stat full.
 VC_SRCS="../rtl/atum_valu.sv ../rtl/atum_vfpu.sv ../rtl/atum_vredu.sv \

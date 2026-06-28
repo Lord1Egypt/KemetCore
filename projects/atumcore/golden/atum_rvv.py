@@ -194,6 +194,25 @@ class VectorUnit:
     def vmorn(self, m1, m2):
         return self._vmlogic(m1, m2, lambda a, b: a | ~b)      # m1 OR  NOT m2
 
+    # -- mask reductions (mask -> scalar) ---------------------------------- #
+    def vcpop(self, m, mask=None):
+        """Population count: number of set bits in m among body-active (i < vl)
+        and v0.t-active lanes."""
+        act = self._active(mask)
+        m = np.asarray(m, dtype=np.uint8) & 1
+        return int(sum(1 for i in range(VLMAX)
+                       if i < self.vl and act[i] and m[i]))
+
+    def vfirst(self, m, mask=None):
+        """Index of the first set bit of m among body-active and v0.t-active
+        lanes, or -1 if none."""
+        act = self._active(mask)
+        m = np.asarray(m, dtype=np.uint8) & 1
+        for i in range(VLMAX):
+            if i < self.vl and act[i] and m[i]:
+                return i
+        return -1
+
     # -- fp ops ------------------------------------------------------------ #
     def vfadd(self, vd, vs1, vs2, mask=None):
         a = self.vreg[vs1].view(np.float32)

@@ -124,6 +124,23 @@ def test_vmask_logic_vl():
     assert list(vu.vmnand(z, z)) == [1, 1, 1, 0, 0, 0, 0, 0]
 
 
+def test_vmpopc():
+    vu = g.VectorUnit()
+    m = [1, 0, 1, 1, 0, 0, 1, 0]            # 4 bits set, first at lane 0
+    assert vu.vcpop(m) == 4
+    assert vu.vfirst(m) == 0
+    assert vu.vcpop([0] * 8) == 0
+    assert vu.vfirst([0] * 8) == -1         # none set -> -1
+    m2 = [0, 0, 0, 1, 0, 0, 0, 0]
+    assert vu.vfirst(m2) == 3
+    # vl gating: a set bit beyond vl is not counted
+    vu.vl = 2
+    assert vu.vcpop(m) == 1                  # only lane0 within vl
+    assert vu.vfirst(m) == 0
+    # v0.t mask gates lane0 off -> first becomes lane... none within vl=2 now
+    assert vu.vfirst(m, mask=[0, 1, 1, 1, 1, 1, 1, 1]) == -1
+
+
 def test_vredsum():
     vu = g.VectorUnit()
     data = [3, 1, 4, 1, 5, 9, 2, 6]
