@@ -37,9 +37,8 @@ def golden(redop, vs, vl, mask_bits):
     vu.vreg[1] = np.array(vs, dtype=np.uint32)
     vu.vl = vl
     mask = [bool((mask_bits >> i) & 1) for i in range(VLMAX)]
-    if redop:
-        return int(vu.vredmax(1, mask=mask)) & MASKW
-    return int(vu.vredsum(1, mask=mask)) & MASKW
+    fn = {0: vu.vredsum, 1: vu.vredmax, 2: vu.vredand, 3: vu.vredor, 4: vu.vredxor}[redop]
+    return int(fn(1, mask=mask)) & MASKW
 
 
 async def check(dut, redop, vs, vl, mask_bits):
@@ -50,8 +49,8 @@ async def check(dut, redop, vs, vl, mask_bits):
     await Timer(1, units="ns")
     got = int(dut.result.value)
     exp = golden(redop, vs, vl, mask_bits)
-    kind = "vredmax" if redop else "vredsum"
-    assert got == exp, (f"{kind} vl={vl} mask={mask_bits:08b}: "
+    kind = {0: "sum", 1: "max", 2: "and", 3: "or", 4: "xor"}[redop]
+    assert got == exp, (f"vred{kind} vl={vl} mask={mask_bits:08b}: "
                         f"got {got:08x} != golden {exp:08x}")
 
 
@@ -71,7 +70,12 @@ async def test_directed(dut):
     await check(dut, 1, a, 4, 0b1111)
     # max, single active lane
     await check(dut, 1, a, 8, 0b00010000)
-    dut._log.info("atum_vredu: directed reductions match golden")
+    # and/or/xor reductions, full + sparse
+    for rop in (2, 3, 4):
+        await check(dut, rop, a, 8, 0xFF)
+        await check(dut, rop, a, 5, 0b10110)
+        await check(dut, rop, a, 0, 0xFF)     # empty: and->all1, or/xor->0
+    dut._log.info("atum_vredu: directed reductions (sum/max/and/or/xor) match golden")
 
 
 @cocotb.test()
@@ -81,11 +85,13 @@ async def test_random(dut):
         vs = [rng.getrandbits(32) for _ in range(VLMAX)]
         vl = rng.randint(0, VLMAX)
         mask = rng.getrandbits(VLMAX)
-        # vredsum: any vl/mask (empty -> 0)
-        await check(dut, 0, vs, vl, mask)
-        # vredmax: ensure >= 1 active lane
-        if not active_lanes(vl, mask):
-            vl = rng.randint(1, VLMAX)
-            mask |= 1                       # lane 0 active, and 0 < vl
-        await check(dut, 1, vs, vl, mask)
-    dut._log.info("atum_vredu: 6000 random vredsum + vredmax match golden")
+        # sum/and/or/xor: any vl/mask (empty handled by identities)
+        for rop in (0, 2, 3, 4):
+            await check(dut, rop, vs, vl, mask)
+        # max: ensure >= 1 active lane
+        vlm, mm = vl, mask
+        if not active_lanes(vlm, mm):
+            vlm = rng.randint(1, VLMAX)
+            mm = mask | 1
+        await check(dut, 1, vs, vlm, mm)
+    dut._log.info("atum_vredu: 6000 random reductions (sum/max/and/or/xor) match golden")
