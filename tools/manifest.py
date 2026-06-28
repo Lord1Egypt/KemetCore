@@ -427,7 +427,12 @@ PROJECTS = [
                  "imem + initial vregs, runs to HALT, compares the whole vector regfile to a golden runner "
                  "executing the same micro-program on VectorUnit. Bit-exact on a directed program "
                  "(int axpy/dot + fp vfmul/vfadd + vredsum/vredmax + partial-vl) + 40 random programs; "
-                 "0-latch (CI coarse). AtumCore is now a complete working vector processor.",
+                 "0-latch (CI coarse). The core gained a word-addressable VECTOR DATA MEMORY with "
+                 "unit-stride VLD/VST micro-ops (3-bit opcode; VLD overwrites vd from dmem[base+i] for "
+                 "i<vl else 0, VST writes vs1 lanes to dmem[base+i]); it now runs a real STRIP-MINED "
+                 "integer axpy (vsetvl + VLD/VMACC/VST over a length-20 array) and the TB checks the "
+                 "whole machine state (vregfile + data memory) vs the golden runner on the axpy + 40 "
+                 "random load/store/op/reduction programs. AtumCore is a complete working vector processor.",
         "checkpoints": [
             ("AT.1", "Golden: RVV subset + vsetvl semantics", 0, "done"),
             ("AT.2", "Golden: masked ops + reductions", 0, "done"),
@@ -438,7 +443,7 @@ PROJECTS = [
             ("AT.9", "RTL: vector reduction unit (atum_vredu, vredsum/vredmax) + cocotb", 2, "done"),
             ("AT.10", "RTL: integrated vector execute unit (atum_vexec) + cocotb vs golden", 2, "done"),
             ("AT.11", "RTL: vector register file (atum_vregfile) + vsetvl (atum_vsetvl) + cocotb", 2, "done"),
-            ("AT.12", "RTL: single-cycle vector core (atum_vcore) running micro-programs + cocotb vs golden runner", 2, "done"),
+            ("AT.12", "RTL: single-cycle vector core (atum_vcore) + vector memory (VLD/VST) running strip-mined programs", 2, "done"),
             ("AT.13", "P&R: GDSII at 500 MHz", 4, "todo"),
         ],
         "tests": [
@@ -454,7 +459,7 @@ PROJECTS = [
             ("rtl: test_vexec (cocotb)", "atum_vexec.sv integrated unit == golden on directed + 6000 random mixed ALU/FP/RED ops", "pass"),
             ("rtl: test_vregfile (cocotb)", "atum_vregfile.sv == model on 4000 rw cycles + reset", "pass"),
             ("rtl: test_vsetvl (cocotb)", "atum_vsetvl.sv VL=min(avl,VLMAX) == golden on edges + 2000 random", "pass"),
-            ("rtl: test_vcore (cocotb)", "atum_vcore.sv final vregfile == golden runner on directed + 40 random micro-programs", "pass"),
+            ("rtl: test_vcore (cocotb)", "atum_vcore.sv final vregfile + data memory == golden runner on strip-mined axpy + 40 random load/store/op programs", "pass"),
         ],
     },
     {
