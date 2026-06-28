@@ -407,7 +407,11 @@ PROJECTS = [
                  "coarse 0-latch check, committed .stat is the full gate-level evidence). atum_vfpu.sv "
                  "— the fp32 vector lane (vfadd/vfmul) composing the bit-exact HapiCore fp32 cores "
                  "(hapi_fp32_add/mul) per lane with the same active-element write; bit-exact vs golden "
-                 "on fp corners (zeros/inf/nan/subnormal/overflow) + 5000 random; 0-latch (CI coarse).",
+                 "on fp corners (zeros/inf/nan/subnormal/overflow) + 5000 random; 0-latch (CI coarse). "
+                 "atum_vredu.sv — the vector reduction unit (vredsum = 32-bit wrapping sum, vredmax) "
+                 "over active lanes (i<vl AND mask), scalar result; note the golden widens uint32->int64 "
+                 "so vredmax is an UNSIGNED max (identity 0) — matched bit-for-bit. Bit-exact vs golden "
+                 "on directed + 6000 random vredsum+vredmax; full-synth 0 latches (~3.1K cells).",
         "checkpoints": [
             ("AT.1", "Golden: RVV subset + vsetvl semantics", 0, "done"),
             ("AT.2", "Golden: masked ops + reductions", 0, "done"),
@@ -415,6 +419,7 @@ PROJECTS = [
             ("AT.4", "pymodel: strip-mined axpy", 1, "done"),
             ("AT.6", "RTL: vector integer ALU lane array (atum_valu) + cocotb vs golden", 2, "done"),
             ("AT.8", "RTL: fp32 vector lane (atum_vfpu, vfadd/vfmul over HapiCore fp32) + cocotb", 2, "done"),
+            ("AT.9", "RTL: vector reduction unit (atum_vredu, vredsum/vredmax) + cocotb", 2, "done"),
             ("AT.13", "P&R: GDSII at 500 MHz", 4, "todo"),
         ],
         "tests": [
@@ -426,6 +431,7 @@ PROJECTS = [
             ("test_axpy_stripmined", "strip-mined axpy == a*x+y", "pass"),
             ("rtl: test_valu (cocotb)", "atum_valu.sv == golden VectorUnit on corners + 6000 random (all ops/vl/mask)", "pass"),
             ("rtl: test_vfpu (cocotb)", "atum_vfpu.sv (fp32 vfadd/vfmul) == golden on fp corners + 5000 random", "pass"),
+            ("rtl: test_vredu (cocotb)", "atum_vredu.sv (vredsum/vredmax) == golden on directed + 6000 random", "pass"),
         ],
     },
     {
