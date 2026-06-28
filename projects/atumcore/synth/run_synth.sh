@@ -262,6 +262,27 @@ else
 fi
 echo "  -> reports/atum_vfcvt.stat (0 latches asserted)"
 
+# atum_vfsub embeds VLMAX fp32 adders (negate-then-add). Like vfpu, full ABC mapping
+# is large; under $CI stop at the coarse 0-latch netlist, committed .stat is full.
+if [ -z "${CI:-}" ]; then
+    echo "=== synthesizing atum_vfsub (fp32 vector subtract, full) ==="
+    "$YOSYS" -ql "reports/atum_vfsub.log" -p "
+        read_verilog -sv $HAPI/hapi_fp32_add.sv ../rtl/atum_vfsub.sv;
+        synth -top atum_vfsub;
+        select -assert-none t:\$_DLATCH_* t:\$dlatch;
+        tee -o reports/atum_vfsub.stat stat
+    "
+else
+    echo "=== synthesizing atum_vfsub (coarse 0-latch check under CI) ==="
+    "$YOSYS" -ql "reports/atum_vfsub.log" -p "
+        read_verilog -sv $HAPI/hapi_fp32_add.sv ../rtl/atum_vfsub.sv;
+        synth -top atum_vfsub -run :fine;
+        select -assert-none t:\$_DLATCH_* t:\$dlatch;
+        stat
+    "
+fi
+echo "  -> reports/atum_vfsub.stat (0 latches asserted)"
+
 # atum_vcore embeds the whole vexec datapath (fp32 multipliers) + vreg array. Full
 # ABC mapping is large; under $CI stop at the coarse 0-latch netlist, committed .stat full.
 VC_SRCS="../rtl/atum_valu.sv ../rtl/atum_vfpu.sv ../rtl/atum_vredu.sv \
