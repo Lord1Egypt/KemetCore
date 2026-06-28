@@ -7,6 +7,7 @@
 #   make CORE=decode             -> seth_decode
 #   make CORE=core               -> seth_core (integrated single-cycle RV32IM)
 #   make CORE=pipeline           -> seth_pipeline (5-stage interlocked RV32IM)
+#   make CORE=fwd                -> seth_pipeline_fwd vs seth_pipeline (forwarding)
 TOPLEVEL_LANG = verilog
 SIM ?= verilator
 CORE ?= alu
@@ -46,6 +47,14 @@ else ifeq ($(CORE),pipeline)
                     $(PWD)/../seth_pipeline.sv
   TOPLEVEL = seth_pipeline
   MODULE   = test_pipeline
+else ifeq ($(CORE),fwd)
+  VERILOG_SOURCES = $(PWD)/../seth_decode.sv $(PWD)/../seth_imm.sv \
+                    $(PWD)/../seth_aluctl.sv $(PWD)/../seth_alu.sv \
+                    $(PWD)/../seth_muldiv.sv $(PWD)/../seth_regfile.sv \
+                    $(PWD)/../seth_pipeline.sv $(PWD)/../seth_pipeline_fwd.sv \
+                    $(PWD)/../seth_pipeline_cmp.sv
+  TOPLEVEL = seth_pipeline_cmp
+  MODULE   = test_pipeline_fwd
 else
   VERILOG_SOURCES = $(PWD)/../seth_alu.sv
   TOPLEVEL = seth_alu

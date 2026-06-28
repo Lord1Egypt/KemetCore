@@ -16,9 +16,9 @@ _Auto-generated from `tools/manifest.py`._
 | S2.16 | P2 | RTL: main control decoder (seth_decode) + cocotb vs golden | ✅ |
 | S2.17 | P2 | RTL: integrated single-cycle core (seth_core) + cocotb vs ISA sim | ✅ |
 | S2.18 | P2 | RTL: 5-stage interlocked pipeline (seth_pipeline) + cocotb vs ISA sim | ✅ |
-| S2.10 | P2 | RTL: add forwarding to the pipeline (performance; result-invariant) | ⬜ |
+| S2.10 | P2 | RTL: forwarding pipeline (seth_pipeline_fwd) + cocotb vs interlock & ISA sim | ✅ |
 | S2.9 | P3 | Synthesis: ALU Yosys, 0 latches | ✅ |
 | S2.11 | P2 | cocotb: per-instruction vs Spike | ⬜ |
 | S2.14 | P4 | P&R: core macro | ⬜ |
 
-**Progress:** 13/16 checkpoints complete (33% of phases).
+**Progress:** 14/16 checkpoints complete (33% of phases).

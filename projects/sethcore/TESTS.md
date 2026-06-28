@@ -20,5 +20,6 @@ Run: `pytest projects/sethcore/tests -v`
 | `rtl: test_decode (cocotb)` | seth_decode.sv == golden.decode_ctrl on opcode sweep + 50K random | ✅ |
 | `rtl: test_core (cocotb)` | seth_core final regfile == ISA sim on real + 40 random programs | ✅ |
 | `rtl: test_pipeline (cocotb)` | seth_pipeline final regfile == ISA sim (hazards/flush + 120 random) | ✅ |
+| `rtl: test_pipeline_fwd (cocotb)` | seth_pipeline_fwd == interlock == ISA sim, in fewer cycles (load-use + 30 random) | ✅ |
 
-**14/14 tests passing.**
+**15/15 tests passing.**
