@@ -121,6 +121,8 @@ jobs:
         run: ./projects/atumcore/rtl/tb/run_sim.sh CORE=vmerge
       - name: Run AtumCore fp sign-injection testbench
         run: ./projects/atumcore/rtl/tb/run_sim.sh CORE=vfsgnj
+      - name: Run AtumCore fp min/max testbench
+        run: ./projects/atumcore/rtl/tb/run_sim.sh CORE=vfminmax
 
   synth-yosys:
     name: Phase 3 synthesis (Yosys, 0-latch check)

@@ -345,6 +345,45 @@ class VectorUnit:
                 out[i] = (s << 31) | mag
         return out
 
+    # -- fp min / max ------------------------------------------------------ #
+    @staticmethod
+    def _fp_isnan(x):
+        return ((x >> 23) & 0xFF) == 0xFF and (x & 0x7FFFFF) != 0
+
+    @staticmethod
+    def _fp_key(x):
+        # monotonic float->uint key: real-value order == unsigned key order, and
+        # -0 maps below +0 (so min/max give the IEEE-recommended signed-zero result).
+        return ((~x) & 0xFFFFFFFF) if (x >> 31) & 1 else (x | 0x80000000)
+
+    def _vfmm(self, vs1, vs2, want_max):
+        a = self.vreg[vs1].astype(np.uint32)
+        b = self.vreg[vs2].astype(np.uint32)
+        out = np.zeros(VLMAX, dtype=np.uint32)
+        for i in range(VLMAX):
+            if i < self.vl:
+                ai, bi = int(a[i]), int(b[i])
+                an, bn = self._fp_isnan(ai), self._fp_isnan(bi)
+                if an and bn:
+                    out[i] = 0x7FC00000              # canonical quiet NaN
+                elif an:
+                    out[i] = bi                      # NaN propagation: pick the number
+                elif bn:
+                    out[i] = ai
+                else:
+                    ka, kb = self._fp_key(ai), self._fp_key(bi)
+                    if want_max:
+                        out[i] = ai if ka >= kb else bi
+                    else:
+                        out[i] = ai if ka <= kb else bi
+        return out
+
+    def vfmin(self, vs1, vs2):
+        return self._vfmm(vs1, vs2, want_max=False)
+
+    def vfmax(self, vs1, vs2):
+        return self._vfmm(vs1, vs2, want_max=True)
+
     # -- reductions -------------------------------------------------------- #
     def vredsum(self, vs, mask=None):
         act = self._active(mask)[:self.vl]

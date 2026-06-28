@@ -190,6 +190,16 @@ echo "=== synthesizing atum_vfsgnj (fp sign-injection unit, full) ==="
 "
 echo "  -> reports/atum_vfsgnj.stat (0 latches asserted)"
 
+# atum_vfminmax is fp comparators + muxes (no multipliers) -> always full.
+echo "=== synthesizing atum_vfminmax (fp32 min/max unit, full) ==="
+"$YOSYS" -ql "reports/atum_vfminmax.log" -p "
+    read_verilog -sv ../rtl/atum_vfminmax.sv;
+    synth -top atum_vfminmax;
+    select -assert-none t:\$_DLATCH_* t:\$dlatch;
+    tee -o reports/atum_vfminmax.stat stat
+"
+echo "  -> reports/atum_vfminmax.stat (0 latches asserted)"
+
 # atum_vcore embeds the whole vexec datapath (fp32 multipliers) + vreg array. Full
 # ABC mapping is large; under $CI stop at the coarse 0-latch netlist, committed .stat full.
 VC_SRCS="../rtl/atum_valu.sv ../rtl/atum_vfpu.sv ../rtl/atum_vredu.sv \
