@@ -33,7 +33,8 @@ module atum_valu #(
     // op encoding
     localparam logic [3:0] OP_ADD = 4'd0, OP_SUB = 4'd1, OP_MUL = 4'd2,
                            OP_AND = 4'd3, OP_OR  = 4'd4, OP_XOR = 4'd5,
-                           OP_SLL = 4'd6, OP_SRL = 4'd7, OP_MACC = 4'd8;
+                           OP_SLL = 4'd6, OP_SRL = 4'd7, OP_MACC = 4'd8,
+                           OP_MIN = 4'd9, OP_MAX = 4'd10, OP_MINU = 4'd11, OP_MAXU = 4'd12;
 
     always_comb begin
         for (int i = 0; i < VLMAX; i++) begin
@@ -51,6 +52,10 @@ module atum_valu #(
                 OP_SLL:  r = a << b[4:0];
                 OP_SRL:  r = a >> b[4:0];      // logical (a is unsigned)
                 OP_MACC: r = vd_old[i*ELEN +: ELEN] + (a * b);  // vd += vs1*vs2 (low ELEN)
+                OP_MIN:  r = ($signed(a) <  $signed(b)) ? a : b;
+                OP_MAX:  r = ($signed(a) >  $signed(b)) ? a : b;
+                OP_MINU: r = (a <  b) ? a : b;
+                OP_MAXU: r = (a >  b) ? a : b;
                 default: r = '0;
             endcase
             // body-active (i < vl) AND mask-active -> write; else keep old element

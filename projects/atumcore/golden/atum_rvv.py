@@ -95,6 +95,24 @@ class VectorUnit:
         acc = self.vreg[vd].astype(np.int64)
         self._wr_int(vd, acc + a * b, mask)
 
+    def vminu(self, vd, vs1, vs2, mask=None):
+        a, b = self.vreg[vs1], self.vreg[vs2]               # unsigned
+        self._wr_int(vd, np.where(a < b, a, b).astype(np.int64), mask)
+
+    def vmaxu(self, vd, vs1, vs2, mask=None):
+        a, b = self.vreg[vs1], self.vreg[vs2]
+        self._wr_int(vd, np.where(a > b, a, b).astype(np.int64), mask)
+
+    def vmin(self, vd, vs1, vs2, mask=None):
+        a = self.vreg[vs1].astype(np.int32)                 # signed compare
+        b = self.vreg[vs2].astype(np.int32)
+        self._wr_int(vd, np.where(a < b, self.vreg[vs1], self.vreg[vs2]).astype(np.int64), mask)
+
+    def vmax(self, vd, vs1, vs2, mask=None):
+        a = self.vreg[vs1].astype(np.int32)
+        b = self.vreg[vs2].astype(np.int32)
+        self._wr_int(vd, np.where(a > b, self.vreg[vs1], self.vreg[vs2]).astype(np.int64), mask)
+
     # -- fp ops ------------------------------------------------------------ #
     def vfadd(self, vd, vs1, vs2, mask=None):
         a = self.vreg[vs1].view(np.float32)

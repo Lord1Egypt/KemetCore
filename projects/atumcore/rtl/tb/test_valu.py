@@ -22,7 +22,8 @@ ELEN = 32
 MASKW = (1 << ELEN) - 1
 
 OPS = {0: "vadd", 1: "vsub", 2: "vmul", 3: "vand",
-       4: "vor", 5: "vxor", 6: "vsll", 7: "vsrl", 8: "vmacc"}
+       4: "vor", 5: "vxor", 6: "vsll", 7: "vsrl", 8: "vmacc",
+       9: "vmin", 10: "vmax", 11: "vminu", 12: "vmaxu"}
 
 
 def pack(lanes):
@@ -93,7 +94,7 @@ async def test_directed(dut):
 async def test_random(dut):
     rng = random.Random(0xA70BEEF)
     for _ in range(6000):
-        op = rng.randint(0, 8)
+        op = rng.randint(0, 12)
         vs1 = [rng.getrandbits(32) for _ in range(VLMAX)]
         vs2 = [rng.getrandbits(32) for _ in range(VLMAX)]
         old = [rng.getrandbits(32) for _ in range(VLMAX)]
