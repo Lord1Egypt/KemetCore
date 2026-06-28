@@ -131,6 +131,8 @@ jobs:
         run: ./projects/atumcore/rtl/tb/run_sim.sh CORE=vmv
       - name: Run AtumCore slide-by-1 testbench
         run: ./projects/atumcore/rtl/tb/run_sim.sh CORE=vslide1
+      - name: Run AtumCore int<->fp convert testbench
+        run: ./projects/atumcore/rtl/tb/run_sim.sh CORE=vfcvt
 
   synth-yosys:
     name: Phase 3 synthesis (Yosys, 0-latch check)

@@ -368,3 +368,34 @@ def test_axpy_stripmined():
     # 37 elements -> ceil(37/8) = 5 strip-mining iterations
     assert eng.vsetvl(0) == 0
     assert eng.ops == 5 * 2                  # vfmul + vfadd per iteration
+
+
+def test_vfcvt_roundtrip_and_saturate():
+    import struct
+    fb = lambda f: struct.unpack("<I", struct.pack("<f", f))[0]
+    vu = g.VectorUnit()
+    # int32 -> fp32 (op 0): exact small ints + RNE for >2**24.
+    vu.vreg[1] = np.array([0, 1, 0xFFFFFFFF, 0x80000000, 16777216,
+                           16777217, 0x40000000, 0x7FFFFFFF], np.uint32)
+    out = vu.vfcvt(1, 0)
+    assert out[0] == 0
+    assert struct.unpack("<f", struct.pack("<I", int(out[1])))[0] == 1.0
+    assert struct.unpack("<f", struct.pack("<I", int(out[2])))[0] == -1.0   # signed -1
+    assert struct.unpack("<f", struct.pack("<I", int(out[3])))[0] == -2147483648.0
+    # uint32 -> fp32 (op 1): 0xFFFFFFFF is positive 4294967295 -> rounds to 2**32.
+    out_u = vu.vfcvt(1, 1)
+    assert struct.unpack("<f", struct.pack("<I", int(out_u[2])))[0] == 4294967296.0
+    # fp32 -> int32 RNE (op 2): ties to even, saturation on Inf/NaN/overflow.
+    vu.vreg[1] = np.array([fb(2.5), fb(3.5), fb(-2.5), fb(1e30),
+                           fb(-1e30), 0x7FC00000, fb(1.4), fb(-0.5)], np.uint32)
+    s = vu.vfcvt(1, 2)
+    assert int(s[0]) == 2 and int(s[1]) == 4 and (int(s[2]) & 0xFFFFFFFF) == ((-2) & 0xFFFFFFFF)
+    assert int(s[3]) == 0x7FFFFFFF                  # +overflow -> INT32_MAX
+    assert int(s[4]) == 0x80000000                  # -overflow -> INT32_MIN
+    assert int(s[5]) == 0x7FFFFFFF                  # NaN -> INT32_MAX
+    assert int(s[6]) == 1 and int(s[7]) == 0
+    # fp32 -> uint32: negative saturates to 0; truncation differs from RNE.
+    u = vu.vfcvt(1, 3)
+    assert int(u[2]) == 0 and int(u[4]) == 0
+    t = vu.vfcvt(1, 4)                               # rtz signed
+    assert int(t[1]) == 3 and int(t[6]) == 1        # 3.5 trunc -> 3, 1.4 -> 1

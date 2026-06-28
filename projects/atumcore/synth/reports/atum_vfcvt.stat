@@ -1,0 +1,25 @@
+
+3. Printing statistics.
+
+=== atum_vfcvt ===
+
+        +----------Local Count, excluding submodules.
+        | 
+    12839 wires
+    17282 wire bits
+      292 public wires
+     4735 public wire bits
+        4 ports
+      519 port bits
+    12803 cells
+      434   $_ANDNOT_
+     3174   $_AND_
+     2353   $_MUX_
+     3749   $_NAND_
+      182   $_NOR_
+      197   $_NOT_
+      525   $_ORNOT_
+     1325   $_OR_
+      596   $_XNOR_
+      268   $_XOR_
+
