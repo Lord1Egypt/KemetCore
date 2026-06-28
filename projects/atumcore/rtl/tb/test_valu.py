@@ -22,7 +22,7 @@ ELEN = 32
 MASKW = (1 << ELEN) - 1
 
 OPS = {0: "vadd", 1: "vsub", 2: "vmul", 3: "vand",
-       4: "vor", 5: "vxor", 6: "vsll", 7: "vsrl"}
+       4: "vor", 5: "vxor", 6: "vsll", 7: "vsrl", 8: "vmacc"}
 
 
 def pack(lanes):
@@ -82,18 +82,22 @@ async def test_directed(dut):
     sh = [33, 64, 31, 1, 0, 7, 32, 5]
     await check(dut, 6, a, sh, old, 8, 0xFF)
     await check(dut, 7, a, sh, old, 8, 0xFF)
-    dut._log.info("atum_valu: directed corners match golden")
+    # vmacc: vd += vs1*vs2 (low 32), incl product overflow + partial vl/mask
+    macc_old = [0x100, 0xFFFFFF00, 1, 0, 0x7FFFFFFF, 0xDEAD, 42, 0x80000000]
+    await check(dut, 8, a, b, macc_old, 8, 0xFF)
+    await check(dut, 8, a, b, macc_old, 5, 0b10110)
+    dut._log.info("atum_valu: directed corners (incl vmacc) match golden")
 
 
 @cocotb.test()
 async def test_random(dut):
     rng = random.Random(0xA70BEEF)
     for _ in range(6000):
-        op = rng.randint(0, 7)
+        op = rng.randint(0, 8)
         vs1 = [rng.getrandbits(32) for _ in range(VLMAX)]
         vs2 = [rng.getrandbits(32) for _ in range(VLMAX)]
         old = [rng.getrandbits(32) for _ in range(VLMAX)]
         vl = rng.randint(0, VLMAX)
         mask = rng.getrandbits(VLMAX)
         await check(dut, op, vs1, vs2, old, vl, mask)
-    dut._log.info("atum_valu: 6000 random vector ops match golden (all ops/vl/mask)")
+    dut._log.info("atum_valu: 6000 random vector ops (incl vmacc) match golden (all ops/vl/mask)")

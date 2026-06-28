@@ -9,8 +9,9 @@
 //
 // Operands are read as unsigned 32-bit values (the golden widens uint32 lanes), so:
 //   add/sub/mul keep the low 32 bits (wraparound); mul is the 32-bit low product;
-//   shifts use shamt = b[4:0]; srl is logical. This matches golden vadd/vsub/vmul/
-//   vand/vor/vxor/vsll/vsrl bit-for-bit. fp lanes (vfadd/vfmul over HapiCore fp32)
+//   shifts use shamt = b[4:0]; srl is logical. vmacc fuses into the destination:
+//   r = vd_old + vs1*vs2 (low ELEN). This matches golden vadd/vsub/vmul/vand/vor/
+//   vxor/vsll/vsrl/vmacc bit-for-bit. fp lanes (vfadd/vfmul over HapiCore fp32)
 //   are a separate block.
 //
 // Vectors cross the port boundary packed little-endian by lane: element i occupies
@@ -32,7 +33,7 @@ module atum_valu #(
     // op encoding
     localparam logic [3:0] OP_ADD = 4'd0, OP_SUB = 4'd1, OP_MUL = 4'd2,
                            OP_AND = 4'd3, OP_OR  = 4'd4, OP_XOR = 4'd5,
-                           OP_SLL = 4'd6, OP_SRL = 4'd7;
+                           OP_SLL = 4'd6, OP_SRL = 4'd7, OP_MACC = 4'd8;
 
     always_comb begin
         for (int i = 0; i < VLMAX; i++) begin
@@ -49,6 +50,7 @@ module atum_valu #(
                 OP_XOR:  r = a ^ b;
                 OP_SLL:  r = a << b[4:0];
                 OP_SRL:  r = a >> b[4:0];      // logical (a is unsigned)
+                OP_MACC: r = vd_old[i*ELEN +: ELEN] + (a * b);  // vd += vs1*vs2 (low ELEN)
                 default: r = '0;
             endcase
             // body-active (i < vl) AND mask-active -> write; else keep old element
