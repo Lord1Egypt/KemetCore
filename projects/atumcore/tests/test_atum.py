@@ -241,6 +241,34 @@ def test_vfsgnj():
     assert list(vu.vfsgnj(1, 2, 2))[4:] == [0, 0, 0, 0]
 
 
+def test_vfminmax():
+    import struct
+
+    def fb(x):
+        return struct.unpack("<I", struct.pack("<f", x))[0]
+    vu = g.VectorUnit()
+    a = [fb(1.0), fb(-2.0), fb(3.5), fb(0.0),
+         0x7FC00000, fb(5.0), fb(-1.0), 0x7F800000]   # NaN at 4, +inf at 7
+    b = [fb(2.0), fb(-1.0), fb(-3.5), 0x80000000,
+         fb(9.0), 0x7FC00000, fb(-2.0), fb(100.0)]    # -0 at 3, NaN at 5
+    vu.load(1, a); vu.load(2, b)
+    mn = list(vu.vfmin(1, 2))
+    mx = list(vu.vfmax(1, 2))
+    assert mn[0] == fb(1.0) and mx[0] == fb(2.0)
+    assert mn[1] == fb(-2.0) and mx[1] == fb(-1.0)
+    assert mn[2] == fb(-3.5) and mx[2] == fb(3.5)
+    # 0.0 vs -0.0 -> min=-0, max=+0
+    assert mn[3] == 0x80000000 and mx[3] == 0x00000000
+    # NaN vs number -> the number (both min and max)
+    assert mn[4] == fb(9.0) and mx[4] == fb(9.0)
+    assert mn[5] == fb(5.0) and mx[5] == fb(5.0)
+    # +inf
+    assert mn[7] == fb(100.0) and mx[7] == 0x7F800000
+    # both NaN -> canonical
+    vu.load(1, [0x7FC00000] * 8); vu.load(2, [0x7F800099] * 8)
+    assert list(vu.vfmin(1, 2)) == [0x7FC00000] * 8
+
+
 def test_vredsum():
     vu = g.VectorUnit()
     data = [3, 1, 4, 1, 5, 9, 2, 6]
