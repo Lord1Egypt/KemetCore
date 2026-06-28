@@ -424,3 +424,18 @@ def test_vmfcmp_fp():
     assert list(vu.vmflt(1, 2)) == [0, 0, 0, 0, 0, 0, 1, 0]
     assert list(vu.vmfle(1, 2)) == [1, 0, 0, 1, 1, 1, 1, 1]
     assert list(vu.vmfge(1, 2)) == [1, 1, 0, 1, 1, 1, 0, 1]
+
+
+def test_vfmacc_fp():
+    vu = g.VectorUnit()
+    x = np.array([1.5, 2.0, -3.0, 0.5, 4.0, 1.0, 2.5, 10.0], np.float32)
+    y = np.array([2.0, 3.0, 2.0, 8.0, 0.25, 7.0, 4.0, 0.1], np.float32)
+    acc = np.array([1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0], np.float32)
+    vu.load_f32(1, x)
+    vu.load_f32(2, y)
+    vu.load_f32(3, acc)
+    vu.vfmacc(3, 1, 2)                       # acc += x*y, fused
+    assert np.allclose(vu.read_f32(3), acc + x * y, atol=1e-5)
+    vu.load_f32(3, acc)
+    vu.vfmsac(3, 1, 2)                       # x*y - acc
+    assert np.allclose(vu.read_f32(3), x * y - acc, atol=1e-5)
