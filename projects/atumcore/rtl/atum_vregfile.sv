@@ -22,8 +22,10 @@ module atum_vregfile #(
     input  logic [VLMAX*ELEN-1:0]    wdata,
     input  logic [$clog2(NREGS)-1:0] raddr1,
     input  logic [$clog2(NREGS)-1:0] raddr2,
+    input  logic [$clog2(NREGS)-1:0] raddr3,
     output logic [VLMAX*ELEN-1:0]    rdata1,
-    output logic [VLMAX*ELEN-1:0]    rdata2
+    output logic [VLMAX*ELEN-1:0]    rdata2,
+    output logic [VLMAX*ELEN-1:0]    rdata3
 );
     logic [VLMAX*ELEN-1:0] regs [0:NREGS-1];
 
@@ -36,4 +38,5 @@ module atum_vregfile #(
 
     assign rdata1 = regs[raddr1];
     assign rdata2 = regs[raddr2];
+    assign rdata3 = regs[raddr3];
 endmodule

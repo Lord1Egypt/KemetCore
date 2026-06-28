@@ -99,4 +99,29 @@ else
     "
 fi
 echo "  -> reports/atum_vexec.stat (0 latches asserted)"
+
+# atum_vcore embeds the whole vexec datapath (fp32 multipliers) + vreg array. Full
+# ABC mapping is large; under $CI stop at the coarse 0-latch netlist, committed .stat full.
+VC_SRCS="../rtl/atum_valu.sv ../rtl/atum_vfpu.sv ../rtl/atum_vredu.sv \
+         $HAPI/hapi_fp32_mul.sv $HAPI/hapi_fp32_add.sv ../rtl/atum_vexec.sv \
+         ../rtl/atum_vregfile.sv ../rtl/atum_vsetvl.sv ../rtl/atum_vcore.sv"
+if [ -z "${CI:-}" ]; then
+    echo "=== synthesizing atum_vcore (single-cycle vector core, full) ==="
+    "$YOSYS" -ql "reports/atum_vcore.log" -p "
+        read_verilog -sv $VC_SRCS;
+        synth -top atum_vcore;
+        select -assert-none t:\$_DLATCH_* t:\$dlatch;
+        tee -o reports/atum_vcore.stat stat
+    "
+else
+    echo "=== synthesizing atum_vcore (coarse 0-latch check under CI) ==="
+    "$YOSYS" -ql "reports/atum_vcore.log" -p "
+        read_verilog -sv $VC_SRCS;
+        hierarchy -top atum_vcore;
+        synth -top atum_vcore -run :fine;
+        select -assert-none t:\$_DLATCH_* t:\$dlatch;
+        stat
+    "
+fi
+echo "  -> reports/atum_vcore.stat (0 latches asserted)"
 echo "ALL SYNTHESIZED ✅ (no latches)"
