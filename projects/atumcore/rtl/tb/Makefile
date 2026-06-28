@@ -22,6 +22,7 @@
 #   make CORE=vslide1            -> atum_vslide1 (vslide1up / vslide1down)
 #   make CORE=vfcvt              -> atum_vfcvt (int<->fp32 convert: vfcvt.*)
 #   make CORE=vfsub              -> atum_vfsub (fp32 vfsub / vfrsub)
+#   make CORE=vmfcmp             -> atum_vmfcmp (fp32 compare->mask: vmfeq/vmflt/...)
 TOPLEVEL_LANG = verilog
 SIM ?= verilator
 CORE ?= valu
@@ -101,6 +102,10 @@ else ifeq ($(CORE),vfsub)
   VERILOG_SOURCES = $(HAPI)/hapi_fp32_add.sv $(PWD)/../atum_vfsub.sv
   TOPLEVEL = atum_vfsub
   MODULE   = test_vfsub
+else ifeq ($(CORE),vmfcmp)
+  VERILOG_SOURCES = $(PWD)/../atum_vmfcmp.sv
+  TOPLEVEL = atum_vmfcmp
+  MODULE   = test_vmfcmp
 else ifeq ($(CORE),vregfile)
   VERILOG_SOURCES = $(PWD)/../atum_vregfile.sv
   TOPLEVEL = atum_vregfile

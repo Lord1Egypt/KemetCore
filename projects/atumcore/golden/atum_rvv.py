@@ -408,6 +408,39 @@ class VectorUnit:
         out[sel] = result.astype(np.float32)[sel]
         self.vreg[vd] = out.view(np.uint32)
 
+    # -- fp compare (vd = mask, 1 bit per lane) ---------------------------- #
+    def _fcmp(self, vs1, vs2, fn, mask):
+        """Per-lane fp32 compare producing a length-VLMAX 0/1 mask. numpy fp compares
+        give IEEE ordered/unordered semantics (NaN -> all False except !=; +0 == -0).
+        A bit is set only for a body-active (i < vl) AND mask-active lane."""
+        a = self.vreg[vs1].view(np.float32)
+        b = self.vreg[vs2].view(np.float32)
+        cmp = fn(a, b)
+        act = self._active(mask)
+        idx = np.arange(VLMAX) < self.vl
+        res = np.zeros(VLMAX, dtype=np.uint8)
+        sel = act & idx
+        res[sel] = cmp.astype(np.uint8)[sel]
+        return res
+
+    def vmfeq(self, vs1, vs2, mask=None):
+        return self._fcmp(vs1, vs2, np.equal, mask)
+
+    def vmfne(self, vs1, vs2, mask=None):
+        return self._fcmp(vs1, vs2, np.not_equal, mask)
+
+    def vmflt(self, vs1, vs2, mask=None):
+        return self._fcmp(vs1, vs2, np.less, mask)
+
+    def vmfle(self, vs1, vs2, mask=None):
+        return self._fcmp(vs1, vs2, np.less_equal, mask)
+
+    def vmfgt(self, vs1, vs2, mask=None):
+        return self._fcmp(vs1, vs2, np.greater, mask)
+
+    def vmfge(self, vs1, vs2, mask=None):
+        return self._fcmp(vs1, vs2, np.greater_equal, mask)
+
     # -- fp sign injection ------------------------------------------------- #
     def vfsgnj(self, vs1, vs2, op):
         """Float sign injection: result = {sign, exponent+mantissa of vs1}, where the

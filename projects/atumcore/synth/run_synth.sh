@@ -262,6 +262,16 @@ else
 fi
 echo "  -> reports/atum_vfcvt.stat (0 latches asserted)"
 
+# atum_vmfcmp is a VLMAX-wide fp comparator array (keys + compares, no multipliers) -> full.
+echo "=== synthesizing atum_vmfcmp (fp32 compare-to-mask unit, full) ==="
+"$YOSYS" -ql "reports/atum_vmfcmp.log" -p "
+    read_verilog -sv ../rtl/atum_vmfcmp.sv;
+    synth -top atum_vmfcmp;
+    select -assert-none t:\$_DLATCH_* t:\$dlatch;
+    tee -o reports/atum_vmfcmp.stat stat
+"
+echo "  -> reports/atum_vmfcmp.stat (0 latches asserted)"
+
 # atum_vfsub embeds VLMAX fp32 adders (negate-then-add). Like vfpu, full ABC mapping
 # is large; under $CI stop at the coarse 0-latch netlist, committed .stat is full.
 if [ -z "${CI:-}" ]; then
