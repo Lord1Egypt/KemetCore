@@ -313,6 +313,17 @@ def test_vmsbf():
     assert list(vu.vmsof([0, 0, 0, 0, 1, 0, 0, 0])) == [0, 0, 0, 0, 0, 0, 0, 0]
 
 
+def test_vmv():
+    vu = g.VectorUnit()
+    vu.load(1, [10, 11, 12, 13, 14, 15, 16, 17])
+    assert list(vu.vmv_vx(0x99)) == [0x99] * 8          # splat
+    assert list(vu.vmv_vv(1)) == [10, 11, 12, 13, 14, 15, 16, 17]   # copy
+    # vl gating
+    vu.vl = 3
+    assert list(vu.vmv_vx(7)) == [7, 7, 7, 0, 0, 0, 0, 0]
+    assert list(vu.vmv_vv(1)) == [10, 11, 12, 0, 0, 0, 0, 0]
+
+
 def test_vredsum():
     vu = g.VectorUnit()
     data = [3, 1, 4, 1, 5, 9, 2, 6]

@@ -245,6 +245,25 @@ class VectorUnit:
     def vmsof(self, m):
         return self._vmsbif(m, 2)
 
+    # -- scalar/vector moves ----------------------------------------------- #
+    def vmv_vx(self, x):
+        """Broadcast (splat) a scalar to every active lane: vd[i] = x for i < vl,
+        else 0."""
+        out = np.zeros(VLMAX, dtype=np.uint32)
+        for i in range(VLMAX):
+            if i < self.vl:
+                out[i] = np.uint32(x & U32)
+        return out
+
+    def vmv_vv(self, vs):
+        """Vector copy: vd[i] = vs[i] for i < vl, else 0."""
+        a = self.vreg[vs].astype(np.uint32)
+        out = np.zeros(VLMAX, dtype=np.uint32)
+        for i in range(VLMAX):
+            if i < self.vl:
+                out[i] = a[i]
+        return out
+
     # -- mask -> index vectors --------------------------------------------- #
     def viota(self, m, mask=None):
         """Exclusive prefix-sum of a mask: element i = number of set source-mask
