@@ -130,6 +130,16 @@ echo "=== synthesizing atum_vmpopc (mask reduction unit, full) ==="
 "
 echo "  -> reports/atum_vmpopc.stat (0 latches asserted)"
 
+# atum_viota is a small prefix-sum / index generator (adders) -> always full.
+echo "=== synthesizing atum_viota (mask iota / index unit, full) ==="
+"$YOSYS" -ql "reports/atum_viota.log" -p "
+    read_verilog -sv ../rtl/atum_viota.sv;
+    synth -top atum_viota;
+    select -assert-none t:\$_DLATCH_* t:\$dlatch;
+    tee -o reports/atum_viota.stat stat
+"
+echo "  -> reports/atum_viota.stat (0 latches asserted)"
+
 # atum_vcore embeds the whole vexec datapath (fp32 multipliers) + vreg array. Full
 # ABC mapping is large; under $CI stop at the coarse 0-latch netlist, committed .stat full.
 VC_SRCS="../rtl/atum_valu.sv ../rtl/atum_vfpu.sv ../rtl/atum_vredu.sv \

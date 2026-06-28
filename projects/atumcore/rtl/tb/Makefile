@@ -9,6 +9,7 @@
 #   make CORE=vmask              -> atum_vmask (compare-to-mask: vmseq/vmslt/...)
 #   make CORE=vmlogic            -> atum_vmlogic (mask logic: vmand/vmor/vmxor/...)
 #   make CORE=vmpopc             -> atum_vmpopc (mask reduce: vcpop/vfirst)
+#   make CORE=viota              -> atum_viota (mask->index: viota/vid)
 TOPLEVEL_LANG = verilog
 SIM ?= verilator
 CORE ?= valu
@@ -36,6 +37,10 @@ else ifeq ($(CORE),vmpopc)
   VERILOG_SOURCES = $(PWD)/../atum_vmpopc.sv
   TOPLEVEL = atum_vmpopc
   MODULE   = test_vmpopc
+else ifeq ($(CORE),viota)
+  VERILOG_SOURCES = $(PWD)/../atum_viota.sv
+  TOPLEVEL = atum_viota
+  MODULE   = test_viota
 else ifeq ($(CORE),vregfile)
   VERILOG_SOURCES = $(PWD)/../atum_vregfile.sv
   TOPLEVEL = atum_vregfile

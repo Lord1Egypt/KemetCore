@@ -213,6 +213,33 @@ class VectorUnit:
                 return i
         return -1
 
+    # -- mask -> index vectors --------------------------------------------- #
+    def viota(self, m, mask=None):
+        """Exclusive prefix-sum of a mask: element i = number of set source-mask
+        bits strictly before i (a masked-off source contributes 0). Written only to
+        active (i < vl, v0.t) lanes; inactive/tail lanes read 0. Building block for
+        vector compress (where to write each kept element)."""
+        act = self._active(mask)
+        m = np.asarray(m, dtype=np.uint8) & 1
+        out = np.zeros(VLMAX, dtype=np.uint32)
+        cnt = 0
+        for i in range(VLMAX):
+            active = (i < self.vl) and bool(act[i])
+            if active:
+                out[i] = cnt
+            if active and m[i]:
+                cnt += 1
+        return out
+
+    def vid(self, mask=None):
+        """Element index: vd[i] = i for active (i < vl, v0.t) lanes, else 0."""
+        act = self._active(mask)
+        out = np.zeros(VLMAX, dtype=np.uint32)
+        for i in range(VLMAX):
+            if i < self.vl and act[i]:
+                out[i] = i
+        return out
+
     # -- fp ops ------------------------------------------------------------ #
     def vfadd(self, vd, vs1, vs2, mask=None):
         a = self.vreg[vs1].view(np.float32)
