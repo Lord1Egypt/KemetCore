@@ -5,6 +5,7 @@
 #   make CORE=regfile            -> seth_regfile
 #   make CORE=aluctl             -> seth_aluctl
 #   make CORE=decode             -> seth_decode
+#   make CORE=csr                -> seth_csr (Zicsr CSR datapath unit)
 #   make CORE=core               -> seth_core (integrated single-cycle RV32IM)
 #   make CORE=pipeline           -> seth_pipeline (5-stage interlocked RV32IM)
 #   make CORE=fwd                -> seth_pipeline_fwd vs seth_pipeline (forwarding)
@@ -13,7 +14,11 @@ SIM ?= verilator
 CORE ?= alu
 PWD := $(shell pwd)
 
-ifeq ($(CORE),muldiv)
+ifeq ($(CORE),csr)
+  VERILOG_SOURCES = $(PWD)/../seth_csr.sv
+  TOPLEVEL = seth_csr
+  MODULE   = test_csr
+else ifeq ($(CORE),muldiv)
   VERILOG_SOURCES = $(PWD)/../seth_muldiv.sv
   TOPLEVEL = seth_muldiv
   MODULE   = test_muldiv
