@@ -180,6 +180,46 @@ def int_to_fp32(x, is_signed):
     return ((sign << 31) | ((exp + 127) << 23) | frac) & 0xFFFFFFFF
 
 
+
+def fp32_to_int(bits, signed, truncate):
+    """fp32 -> int32 with RVV-style saturation. signed selects fcvt.w.s vs
+    fcvt.wu.s; truncate selects round-toward-zero vs RNE. NaN -> max; +/-Inf and
+    out-of-range -> max/min; negative -> 0 for unsigned. Integer-only (matches the
+    hapi_fp32_to_int RTL and AtumCore _f2i)."""
+    bits &= 0xFFFFFFFF
+    sign = (bits >> 31) & 1
+    exp = (bits >> 23) & 0xFF
+    mant = bits & 0x7FFFFF
+    posmax = 0x7FFFFFFF if signed else 0xFFFFFFFF
+    negmax = 0x80000000 if signed else 0
+    if exp == 0xFF:
+        if mant != 0:
+            return posmax
+        return negmax if sign else posmax
+    full, e = (mant, -126) if exp == 0 else ((1 << 23) | mant, exp - 127)
+    if full == 0:
+        return 0
+    sh = e - 23
+    if sh >= 0:
+        m = full << sh
+    else:
+        rsh = -sh
+        if rsh >= 25:
+            ipart, rbit, sticky = 0, 0, 1
+        else:
+            ipart = full >> rsh
+            rbit = (full >> (rsh - 1)) & 1
+            sticky = 1 if (full & ((1 << (rsh - 1)) - 1)) else 0
+        m = ipart + (1 if ((not truncate) and rbit and (sticky or (ipart & 1))) else 0)
+    if signed:
+        if not sign:
+            return posmax if m > 0x7FFFFFFF else m
+        return negmax if m > 0x80000000 else ((-m) & 0xFFFFFFFF)
+    if sign:
+        return 0
+    return posmax if m > 0xFFFFFFFF else m
+
+
 def round_bf16(x):
     """Round a real value to the nearest bf16 (8 exp / 7 mantissa), ties-to-even.
 
