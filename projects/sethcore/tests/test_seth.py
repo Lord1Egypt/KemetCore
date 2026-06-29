@@ -216,3 +216,16 @@ def test_decode_ctrl_matches_step():
     assert g.decode_ctrl(samples[0x37])["wb_sel"] == 3
     assert g.decode_ctrl(samples[0x17])["a_src_pc"] == 1
     assert g.decode_ctrl(g._R(0x01, 3, 2, 0x0, 5, 0x33))["is_mdu"] == 1   # M-ext
+
+
+def test_csr_op():
+    # RW always writes; rd gets old value
+    assert g.csr_op(0b001, 0xAAAA, 0x1234, 0) == (0xAAAA, 0x1234, 1)
+    # RWI uses 5-bit zimm
+    assert g.csr_op(0b101, 0xAAAA, 0xFFFFFFFF, 0x1F) == (0xAAAA, 0x1F, 1)
+    # RS sets bits; no write when operand 0
+    assert g.csr_op(0b010, 0xF0, 0x0F, 0) == (0xF0, 0xFF, 1)
+    assert g.csr_op(0b010, 0xF0, 0, 0) == (0xF0, 0xF0, 0)
+    # RC clears bits; no write when operand 0
+    assert g.csr_op(0b011, 0xFF, 0x0F, 0) == (0xFF, 0xF0, 1)
+    assert g.csr_op(0b111, 0xFF, 0, 0) == (0xFF, 0xFF, 0)

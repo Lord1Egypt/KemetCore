@@ -210,6 +210,25 @@ def decode_aluop(op, f3, f7):
     return 0
 
 
+def csr_op(funct3, csr_in, rs1, zimm):
+    """Zicsr CSR datapath. funct3: 1 RW, 2 RS, 3 RC, 5 RWI, 6 RSI, 7 RCI.
+
+    Returns (rd_val, csr_out, csr_we): rd always gets the OLD csr value; CSRRW
+    always writes; CSRRS/CSRRC write only when the operand is non-zero."""
+    csr_in = u32(csr_in)
+    operand = u32(zimm & 0x1F) if (funct3 & 0b100) else u32(rs1)
+    low = funct3 & 0b011
+    if low == 0b01:      # RW / RWI
+        csr_out, we = operand, 1
+    elif low == 0b10:    # RS / RSI
+        csr_out, we = u32(csr_in | operand), (1 if operand != 0 else 0)
+    elif low == 0b11:    # RC / RCI
+        csr_out, we = u32(csr_in & ~operand), (1 if operand != 0 else 0)
+    else:
+        csr_out, we = csr_in, 0
+    return (csr_in, csr_out, we)
+
+
 class Cpu:
     def __init__(self):
         self.x = [0] * 32
