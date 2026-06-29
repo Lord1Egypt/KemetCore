@@ -18,6 +18,7 @@
 #   make CORE=fp32cmp             -> hapi_fp32_cmp (feq / flt / fle)
 #   make CORE=fp32class           -> hapi_fp32_class (fclass 10-bit one-hot)
 #   make CORE=inttofp32           -> hapi_int_to_fp32 (fcvt.s.w / fcvt.s.wu)
+#   make CORE=fp32toint           -> hapi_fp32_to_int (fcvt.w.s / .wu.s / .rtz)
 #   make CORE=bf16tofp32          -> hapi_bf16_to_fp32 (exact widening convert)
 TOPLEVEL_LANG = verilog
 SIM ?= verilator
@@ -33,6 +34,10 @@ else ifeq ($(CORE),fp16tofp32)
   VERILOG_SOURCES = $(PWD)/../hapi_fp16_to_fp32.sv
   TOPLEVEL = hapi_fp16_to_fp32
   MODULE   = test_fp16_to_fp32
+else ifeq ($(CORE),fp32toint)
+  VERILOG_SOURCES = $(PWD)/../hapi_fp32_to_int.sv
+  TOPLEVEL = hapi_fp32_to_int
+  MODULE   = test_fp32_to_int
 else ifeq ($(CORE),inttofp32)
   VERILOG_SOURCES = $(PWD)/../hapi_int_to_fp32.sv
   TOPLEVEL = hapi_int_to_fp32

@@ -119,6 +119,8 @@ jobs:
         run: ./projects/hapicore/rtl/tb/run_sim.sh CORE=fp32class
       - name: Run HapiCore int->fp32 convert testbench
         run: ./projects/hapicore/rtl/tb/run_sim.sh CORE=inttofp32
+      - name: Run HapiCore fp32->int convert testbench
+        run: ./projects/hapicore/rtl/tb/run_sim.sh CORE=fp32toint
       - name: Run NeithCore modular multiplier testbench
         run: ./projects/neithcore/rtl/tb/run_sim.sh CORE=modmul
       - name: Run NeithCore NTT butterfly testbench

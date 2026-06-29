@@ -382,3 +382,34 @@ def test_int_to_fp32():
             iv = np.int32(np.uint32(x)) if s else np.uint32(x)
             ref = int(np.frombuffer(np.float32(iv).tobytes(), np.uint32)[0])
             assert g.int_to_fp32(int(x), s) == ref
+
+
+def test_fp32_to_int():
+    import struct
+
+    def f2b(x):
+        return struct.unpack("<I", struct.pack("<f", np.float32(x)))[0]
+
+    # RNE
+    assert g.fp32_to_int(f2b(1.0), 1, 0) == 1
+    assert g.fp32_to_int(f2b(-1.0), 1, 0) == (-1) & 0xFFFFFFFF
+    assert g.fp32_to_int(f2b(2.5), 1, 0) == 2          # ties to even
+    assert g.fp32_to_int(f2b(3.5), 1, 0) == 4
+    assert g.fp32_to_int(f2b(2.5), 1, 1) == 2          # truncate
+    assert g.fp32_to_int(f2b(-2.9), 1, 1) == (-2) & 0xFFFFFFFF
+    # saturation
+    assert g.fp32_to_int(f2b(1e30), 1, 0) == 0x7FFFFFFF
+    assert g.fp32_to_int(f2b(-1e30), 1, 0) == 0x80000000
+    assert g.fp32_to_int(f2b(-1.0), 0, 0) == 0         # neg -> unsigned 0
+    assert g.fp32_to_int(f2b(5e9), 0, 0) == 0xFFFFFFFF  # > 2^32-1 -> max
+    assert g.fp32_to_int(0x7FC00000, 1, 0) == 0x7FFFFFFF  # NaN -> max
+    # cross-check vs AtumCore _f2i over random
+    import sys, os
+    sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "atumcore", "golden"))
+    from atum_rvv import VectorUnit
+    import random
+    for _ in range(3000):
+        b = random.getrandbits(32)
+        for s in (0, 1):
+            for t in (0, 1):
+                assert g.fp32_to_int(b, s, t) == VectorUnit._f2i(b, s, t)
