@@ -1,13 +1,18 @@
 # cocotb + Verilator testbenches for AnubisCore.
 #   make CORE=sha256   (default)   -> sha256_core
 #   make CORE=sha3                 -> sha3_256_core
+#   make CORE=sha512               -> sha512_core
 TOPLEVEL_LANG = verilog
 SIM ?= verilator
 CORE ?= sha256
 
 PWD := $(shell pwd)
 
-ifeq ($(CORE),sha3)
+ifeq ($(CORE),sha512)
+  VERILOG_SOURCES = $(PWD)/../sha512_core.sv
+  TOPLEVEL = sha512_core
+  MODULE   = test_sha512
+else ifeq ($(CORE),sha3)
   VERILOG_SOURCES = $(PWD)/../sha3_256_core.sv
   TOPLEVEL = sha3_256_core
   MODULE   = test_sha3
