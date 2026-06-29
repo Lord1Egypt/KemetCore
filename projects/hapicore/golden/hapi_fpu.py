@@ -121,6 +121,35 @@ def fp32_cmp(a, b, op):
     return 1 if (ltv or eqv) else 0
 
 
+
+def fp32_class(a):
+    """RISC-V fp32 fclass -> 10-bit one-hot. bit0 -Inf, 1 -normal, 2 -subnormal,
+    3 -0, 4 +0, 5 +subnormal, 6 +normal, 7 +Inf, 8 sNaN, 9 qNaN. Matches
+    hapi_fp32_class."""
+    a &= 0xFFFFFFFF
+    sign = (a >> 31) & 1
+    exp = (a >> 23) & 0xFF
+    man = a & 0x7FFFFF
+    is_inf = exp == 0xFF and man == 0
+    is_nan = exp == 0xFF and man != 0
+    is_zero = exp == 0 and man == 0
+    is_sub = exp == 0 and man != 0
+    is_norm = exp != 0 and exp != 0xFF
+    snan = is_nan and ((man >> 22) & 1) == 0
+    y = 0
+    if sign and is_inf:  y |= 1 << 0
+    if sign and is_norm: y |= 1 << 1
+    if sign and is_sub:  y |= 1 << 2
+    if sign and is_zero: y |= 1 << 3
+    if (not sign) and is_zero: y |= 1 << 4
+    if (not sign) and is_sub:  y |= 1 << 5
+    if (not sign) and is_norm: y |= 1 << 6
+    if (not sign) and is_inf:  y |= 1 << 7
+    if is_nan and snan:        y |= 1 << 8
+    if is_nan and not snan:    y |= 1 << 9
+    return y
+
+
 def round_bf16(x):
     """Round a real value to the nearest bf16 (8 exp / 7 mantissa), ties-to-even.
 

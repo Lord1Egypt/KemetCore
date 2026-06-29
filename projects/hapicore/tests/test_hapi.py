@@ -344,3 +344,20 @@ def test_fp32_cmp():
     for op in range(3):
         assert g.fp32_cmp(nan, p1, op) == 0
         assert g.fp32_cmp(p1, nan, op) == 0
+
+
+def test_fp32_class():
+    assert g.fp32_class(0xFF800000) == (1 << 0)    # -Inf
+    assert g.fp32_class(0xBF800000) == (1 << 1)    # -normal
+    assert g.fp32_class(0x80000001) == (1 << 2)    # -subnormal
+    assert g.fp32_class(0x80000000) == (1 << 3)    # -0
+    assert g.fp32_class(0x00000000) == (1 << 4)    # +0
+    assert g.fp32_class(0x00000001) == (1 << 5)    # +subnormal
+    assert g.fp32_class(0x3F800000) == (1 << 6)    # +normal
+    assert g.fp32_class(0x7F800000) == (1 << 7)    # +Inf
+    assert g.fp32_class(0x7F800001) == (1 << 8)    # sNaN (mantissa MSB clear)
+    assert g.fp32_class(0x7FC00000) == (1 << 9)    # qNaN (mantissa MSB set)
+    # exactly one bit set for every input
+    import random
+    for _ in range(300):
+        assert bin(g.fp32_class(random.getrandbits(32))).count("1") == 1
