@@ -413,6 +413,24 @@ def test_vfsub_fp():
     assert np.allclose(vu.read_f32(4), y - x)        # reverse operand order
 
 
+def test_vfdiv_fp():
+    vu = g.VectorUnit()
+    x = np.array([1.0, 3.0, -8.0, 1.0, 7.0, -2.0, 9.0, 1.0], np.float32)
+    y = np.array([2.0, 3.0, 4.0, 0.0, 2.0, 8.0, 3.0, 0.0], np.float32)  # y[3]=1/0 inf
+    vu.load_f32(1, x)
+    vu.load_f32(2, y)
+    vu.vfdiv(3, 1, 2)
+    with np.errstate(divide="ignore", invalid="ignore"):
+        exp = x / y
+    got = vu.read_f32(3)
+    assert np.array_equal(got[np.isfinite(exp)], exp[np.isfinite(exp)])  # exact RNE
+    assert np.isinf(got[3])                                              # 1.0/0.0 -> inf
+    vu.vfrdiv(4, 1, 2)                                # reverse: vd = y / x
+    with np.errstate(divide="ignore", invalid="ignore"):
+        rexp = y / x
+    assert np.array_equal(vu.read_f32(4), rexp.astype(np.float32))
+
+
 def test_vmfcmp_fp():
     vu = g.VectorUnit()
     x = np.array([1.0, 2.0, np.nan, 0.0, -0.0, np.inf, -1.0, 3.0], np.float32)

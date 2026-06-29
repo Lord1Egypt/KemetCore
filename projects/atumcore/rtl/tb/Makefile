@@ -22,6 +22,7 @@
 #   make CORE=vslide1            -> atum_vslide1 (vslide1up / vslide1down)
 #   make CORE=vfcvt              -> atum_vfcvt (int<->fp32 convert: vfcvt.*)
 #   make CORE=vfsub              -> atum_vfsub (fp32 vfsub / vfrsub)
+#   make CORE=vfdiv              -> atum_vfdiv (fp32 vfdiv / vfrdiv)
 #   make CORE=vmfcmp             -> atum_vmfcmp (fp32 compare->mask: vmfeq/vmflt/...)
 #   make CORE=vfmacc             -> atum_vfmacc (fp32 fused MAC: vfmacc / vfmsac)
 #   make CORE=vsadd              -> atum_vsadd (saturating int add/sub: vsaddu/vsadd/...)
@@ -138,6 +139,10 @@ else ifeq ($(CORE),vfsub)
   VERILOG_SOURCES = $(HAPI)/hapi_fp32_add.sv $(PWD)/../atum_vfsub.sv
   TOPLEVEL = atum_vfsub
   MODULE   = test_vfsub
+else ifeq ($(CORE),vfdiv)
+  VERILOG_SOURCES = $(HAPI)/hapi_fp32_div.sv $(PWD)/../atum_vfdiv.sv
+  TOPLEVEL = atum_vfdiv
+  MODULE   = test_vfdiv
 else ifeq ($(CORE),vmfcmp)
   VERILOG_SOURCES = $(PWD)/../atum_vmfcmp.sv
   TOPLEVEL = atum_vmfcmp
