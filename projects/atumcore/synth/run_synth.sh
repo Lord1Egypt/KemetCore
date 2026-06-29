@@ -345,6 +345,28 @@ echo "=== synthesizing atum_vssr (rounding shift-right unit, full) ==="
 "
 echo "  -> reports/atum_vssr.stat (0 latches asserted)"
 
+# atum_vmulh embeds VLMAX wide multipliers (3 sign-variant 64-bit products / lane). Like
+# valu, full ABC mapping is heavy on apt-yosys, so under $CI stop at the coarse 0-latch
+# netlist; committed reports/atum_vmulh.stat is the full gate-level evidence.
+if [ -z "${CI:-}" ]; then
+    echo "=== synthesizing atum_vmulh (multiply-high unit, full) ==="
+    "$YOSYS" -ql "reports/atum_vmulh.log" -p "
+        read_verilog -sv ../rtl/atum_vmulh.sv;
+        synth -top atum_vmulh;
+        select -assert-none t:\$_DLATCH_* t:\$dlatch;
+        tee -o reports/atum_vmulh.stat stat
+    "
+else
+    echo "=== synthesizing atum_vmulh (coarse 0-latch check under CI) ==="
+    "$YOSYS" -ql "reports/atum_vmulh.log" -p "
+        read_verilog -sv ../rtl/atum_vmulh.sv;
+        synth -top atum_vmulh -run :fine;
+        select -assert-none t:\$_DLATCH_* t:\$dlatch;
+        stat
+    "
+fi
+echo "  -> reports/atum_vmulh.stat (0 latches asserted)"
+
 # atum_vsadd is adders + range comparators / muxes (no multipliers) -> always full.
 echo "=== synthesizing atum_vsadd (saturating int add/sub unit, full) ==="
 "$YOSYS" -ql "reports/atum_vsadd.log" -p "

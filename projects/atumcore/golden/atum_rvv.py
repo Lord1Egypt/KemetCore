@@ -231,6 +231,24 @@ class VectorUnit:
         b = self.vreg[vs2].astype(np.int32).astype(np.int64)
         self._wr_int(vd, self._avg(a - b), mask)
 
+    def vmulh(self, vd, vs1, vs2, mask=None):
+        """Signed*signed multiply, high 32 bits of the 64-bit product."""
+        a = self.vreg[vs1].astype(np.int32).astype(np.int64)
+        b = self.vreg[vs2].astype(np.int32).astype(np.int64)
+        self._wr_int(vd, (a * b) >> 32, mask)
+
+    def vmulhu(self, vd, vs1, vs2, mask=None):
+        """Unsigned*unsigned multiply, high 32 bits."""
+        a = self.vreg[vs1].astype(np.uint64)
+        b = self.vreg[vs2].astype(np.uint64)
+        self._wr_int(vd, ((a * b) >> 32).astype(np.int64), mask)
+
+    def vmulhsu(self, vd, vs1, vs2, mask=None):
+        """Signed(vs1)*unsigned(vs2) multiply, high 32 bits."""
+        a = self.vreg[vs1].astype(np.int32).astype(np.int64)
+        b = self.vreg[vs2].astype(np.int64)              # zero-extended (non-negative)
+        self._wr_int(vd, (a * b) >> 32, mask)
+
     # -- compare ops (vd = mask, 1 bit per lane) --------------------------- #
     def _cmp(self, vs1, vs2, fn, signed, mask):
         """Per-lane compare producing a length-VLMAX 0/1 mask. A lane bit is set
