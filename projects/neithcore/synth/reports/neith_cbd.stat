@@ -1,0 +1,29 @@
+
+3. Printing statistics.
+
+=== neith_cbd ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     4225 wires
+     7384 wire bits
+      270 public wires
+     3421 public wire bits
+        9 ports
+       40 port bits
+     5268 cells
+       28   $_ANDNOT_
+     2617   $_AND_
+        9   $_DFFE_PN0P_
+     1280   $_DFFE_PP_
+        2   $_DFF_PN0_
+        1   $_DFF_PN1_
+        3   $_MUX_
+     1297   $_NAND_
+       11   $_NOR_
+        2   $_NOT_
+        6   $_ORNOT_
+        8   $_OR_
+        2   $_XNOR_
+        2   $_XOR_
+

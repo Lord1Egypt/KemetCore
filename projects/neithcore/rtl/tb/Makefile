@@ -5,13 +5,18 @@
 #   make CORE=pointwise             -> neith_pointwise (NTT-domain A[i]*B[i] mod Q) + modmul
 #   make CORE=polyaddsub            -> neith_polyaddsub (padd / psub mod Q)
 #   make CORE=msgcodec              -> neith_msgcodec (ML-KEM message encode / decode)
+#   make CORE=cbd                   -> neith_cbd (centered binomial noise sampler)
 TOPLEVEL_LANG = verilog
 SIM ?= verilator
 CORE ?= modmul
 
 PWD := $(shell pwd)
 
-ifeq ($(CORE),msgcodec)
+ifeq ($(CORE),cbd)
+  VERILOG_SOURCES = $(PWD)/../neith_cbd.sv
+  TOPLEVEL = neith_cbd
+  MODULE   = test_cbd
+else ifeq ($(CORE),msgcodec)
   VERILOG_SOURCES = $(PWD)/../neith_msgcodec.sv
   TOPLEVEL = neith_msgcodec
   MODULE   = test_msgcodec

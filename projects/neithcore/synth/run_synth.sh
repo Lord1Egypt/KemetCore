@@ -61,4 +61,13 @@ echo "=== synthesizing neith_msgcodec (ML-KEM message encode/decode) ==="
     tee -o reports/neith_msgcodec.stat stat
 "
 echo "  -> reports/neith_msgcodec.stat (0 latches asserted)"
+
+echo "=== synthesizing neith_cbd (centered binomial noise sampler) ==="
+"$YOSYS" -ql "reports/neith_cbd.log" -p "
+    read_verilog -sv ../rtl/neith_cbd.sv;
+    synth -top neith_cbd;
+    select -assert-none t:\$_DLATCH_* t:\$dlatch;
+    tee -o reports/neith_cbd.stat stat
+"
+echo "  -> reports/neith_cbd.stat (0 latches asserted)"
 echo "ALL SYNTHESIZED ✅ (no latches)"
