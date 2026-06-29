@@ -1,18 +1,21 @@
-// AnubisCore — SHA-256 core (KemetCore Phase 2 RTL)
+// AnubisCore — SHA-256 / SHA-224 core (KemetCore Phase 2 RTL)
 //
 // Multicycle implementation: one round per cycle, 64 rounds per 512-bit block.
 // The message schedule uses a 16-word sliding window so only 16 words are stored.
 // `init` selects the IV (first block) vs. continuing the running hash (chaining),
-// so multi-block messages are driven by streaming padded 512-bit blocks.
+// so multi-block messages are driven by streaming padded 512-bit blocks. `alg`
+// selects SHA-256 (0) or SHA-224 (1): identical compression, different IV; the
+// SHA-224 digest is the top 224 bits of `hash` (hash[255:32]).
 //
 // Bit-exact against the Python golden (projects/anubiscore/golden/anubis_hash.py)
-// and hashlib — see tb/test_sha256.py.
+// and hashlib (sha256 / sha224) — see tb/test_sha256.py.
 
 module sha256_core (
     input  logic         clk,
     input  logic         rst_n,
     input  logic         start,     // pulse 1 cycle to begin a block
     input  logic         init,      // 1: start from IV, 0: continue chaining
+    input  logic         alg,       // 0: SHA-256, 1: SHA-224 (digest = hash[255:32])
     input  logic [511:0] block,     // padded 512-bit message block (W0 = MSBs)
     output logic         busy,
     output logic         done,      // 1-cycle pulse when block is absorbed
@@ -73,13 +76,26 @@ module sha256_core (
     endfunction
 
     // initial hash value (IV)
-    function automatic logic [31:0] iv(input logic [2:0] i);
-        case (i)
-            3'd0: iv=32'h6a09e667; 3'd1: iv=32'hbb67ae85;
-            3'd2: iv=32'h3c6ef372; 3'd3: iv=32'ha54ff53a;
-            3'd4: iv=32'h510e527f; 3'd5: iv=32'h9b05688c;
-            3'd6: iv=32'h1f83d9ab; 3'd7: iv=32'h5be0cd19;
-        endcase
+    // alg = 0 -> SHA-256 IV, alg = 1 -> SHA-224 IV (same compression, different IV +
+    // truncated digest). Both are the standard FIPS 180-4 constants.
+    function automatic logic [31:0] iv(input logic a, input logic [2:0] i);
+        if (a) begin
+            case (i)                         // SHA-224
+                3'd0: iv=32'hc1059ed8; 3'd1: iv=32'h367cd507;
+                3'd2: iv=32'h3070dd17; 3'd3: iv=32'hf70e5939;
+                3'd4: iv=32'hffc00b31; 3'd5: iv=32'h68581511;
+                3'd6: iv=32'h64f98fa7; 3'd7: iv=32'hbefa4fa4;
+                default: iv = 32'h0;
+            endcase
+        end else begin
+            case (i)                         // SHA-256
+                3'd0: iv=32'h6a09e667; 3'd1: iv=32'hbb67ae85;
+                3'd2: iv=32'h3c6ef372; 3'd3: iv=32'ha54ff53a;
+                3'd4: iv=32'h510e527f; 3'd5: iv=32'h9b05688c;
+                3'd6: iv=32'h1f83d9ab; 3'd7: iv=32'h5be0cd19;
+                default: iv = 32'h0;
+            endcase
+        end
     endfunction
 
     // ---- state ----------------------------------------------------------- //
@@ -106,7 +122,9 @@ module sha256_core (
             busy  <= 1'b0;
             done  <= 1'b0;
             rc    <= 6'd0;
-            for (i = 0; i < 8; i = i + 1) H[i] <= iv(i[2:0]);
+            // reset value must be constant (async reset); H is reloaded from the
+            // alg-selected IV on the first `init` block before it is ever used.
+            for (i = 0; i < 8; i = i + 1) H[i] <= iv(1'b0, i[2:0]);
         end else begin
             done <= 1'b0;
             case (state)
@@ -117,15 +135,15 @@ module sha256_core (
                         for (i = 0; i < 16; i = i + 1)
                             w[i] <= block[(15 - i) * 32 +: 32];
                         // base hash for this block
-                        if (init) for (i = 0; i < 8; i = i + 1) H[i] <= iv(i[2:0]);
-                        a <= init ? iv(3'd0) : H[0];
-                        b <= init ? iv(3'd1) : H[1];
-                        c <= init ? iv(3'd2) : H[2];
-                        d <= init ? iv(3'd3) : H[3];
-                        e <= init ? iv(3'd4) : H[4];
-                        f <= init ? iv(3'd5) : H[5];
-                        g <= init ? iv(3'd6) : H[6];
-                        h <= init ? iv(3'd7) : H[7];
+                        if (init) for (i = 0; i < 8; i = i + 1) H[i] <= iv(alg, i[2:0]);
+                        a <= init ? iv(alg, 3'd0) : H[0];
+                        b <= init ? iv(alg, 3'd1) : H[1];
+                        c <= init ? iv(alg, 3'd2) : H[2];
+                        d <= init ? iv(alg, 3'd3) : H[3];
+                        e <= init ? iv(alg, 3'd4) : H[4];
+                        f <= init ? iv(alg, 3'd5) : H[5];
+                        g <= init ? iv(alg, 3'd6) : H[6];
+                        h <= init ? iv(alg, 3'd7) : H[7];
                         rc    <= 6'd0;
                         busy  <= 1'b1;
                         state <= RUN;
