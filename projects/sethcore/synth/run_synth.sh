@@ -17,6 +17,17 @@ for core in seth_alu seth_imm seth_regfile seth_aluctl seth_decode seth_csr seth
     echo "  -> reports/${core}.stat (0 latches asserted)"
 done
 
+# seth_csru integrates the combinational seth_csr datapath with a CSR bank, so it
+# reads both sources.
+echo "=== synthesizing seth_csru ==="
+"$YOSYS" -ql "reports/seth_csru.log" -p "
+    read_verilog -sv ../rtl/seth_csru.sv ../rtl/seth_csr.sv;
+    synth -top seth_csru;
+    select -assert-none t:\$_DLATCH_* t:\$dlatch;
+    tee -o reports/seth_csru.stat stat
+"
+echo "  -> reports/seth_csru.stat (0 latches asserted)"
+
 # seth_core (single-cycle) and seth_pipeline (5-stage) are full integrated CPUs.
 # Both embed seth_muldiv (whose combinational divider explodes under full ABC), so
 # we stop at the coarse netlist: that proves the Phase-3 exit gate (0 latches;

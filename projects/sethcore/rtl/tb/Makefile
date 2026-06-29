@@ -6,6 +6,7 @@
 #   make CORE=aluctl             -> seth_aluctl
 #   make CORE=decode             -> seth_decode
 #   make CORE=csr                -> seth_csr (Zicsr CSR datapath unit)
+#   make CORE=csru               -> seth_csru (Zicsr CSR register bank + seth_csr)
 #   make CORE=branch             -> seth_branch (branch-condition unit)
 #   make CORE=lsu                -> seth_lsu (load/store format unit)
 #   make CORE=core               -> seth_core (integrated single-cycle RV32IM)
@@ -24,6 +25,10 @@ else ifeq ($(CORE),branch)
   VERILOG_SOURCES = $(PWD)/../seth_branch.sv
   TOPLEVEL = seth_branch
   MODULE   = test_branch
+else ifeq ($(CORE),csru)
+  VERILOG_SOURCES = $(PWD)/../seth_csru.sv $(PWD)/../seth_csr.sv
+  TOPLEVEL = seth_csru
+  MODULE   = test_csru
 else ifeq ($(CORE),csr)
   VERILOG_SOURCES = $(PWD)/../seth_csr.sv
   TOPLEVEL = seth_csr

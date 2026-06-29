@@ -257,3 +257,23 @@ def test_csr_op():
     # RC clears bits; no write when operand 0
     assert g.csr_op(0b011, 0xFF, 0x0F, 0) == (0xFF, 0xF0, 1)
     assert g.csr_op(0b111, 0xFF, 0, 0) == (0xFF, 0xFF, 0)
+
+
+def test_csr_bank_step():
+    bank = [0] * 16
+    # CSRRW writes operand, rd gets old (0)
+    assert g.csr_bank_step(bank, 0b001, 0x340, 0xCAFE, 0) == 0
+    assert bank[0x0] == 0xCAFE                       # 0x340 & 0xF == 0
+    # CSRRS sets bits, rd = old
+    assert g.csr_bank_step(bank, 0b010, 0x340, 0x1, 0) == 0xCAFE
+    assert bank[0x0] == 0xCAFF
+    # CSRRC clears bits
+    assert g.csr_bank_step(bank, 0b011, 0x340, 0xFF, 0) == 0xCAFF
+    assert bank[0x0] == 0xCA00
+    # CSRRSI with zero uimm -> no write
+    before = bank[0x0]
+    assert g.csr_bank_step(bank, 0b110, 0x340, 0, 0) == before
+    assert bank[0x0] == before
+    # independent addresses
+    g.csr_bank_step(bank, 0b001, 0x305, 0x1234, 0)  # 0x305 & 0xF == 5
+    assert bank[0x5] == 0x1234 and bank[0x0] == before

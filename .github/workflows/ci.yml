@@ -67,6 +67,8 @@ jobs:
         run: ./projects/sethcore/rtl/tb/run_sim.sh CORE=decode
       - name: Run SethCore CSR testbench
         run: ./projects/sethcore/rtl/tb/run_sim.sh CORE=csr
+      - name: Run SethCore CSR bank testbench
+        run: ./projects/sethcore/rtl/tb/run_sim.sh CORE=csru
       - name: Run SethCore branch testbench
         run: ./projects/sethcore/rtl/tb/run_sim.sh CORE=branch
       - name: Run SethCore LSU testbench

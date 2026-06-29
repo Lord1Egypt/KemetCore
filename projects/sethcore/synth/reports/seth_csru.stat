@@ -1,0 +1,76 @@
+
+4. Printing statistics.
+
+=== seth_csr ===
+
+        +----------Local Count, excluding submodules.
+        | 
+      202 wires
+      332 wire bits
+        8 public wires
+      138 public wire bits
+        7 ports
+      137 port bits
+      227 cells
+       28   $_ANDNOT_
+       46   $_AND_
+        6   $_MUX_
+      127   $_NAND_
+       15   $_NOR_
+        2   $_ORNOT_
+        2   $_OR_
+        1   $_XOR_
+
+=== seth_csru ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     1828 wires
+     2510 wire bits
+       30 public wires
+      712 public wire bits
+       10 ports
+      131 port bits
+     2374 cells
+       17   $_ANDNOT_
+      439   $_AND_
+      372   $_MUX_
+      920   $_NAND_
+       26   $_NOR_
+       54   $_ORNOT_
+       34   $_OR_
+      512   $_SDFFCE_PN0P_
+        1 submodules
+        1   seth_csr
+
+=== design hierarchy ===
+
+        +----------Count including submodules.
+        | 
+     2601 seth_csru
+      227 seth_csr
+
+        +----------Count including submodules.
+        | 
+     2030 wires
+     2842 wire bits
+       38 public wires
+      850 public wire bits
+       17 ports
+      268 port bits
+        - memories
+        - memory bits
+        - processes
+     2601 cells
+       45   $_ANDNOT_
+      485   $_AND_
+      378   $_MUX_
+     1047   $_NAND_
+       41   $_NOR_
+       56   $_ORNOT_
+       36   $_OR_
+      512   $_SDFFCE_PN0P_
+        1   $_XOR_
+        1 submodules
+        1   seth_csr
+

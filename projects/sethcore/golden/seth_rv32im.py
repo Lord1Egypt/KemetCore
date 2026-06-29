@@ -286,6 +286,18 @@ def csr_op(funct3, csr_in, rs1, zimm):
     return (csr_in, csr_out, we)
 
 
+
+def csr_bank_step(bank, funct3, csr_addr, rs1, zimm):
+    """Apply one Zicsr instruction to a 16-entry CSR bank (indexed by the low 4
+    address bits), mirroring seth_csru. `bank` is a list of 16 ints, mutated in
+    place. Returns rd_val (the OLD CSR value)."""
+    a = csr_addr & 0xF
+    rd_val, csr_out, we = csr_op(funct3, bank[a], rs1, zimm)
+    if we:
+        bank[a] = csr_out
+    return rd_val
+
+
 class Cpu:
     def __init__(self):
         self.x = [0] * 32
