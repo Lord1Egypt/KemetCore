@@ -4,13 +4,18 @@
 #   make CORE=ntt                   -> neith_ntt 256-pt engine (+ butterfly + modmul)
 #   make CORE=pointwise             -> neith_pointwise (NTT-domain A[i]*B[i] mod Q) + modmul
 #   make CORE=polyaddsub            -> neith_polyaddsub (padd / psub mod Q)
+#   make CORE=msgcodec              -> neith_msgcodec (ML-KEM message encode / decode)
 TOPLEVEL_LANG = verilog
 SIM ?= verilator
 CORE ?= modmul
 
 PWD := $(shell pwd)
 
-ifeq ($(CORE),polyaddsub)
+ifeq ($(CORE),msgcodec)
+  VERILOG_SOURCES = $(PWD)/../neith_msgcodec.sv
+  TOPLEVEL = neith_msgcodec
+  MODULE   = test_msgcodec
+else ifeq ($(CORE),polyaddsub)
   VERILOG_SOURCES = $(PWD)/../neith_polyaddsub.sv
   TOPLEVEL = neith_polyaddsub
   MODULE   = test_polyaddsub
