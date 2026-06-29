@@ -142,8 +142,8 @@
       <div class="card"><span class="num">00</span><div class="deity">Ra · the sun, creator</div><h3>RaCore</h3><div class="dom">Heterogeneous AI SoC — the capstone that integrates every other core.</div><span class="pill prog">P0·P1 ✓</span></div>
       <div class="card"><span class="num">01</span><div class="deity">Seth · strength</div><h3>SethCore</h3><div class="dom">RV32IM CPU — single-cycle, 5-stage pipeline + data forwarding.</div><span class="pill done">CPU + forwarding ✓</span></div>
       <div class="card"><span class="num">09</span><div class="deity">Hapi · the Nile flood</div><h3>HapiCore</h3><div class="dom">IEEE-754 FPU — mul, add, FMA (×3 formats), divide &amp; sqrt.</div><span class="pill done">FPU complete ✓</span></div>
-      <div class="card"><span class="num">06</span><div class="deity">Anubis · the embalmer</div><h3>AnubisCore</h3><div class="dom">SHA-256 &amp; SHA-3 / Keccak hash engine.</div><span class="pill done">RTL verified ✓</span></div>
-      <div class="card"><span class="num">07</span><div class="deity">Neith · weaver, war</div><h3>NeithCore</h3><div class="dom">ML-KEM (Kyber) lattice crypto — full NTT engine.</div><span class="pill prog">NTT verified</span></div>
+      <div class="card"><span class="num">06</span><div class="deity">Anubis · the embalmer</div><h3>AnubisCore</h3><div class="dom">Hash engine — SHA-256, SHA-3 / Keccak, SHA-512 &amp; SHA-384.</div><span class="pill done">4 hashes ✓</span></div>
+      <div class="card"><span class="num">07</span><div class="deity">Neith · weaver, war</div><h3>NeithCore</h3><div class="dom">ML-KEM (Kyber) lattice crypto — NTT + pointwise + polynomial multiply, CBD sampler &amp; message codec.</div><span class="pill done">ML-KEM primitives ✓</span></div>
       <div class="card"><span class="num">05</span><div class="deity">Bast · protection</div><h3>BastCore</h3><div class="dom">BF16 tensor core — MAC PE + systolic array.</div><span class="pill prog">MAC + grid ✓</span></div>
       <div class="card"><span class="num">04</span><div class="deity">Geb · the earth</div><h3>GebCore</h3><div class="dom">2:4 structured-sparse matmul accelerator.</div><span class="pill prog">sparse-MAC ✓</span></div>
       <div class="card"><span class="num">02</span><div class="deity">Ptah · the craftsman</div><h3>PtahConv</h3><div class="dom">Direct convolution accelerator.</div><span class="pill todo">golden + model</span></div>
@@ -157,7 +157,7 @@
 <section id="built">
   <div class="wrap">
     <div class="kicker">Proven In Silicon-Ready RTL</div>
-    <h2>Three complete subsystems, built from first principles.</h2>
+    <h2>Four complete subsystems, built from first principles.</h2>
     <div class="grid g2">
       <div class="card">
         <h3>𓂧 HapiCore — a full IEEE-754 FPU</h3>
@@ -174,9 +174,15 @@
       <div class="card">
         <h3>𓇋 AtumCore — a RISC-V vector processor</h3>
         <p class="muted">A length-agnostic RVV datapath with full active-element semantics (per-lane mask + <code>vl</code>), composed from the verified primitives:</p>
-        <p style="margin:.2em 0"><b>integer lanes</b> (add/sub/mul/logic/shift · min/max · <b>vmacc</b>) · <b>fp32 lanes</b> (vfadd/vfmul over HapiCore · sign-inject · min/max with full NaN handling) · <b>reductions</b> (sum/max/and/or/xor) → <b>integrated execute unit</b> → register file + <code>vsetvl</code> → <b>single-cycle vector core</b> (with data memory + strip-mined unit-stride load/store).</p>
+        <p style="margin:.2em 0"><b>integer lanes</b> (add/sub/mul/logic/shift · min/max · <b>vmacc</b> · saturating &amp; fixed-point · multiply-high · divide) · a <b>complete fp32 lane set</b> (add/sub/mul/<b>fma</b>/<b>divide</b>/<b>sqrt</b> over HapiCore · convert · compare · sign-inject · min/max with full NaN handling) · <b>reductions</b> (integer sum / signed &amp; unsigned min·max / and·or·xor and fp sum·min·max) → <b>integrated execute unit</b> → register file + <code>vsetvl</code> → <b>single-cycle vector core</b> (with data memory + strip-mined unit-stride load/store).</p>
         <p class="muted">A complete <b>mask &amp; data-motion toolkit</b> rounds out the ISA: <b>produce</b> masks (vmseq/vmslt/…), <b>combine</b> them (vmand/vmor/…), <b>reduce</b> (vcpop/vfirst), <b>index</b> (viota/vid), <b>compact</b> (vcompress), <b>permute</b> (vrgather), <b>slide</b> (vslideup/down) and <b>select</b> (vmerge) — the full predication and shuffle vocabulary.</p>
         <p class="muted">The core runs micro-programs (axpy, dot-product, reductions) with its <b>full vector register file matching the golden model</b> bit-for-bit — and every block is checked across thousands of randomised ops, masks and vector lengths, each synthesising latch-free.</p>
+      </div>
+      <div class="card">
+        <h3>𓍢 NeithCore — a post-quantum crypto pipeline</h3>
+        <p class="muted">The lattice arithmetic behind ML-KEM (Kyber), assembled from Barrett-reduced modular primitives over Z<sub>q</sub>[x]/(x²⁵⁶+1):</p>
+        <p style="margin:.2em 0"><b>modular multiply · butterfly</b> → a multicycle <b>256-point NTT engine</b> (forward / inverse · cyclic &amp; <b>negacyclic</b>) · <b>pointwise multiply</b> · <b>polynomial add/sub</b> · <b>CBD noise sampler</b> · <b>message codec</b> → a full <b>negacyclic polynomial multiply</b> that sequences three NTT passes and a pointwise stage end-to-end.</p>
+        <p class="muted">The <code>a·b</code> pipeline is checked bit-for-bit against <b>both</b> an NTT reference and an independent schoolbook multiplier — the whole transform machinery proven by the product it exists to compute.</p>
       </div>
     </div>
   </div>
