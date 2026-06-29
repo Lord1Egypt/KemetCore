@@ -34,4 +34,13 @@ echo "=== synthesizing neith_ntt (256-point engine) ==="
     tee -o reports/neith_ntt.stat stat
 "
 echo "  -> reports/neith_ntt.stat (0 latches asserted)"
+
+echo "=== synthesizing neith_pointwise (NTT-domain pointwise multiply) ==="
+"$YOSYS" -ql "reports/neith_pointwise.log" -p "
+    read_verilog -sv ../rtl/neith_modmul.sv ../rtl/neith_pointwise.sv;
+    synth -top neith_pointwise;
+    select -assert-none t:\$_DLATCH_* t:\$dlatch;
+    tee -o reports/neith_pointwise.stat stat
+"
+echo "  -> reports/neith_pointwise.stat (0 latches asserted)"
 echo "ALL SYNTHESIZED ✅ (no latches)"

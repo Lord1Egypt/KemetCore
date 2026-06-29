@@ -25,6 +25,18 @@ def test_ntt_polymult():
         assert g.poly_mul_ntt(a, b) == g.poly_mul_schoolbook(a, b)
 
 
+def test_pointwise():
+    rng = random.Random(7)
+    for _ in range(20):
+        A = [rng.randrange(g.Q) for _ in range(g.N)]
+        B = [rng.randrange(g.Q) for _ in range(g.N)]
+        assert g.pointwise(A, B) == [(A[i] * B[i]) % g.Q for i in range(g.N)]
+    # pointwise is exactly the middle of poly_mul_ntt
+    a = [rng.randrange(g.Q) for _ in range(g.N)]
+    b = [rng.randrange(g.Q) for _ in range(g.N)]
+    assert g.intt(g.pointwise(g.ntt(a), g.ntt(b))) == g.poly_mul_ntt(a, b)
+
+
 def test_kem_correctness():
     for seed in range(30):
         rng = random.Random(seed)

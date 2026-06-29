@@ -91,9 +91,15 @@ def intt(A):
     return [tmp[i] * N_INV % Q * _PSI_INV_POW[i] % Q for i in range(N)]
 
 
+def pointwise(A, B):
+    """NTT-domain pointwise modular multiply: C[i] = A[i]*B[i] mod Q. This is the middle
+    stage of poly_mul_ntt (ntt -> pointwise -> intt)."""
+    return [(A[i] * B[i]) % Q for i in range(len(A))]
+
+
 def poly_mul_ntt(a, b):
     A, B = ntt(a), ntt(b)
-    C = [A[i] * B[i] % Q for i in range(N)]
+    C = pointwise(A, B)
     return intt(C)
 
 
