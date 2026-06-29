@@ -540,3 +540,25 @@ def test_vaadd_averaging():
     b = vu.vreg[2].astype(np.int32).astype(np.int64)
     exp = (((a - b) >> 1) + ((a - b) & 1)).astype(np.uint32)
     assert list(vu.vreg[5]) == list(exp)
+
+
+def test_vmulh_family():
+    vu = g.VectorUnit()
+    vu.vreg[1] = np.array([0xFFFFFFFF, 0x80000000, 0x40000000, 2,
+                           0xFFFFFFFF, 0x7FFFFFFF, 0, 0x10000000], np.uint32)
+    vu.vreg[2] = np.array([0xFFFFFFFF, 0x80000000, 0x40000000, 0x80000000,
+                           1, 2, 5, 0x10000000], np.uint32)
+    vu.vmulh(3, 1, 2)
+    # (-1)*(-1) = 1 -> high 32 = 0
+    assert int(vu.vreg[3][0]) == 0
+    a = vu.vreg[1].astype(np.int32).astype(np.int64)
+    b = vu.vreg[2].astype(np.int32).astype(np.int64)
+    assert list(vu.vreg[3]) == list(((a * b) >> 32).astype(np.uint32))
+    vu.vmulhu(4, 1, 2)
+    au = vu.vreg[1].astype(np.uint64); bu = vu.vreg[2].astype(np.uint64)
+    assert list(vu.vreg[4]) == list(((au * bu) >> 32).astype(np.uint32))
+    # (0xFFFFFFFF * 0xFFFFFFFF) unsigned high = 0xFFFFFFFE
+    assert int(vu.vreg[4][0]) == 0xFFFFFFFE
+    vu.vmulhsu(5, 1, 2)
+    bsu = vu.vreg[2].astype(np.int64)
+    assert list(vu.vreg[5]) == list(((a * bsu) >> 32).astype(np.uint32))
