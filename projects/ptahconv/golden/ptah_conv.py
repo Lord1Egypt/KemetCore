@@ -60,3 +60,18 @@ def conv2d_im2col(x, w, stride=1, pad=0):
         y = (cols[n] @ wmat).astype(np.float32)   # (OH*OW, Cout)
         out[n] = y.T.reshape(Cout, OH, OW)
     return out
+
+
+def dot_seq(avec, bvec):
+    """Sequential fp32 dot product matching the ptah_mac hardware accumulation
+    order (element-by-element, correctly-rounded fp32 mul then add, seeded from
+    +0.0). Inputs/outputs are raw fp32 bit patterns. The numpy conv references use
+    pairwise/blocked sums and are NOT bit-identical to this sequential order."""
+    import struct
+    acc = np.float32(0.0)
+    for ua, ub in zip(avec, bvec):
+        a = np.frombuffer(struct.pack("<I", ua & 0xFFFFFFFF), np.float32)[0]
+        b = np.frombuffer(struct.pack("<I", ub & 0xFFFFFFFF), np.float32)[0]
+        with np.errstate(over="ignore", invalid="ignore"):
+            acc = np.float32(acc + np.float32(a * b))
+    return int(np.frombuffer(struct.pack("<f", acc), np.uint32)[0])
