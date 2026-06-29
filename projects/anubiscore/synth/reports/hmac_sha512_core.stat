@@ -1,0 +1,92 @@
+
+4. Printing statistics.
+
+=== sha512_core ===
+
+        +----------Local Count, excluding submodules.
+        | 
+    10637 wires
+    17105 wire bits
+       58 public wires
+     4504 public wire bits
+        9 ports
+     1543 port bits
+    14661 cells
+      214   $_ANDNOT_
+     1348   $_AND_
+      244   $_DFFE_PN0P_
+      276   $_DFFE_PN1P_
+     1536   $_DFFE_PP_
+        3   $_DFF_PN0_
+        1   $_DFF_PN1_
+     1857   $_MUX_
+     5415   $_NAND_
+       95   $_NOR_
+       35   $_NOT_
+      132   $_ORNOT_
+     1574   $_OR_
+      688   $_XNOR_
+     1243   $_XOR_
+
+=== hmac_sha512_core ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     5185 wires
+    14907 wire bits
+       24 public wires
+     8723 public wire bits
+       11 ports
+     2568 port bits
+     9267 cells
+        5   $_ANDNOT_
+     1545   $_AND_
+     3075   $_DFFE_PN0P_
+        7   $_DFF_PN0_
+        1   $_DFF_PN1_
+        2   $_MUX_
+     3592   $_NAND_
+        1   $_NOR_
+        2   $_NOT_
+      522   $_ORNOT_
+      515   $_OR_
+        1 submodules
+        1   sha512_core
+
+=== design hierarchy ===
+
+        +----------Count including submodules.
+        | 
+    23928 hmac_sha512_core
+    14661 sha512_core
+
+        +----------Count including submodules.
+        | 
+    15822 wires
+    32012 wire bits
+       82 public wires
+    13227 public wire bits
+       20 ports
+     4111 port bits
+        - memories
+        - memory bits
+        - processes
+    23928 cells
+      219   $_ANDNOT_
+     2893   $_AND_
+     3319   $_DFFE_PN0P_
+      276   $_DFFE_PN1P_
+     1536   $_DFFE_PP_
+       10   $_DFF_PN0_
+        2   $_DFF_PN1_
+     1859   $_MUX_
+     9007   $_NAND_
+       96   $_NOR_
+       37   $_NOT_
+      654   $_ORNOT_
+     2089   $_OR_
+      688   $_XNOR_
+     1243   $_XOR_
+        1 submodules
+        1   sha512_core
+

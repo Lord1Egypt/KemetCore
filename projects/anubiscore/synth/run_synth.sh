@@ -27,4 +27,13 @@ echo "=== synthesizing hmac_sha256_core ==="
     tee -o reports/hmac_sha256_core.stat stat
 "
 echo "  -> reports/hmac_sha256_core.stat (0 latches asserted)"
+
+echo "=== synthesizing hmac_sha512_core ==="
+"$YOSYS" -ql "reports/hmac_sha512_core.log" -p "
+    read_verilog -sv ../rtl/hmac_sha512_core.sv ../rtl/sha512_core.sv;
+    synth -top hmac_sha512_core;
+    select -assert-none t:\$_DLATCH_* t:\$dlatch;
+    tee -o reports/hmac_sha512_core.stat stat
+"
+echo "  -> reports/hmac_sha512_core.stat (0 latches asserted)"
 echo "ALL SYNTHESIZED ✅ (no latches)"
