@@ -155,6 +155,8 @@ jobs:
         run: ./projects/racore/rtl/tb/run_sim.sh CORE=noc
       - name: Run RaCore DMA engine testbench
         run: ./projects/racore/rtl/tb/run_sim.sh CORE=dma
+      - name: Run RaCore KAI-DMA accelerator testbench
+        run: ./projects/racore/rtl/tb/run_sim.sh CORE=kaidma
       - name: Run GebCore 2:4 sparse-MAC testbench
         run: ./projects/gebcore/rtl/tb/run_sim.sh CORE=spmac
       - name: Run GebCore 2:4 pruner testbench

@@ -1,0 +1,108 @@
+
+5. Printing statistics.
+
+=== $paramod\ra_kai_regs\BLOCK_ID=8'00001101 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+      402 wires
+      723 wire bits
+       18 public wires
+      339 public wire bits
+       15 ports
+      243 port bits
+      612 cells
+        6   $_ANDNOT_
+      173   $_AND_
+      228   $_NAND_
+        8   $_NOR_
+        1   $_ORNOT_
+      195   $_SDFFE_PP0P_
+        1   $_SDFF_PP0_
+
+=== $paramod\ra_dma\AW=s32'00000000000000000000000000001010 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+    38608 wires
+    45917 wire bits
+     1043 public wires
+     8352 public wire bits
+       16 ports
+      126 port bits
+    45801 cells
+      101   $_ANDNOT_
+     5991   $_AND_
+     8192   $_DFFE_PP_
+        2   $_DFF_P_
+    20161   $_MUX_
+     6703   $_NAND_
+        9   $_NOR_
+       12   $_NOT_
+     1502   $_ORNOT_
+     2763   $_OR_
+       33   $_SDFFE_PP0P_
+        1   $_SDFF_PP0_
+      127   $_XNOR_
+      204   $_XOR_
+
+=== ra_kai_dma ===
+
+        +----------Local Count, excluding submodules.
+        | 
+       54 wires
+      345 wire bits
+       20 public wires
+      280 public wire bits
+       12 ports
+      117 port bits
+       96 cells
+       29   $_AND_
+        1   $_NAND_
+        1   $_ORNOT_
+        2   $_OR_
+       32   $_SDFFE_PP0P_
+        1   $_XNOR_
+       30   $_XOR_
+        2 submodules
+        1   $paramod\ra_dma\AW=s32'00000000000000000000000000001010
+        1   $paramod\ra_kai_regs\BLOCK_ID=8'00001101
+
+=== design hierarchy ===
+
+        +----------Count including submodules.
+        | 
+    46509 ra_kai_dma
+    45801 $paramod\ra_dma\AW=s32'00000000000000000000000000001010
+      612 $paramod\ra_kai_regs\BLOCK_ID=8'00001101
+
+        +----------Count including submodules.
+        | 
+    39064 wires
+    46985 wire bits
+     1081 public wires
+     8971 public wire bits
+       43 ports
+      486 port bits
+        - memories
+        - memory bits
+        - processes
+    46509 cells
+      107   $_ANDNOT_
+     6193   $_AND_
+     8192   $_DFFE_PP_
+        2   $_DFF_P_
+    20161   $_MUX_
+     6932   $_NAND_
+       17   $_NOR_
+       12   $_NOT_
+     1504   $_ORNOT_
+     2765   $_OR_
+      260   $_SDFFE_PP0P_
+        2   $_SDFF_PP0_
+      128   $_XNOR_
+      234   $_XOR_
+        2 submodules
+        1   $paramod\ra_dma\AW=s32'00000000000000000000000000001010
+        1   $paramod\ra_kai_regs\BLOCK_ID=8'00001101
+
