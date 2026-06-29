@@ -12,4 +12,13 @@ echo "=== synthesizing ra_kai_regs ==="
     tee -o reports/ra_kai_regs.stat stat
 "
 echo "  -> reports/ra_kai_regs.stat (0 latches asserted)"
+
+echo "=== synthesizing ra_noc_arbiter ==="
+"$YOSYS" -ql "reports/ra_noc_arbiter.log" -p "
+    read_verilog -sv ../rtl/ra_noc_arbiter.sv;
+    synth -top ra_noc_arbiter;
+    select -assert-none t:\$_DLATCH_* t:\$dlatch;
+    tee -o reports/ra_noc_arbiter.stat stat
+"
+echo "  -> reports/ra_noc_arbiter.stat (0 latches asserted)"
 echo "ALL SYNTHESIZED ✅ (no latches)"

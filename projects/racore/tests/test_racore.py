@@ -90,3 +90,20 @@ def test_kai_regs_model():
     assert r.read(g.KAI_STATUS) == 0
     r.write(g.KAI_ID, 0xDEAD)
     assert r.read(g.KAI_ID) == ((0x05 << 24) | g.KAI_MAGIC)
+
+
+def test_noc_crossbar():
+    import ra_soc as g
+    x = g.NocCrossbar(4)
+    # no requests -> no grant
+    assert x.arbitrate([False] * 4) is None
+    # single requester always granted
+    assert x.arbitrate([False, False, True, False]) == 2
+    # round-robin: after granting 2, a 0&3 contest goes to 3 (next after 2)
+    x2 = g.NocCrossbar(4)
+    x2.arbitrate([False, False, True, False])     # last=2
+    assert x2.arbitrate([True, False, False, True]) == 3
+    # then from last=3, 0&1 contest -> 0
+    assert x2.arbitrate([True, True, False, False]) == 0
+    # grant counters accumulate
+    assert x2.grants[2] == 1 and x2.grants[3] == 1 and x2.grants[0] == 1
