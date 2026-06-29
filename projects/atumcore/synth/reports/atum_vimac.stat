@@ -1,0 +1,24 @@
+
+3. Printing statistics.
+
+=== atum_vimac ===
+
+        +----------Local Count, excluding submodules.
+        | 
+    49835 wires
+    50866 wire bits
+        7 public wires
+     1038 public wire bits
+        7 ports
+     1038 port bits
+    50084 cells
+       62   $_ANDNOT_
+    10033   $_AND_
+      771   $_MUX_
+    21637   $_NAND_
+       90   $_NOR_
+      131   $_ORNOT_
+      278   $_OR_
+     2078   $_XNOR_
+    15004   $_XOR_
+

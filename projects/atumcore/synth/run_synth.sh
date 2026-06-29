@@ -303,6 +303,28 @@ else
 fi
 echo "  -> reports/atum_vsmul.stat (0 latches asserted)"
 
+# atum_vimac embeds VLMAX 32-bit multipliers (integer multiply-add). Like valu, full
+# ABC mapping is heavy on apt-yosys, so under $CI stop at the coarse 0-latch netlist;
+# committed reports/atum_vimac.stat is the full gate-level evidence.
+if [ -z "${CI:-}" ]; then
+    echo "=== synthesizing atum_vimac (integer multiply-add family, full) ==="
+    "$YOSYS" -ql "reports/atum_vimac.log" -p "
+        read_verilog -sv ../rtl/atum_vimac.sv;
+        synth -top atum_vimac;
+        select -assert-none t:\$_DLATCH_* t:\$dlatch;
+        tee -o reports/atum_vimac.stat stat
+    "
+else
+    echo "=== synthesizing atum_vimac (coarse 0-latch check under CI) ==="
+    "$YOSYS" -ql "reports/atum_vimac.log" -p "
+        read_verilog -sv ../rtl/atum_vimac.sv;
+        synth -top atum_vimac -run :fine;
+        select -assert-none t:\$_DLATCH_* t:\$dlatch;
+        stat
+    "
+fi
+echo "  -> reports/atum_vimac.stat (0 latches asserted)"
+
 # atum_vssr is barrel shifters + a 1-bit round add (no multipliers) -> always full.
 echo "=== synthesizing atum_vssr (rounding shift-right unit, full) ==="
 "$YOSYS" -ql "reports/atum_vssr.log" -p "

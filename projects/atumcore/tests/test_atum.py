@@ -501,3 +501,23 @@ def test_vssr_rounding():
     # arithmetic: -1 (0xFFFFFFFF) >> 1 rnu -> 0; INT_MIN>>2 rnu
     assert int(vu.vreg[4][3]) == 0
     assert (int(vu.vreg[4][4]) & 0xFFFFFFFF) == ((-(2**31) >> 2) + ((-(2**31) >> 1) & 1)) & 0xFFFFFFFF
+
+
+def test_vimac_family():
+    M = 0xFFFFFFFF
+    vu = g.VectorUnit()
+    s1 = np.array([2, 3, 4, 5, 0, 7, 0xFFFFFFFF, 10], np.uint32)
+    s2 = np.array([10, 10, 10, 10, 10, 10, 2, 10], np.uint32)
+    d0 = np.array([1, 1, 1, 1, 1, 1, 1, 1], np.uint32)
+    vu.vreg[1], vu.vreg[2], vu.vreg[3] = s1.copy(), s2.copy(), d0.copy()
+    vu.vmadd(3, 1, 2)                                    # vd = s1*vd + s2
+    exp = ((s1.astype(np.int64) * d0 + s2) & M).astype(np.uint32)
+    assert list(vu.vreg[3]) == list(exp)
+    vu.vreg[3] = d0.copy()
+    vu.vnmsac(3, 1, 2)                                   # vd = vd - s1*s2
+    exp = ((d0.astype(np.int64) - s1.astype(np.int64) * s2) & M).astype(np.uint32)
+    assert list(vu.vreg[3]) == list(exp)
+    vu.vreg[3] = d0.copy()
+    vu.vnmsub(3, 1, 2)                                   # vd = s2 - s1*vd
+    exp = ((s2.astype(np.int64) - s1.astype(np.int64) * d0) & M).astype(np.uint32)
+    assert list(vu.vreg[3]) == list(exp)
