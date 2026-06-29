@@ -12,6 +12,7 @@ Supported here (Phase 0): add, sub, mul, fma, cmp, classify, cast for
 fp16 / bf16 / fp32. div/sqrt and fp64 arrive with the RTL (Phase 2).
 """
 import math
+import struct
 from fractions import Fraction
 
 import numpy as np
@@ -29,6 +30,16 @@ _FMT = {
     "bf16": (8, -126, 127),
     "fp32": (24, -126, 127),
 }
+
+
+def fp32_to_fp16(u):
+    """Narrow an fp32 bit-pattern u to a 16-bit fp16 (IEEE half), round-to-nearest-
+    even. numpy float16 is the correctly-rounded oracle; a NaN becomes a canonical
+    quiet fp16 NaN (sign | 0x7E00). Matches the hapi_fp32_to_fp16 RTL."""
+    f = np.frombuffer(struct.pack("<I", u & 0xFFFFFFFF), np.float32)[0]
+    if np.isnan(f):
+        return ((u >> 16) & 0x8000) | 0x7E00
+    return int(np.frombuffer(np.float16(f).tobytes(), np.uint16)[0])
 
 
 def round_bf16(x):

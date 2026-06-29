@@ -201,3 +201,29 @@ def test_fp32_to_bf16():
     for x in [0.0, 1.5, -3.25, 1e20, 1e-20, np.pi]:
         rb = f2b(g.round_bf16(x)) >> 16
         assert g.fp32_to_bf16(f2b(x)) == rb
+
+
+def test_fp32_to_fp16():
+    import struct
+
+    def f2b(x):
+        return struct.unpack("<I", struct.pack("<f", np.float32(x)))[0]
+
+    # known fp16 encodings (hand-verified, independent of numpy round path)
+    assert g.fp32_to_fp16(f2b(1.0)) == 0x3C00
+    assert g.fp32_to_fp16(f2b(-2.0)) == 0xC000
+    assert g.fp32_to_fp16(f2b(0.0)) == 0x0000
+    assert g.fp32_to_fp16(f2b(-0.0)) == 0x8000
+    assert g.fp32_to_fp16(0x7F800000) == 0x7C00          # +Inf
+    assert g.fp32_to_fp16(0xFF800000) == 0xFC00          # -Inf
+    assert g.fp32_to_fp16(f2b(65504.0)) == 0x7BFF        # fp16 max finite
+    assert g.fp32_to_fp16(f2b(70000.0)) == 0x7C00        # overflow -> Inf
+    assert g.fp32_to_fp16(f2b(6e-8)) == 0x0001           # smallest subnormal region
+    assert g.fp32_to_fp16(f2b(1e-10)) == 0x0000          # underflow -> 0
+    # NaN -> quiet fp16 NaN (not Inf)
+    assert g.fp32_to_fp16(0x7F800001) == 0x7E00
+    # vs numpy float16 over a sweep of finite values
+    for _ in range(500):
+        x = np.float32(np.random.uniform(-100000, 100000))
+        u = f2b(x)
+        assert g.fp32_to_fp16(u) == int(np.frombuffer(np.float16(x).tobytes(), np.uint16)[0])
