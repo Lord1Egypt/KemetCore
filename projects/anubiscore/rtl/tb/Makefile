@@ -5,13 +5,18 @@
 #   make CORE=sha3_512             -> sha3_512_core
 #   make CORE=sha3_384             -> sha3_384_core
 #   make CORE=sha3_224             -> sha3_224_core
+#   make CORE=hmac                 -> hmac_sha256_core (+ sha256_core)
 TOPLEVEL_LANG = verilog
 SIM ?= verilator
 CORE ?= sha256
 
 PWD := $(shell pwd)
 
-ifeq ($(CORE),sha3_224)
+ifeq ($(CORE),hmac)
+  VERILOG_SOURCES = $(PWD)/../hmac_sha256_core.sv $(PWD)/../sha256_core.sv
+  TOPLEVEL = hmac_sha256_core
+  MODULE   = test_hmac_sha256
+else ifeq ($(CORE),sha3_224)
   VERILOG_SOURCES = $(PWD)/../sha3_224_core.sv
   TOPLEVEL = sha3_224_core
   MODULE   = test_sha3_224
