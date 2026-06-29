@@ -166,6 +166,27 @@ class VectorUnit:
         r = (prod + (1 << 30)) >> 31
         self._wr_int(vd, np.clip(r, -(2**31), 2**31 - 1), mask)
 
+    def _vssr(self, vs1, vs2, arith):
+        """Rounding right shift (round-to-nearest, ties up). value=vs1, shamt=vs2&31."""
+        vals = self.vreg[vs1]
+        shs = self.vreg[vs2] & 31
+        out = np.zeros(VLMAX, dtype=np.int64)
+        for i in range(VLMAX):
+            v = int(vals[i])
+            if arith and (v & 0x80000000):
+                v -= (1 << 32)                         # interpret as signed
+            d = int(shs[i])
+            out[i] = v if d == 0 else (v >> d) + ((v >> (d - 1)) & 1)
+        return out
+
+    def vssrl(self, vd, vs1, vs2, mask=None):
+        """Logical rounding shift-right (unsigned value)."""
+        self._wr_int(vd, self._vssr(vs1, vs2, False), mask)
+
+    def vssra(self, vd, vs1, vs2, mask=None):
+        """Arithmetic rounding shift-right (signed value)."""
+        self._wr_int(vd, self._vssr(vs1, vs2, True), mask)
+
     # -- compare ops (vd = mask, 1 bit per lane) --------------------------- #
     def _cmp(self, vs1, vs2, fn, signed, mask):
         """Per-lane compare producing a length-VLMAX 0/1 mask. A lane bit is set
