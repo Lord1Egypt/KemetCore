@@ -70,3 +70,21 @@ def sparse_matmul(A, values, indices):
 
 def dense_matmul(A, Wp):
     return (np.asarray(A, np.float32) @ np.asarray(Wp, np.float32)).astype(np.float32)
+
+
+def prune_group(group):
+    """Hardware 2:4 pruner for one group of four fp32 weights given as raw 32-bit
+    patterns. Keeps the two largest by IEEE magnitude (sign-cleared unsigned bit
+    compare key = b & 0x7FFFFFFF), ties broken toward the LOWER lane index. Returns
+    (keep_mask, [(idx0, bits0), (idx1, bits1)]) with idx0 < idx1 (ascending kept
+    lanes), matching geb_prune. Deterministic for any bit pattern."""
+    bits = [int(g) & 0xFFFFFFFF for g in group]
+    key = [b & 0x7FFFFFFF for b in bits]
+    keep = []
+    for i in range(4):
+        rank = sum(1 for j in range(4) if j != i and
+                   (key[j] > key[i] or (key[j] == key[i] and j < i)))
+        keep.append(rank < 2)
+    mask = sum(1 << i for i in range(4) if keep[i])
+    kept = [(i, bits[i]) for i in range(4) if keep[i]]
+    return mask, kept
