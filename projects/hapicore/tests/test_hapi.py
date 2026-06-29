@@ -227,3 +227,29 @@ def test_fp32_to_fp16():
         x = np.float32(np.random.uniform(-100000, 100000))
         u = f2b(x)
         assert g.fp32_to_fp16(u) == int(np.frombuffer(np.float16(x).tobytes(), np.uint16)[0])
+
+
+def test_fp16_to_fp32():
+    import struct
+
+    def b2f32(u):
+        return struct.unpack("<f", struct.pack("<I", u))[0]
+
+    # known widenings
+    assert g.fp16_to_fp32(0x3C00) == 0x3F800000          # 1.0
+    assert g.fp16_to_fp32(0xC000) == 0xC0000000          # -2.0
+    assert g.fp16_to_fp32(0x0000) == 0x00000000          # +0
+    assert g.fp16_to_fp32(0x8000) == 0x80000000          # -0
+    assert g.fp16_to_fp32(0x7C00) == 0x7F800000          # +Inf
+    assert g.fp16_to_fp32(0xFC00) == 0xFF800000          # -Inf
+    assert g.fp16_to_fp32(0x0001) == 0x33800000          # smallest subnormal 2^-24
+    assert g.fp16_to_fp32(0x03FF) == 0x387FC000          # largest subnormal
+    assert g.fp16_to_fp32(0x7BFF) == 0x477FE000          # max finite 65504
+    # round-trip: fp16 -> fp32 -> fp16 is identity for all 65536 patterns
+    for h in range(0x10000):
+        u = g.fp16_to_fp32(h)
+        e16 = (h >> 10) & 0x1F
+        if e16 == 0x1F and (h & 0x3FF):       # NaN: payload preserved, still NaN
+            assert (u & 0x7F800000) == 0x7F800000 and (u & 0x007FFFFF) != 0
+        else:
+            assert g.fp32_to_fp16(u) == h

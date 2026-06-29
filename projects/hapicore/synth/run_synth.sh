@@ -7,7 +7,7 @@ cd "$(dirname "$0")"
 YOSYS="${YOSYS:-$HOME/miniconda3/envs/eda/bin/yosys}"
 mkdir -p reports
 
-for core in hapi_bf16_mul hapi_bf16_add hapi_fp32_mul hapi_fp32_add hapi_fp16_mul hapi_fp16_add hapi_fp32_to_bf16 hapi_fp32_to_fp16; do
+for core in hapi_bf16_mul hapi_bf16_add hapi_fp32_mul hapi_fp32_add hapi_fp16_mul hapi_fp16_add hapi_fp32_to_bf16 hapi_fp32_to_fp16 hapi_fp16_to_fp32; do
     echo "=== synthesizing $core ==="
     "$YOSYS" -ql "reports/${core}.log" -p "
         read_verilog -sv ../rtl/${core}.sv;

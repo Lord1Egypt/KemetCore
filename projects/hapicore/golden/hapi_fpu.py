@@ -42,6 +42,19 @@ def fp32_to_fp16(u):
     return int(np.frombuffer(np.float16(f).tobytes(), np.uint16)[0])
 
 
+def fp16_to_fp32(h):
+    """Widen a 16-bit fp16 (IEEE half) bit-pattern to fp32, returning the 32-bit
+    value. The upcast is exact; numpy is the oracle for finite values, while
+    Inf/NaN use the exact payload-preserving widening (mantissa = m16 << 13) to
+    match the hapi_fp16_to_fp32 RTL."""
+    h &= 0xFFFF
+    sign, e16, m16 = (h >> 15) & 1, (h >> 10) & 0x1F, h & 0x3FF
+    if e16 == 0x1F:
+        return (sign << 31) | (0xFF << 23) | (m16 << 13)
+    f16 = np.frombuffer(struct.pack("<H", h), np.float16)[0]
+    return int(np.frombuffer(struct.pack("<f", np.float32(f16)), np.uint32)[0])
+
+
 def round_bf16(x):
     """Round a real value to the nearest bf16 (8 exp / 7 mantissa), ties-to-even.
 
