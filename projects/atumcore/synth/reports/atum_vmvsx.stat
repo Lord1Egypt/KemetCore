@@ -1,0 +1,18 @@
+
+3. Printing statistics.
+
+=== atum_vmvsx ===
+
+        +----------Local Count, excluding submodules.
+        | 
+        9 wires
+      839 wire bits
+        6 public wires
+      836 public wire bits
+        6 ports
+      836 port bits
+       35 cells
+       32   $_MUX_
+        1   $_NAND_
+        2   $_NOR_
+

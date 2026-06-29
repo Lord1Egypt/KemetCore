@@ -462,6 +462,22 @@ def test_vfredu_fp():
     assert np.uint32(rm).view(np.float32) == np.float32(16.0)
 
 
+def test_vmvsx_scalar_moves():
+    vu = g.VectorUnit()
+    vu.vreg[1] = np.array([0xDEADBEEF, 1, 2, 3, 4, 5, 6, 7], np.uint32)
+    assert vu.vmv_x_s(1) == 0xDEADBEEF                # extract element 0 (any vl)
+    vu.vl = 0
+    assert vu.vmv_x_s(1) == 0xDEADBEEF                # still reads element 0
+    # insert no-op when vl==0
+    vu.vreg[3] = np.array([0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17], np.uint32)
+    vu.vmv_s_x(3, 0xABCD)
+    assert vu.vreg[3][0] == 0x10                      # unchanged (vl==0)
+    vu.vl = 4
+    vu.vmv_s_x(3, 0xABCD)
+    assert vu.vreg[3][0] == 0xABCD                    # element 0 written
+    assert list(vu.vreg[3][1:]) == [0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17]  # tail kept
+
+
 def test_vredminmax_int():
     vu = g.VectorUnit()
     # signed view: [-1, 5, -8, 3, 0, 7, -100, 2]

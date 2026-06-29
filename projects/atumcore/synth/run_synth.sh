@@ -442,6 +442,16 @@ echo "=== synthesizing atum_vredminmax (integer min/max reduction) ==="
 "
 echo "  -> reports/atum_vredminmax.stat (0 latches asserted)"
 
+# atum_vmvsx is pure muxing/wiring (element-0 select), trivially mapped.
+echo "=== synthesizing atum_vmvsx (scalar<->vector element-0 move) ==="
+"$YOSYS" -ql "reports/atum_vmvsx.log" -p "
+    read_verilog -sv ../rtl/atum_vmvsx.sv;
+    synth -top atum_vmvsx;
+    select -assert-none t:\$_DLATCH_* t:\$dlatch;
+    tee -o reports/atum_vmvsx.stat stat
+"
+echo "  -> reports/atum_vmvsx.stat (0 latches asserted)"
+
 # atum_vmulh embeds VLMAX wide multipliers (3 sign-variant 64-bit products / lane). Like
 # valu, full ABC mapping is heavy on apt-yosys, so under $CI stop at the coarse 0-latch
 # netlist; committed reports/atum_vmulh.stat is the full gate-level evidence.
