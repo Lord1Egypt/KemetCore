@@ -61,6 +61,21 @@ def fp16_to_fp32(h):
     return int(np.frombuffer(struct.pack("<f", np.float32(f16)), np.uint32)[0])
 
 
+
+def fp32_sgnj(a, b, op):
+    """RISC-V fp32 sign-injection: a's magnitude with a sign from b.
+    op: 0 fsgnj (b.sign), 1 fsgnjn (~b.sign), 2 fsgnjx (a.sign^b.sign). Exact."""
+    a &= 0xFFFFFFFF
+    b &= 0xFFFFFFFF
+    if op == 0:
+        sgn = (b >> 31) & 1
+    elif op == 1:
+        sgn = ((b >> 31) & 1) ^ 1
+    else:
+        sgn = ((a >> 31) & 1) ^ ((b >> 31) & 1)
+    return (sgn << 31) | (a & 0x7FFFFFFF)
+
+
 def round_bf16(x):
     """Round a real value to the nearest bf16 (8 exp / 7 mantissa), ties-to-even.
 

@@ -1,0 +1,18 @@
+
+3. Printing statistics.
+
+=== hapi_fp32_sgnj ===
+
+        +----------Local Count, excluding submodules.
+        | 
+        7 wires
+      101 wire bits
+        5 public wires
+       99 public wire bits
+        4 ports
+       98 port bits
+        3 cells
+        1   $_MUX_
+        1   $_NAND_
+        1   $_XNOR_
+
