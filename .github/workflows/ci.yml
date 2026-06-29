@@ -41,6 +41,8 @@ jobs:
         run: ./projects/anubiscore/rtl/tb/run_sim.sh CORE=sha512
       - name: Run SHA3-512 testbench
         run: ./projects/anubiscore/rtl/tb/run_sim.sh CORE=sha3_512
+      - name: Run SHA3-384 testbench
+        run: ./projects/anubiscore/rtl/tb/run_sim.sh CORE=sha3_384
       - name: Run SethCore ALU testbench
         run: ./projects/sethcore/rtl/tb/run_sim.sh CORE=alu
       - name: Run SethCore mul/div testbench
