@@ -253,3 +253,23 @@ def test_fp16_to_fp32():
             assert (u & 0x7F800000) == 0x7F800000 and (u & 0x007FFFFF) != 0
         else:
             assert g.fp32_to_fp16(u) == h
+
+
+def test_bf16_to_fp32():
+    import struct
+
+    def f2b(x):
+        return struct.unpack("<I", struct.pack("<f", np.float32(x)))[0]
+
+    # bf16 = top 16 bits of fp32; widening appends 16 zeros
+    assert g.bf16_to_fp32(0x3F80) == 0x3F800000          # 1.0
+    assert g.bf16_to_fp32(0xC000) == 0xC0000000          # -2.0
+    assert g.bf16_to_fp32(0x7F80) == 0x7F800000          # +Inf
+    assert g.bf16_to_fp32(0x0000) == 0x00000000          # +0
+    # round-trip: fp32_to_bf16(bf16_to_fp32(h)) == h for all bf16 patterns
+    for h in range(0x10000):
+        u = g.bf16_to_fp32(h)
+        assert u == (h << 16)
+        e = (h >> 7) & 0xFF
+        if not (e == 0xFF and (h & 0x7F)):     # skip NaN (round narrows to quiet)
+            assert g.fp32_to_bf16(u) == h

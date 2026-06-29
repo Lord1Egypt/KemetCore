@@ -42,6 +42,12 @@ def fp32_to_fp16(u):
     return int(np.frombuffer(np.float16(f).tobytes(), np.uint16)[0])
 
 
+def bf16_to_fp32(h):
+    """Widen a 16-bit bf16 bit-pattern to fp32 (exact): append 16 zero mantissa
+    bits. Matches the hapi_bf16_to_fp32 RTL."""
+    return (h & 0xFFFF) << 16
+
+
 def fp16_to_fp32(h):
     """Widen a 16-bit fp16 (IEEE half) bit-pattern to fp32, returning the 32-bit
     value. The upcast is exact; numpy is the oracle for finite values, while
