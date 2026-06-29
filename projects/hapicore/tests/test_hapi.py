@@ -273,3 +273,24 @@ def test_bf16_to_fp32():
         e = (h >> 7) & 0xFF
         if not (e == 0xFF and (h & 0x7F)):     # skip NaN (round narrows to quiet)
             assert g.fp32_to_bf16(u) == h
+
+
+def test_fp32_sgnj():
+    import struct
+
+    def f2b(x):
+        return struct.unpack("<I", struct.pack("<f", np.float32(x)))[0]
+
+    pos1, neg1, pos2, neg2 = f2b(1.0), f2b(-1.0), f2b(2.0), f2b(-2.0)
+    # fsgnj: take b's sign
+    assert g.fp32_sgnj(pos1, neg2, 0) == neg1          # |1| with - -> -1
+    assert g.fp32_sgnj(neg1, pos2, 0) == pos1          # |-1| with + -> 1
+    # fsgnjn: ~b sign
+    assert g.fp32_sgnj(pos1, pos2, 1) == neg1
+    # fsgnjx: a.sign ^ b.sign (fabs via x,x ; fneg via n,x)
+    assert g.fp32_sgnj(neg1, neg1, 2) == pos1          # -1 ^ -1 -> +
+    assert g.fp32_sgnj(neg1, pos1, 2) == neg1          # - ^ + -> -
+    # magnitude (incl NaN payload) preserved
+    nan = 0x7FABCDEF
+    assert g.fp32_sgnj(nan, 0x80000000, 0) == (nan | 0x80000000)
+    assert g.fp32_sgnj(nan, 0x00000000, 0) == (nan & 0x7FFFFFFF)
