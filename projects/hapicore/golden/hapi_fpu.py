@@ -46,6 +46,19 @@ def round_bf16(x):
     return float(np.uint32(u).view(np.float32))
 
 
+
+def fp32_to_bf16(u):
+    """Round an fp32 bit-pattern u to a 16-bit bf16 (round-to-nearest-even),
+    returning the 16-bit value. Finite values use the RNE-at-bit-16 formula
+    (carries propagate into the exponent, so an overflow becomes Inf); Inf passes
+    through; a NaN is preserved as a canonical quiet bf16 NaN. Matches the
+    hapi_fp32_to_bf16 RTL."""
+    u &= 0xFFFFFFFF
+    if (u & 0x7F800000) == 0x7F800000 and (u & 0x007FFFFF) != 0:   # NaN
+        return ((u >> 16) & 0x8000) | 0x7FC0
+    return ((u + 0x7FFF + ((u >> 16) & 1)) >> 16) & 0xFFFF
+
+
 def cast(x, fmt="fp32"):
     """Round a value into the given format, returned as a Python float."""
     if fmt == "bf16":
