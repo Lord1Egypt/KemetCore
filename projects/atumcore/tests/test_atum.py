@@ -462,6 +462,21 @@ def test_vfredu_fp():
     assert np.uint32(rm).view(np.float32) == np.float32(16.0)
 
 
+def test_vredminmax_int():
+    vu = g.VectorUnit()
+    # signed view: [-1, 5, -8, 3, 0, 7, -100, 2]
+    x = np.array([0xFFFFFFFF, 5, 0xFFFFFFF8, 3, 0, 7, 0xFFFFFF9C, 2], np.uint32)
+    vu.vreg[1] = x
+    assert vu.vredminu(1) == 0                  # unsigned min (0 is present)
+    assert vu.vredmaxu(1) == 0xFFFFFFFF         # unsigned max
+    assert vu.vredmins(1) == 0xFFFFFF9C         # signed min = -100
+    assert vu.vredmaxs(1) == 7                  # signed max = 7
+    # empty reduction -> identity
+    vu.vl = 0
+    assert vu.vredminu(1) == 0xFFFFFFFF and vu.vredmaxu(1) == 0
+    assert vu.vredmins(1) == 0x7FFFFFFF and vu.vredmaxs(1) == 0x80000000
+
+
 def test_vfredminmax_fp():
     vu = g.VectorUnit()
     x = np.array([3.0, -1.0, 5.0, 2.0, -8.0, 4.0, 0.5, 7.0], np.float32)

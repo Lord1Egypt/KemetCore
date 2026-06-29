@@ -911,6 +911,36 @@ class VectorUnit:
         vals = self.vreg[vs][:self.vl].astype(np.int64)[act]
         return int(vals.max())
 
+    def _vredmm_int(self, vs, mask, op):
+        """Integer min/max reduction. op: 0 minu, 1 maxu, 2 min(signed), 3 max(signed).
+        Identity-seeded fold over the active lanes (empty -> identity)."""
+        act = self._active(mask)[:self.vl]
+        vals = self.vreg[vs][:self.vl].astype(np.uint32)[act]
+        idents = [U32, 0, 0x7FFFFFFF, 0x80000000]
+        acc = idents[op]
+        for vv in vals:
+            x = int(vv)
+            if op < 2:
+                keep = (acc <= x) if op == 0 else (acc >= x)
+            else:
+                sa = acc - (1 << 32) if acc & 0x80000000 else acc
+                sx = x - (1 << 32) if x & 0x80000000 else x
+                keep = (sa <= sx) if op == 2 else (sa >= sx)
+            acc = acc if keep else x
+        return acc & U32
+
+    def vredminu(self, vs, mask=None):
+        return self._vredmm_int(vs, mask, 0)
+
+    def vredmaxu(self, vs, mask=None):
+        return self._vredmm_int(vs, mask, 1)
+
+    def vredmins(self, vs, mask=None):
+        return self._vredmm_int(vs, mask, 2)
+
+    def vredmaxs(self, vs, mask=None):
+        return self._vredmm_int(vs, mask, 3)
+
     def _vredbit(self, vs, mask, op, ident):
         act = self._active(mask)[:self.vl]
         vals = self.vreg[vs][:self.vl][act]
