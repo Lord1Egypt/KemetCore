@@ -1,0 +1,26 @@
+
+3. Printing statistics.
+
+=== bast_int8_mac ===
+
+        +----------Local Count, excluding submodules.
+        | 
+      577 wires
+      653 wire bits
+        8 public wires
+       84 public wire bits
+        7 ports
+       52 port bits
+      633 cells
+       48   $_ANDNOT_
+       89   $_AND_
+       32   $_DFFE_PN0P_
+        6   $_MUX_
+      244   $_NAND_
+        1   $_NOR_
+        1   $_NOT_
+        9   $_ORNOT_
+        5   $_OR_
+       44   $_XNOR_
+      154   $_XOR_
+
