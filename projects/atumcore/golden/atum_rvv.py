@@ -566,6 +566,21 @@ class VectorUnit:
         b = self.vreg[vs2].view(np.float32)
         self._wr_f32(vd, b - a, mask)
 
+    def vfdiv(self, vd, vs1, vs2, mask=None):
+        # vd = vs1 / vs2, correctly-rounded (RNE) IEEE-754 fp32 divide. numpy fp32
+        # division is correctly rounded, matching the HapiCore divider bit-for-bit.
+        a = self.vreg[vs1].view(np.float32)
+        b = self.vreg[vs2].view(np.float32)
+        with np.errstate(divide="ignore", invalid="ignore", over="ignore"):
+            self._wr_f32(vd, a / b, mask)
+
+    def vfrdiv(self, vd, vs1, vs2, mask=None):
+        # reverse divide: vd = vs2 / vs1 (RVV vfrdiv operand order)
+        a = self.vreg[vs1].view(np.float32)
+        b = self.vreg[vs2].view(np.float32)
+        with np.errstate(divide="ignore", invalid="ignore", over="ignore"):
+            self._wr_f32(vd, b / a, mask)
+
     def _wr_f32(self, vd, result, mask):
         act = self._active(mask)
         idx = np.arange(VLMAX) < self.vl

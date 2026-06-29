@@ -1,0 +1,93 @@
+
+4. Printing statistics.
+
+=== atum_vfdiv ===
+
+        +----------Local Count, excluding submodules.
+        | 
+       87 wires
+     2429 wire bits
+       55 public wires
+     2325 public wire bits
+        7 ports
+     1037 port bits
+       48 cells
+        8   $alu
+        8   $and
+       24   $mux
+        8   $not
+        8 submodules
+        8   hapi_fp32_div
+
+=== hapi_fp32_div ===
+
+        +----------Local Count, excluding submodules.
+        | 
+      311 wires
+     1927 wire bits
+       48 public wires
+      735 public wire bits
+        3 ports
+       96 port bits
+      265 cells
+       13   $alu
+        2   $and
+        1   $div
+        2   $eq
+       53   $logic_and
+       50   $logic_not
+        2   $logic_or
+        2   $macc_v2
+        1   $mod
+      112   $mux
+        3   $not
+        4   $or
+        3   $reduce_and
+        2   $reduce_bool
+        5   $reduce_or
+        1   $shiftx
+        3   $shl
+        1   $shr
+        5   $xor
+
+=== design hierarchy ===
+
+        +----------Count including submodules.
+        | 
+     2168 atum_vfdiv
+      265 hapi_fp32_div
+
+        +----------Count including submodules.
+        | 
+     2575 wires
+    17845 wire bits
+      439 public wires
+     8205 public wire bits
+       31 ports
+     1805 port bits
+        - memories
+        - memory bits
+        - processes
+     2168 cells
+      112   $alu
+       24   $and
+        8   $div
+       16   $eq
+      424   $logic_and
+      400   $logic_not
+       16   $logic_or
+       16   $macc_v2
+        8   $mod
+      920   $mux
+       32   $not
+       32   $or
+       24   $reduce_and
+       16   $reduce_bool
+       40   $reduce_or
+        8   $shiftx
+       24   $shl
+        8   $shr
+       40   $xor
+        8 submodules
+        8   hapi_fp32_div
+
