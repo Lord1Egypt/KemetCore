@@ -361,3 +361,24 @@ def test_fp32_class():
     import random
     for _ in range(300):
         assert bin(g.fp32_class(random.getrandbits(32))).count("1") == 1
+
+
+def test_int_to_fp32():
+    import struct
+
+    def b2f(u):
+        return float(np.frombuffer(struct.pack("<I", u), np.float32)[0])
+
+    assert b2f(g.int_to_fp32(0, 1)) == 0.0
+    assert b2f(g.int_to_fp32(1, 1)) == 1.0
+    assert b2f(g.int_to_fp32(0xFFFFFFFF, 1)) == -1.0          # signed -1
+    assert b2f(g.int_to_fp32(0xFFFFFFFF, 0)) == 4294967296.0  # unsigned, RNE -> 2^32
+    assert b2f(g.int_to_fp32(0x80000000, 1)) == -2147483648.0
+    assert b2f(g.int_to_fp32(0x7FFFFFFF, 1)) == 2147483648.0   # rounds up to 2^31
+    # cross-check vs numpy over random
+    for _ in range(2000):
+        x = np.random.randint(0, 1 << 32, dtype=np.uint64) & 0xFFFFFFFF
+        for s in (0, 1):
+            iv = np.int32(np.uint32(x)) if s else np.uint32(x)
+            ref = int(np.frombuffer(np.float32(iv).tobytes(), np.uint32)[0])
+            assert g.int_to_fp32(int(x), s) == ref
