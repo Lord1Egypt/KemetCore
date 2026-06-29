@@ -210,6 +210,25 @@ def decode_aluop(op, f3, f7):
     return 0
 
 
+def branch_taken(funct3, a, b):
+    """RV32I conditional-branch test (mirrors Cpu._branch); invalid encodings
+    (funct3 010/011) read as not-taken, matching seth_branch's default."""
+    f3 = funct3 & 0x7
+    if f3 == 0x0:
+        return u32(a) == u32(b)
+    if f3 == 0x1:
+        return u32(a) != u32(b)
+    if f3 == 0x4:
+        return s32(a) < s32(b)
+    if f3 == 0x5:
+        return s32(a) >= s32(b)
+    if f3 == 0x6:
+        return u32(a) < u32(b)
+    if f3 == 0x7:
+        return u32(a) >= u32(b)
+    return False
+
+
 def csr_op(funct3, csr_in, rs1, zimm):
     """Zicsr CSR datapath. funct3: 1 RW, 2 RS, 3 RC, 5 RWI, 6 RSI, 7 RCI.
 

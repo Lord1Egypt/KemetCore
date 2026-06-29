@@ -218,6 +218,17 @@ def test_decode_ctrl_matches_step():
     assert g.decode_ctrl(g._R(0x01, 3, 2, 0x0, 5, 0x33))["is_mdu"] == 1   # M-ext
 
 
+def test_branch_taken():
+    assert g.branch_taken(0b000, 5, 5) is True            # beq
+    assert g.branch_taken(0b001, 5, 5) is False           # bne
+    assert g.branch_taken(0b100, 0xFFFFFFFF, 1) is True   # blt: -1 < 1 signed
+    assert g.branch_taken(0b110, 0xFFFFFFFF, 1) is False  # bltu: big > 1 unsigned
+    assert g.branch_taken(0b101, 1, 0xFFFFFFFF) is True   # bge: 1 >= -1 signed
+    assert g.branch_taken(0b111, 1, 0xFFFFFFFF) is False  # bgeu: 1 < big unsigned
+    assert g.branch_taken(0b111, 5, 5) is True            # bgeu equal
+    assert g.branch_taken(0b010, 5, 5) is False           # invalid -> not taken
+
+
 def test_csr_op():
     # RW always writes; rd gets old value
     assert g.csr_op(0b001, 0xAAAA, 0x1234, 0) == (0xAAAA, 0x1234, 1)
