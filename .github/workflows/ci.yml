@@ -51,6 +51,8 @@ jobs:
         run: ./projects/anubiscore/rtl/tb/run_sim.sh CORE=hmac512
       - name: Run SHAKE128 XOF testbench
         run: ./projects/anubiscore/rtl/tb/run_sim.sh CORE=shake128
+      - name: Run SHAKE256 XOF testbench
+        run: ./projects/anubiscore/rtl/tb/run_sim.sh CORE=shake256
       - name: Run SethCore ALU testbench
         run: ./projects/sethcore/rtl/tb/run_sim.sh CORE=alu
       - name: Run SethCore mul/div testbench
