@@ -7,7 +7,7 @@ cd "$(dirname "$0")"
 YOSYS="${YOSYS:-$HOME/miniconda3/envs/eda/bin/yosys}"
 mkdir -p reports
 
-for core in sha256_core sha3_256_core sha512_core; do
+for core in sha256_core sha3_256_core sha3_512_core sha512_core; do
     echo "=== synthesizing $core ==="
     "$YOSYS" -ql "reports/${core}.log" -p "
         read_verilog -sv ../rtl/${core}.sv;

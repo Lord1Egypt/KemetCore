@@ -18,6 +18,12 @@ def test_sha3_256_vs_hashlib():
         assert g.sha3_256(data).hex() == hashlib.sha3_256(data).hexdigest()
 
 
+def test_sha3_512_vs_hashlib():
+    for n in [0, 1, 71, 72, 73, 143, 144, 500, 1000]:
+        data = os.urandom(n)
+        assert g.sha3_512(data).hex() == hashlib.sha3_512(data).hexdigest()
+
+
 def test_known_vectors():
     assert g.sha256(b"").hex() == (
         "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855")
@@ -27,6 +33,12 @@ def test_known_vectors():
         "a7ffc6f8bf1ed76651c14756a061d662f580ff4de43b49fa82d80a4b80f8434a")
     assert g.sha3_256(b"abc").hex() == (
         "3a985da74fe225b2045c172d6bd390bd855f086e3e9d525b46bfe24511431532")
+    assert g.sha3_512(b"").hex() == (
+        "a69f73cca23a9ac5c8b567dc185a756e97c982164fe25859e0d1dcc1475c80a6"
+        "15b2123af1f5f94c11e3e9402c3ac558f500199d95b6d3e301758586281dcd26")
+    assert g.sha3_512(b"abc").hex() == (
+        "b751850b1a57168a5693cd924b6b096e08f621827444f70d884f5d0240d2712e"
+        "10e116e9192af3c91a7ec57647e3934057340b4cf408d5a56592f8274eec53f0")
 
 
 def test_pymodel_rounds():
