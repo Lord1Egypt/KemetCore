@@ -34,3 +34,29 @@ def test_pymodel_equals_golden():
     assert np.allclose(out, ref, atol=1e-4)
     # OH*OW=16 outputs, Cout=5, K=27 -> exact MAC count
     assert tc.macs == 16 * 5 * 27
+
+
+def test_dot_seq():
+    import struct
+    import numpy as np
+    import ptah_conv as g
+
+    def f2b(x):
+        return int(np.frombuffer(struct.pack("<f", np.float32(x)), np.uint32)[0])
+
+    def b2f(u):
+        return float(np.frombuffer(struct.pack("<I", u), np.float32)[0])
+
+    assert b2f(g.dot_seq([f2b(1.0)], [f2b(2.0)])) == 2.0
+    assert b2f(g.dot_seq([f2b(1.0)] * 8, [f2b(1.0)] * 8)) == 8.0
+    # sequential order: matches an explicit Python fp32 fold (NOT numpy pairwise sum)
+    rng = np.random.default_rng(7)
+    for _ in range(50):
+        K = int(rng.integers(1, 20))
+        a = rng.standard_normal(K).astype(np.float32)
+        b = rng.standard_normal(K).astype(np.float32)
+        acc = np.float32(0.0)
+        for i in range(K):
+            acc = np.float32(acc + np.float32(a[i] * b[i]))
+        got = g.dot_seq([f2b(x) for x in a], [f2b(x) for x in b])
+        assert got == int(np.frombuffer(acc.tobytes(), np.uint32)[0])

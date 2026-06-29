@@ -131,6 +131,8 @@ jobs:
         run: ./projects/bastcore/rtl/tb/run_sim.sh CORE=int8
       - name: Run BastCore INT8 grid (systolic array) testbench
         run: ./projects/bastcore/rtl/tb/run_sim.sh CORE=int8grid
+      - name: Run PtahConv fp32 MAC testbench
+        run: ./projects/ptahconv/rtl/tb/run_sim.sh CORE=mac
       - name: Run GebCore 2:4 sparse-MAC testbench
         run: ./projects/gebcore/rtl/tb/run_sim.sh CORE=spmac
       - name: Run GebCore 2:4 pruner testbench
@@ -233,3 +235,5 @@ jobs:
         run: YOSYS=yosys ./projects/gebcore/synth/run_synth.sh
       - name: Synthesize AtumCore vector ALU (asserts no latches)
         run: YOSYS=yosys ./projects/atumcore/synth/run_synth.sh
+      - name: Synthesize PtahConv fp32 MAC (asserts no latches)
+        run: YOSYS=yosys ./projects/ptahconv/synth/run_synth.sh
