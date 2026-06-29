@@ -60,3 +60,32 @@ def test_dot_seq():
             acc = np.float32(acc + np.float32(a[i] * b[i]))
         got = g.dot_seq([f2b(x) for x in a], [f2b(x) for x in b])
         assert got == int(np.frombuffer(acc.tobytes(), np.uint32)[0])
+
+
+def test_matmul_seq():
+    import struct
+    import numpy as np
+    import ptah_conv as g
+
+    def f2b(x):
+        return int(np.frombuffer(struct.pack("<f", np.float32(x)), np.uint32)[0])
+
+    def b2f(u):
+        return float(np.frombuffer(struct.pack("<I", u), np.float32)[0])
+
+    A = [[f2b(1.0), f2b(2.0)], [f2b(3.0), f2b(4.0)]]
+    B = [[f2b(5.0), f2b(6.0)], [f2b(7.0), f2b(8.0)]]
+    C = g.matmul_seq(A, B, 2, 2, 2)
+    assert b2f(C[0][0]) == 1 * 5 + 2 * 7
+    assert b2f(C[0][1]) == 1 * 6 + 2 * 8
+    assert b2f(C[1][0]) == 3 * 5 + 4 * 7
+    assert b2f(C[1][1]) == 3 * 6 + 4 * 8
+    # each output equals the sequential dot of its row/col
+    rng = np.random.default_rng(11)
+    M, N, K = 3, 4, 5
+    A = [[f2b(x) for x in rng.standard_normal(K).astype(np.float32)] for _ in range(M)]
+    B = [[f2b(x) for x in rng.standard_normal(N).astype(np.float32)] for _ in range(K)]
+    C = g.matmul_seq(A, B, M, N, K)
+    for i in range(M):
+        for j in range(N):
+            assert C[i][j] == g.dot_seq(A[i], [B[k][j] for k in range(K)])
