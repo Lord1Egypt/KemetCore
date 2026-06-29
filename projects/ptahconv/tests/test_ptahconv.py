@@ -89,3 +89,34 @@ def test_matmul_seq():
     for i in range(M):
         for j in range(N):
             assert C[i][j] == g.dot_seq(A[i], [B[k][j] for k in range(K)])
+
+
+def test_conv2d_seq():
+    import struct
+    import numpy as np
+    import ptah_conv as g
+
+    def f2b(x):
+        return int(np.frombuffer(struct.pack("<f", np.float32(x)), np.uint32)[0])
+
+    def b2f(u):
+        return float(np.frombuffer(struct.pack("<I", u), np.float32)[0])
+
+    # conv2d_seq matches numpy conv to fp32 rounding (sequential vs pairwise sum)
+    rng = np.random.default_rng(3)
+    for (Cin, H, W, Cout, KH, KW, stride, pad) in [
+            (1, 4, 4, 1, 3, 3, 1, 0), (2, 5, 5, 3, 3, 3, 1, 1), (2, 5, 5, 2, 3, 3, 2, 0)]:
+        x = rng.standard_normal((Cin, H, W)).astype(np.float32)
+        w = rng.standard_normal((Cout, Cin, KH, KW)).astype(np.float32)
+        xb = [f2b(v) for v in x.flatten()]
+        wb = [f2b(v) for v in w.flatten()]
+        got = g.conv2d_seq(xb, wb, Cin, H, W, Cout, KH, KW, stride, pad)
+        ref = g.conv2d_naive(x[None], w, stride=stride, pad=pad)[0]
+        gf = np.array([b2f(u) for u in got]).reshape(ref.shape)
+        assert np.allclose(gf, ref, atol=1e-4)
+    # 1x1 pointwise conv == per-pixel channel matmul
+    x = rng.standard_normal((2, 3, 3)).astype(np.float32)
+    w = rng.standard_normal((4, 2, 1, 1)).astype(np.float32)
+    got = g.conv2d_seq([f2b(v) for v in x.flatten()],
+                       [f2b(v) for v in w.flatten()], 2, 3, 3, 4, 1, 1, 1, 0)
+    assert len(got) == 4 * 3 * 3

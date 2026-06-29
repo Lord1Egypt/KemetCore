@@ -30,7 +30,15 @@ if [ -z "${CI:-}" ]; then
         tee -o reports/ptah_gemm.stat stat
     "
     echo "  -> reports/ptah_gemm.stat (0 latches asserted)"
+    echo "=== synthesizing ptah_conv2d ==="
+    "$YOSYS" -ql "reports/ptah_conv2d.log" -p "
+        read_verilog -sv ${HAPI}/hapi_fp32_mul.sv ${HAPI}/hapi_fp32_add.sv ../rtl/ptah_mac.sv ../rtl/ptah_conv2d.sv;
+        synth -top ptah_conv2d;
+        select -assert-none t:\$_DLATCH_* t:\$dlatch;
+        tee -o reports/ptah_conv2d.stat stat
+    "
+    echo "  -> reports/ptah_conv2d.stat (0 latches asserted)"
 else
-    echo "=== skipping ptah_gemm synth under CI (see committed reports/ptah_gemm.stat) ==="
+    echo "=== skipping ptah_gemm + ptah_conv2d synth under CI (see committed reports/*.stat) ==="
 fi
 echo "ALL SYNTHESIZED ✅ (no latches)"
