@@ -30,6 +30,7 @@
 #   make CORE=vimac              -> atum_vimac (int mul-add: vmacc/vnmsac/vmadd/vnmsub)
 #   make CORE=vaadd              -> atum_vaadd (averaging add/sub: vaaddu/vaadd/vasub)
 #   make CORE=vmulh              -> atum_vmulh (multiply-high: vmulh/vmulhu/vmulhsu)
+#   make CORE=vdiv               -> atum_vdiv (int divide/rem: vdivu/vdiv/vremu/vrem)
 TOPLEVEL_LANG = verilog
 SIM ?= verilator
 CORE ?= valu
@@ -129,6 +130,10 @@ else ifeq ($(CORE),vmulh)
   VERILOG_SOURCES = $(PWD)/../atum_vmulh.sv
   TOPLEVEL = atum_vmulh
   MODULE   = test_vmulh
+else ifeq ($(CORE),vdiv)
+  VERILOG_SOURCES = $(PWD)/../atum_vdiv.sv
+  TOPLEVEL = atum_vdiv
+  MODULE   = test_vdiv
 else ifeq ($(CORE),vfsub)
   VERILOG_SOURCES = $(HAPI)/hapi_fp32_add.sv $(PWD)/../atum_vfsub.sv
   TOPLEVEL = atum_vfsub

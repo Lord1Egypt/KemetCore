@@ -562,3 +562,19 @@ def test_vmulh_family():
     vu.vmulhsu(5, 1, 2)
     bsu = vu.vreg[2].astype(np.int64)
     assert list(vu.vreg[5]) == list(((a * bsu) >> 32).astype(np.uint32))
+
+
+def test_vdiv_specialcases():
+    vu = g.VectorUnit()
+    vu.vreg[1] = np.array([7, 0xFFFFFFFF, 0x80000000, 7, 100, 0x80000000, 1, 10], np.uint32)
+    vu.vreg[2] = np.array([0, 3, 0xFFFFFFFF, 2, 0, 0, 0xFFFFFFFF, 3], np.uint32)
+    vu.vdivu(3, 1, 2)
+    assert int(vu.vreg[3][0]) == 0xFFFFFFFF          # div by zero -> all ones
+    vu.vdiv(4, 1, 2)
+    assert int(vu.vreg[4][2]) == 0x80000000          # INT_MIN / -1 -> INT_MIN (overflow)
+    assert int(vu.vreg[4][1]) == 0                    # -1 / 3 trunc -> 0
+    vu.vremu(5, 1, 2)
+    assert int(vu.vreg[5][4]) == 100                  # rem by zero -> a
+    vu.vrem(6, 1, 2)
+    assert int(vu.vreg[6][2]) == 0                     # INT_MIN % -1 -> 0
+    assert (int(vu.vreg[6][1]) & 0xFFFFFFFF) == 0xFFFFFFFF  # -1 % 3 -> -1

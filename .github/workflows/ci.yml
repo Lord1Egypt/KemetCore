@@ -151,6 +151,8 @@ jobs:
         run: ./projects/atumcore/rtl/tb/run_sim.sh CORE=vaadd
       - name: Run AtumCore multiply-high testbench
         run: ./projects/atumcore/rtl/tb/run_sim.sh CORE=vmulh
+      - name: Run AtumCore integer divide/remainder testbench
+        run: ./projects/atumcore/rtl/tb/run_sim.sh CORE=vdiv
 
   synth-yosys:
     name: Phase 3 synthesis (Yosys, 0-latch check)
