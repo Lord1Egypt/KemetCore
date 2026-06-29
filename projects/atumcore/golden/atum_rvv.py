@@ -941,6 +941,19 @@ class VectorUnit:
     def vredmaxs(self, vs, mask=None):
         return self._vredmm_int(vs, mask, 3)
 
+    # -- scalar <-> vector element-0 moves --------------------------------- #
+    def vmv_x_s(self, vs):
+        """vmv.x.s / vfmv.f.s: read element 0 of a vector as a scalar (any vl)."""
+        return int(self.vreg[vs][0])
+
+    def vmv_s_x(self, vd, scalar):
+        """vmv.s.x / vfmv.s.f: write scalar to element 0 of vd (no-op if vl==0);
+        elements 1.. are the undisturbed tail."""
+        if self.vl > 0:
+            out = self.vreg[vd].copy()
+            out[0] = np.uint32(scalar & U32)
+            self.vreg[vd] = out
+
     def _vredbit(self, vs, mask, op, ident):
         act = self._active(mask)[:self.vl]
         vals = self.vreg[vs][:self.vl][act]

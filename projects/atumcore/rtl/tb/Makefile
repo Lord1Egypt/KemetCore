@@ -27,6 +27,7 @@
 #   make CORE=vfredu             -> atum_vfredu (fp32 sum reduction: vfredosum/vfredusum)
 #   make CORE=vfredmm            -> atum_vfredminmax (fp32 reduction: vfredmin/vfredmax)
 #   make CORE=vredmm             -> atum_vredminmax (int reduction: vredminu/maxu/mins/maxs)
+#   make CORE=vmvsx              -> atum_vmvsx (scalar<->vector elem-0: vmv.x.s/vmv.s.x)
 #   make CORE=vmfcmp             -> atum_vmfcmp (fp32 compare->mask: vmfeq/vmflt/...)
 #   make CORE=vfmacc             -> atum_vfmacc (fp32 fused MAC: vfmacc / vfmsac)
 #   make CORE=vsadd              -> atum_vsadd (saturating int add/sub: vsaddu/vsadd/...)
@@ -163,6 +164,10 @@ else ifeq ($(CORE),vredmm)
   VERILOG_SOURCES = $(PWD)/../atum_vredminmax.sv
   TOPLEVEL = atum_vredminmax
   MODULE   = test_vredminmax
+else ifeq ($(CORE),vmvsx)
+  VERILOG_SOURCES = $(PWD)/../atum_vmvsx.sv
+  TOPLEVEL = atum_vmvsx
+  MODULE   = test_vmvsx
 else ifeq ($(CORE),vmfcmp)
   VERILOG_SOURCES = $(PWD)/../atum_vmfcmp.sv
   TOPLEVEL = atum_vmfcmp
