@@ -76,6 +76,29 @@ def fp32_sgnj(a, b, op):
     return (sgn << 31) | (a & 0x7FFFFFFF)
 
 
+
+def fp32_minmax(a, b, op):
+    """RISC-V fp32 fmin (op=0) / fmax (op=1): one NaN -> the other operand, both
+    NaN -> canonical qNaN 0x7FC00000, else smaller/larger with -0.0 < +0.0 via a
+    monotonic total-order key. Matches hapi_fp32_minmax."""
+    a &= 0xFFFFFFFF
+    b &= 0xFFFFFFFF
+    a_nan = (a & 0x7F800000) == 0x7F800000 and (a & 0x7FFFFF) != 0
+    b_nan = (b & 0x7F800000) == 0x7F800000 and (b & 0x7FFFFF) != 0
+    if a_nan and b_nan:
+        return 0x7FC00000
+    if a_nan:
+        return b
+    if b_nan:
+        return a
+    ka = a ^ (0xFFFFFFFF if (a >> 31) & 1 else 0x80000000)
+    kb = b ^ (0xFFFFFFFF if (b >> 31) & 1 else 0x80000000)
+    a_le_b = ka <= kb
+    smaller = a if a_le_b else b
+    larger = b if a_le_b else a
+    return larger if op else smaller
+
+
 def round_bf16(x):
     """Round a real value to the nearest bf16 (8 exp / 7 mantissa), ties-to-even.
 

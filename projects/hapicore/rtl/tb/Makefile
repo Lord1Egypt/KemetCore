@@ -14,6 +14,7 @@
 #   make CORE=fp32tofp16          -> hapi_fp32_to_fp16 (RNE narrowing convert)
 #   make CORE=fp16tofp32          -> hapi_fp16_to_fp32 (exact widening convert)
 #   make CORE=fp32sgnj            -> hapi_fp32_sgnj (fsgnj / fsgnjn / fsgnjx)
+#   make CORE=fp32minmax          -> hapi_fp32_minmax (fmin / fmax)
 #   make CORE=bf16tofp32          -> hapi_bf16_to_fp32 (exact widening convert)
 TOPLEVEL_LANG = verilog
 SIM ?= verilator
@@ -29,6 +30,10 @@ else ifeq ($(CORE),fp16tofp32)
   VERILOG_SOURCES = $(PWD)/../hapi_fp16_to_fp32.sv
   TOPLEVEL = hapi_fp16_to_fp32
   MODULE   = test_fp16_to_fp32
+else ifeq ($(CORE),fp32minmax)
+  VERILOG_SOURCES = $(PWD)/../hapi_fp32_minmax.sv
+  TOPLEVEL = hapi_fp32_minmax
+  MODULE   = test_fp32_minmax
 else ifeq ($(CORE),fp32sgnj)
   VERILOG_SOURCES = $(PWD)/../hapi_fp32_sgnj.sv
   TOPLEVEL = hapi_fp32_sgnj

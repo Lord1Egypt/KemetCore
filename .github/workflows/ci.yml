@@ -111,6 +111,8 @@ jobs:
         run: ./projects/hapicore/rtl/tb/run_sim.sh CORE=bf16tofp32
       - name: Run HapiCore fp32 sign-inject testbench
         run: ./projects/hapicore/rtl/tb/run_sim.sh CORE=fp32sgnj
+      - name: Run HapiCore fp32 min/max testbench
+        run: ./projects/hapicore/rtl/tb/run_sim.sh CORE=fp32minmax
       - name: Run NeithCore modular multiplier testbench
         run: ./projects/neithcore/rtl/tb/run_sim.sh CORE=modmul
       - name: Run NeithCore NTT butterfly testbench

@@ -294,3 +294,28 @@ def test_fp32_sgnj():
     nan = 0x7FABCDEF
     assert g.fp32_sgnj(nan, 0x80000000, 0) == (nan | 0x80000000)
     assert g.fp32_sgnj(nan, 0x00000000, 0) == (nan & 0x7FFFFFFF)
+
+
+def test_fp32_minmax():
+    import struct
+
+    def f2b(x):
+        return struct.unpack("<I", struct.pack("<f", np.float32(x)))[0]
+
+    p1, n1, p2 = f2b(1.0), f2b(-1.0), f2b(2.0)
+    assert g.fp32_minmax(p1, p2, 0) == p1          # min(1,2)=1
+    assert g.fp32_minmax(p1, p2, 1) == p2          # max(1,2)=2
+    assert g.fp32_minmax(n1, p1, 0) == n1          # min(-1,1)=-1
+    # -0 < +0
+    pz, nz = 0x00000000, 0x80000000
+    assert g.fp32_minmax(pz, nz, 0) == nz          # min(+0,-0) = -0
+    assert g.fp32_minmax(pz, nz, 1) == pz          # max(+0,-0) = +0
+    # one NaN -> other operand; both NaN -> canonical qNaN
+    nan = 0x7FABCDEF
+    assert g.fp32_minmax(nan, p2, 0) == p2
+    assert g.fp32_minmax(p2, nan, 1) == p2
+    assert g.fp32_minmax(nan, 0x7F800001, 0) == 0x7FC00000
+    # Inf handling
+    inf, ninf = 0x7F800000, 0xFF800000
+    assert g.fp32_minmax(inf, p2, 0) == p2
+    assert g.fp32_minmax(ninf, p2, 0) == ninf
