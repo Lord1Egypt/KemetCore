@@ -420,6 +420,17 @@ else
     "
 fi
 
+# atum_vfredminmax is a fold chain of fp32 key-compare/NaN-select logic (no multipliers
+# or adders), small enough to map fully even on the apt CI Yosys.
+echo "=== synthesizing atum_vfredminmax (fp32 min/max reduction) ==="
+"$YOSYS" -ql "reports/atum_vfredminmax.log" -p "
+    read_verilog -sv ../rtl/atum_vfredminmax.sv;
+    synth -top atum_vfredminmax;
+    select -assert-none t:\$_DLATCH_* t:\$dlatch;
+    tee -o reports/atum_vfredminmax.stat stat
+"
+echo "  -> reports/atum_vfredminmax.stat (0 latches asserted)"
+
 # atum_vmulh embeds VLMAX wide multipliers (3 sign-variant 64-bit products / lane). Like
 # valu, full ABC mapping is heavy on apt-yosys, so under $CI stop at the coarse 0-latch
 # netlist; committed reports/atum_vmulh.stat is the full gate-level evidence.

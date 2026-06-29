@@ -873,6 +873,39 @@ class VectorUnit:
         result is identical to vfredosum (a legal unordered ordering)."""
         return self.vfredosum(vs, mask)
 
+    def _fmm_pair(self, ai, bi, want_max):
+        """Pairwise fp32 min/max with NaN propagation + signed-zero ordering (same rule
+        as _vfmm): one NaN -> the number; both NaN -> canonical qNaN; else key compare."""
+        an, bn = self._fp_isnan(ai), self._fp_isnan(bi)
+        if an and bn:
+            return 0x7FC00000
+        if an:
+            return bi
+        if bn:
+            return ai
+        ka, kb = self._fp_key(ai), self._fp_key(bi)
+        if want_max:
+            return ai if ka >= kb else bi
+        return ai if ka <= kb else bi
+
+    def _vfredmm(self, vs, mask, want_max):
+        """fp32 min/max reduction: seed with the identity (+inf for min, -inf for max),
+        fold active lanes left-to-right with _fmm_pair. The accumulator stays a number,
+        so an all-NaN active set reduces to the identity (matches the hardware)."""
+        act = self._active(mask)[:self.vl]
+        vals = self.vreg[vs].astype(np.uint32)
+        acc = 0xFF800000 if want_max else 0x7F800000   # -inf / +inf identity
+        for i in range(self.vl):
+            if act[i]:
+                acc = self._fmm_pair(acc, int(vals[i]), want_max)
+        return int(acc)
+
+    def vfredmax(self, vs, mask=None):
+        return self._vfredmm(vs, mask, True)
+
+    def vfredmin(self, vs, mask=None):
+        return self._vfredmm(vs, mask, False)
+
     def vredmax(self, vs, mask=None):
         act = self._active(mask)[:self.vl]
         vals = self.vreg[vs][:self.vl].astype(np.int64)[act]
