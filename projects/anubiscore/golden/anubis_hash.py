@@ -106,6 +106,31 @@ def keccak_f1600(A, on_round=None):
     return A
 
 
+def sha3_512(data, on_round=None):
+    rate = 72  # bytes (576 bits); capacity 1024
+    A = [[0] * 5 for _ in range(5)]
+    padlen = rate - (len(data) % rate)
+    pad = bytearray(padlen)
+    pad[0] ^= 0x06
+    pad[-1] ^= 0x80
+    msg = bytes(data) + bytes(pad)
+    for off in range(0, len(msg), rate):
+        block = msg[off:off + rate]
+        for i in range(rate // 8):
+            lane = int.from_bytes(block[i * 8:i * 8 + 8], "little")
+            A[i % 5][i // 5] ^= lane
+        keccak_f1600(A, on_round=on_round)
+    out = bytearray()
+    while len(out) < 64:
+        for i in range(rate // 8):
+            out += A[i % 5][i // 5].to_bytes(8, "little")
+            if len(out) >= 64:
+                break
+        if len(out) < 64:
+            keccak_f1600(A, on_round=on_round)
+    return bytes(out[:64])
+
+
 def sha3_256(data, on_round=None):
     rate = 136  # bytes (1088 bits); capacity 512
     A = [[0] * 5 for _ in range(5)]
