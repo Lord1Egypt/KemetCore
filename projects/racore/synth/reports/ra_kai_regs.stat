@@ -1,0 +1,22 @@
+
+3. Printing statistics.
+
+=== ra_kai_regs ===
+
+        +----------Local Count, excluding submodules.
+        | 
+      397 wires
+      718 wire bits
+       18 public wires
+      339 public wire bits
+       15 ports
+      243 port bits
+      607 cells
+        7   $_ANDNOT_
+      167   $_AND_
+      228   $_NAND_
+        8   $_NOR_
+        1   $_ORNOT_
+      195   $_SDFFE_PP0P_
+        1   $_SDFF_PP0_
+

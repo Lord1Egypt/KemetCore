@@ -105,3 +105,51 @@ class NocCrossbar:
                 self.grants[cand] += 1
                 return cand
         return None
+
+
+class KaiRegs:
+    """Reference model for the ra_kai_regs RTL register block (synchronous): one
+    write() or finish() per clock, read() is combinational. Matches the RTL."""
+    def __init__(self, block_id=0):
+        self.block_id = block_id & 0xFF
+        self.caps = self.ctrl = self.status = 0
+        self.src = self.dst = self.len = self.perf = 0
+        self.go = 0
+
+    def reset(self):
+        self.caps = self.ctrl = self.status = 0
+        self.src = self.dst = self.len = self.perf = self.go = 0
+
+    def write(self, off, val):
+        self.go = 0
+        val &= 0xFFFFFFFF
+        if off == KAI_CAPS:
+            self.caps = val
+        elif off == KAI_SRC:
+            self.src = val
+        elif off == KAI_DST:
+            self.dst = val
+        elif off == KAI_LEN:
+            self.len = val
+        elif off == KAI_CTRL:
+            self.ctrl = val
+            if val & 0x1:
+                self.go = 1
+                self.status = 0x1                 # BUSY
+            if (val & 0x2) or (val & 0x8):        # ABORT or SOFT_RST
+                self.status = 0
+
+    def idle(self):
+        self.go = 0
+
+    def finish(self, perf, err):
+        self.status = 0x6 if err else 0x2         # ERR|DONE : DONE
+        self.perf = perf & 0xFFFFFFFF
+
+    def read(self, off):
+        return {
+            KAI_ID: ((self.block_id << 24) | KAI_MAGIC) & 0xFFFFFFFF,
+            KAI_CAPS: self.caps, KAI_CTRL: self.ctrl, KAI_STATUS: self.status,
+            KAI_SRC: self.src, KAI_DST: self.dst, KAI_LEN: self.len,
+            KAI_PERF: self.perf,
+        }.get(off, 0)
