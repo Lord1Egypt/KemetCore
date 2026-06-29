@@ -46,6 +46,17 @@ def test_polyaddsub():
         assert g.psub(a, b) == [(a[i] - b[i]) % g.Q for i in range(g.N)]
 
 
+def test_msgcodec():
+    rng = random.Random(11)
+    for _ in range(20):
+        bits = [rng.getrandbits(1) for _ in range(g.N)]
+        assert g._decode(g._encode(bits)) == bits          # round trip
+    # decode threshold: q4 and 3q4 are excluded (strict)
+    q4, q34 = g.Q // 4, 3 * g.Q // 4
+    poly = [q4, q4 + 1, q34 - 1, q34] + [0] * (g.N - 4)
+    assert g._decode(poly)[:4] == [0, 1, 1, 0]
+
+
 def test_kem_correctness():
     for seed in range(30):
         rng = random.Random(seed)

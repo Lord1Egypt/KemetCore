@@ -52,4 +52,13 @@ echo "=== synthesizing neith_polyaddsub (polynomial mod add/sub) ==="
     tee -o reports/neith_polyaddsub.stat stat
 "
 echo "  -> reports/neith_polyaddsub.stat (0 latches asserted)"
+
+echo "=== synthesizing neith_msgcodec (ML-KEM message encode/decode) ==="
+"$YOSYS" -ql "reports/neith_msgcodec.log" -p "
+    read_verilog -sv ../rtl/neith_msgcodec.sv;
+    synth -top neith_msgcodec;
+    select -assert-none t:\$_DLATCH_* t:\$dlatch;
+    tee -o reports/neith_msgcodec.stat stat
+"
+echo "  -> reports/neith_msgcodec.stat (0 latches asserted)"
 echo "ALL SYNTHESIZED ✅ (no latches)"
