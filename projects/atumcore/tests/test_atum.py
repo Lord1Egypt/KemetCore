@@ -462,6 +462,29 @@ def test_vfredu_fp():
     assert np.uint32(rm).view(np.float32) == np.float32(16.0)
 
 
+def test_vfredminmax_fp():
+    vu = g.VectorUnit()
+    x = np.array([3.0, -1.0, 5.0, 2.0, -8.0, 4.0, 0.5, 7.0], np.float32)
+    vu.load_f32(1, x)
+    assert np.uint32(vu.vfredmax(1)).view(np.float32) == np.float32(7.0)
+    assert np.uint32(vu.vfredmin(1)).view(np.float32) == np.float32(-8.0)
+    # masked: lanes 0,2,4,6 -> {3,5,-8,0.5}
+    m = [True, False, True, False, True, False, True, False]
+    assert np.uint32(vu.vfredmax(1, mask=m)).view(np.float32) == np.float32(5.0)
+    assert np.uint32(vu.vfredmin(1, mask=m)).view(np.float32) == np.float32(-8.0)
+    # empty reduction -> identity (-inf for max, +inf for min)
+    vu.vl = 0
+    assert vu.vfredmax(1) == 0xFF800000
+    assert vu.vfredmin(1) == 0x7F800000
+    # NaN among numbers is skipped; signed zero ordering
+    vu.vl = 8
+    z = np.zeros(8, np.uint32)
+    z[0] = 0x7FC00000           # NaN
+    z[1:] = np.array([0x40000000] * 7, np.uint32)   # 2.0
+    vu.vreg[2] = z
+    assert np.uint32(vu.vfredmax(2)).view(np.float32) == np.float32(2.0)
+
+
 def test_vmfcmp_fp():
     vu = g.VectorUnit()
     x = np.array([1.0, 2.0, np.nan, 0.0, -0.0, np.inf, -1.0, 3.0], np.float32)
