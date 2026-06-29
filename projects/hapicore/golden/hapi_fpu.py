@@ -99,6 +99,28 @@ def fp32_minmax(a, b, op):
     return larger if op else smaller
 
 
+
+def fp32_cmp(a, b, op):
+    """RISC-V fp32 compare -> 1-bit. op: 0 feq, 1 flt, 2 fle. Any NaN -> 0;
+    +0.0 == -0.0. Matches hapi_fp32_cmp."""
+    a &= 0xFFFFFFFF
+    b &= 0xFFFFFFFF
+    a_nan = (a & 0x7F800000) == 0x7F800000 and (a & 0x7FFFFF) != 0
+    b_nan = (b & 0x7F800000) == 0x7F800000 and (b & 0x7FFFFF) != 0
+    if a_nan or b_nan:
+        return 0
+    both_zero = (a & 0x7FFFFFFF) == 0 and (b & 0x7FFFFFFF) == 0
+    ka = a ^ (0xFFFFFFFF if (a >> 31) & 1 else 0x80000000)
+    kb = b ^ (0xFFFFFFFF if (b >> 31) & 1 else 0x80000000)
+    eqv = both_zero or (a == b)
+    ltv = (ka < kb) and not both_zero
+    if op == 0:
+        return 1 if eqv else 0
+    if op == 1:
+        return 1 if ltv else 0
+    return 1 if (ltv or eqv) else 0
+
+
 def round_bf16(x):
     """Round a real value to the nearest bf16 (8 exp / 7 mantissa), ties-to-even.
 

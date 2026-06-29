@@ -319,3 +319,28 @@ def test_fp32_minmax():
     inf, ninf = 0x7F800000, 0xFF800000
     assert g.fp32_minmax(inf, p2, 0) == p2
     assert g.fp32_minmax(ninf, p2, 0) == ninf
+
+
+def test_fp32_cmp():
+    import struct
+
+    def f2b(x):
+        return struct.unpack("<I", struct.pack("<f", np.float32(x)))[0]
+
+    p1, n1, p2 = f2b(1.0), f2b(-1.0), f2b(2.0)
+    assert g.fp32_cmp(p1, p1, 0) == 1          # feq 1==1
+    assert g.fp32_cmp(p1, p2, 0) == 0
+    assert g.fp32_cmp(p1, p2, 1) == 1          # flt 1<2
+    assert g.fp32_cmp(p2, p1, 1) == 0
+    assert g.fp32_cmp(p1, p1, 2) == 1          # fle 1<=1
+    assert g.fp32_cmp(n1, p1, 1) == 1          # flt -1<1
+    # +0 == -0
+    pz, nz = 0x00000000, 0x80000000
+    assert g.fp32_cmp(pz, nz, 0) == 1
+    assert g.fp32_cmp(pz, nz, 1) == 0          # not strictly less
+    assert g.fp32_cmp(pz, nz, 2) == 1
+    # NaN -> all false
+    nan = 0x7FABCDEF
+    for op in range(3):
+        assert g.fp32_cmp(nan, p1, op) == 0
+        assert g.fp32_cmp(p1, nan, op) == 0
