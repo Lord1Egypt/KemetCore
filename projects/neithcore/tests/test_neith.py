@@ -37,6 +37,15 @@ def test_pointwise():
     assert g.intt(g.pointwise(g.ntt(a), g.ntt(b))) == g.poly_mul_ntt(a, b)
 
 
+def test_polyaddsub():
+    rng = random.Random(9)
+    for _ in range(20):
+        a = [rng.randrange(g.Q) for _ in range(g.N)]
+        b = [rng.randrange(g.Q) for _ in range(g.N)]
+        assert g.padd(a, b) == [(a[i] + b[i]) % g.Q for i in range(g.N)]
+        assert g.psub(a, b) == [(a[i] - b[i]) % g.Q for i in range(g.N)]
+
+
 def test_kem_correctness():
     for seed in range(30):
         rng = random.Random(seed)

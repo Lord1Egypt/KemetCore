@@ -43,4 +43,13 @@ echo "=== synthesizing neith_pointwise (NTT-domain pointwise multiply) ==="
     tee -o reports/neith_pointwise.stat stat
 "
 echo "  -> reports/neith_pointwise.stat (0 latches asserted)"
+
+echo "=== synthesizing neith_polyaddsub (polynomial mod add/sub) ==="
+"$YOSYS" -ql "reports/neith_polyaddsub.log" -p "
+    read_verilog -sv ../rtl/neith_polyaddsub.sv;
+    synth -top neith_polyaddsub;
+    select -assert-none t:\$_DLATCH_* t:\$dlatch;
+    tee -o reports/neith_polyaddsub.stat stat
+"
+echo "  -> reports/neith_polyaddsub.stat (0 latches asserted)"
 echo "ALL SYNTHESIZED ✅ (no latches)"
