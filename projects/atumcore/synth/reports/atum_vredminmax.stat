@@ -1,0 +1,25 @@
+
+3. Printing statistics.
+
+=== atum_vredminmax ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     2072 wires
+     2369 wire bits
+        5 public wires
+      302 public wire bits
+        5 ports
+      302 port bits
+     2099 cells
+       36   $_ANDNOT_
+      452   $_AND_
+      542   $_MUX_
+      467   $_NAND_
+       24   $_NOR_
+      220   $_NOT_
+      207   $_ORNOT_
+       84   $_OR_
+       58   $_XNOR_
+        9   $_XOR_
+

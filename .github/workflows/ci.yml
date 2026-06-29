@@ -161,6 +161,8 @@ jobs:
         run: ./projects/atumcore/rtl/tb/run_sim.sh CORE=vfredu
       - name: Run AtumCore fp32 min/max-reduction testbench
         run: ./projects/atumcore/rtl/tb/run_sim.sh CORE=vfredmm
+      - name: Run AtumCore integer min/max-reduction testbench
+        run: ./projects/atumcore/rtl/tb/run_sim.sh CORE=vredmm
 
   synth-yosys:
     name: Phase 3 synthesis (Yosys, 0-latch check)

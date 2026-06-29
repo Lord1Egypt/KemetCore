@@ -431,6 +431,17 @@ echo "=== synthesizing atum_vfredminmax (fp32 min/max reduction) ==="
 "
 echo "  -> reports/atum_vfredminmax.stat (0 latches asserted)"
 
+# atum_vredminmax is a fold chain of integer signed/unsigned comparators (no
+# multipliers), small enough to map fully even on the apt CI Yosys.
+echo "=== synthesizing atum_vredminmax (integer min/max reduction) ==="
+"$YOSYS" -ql "reports/atum_vredminmax.log" -p "
+    read_verilog -sv ../rtl/atum_vredminmax.sv;
+    synth -top atum_vredminmax;
+    select -assert-none t:\$_DLATCH_* t:\$dlatch;
+    tee -o reports/atum_vredminmax.stat stat
+"
+echo "  -> reports/atum_vredminmax.stat (0 latches asserted)"
+
 # atum_vmulh embeds VLMAX wide multipliers (3 sign-variant 64-bit products / lane). Like
 # valu, full ABC mapping is heavy on apt-yosys, so under $CI stop at the coarse 0-latch
 # netlist; committed reports/atum_vmulh.stat is the full gate-level evidence.
