@@ -43,3 +43,22 @@ def test_int8_dot():
     # accumulation of many max products stays correct (no premature saturation)
     assert g.int8_dot([127] * 100, [127] * 100) == 127 * 127 * 100
     assert g.int8_dot([0x80] * 50, [127] * 50) == (-128 * 127 * 50) & 0xFFFFFFFF
+
+
+def test_int8_matmul():
+    # 2x2 result of all-ones K=4: each cell = 4
+    Ab = [[1, 1, 1, 1], [1, 1, 1, 1]]
+    Bb = [[1, 1], [1, 1], [1, 1], [1, 1]]
+    out = g.int8_matmul(Ab, Bb, 4, 2, 2)
+    assert out == [[4, 4], [4, 4]]
+    # signed: row of -1 (0xFF) times col of 1 -> -K
+    Ab = [[0xFF, 0xFF]]
+    Bb = [[1], [1]]
+    assert g.int8_matmul(Ab, Bb, 2, 1, 1) == [[(-2) & 0xFFFFFFFF]]
+    # consistency with int8_dot per cell
+    Ab = [[3, 0xFE, 7], [0x80, 5, 0x7F]]
+    Bb = [[2, 0xFF], [0x7F, 1], [4, 0x80]]
+    out = g.int8_matmul(Ab, Bb, 3, 2, 2)
+    for i in range(2):
+        for j in range(2):
+            assert out[i][j] == g.int8_dot(Ab[i], [Bb[k][j] for k in range(3)])
