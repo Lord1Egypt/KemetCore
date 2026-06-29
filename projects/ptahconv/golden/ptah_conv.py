@@ -87,3 +87,31 @@ def matmul_seq(A, B, M, N, K):
             out[i][j] = dot_seq([A[i][k] for k in range(K)],
                                 [B[k][j] for k in range(K)])
     return out
+
+
+def conv2d_seq(x_bits, w_bits, Cin, H, W, Cout, KH, KW, stride, pad):
+    """Sequential fp32 conv (single batch) matching the ptah_conv2d hardware: each
+    output is dot_seq over the receptive field in (ic, ky, kx) order, with implicit
+    zero padding (a padded tap contributes 0*w == 0, an exact no-op). x_bits is a
+    flat Cin*H*W list of fp32 bit patterns (CHW), w_bits a flat Cout*Cin*KH*KW list
+    (Cout,Cin,KH,KW). Returns Cout*OH*OW output bit patterns (CHW)."""
+    OH = (H + 2 * pad - KH) // stride + 1
+    OW = (W + 2 * pad - KW) // stride + 1
+    Z = 0x00000000  # +0.0
+    out = []
+    for co in range(Cout):
+        for oh in range(OH):
+            for ow in range(OW):
+                avec, bvec = [], []
+                for ic in range(Cin):
+                    for ky in range(KH):
+                        for kx in range(KW):
+                            ih = oh * stride + ky - pad
+                            iw = ow * stride + kx - pad
+                            if 0 <= ih < H and 0 <= iw < W:
+                                avec.append(x_bits[(ic * H + ih) * W + iw])
+                            else:
+                                avec.append(Z)
+                            bvec.append(w_bits[((co * Cin + ic) * KH + ky) * KW + kx])
+                out.append(dot_seq(avec, bvec))
+    return out

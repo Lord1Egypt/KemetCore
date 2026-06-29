@@ -149,6 +149,8 @@ jobs:
         run: ./projects/ptahconv/rtl/tb/run_sim.sh CORE=mac
       - name: Run PtahConv fp32 GEMM engine testbench
         run: ./projects/ptahconv/rtl/tb/run_sim.sh CORE=gemm
+      - name: Run PtahConv 2D convolution engine testbench
+        run: ./projects/ptahconv/rtl/tb/run_sim.sh CORE=conv2d
       - name: Run RaCore KAI register block testbench
         run: ./projects/racore/rtl/tb/run_sim.sh CORE=kai
       - name: Run RaCore NoC arbiter testbench

@@ -1,0 +1,131 @@
+
+6. Printing statistics.
+
+=== ptah_conv2d ===
+
+        +----------Local Count, excluding submodules.
+        | 
+    41020 wires
+    65201 wire bits
+      803 public wires
+    24956 public wire bits
+       21 ports
+      215 port bits
+    64971 cells
+      242   $_ANDNOT_
+     5793   $_AND_
+    24576   $_DFFE_PP_
+        3   $_DFF_P_
+    20350   $_MUX_
+     8029   $_NAND_
+       70   $_NOR_
+      101   $_NOT_
+     1803   $_ORNOT_
+     2419   $_OR_
+       65   $_SDFFE_PP0P_
+        1   $_SDFF_PP0_
+      851   $_XNOR_
+      668   $_XOR_
+        1 submodules
+        1   ptah_mac
+
+=== ptah_mac ===
+
+        +----------Local Count, excluding submodules.
+        | 
+       10 wires
+      196 wire bits
+       10 public wires
+      196 public wire bits
+        7 ports
+      100 port bits
+       64 cells
+       32   $_ANDNOT_
+       32   $_DFFE_PN0P_
+        2 submodules
+        1   hapi_fp32_add
+        1   hapi_fp32_mul
+
+=== hapi_fp32_add ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     1778 wires
+     2228 wire bits
+       18 public wires
+      468 public wire bits
+        3 ports
+       96 port bits
+     1792 cells
+       97   $_ANDNOT_
+      486   $_AND_
+      342   $_MUX_
+      415   $_NAND_
+       68   $_NOR_
+       43   $_NOT_
+      156   $_ORNOT_
+      114   $_OR_
+       49   $_XNOR_
+       22   $_XOR_
+
+=== hapi_fp32_mul ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     5028 wires
+     5288 wire bits
+       14 public wires
+      274 public wire bits
+        3 ports
+       96 port bits
+     5046 cells
+       96   $_ANDNOT_
+     1282   $_AND_
+      290   $_MUX_
+     1871   $_NAND_
+       53   $_NOR_
+       98   $_NOT_
+       74   $_ORNOT_
+       82   $_OR_
+      119   $_XNOR_
+     1081   $_XOR_
+
+=== design hierarchy ===
+
+        +----------Count including submodules.
+        | 
+    71873 ptah_conv2d
+       64 ptah_mac
+     1792   hapi_fp32_add
+     5046   hapi_fp32_mul
+
+        +----------Count including submodules.
+        | 
+    47836 wires
+    72913 wire bits
+      845 public wires
+    25894 public wire bits
+       34 ports
+      507 port bits
+        - memories
+        - memory bits
+        - processes
+    71873 cells
+      467   $_ANDNOT_
+     7561   $_AND_
+       32   $_DFFE_PN0P_
+    24576   $_DFFE_PP_
+        3   $_DFF_P_
+    20982   $_MUX_
+    10315   $_NAND_
+      191   $_NOR_
+      242   $_NOT_
+     2033   $_ORNOT_
+     2615   $_OR_
+       65   $_SDFFE_PP0P_
+        1   $_SDFF_PP0_
+     1019   $_XNOR_
+     1771   $_XOR_
+        1 submodules
+        1   ptah_mac
+
