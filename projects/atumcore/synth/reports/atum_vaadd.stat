@@ -1,0 +1,24 @@
+
+3. Printing statistics.
+
+=== atum_vaadd ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     5076 wires
+     6107 wire bits
+        7 public wires
+     1038 public wire bits
+        7 ports
+     1038 port bits
+     5325 cells
+       14   $_ANDNOT_
+     1043   $_AND_
+      271   $_MUX_
+     2083   $_NAND_
+        2   $_NOR_
+       28   $_ORNOT_
+      734   $_OR_
+      490   $_XNOR_
+      660   $_XOR_
+
