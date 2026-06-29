@@ -20,6 +20,18 @@ def round_bf16(x):
     return out
 
 
+def int8_dot(avec, bvec):
+    """Signed INT8 dot product with INT32 wrapping accumulate (matches
+    bast_int8_mac). Inputs are raw 0..255 byte patterns interpreted as two's
+    complement; the result is the low 32 bits, two's-complement."""
+    acc = 0
+    for ua, ub in zip(avec, bvec):
+        a = (ua & 0xFF) - 256 if (ua & 0xFF) >= 128 else (ua & 0xFF)
+        b = (ub & 0xFF) - 256 if (ub & 0xFF) >= 128 else (ub & 0xFF)
+        acc = (acc + a * b) & 0xFFFFFFFF
+    return acc
+
+
 def matmul(A, B):
     """BF16 matmul with FP32 accumulate. A:(M,K) B:(K,N) -> (M,N) fp32."""
     A = round_bf16(A)

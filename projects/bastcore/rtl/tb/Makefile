@@ -1,6 +1,7 @@
 # cocotb + Verilator testbenches for the BastCore tensor core.
 #   make CORE=mac    (default)   -> bast_mac single PE (+ hapi_bf16_mul, hapi_fp32_add)
 #   make CORE=grid               -> bast_mac_grid RxC systolic array (+ bast_mac, hapi)
+#   make CORE=int8               -> bast_int8_mac INT8 MAC cell (pure integer)
 TOPLEVEL_LANG = verilog
 SIM ?= verilator
 CORE ?= mac
@@ -9,7 +10,11 @@ PWD := $(shell pwd)
 HAPI := $(PWD)/../../../hapicore/rtl
 
 # bast_mac instantiates the verified HapiCore primitives, so they are compiled in.
-ifeq ($(CORE),grid)
+ifeq ($(CORE),int8)
+  VERILOG_SOURCES = $(PWD)/../bast_int8_mac.sv
+  TOPLEVEL = bast_int8_mac
+  MODULE   = test_int8_mac
+else ifeq ($(CORE),grid)
   VERILOG_SOURCES = $(PWD)/../bast_mac_grid.sv $(PWD)/../bast_mac.sv \
                     $(HAPI)/hapi_bf16_mul.sv $(HAPI)/hapi_fp32_add.sv
   TOPLEVEL = bast_mac_grid

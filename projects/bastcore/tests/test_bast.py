@@ -32,3 +32,14 @@ def test_pymodel_equals_golden():
     assert np.array_equal(out, g.matmul(A, B))
     assert arr.macs == 6 * 7 * 10
     assert arr.cycles == 10
+
+
+def test_int8_dot():
+    # max-magnitude products
+    assert g.int8_dot([127], [127]) == 127 * 127
+    assert g.int8_dot([0x80], [0x80]) == 128 * 128          # -128 * -128 = 16384
+    assert g.int8_dot([0x80], [127]) == (-128 * 127) & 0xFFFFFFFF
+    assert g.int8_dot([1, 0xFF], [1, 1]) == 0               # 1 + (-1) = 0
+    # accumulation of many max products stays correct (no premature saturation)
+    assert g.int8_dot([127] * 100, [127] * 100) == 127 * 127 * 100
+    assert g.int8_dot([0x80] * 50, [127] * 50) == (-128 * 127 * 50) & 0xFFFFFFFF
