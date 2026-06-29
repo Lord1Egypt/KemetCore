@@ -29,6 +29,7 @@ async def reset(dut):
     dut.rst_n.value = 0
     dut.start.value = 0
     dut.init.value = 0
+    dut.alg.value = 0
     dut.block.value = 0
     for _ in range(3):
         await RisingEdge(dut.clk)
@@ -36,9 +37,10 @@ async def reset(dut):
     await RisingEdge(dut.clk)
 
 
-async def absorb(dut, blk_bytes, init):
+async def absorb(dut, blk_bytes, init, alg):
     dut.block.value = int.from_bytes(blk_bytes, "big")
     dut.init.value = 1 if init else 0
+    dut.alg.value = alg
     dut.start.value = 1
     await RisingEdge(dut.clk)
     dut.start.value = 0
@@ -48,11 +50,11 @@ async def absorb(dut, blk_bytes, init):
             break
 
 
-async def sha256(dut, msg):
+async def sha256(dut, msg, alg=0):
     padded = pad(msg)
     blocks = [padded[i:i + 64] for i in range(0, len(padded), 64)]
     for i, blk in enumerate(blocks):
-        await absorb(dut, blk, init=(i == 0))
+        await absorb(dut, blk, init=(i == 0), alg=alg)
     await RisingEdge(dut.clk)          # let the final H += vars settle
     return int(dut.hash.value)
 
@@ -64,10 +66,15 @@ async def test_vectors(dut):
 
     msgs = [b"", b"abc", b"a" * 55, b"a" * 56, b"a" * 64, b"a" * 119,
             b"hello kemet", os.urandom(100), os.urandom(200)]
+    # SHA-256 (alg=0): full 256-bit digest, also cross-checked vs the from-scratch golden
     for m in msgs:
-        got = await sha256(dut, m)
+        got = await sha256(dut, m, alg=0)
         exp = int.from_bytes(hashlib.sha256(m).digest(), "big")
-        assert got == exp, f"len {len(m)}: got {got:064x} != exp {exp:064x}"
-        # golden must agree with the RTL too
+        assert got == exp, f"sha256 len {len(m)}: got {got:064x} != exp {exp:064x}"
         assert got == int.from_bytes(golden.sha256(m), "big")
-    dut._log.info(f"SHA-256 RTL verified bit-exact on {len(msgs)} messages")
+    # SHA-224 (alg=1): digest is the top 224 bits of the 256-bit state
+    for m in msgs:
+        got = (await sha256(dut, m, alg=1)) >> 32
+        exp = int.from_bytes(hashlib.sha224(m).digest(), "big")
+        assert got == exp, f"sha224 len {len(m)}: got {got:056x} != exp {exp:056x}"
+    dut._log.info(f"SHA-256 + SHA-224 RTL verified bit-exact on {len(msgs)} messages each")
