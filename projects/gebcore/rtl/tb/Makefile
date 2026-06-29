@@ -1,5 +1,6 @@
-# cocotb + Verilator testbench for the GebCore 2:4 sparse-MAC cell.
+# cocotb + Verilator testbenches for GebCore.
 #   make CORE=spmac   (default)   -> geb_spmac (+ HapiCore hapi_fp32_mul, hapi_fp32_add)
+#   make CORE=prune               -> geb_prune (2:4 sparsity pruner)
 TOPLEVEL_LANG = verilog
 SIM ?= verilator
 CORE ?= spmac
@@ -7,10 +8,16 @@ CORE ?= spmac
 PWD := $(shell pwd)
 HAPI := $(PWD)/../../../hapicore/rtl
 
+ifeq ($(CORE),prune)
+  VERILOG_SOURCES = $(PWD)/../geb_prune.sv
+  TOPLEVEL = geb_prune
+  MODULE   = test_prune
+else
 # geb_spmac instantiates the verified HapiCore fp32 primitives, so they are compiled in.
 VERILOG_SOURCES = $(PWD)/../geb_spmac.sv $(HAPI)/hapi_fp32_mul.sv $(HAPI)/hapi_fp32_add.sv
 TOPLEVEL = geb_spmac
 MODULE   = test_spmac
+endif
 
 SIM_BUILD = sim_build_$(CORE)
 EXTRA_ARGS += --no-timing

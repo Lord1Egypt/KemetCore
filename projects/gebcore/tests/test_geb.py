@@ -40,3 +40,23 @@ def test_macs_halved():
     assert np.allclose(out, g.sparse_matmul(A, values, indices))
     # dense would be M*K*N = 4*16*5 = 320; sparse is exactly half: 4*8*5 = 160
     assert mac.macs == 4 * 8 * 5
+
+
+def test_prune_group():
+    import struct
+
+    def f2b(x):
+        return struct.unpack("<I", struct.pack("<f", np.float32(x)))[0]
+
+    # distinct magnitudes: keep the two largest
+    mask, kept = g.prune_group([f2b(1.0), f2b(2.0), f2b(3.0), f2b(4.0)])
+    assert mask == 0b1100 and [i for i, _ in kept] == [2, 3]
+    # magnitude ties broken toward the lower lane index
+    mask, kept = g.prune_group([f2b(5.0), f2b(-5.0), f2b(5.0), f2b(1.0)])
+    assert [i for i, _ in kept] == [0, 1]
+    # exactly two lanes are always kept
+    for _ in range(200):
+        bits = [int.from_bytes(np.random.bytes(4), "little") for _ in range(4)]
+        mask, kept = g.prune_group(bits)
+        assert bin(mask).count("1") == 2 and len(kept) == 2
+        assert kept[0][0] < kept[1][0]

@@ -117,6 +117,8 @@ jobs:
         run: ./projects/bastcore/rtl/tb/run_sim.sh CORE=grid
       - name: Run GebCore 2:4 sparse-MAC testbench
         run: ./projects/gebcore/rtl/tb/run_sim.sh CORE=spmac
+      - name: Run GebCore 2:4 pruner testbench
+        run: ./projects/gebcore/rtl/tb/run_sim.sh CORE=prune
       - name: Run AtumCore vector integer ALU testbench
         run: ./projects/atumcore/rtl/tb/run_sim.sh CORE=valu
       - name: Run AtumCore fp32 vector lane testbench
