@@ -521,3 +521,22 @@ def test_vimac_family():
     vu.vnmsub(3, 1, 2)                                   # vd = s2 - s1*vd
     exp = ((s2.astype(np.int64) - s1.astype(np.int64) * d0) & M).astype(np.uint32)
     assert list(vu.vreg[3]) == list(exp)
+
+
+def test_vaadd_averaging():
+    vu = g.VectorUnit()
+    vu.vreg[1] = np.array([1, 2, 0xFFFFFFFF, 0xFFFFFFFF, 0x80000000, 10, 0, 4], np.uint32)
+    vu.vreg[2] = np.array([2, 2, 1, 0xFFFFFFFF, 0x80000000, 20, 0, 7], np.uint32)
+    vu.vaaddu(3, 1, 2)
+    # avg(1,2)=2 (rnu of 1.5), avg(0xFFFFFFFF,1) unsigned = 2^31 (no overflow)
+    assert int(vu.vreg[3][0]) == 2
+    assert int(vu.vreg[3][2]) == 0x80000000
+    vu.vaadd(4, 1, 2)
+    # signed avg(-1,-1) = -1
+    assert int(vu.vreg[4][3]) == 0xFFFFFFFF
+    vu.vasub(5, 1, 2)
+    # signed avg-diff(-1 - 1) ... cross-check golden formula
+    a = vu.vreg[1].astype(np.int32).astype(np.int64)
+    b = vu.vreg[2].astype(np.int32).astype(np.int64)
+    exp = (((a - b) >> 1) + ((a - b) & 1)).astype(np.uint32)
+    assert list(vu.vreg[5]) == list(exp)

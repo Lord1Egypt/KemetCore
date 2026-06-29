@@ -208,6 +208,29 @@ class VectorUnit:
         c = self.vreg[vd].astype(np.int64)
         self._wr_int(vd, b - a * c, mask)
 
+    @staticmethod
+    def _avg(v):
+        """Round-to-nearest-ties-up halving of an exact integer: (v >> 1) + (v & 1)."""
+        return (v >> 1) + (v & 1)
+
+    def vaaddu(self, vd, vs1, vs2, mask=None):
+        """Unsigned averaging add: (a + b) >> 1, rounded (no overflow)."""
+        a = self.vreg[vs1].astype(np.int64)
+        b = self.vreg[vs2].astype(np.int64)
+        self._wr_int(vd, self._avg(a + b), mask)
+
+    def vaadd(self, vd, vs1, vs2, mask=None):
+        """Signed averaging add: (a + b) >> 1, rounded."""
+        a = self.vreg[vs1].astype(np.int32).astype(np.int64)
+        b = self.vreg[vs2].astype(np.int32).astype(np.int64)
+        self._wr_int(vd, self._avg(a + b), mask)
+
+    def vasub(self, vd, vs1, vs2, mask=None):
+        """Signed averaging difference: (a - b) >> 1, rounded."""
+        a = self.vreg[vs1].astype(np.int32).astype(np.int64)
+        b = self.vreg[vs2].astype(np.int32).astype(np.int64)
+        self._wr_int(vd, self._avg(a - b), mask)
+
     # -- compare ops (vd = mask, 1 bit per lane) --------------------------- #
     def _cmp(self, vs1, vs2, fn, signed, mask):
         """Per-lane compare producing a length-VLMAX 0/1 mask. A lane bit is set

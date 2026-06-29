@@ -147,6 +147,8 @@ jobs:
         run: ./projects/atumcore/rtl/tb/run_sim.sh CORE=vssr
       - name: Run AtumCore integer multiply-add testbench
         run: ./projects/atumcore/rtl/tb/run_sim.sh CORE=vimac
+      - name: Run AtumCore averaging add/sub testbench
+        run: ./projects/atumcore/rtl/tb/run_sim.sh CORE=vaadd
 
   synth-yosys:
     name: Phase 3 synthesis (Yosys, 0-latch check)
