@@ -1,0 +1,85 @@
+
+4. Printing statistics.
+
+=== atum_vfsqrt ===
+
+        +----------Local Count, excluding submodules.
+        | 
+       61 wires
+     1404 wire bits
+       29 public wires
+     1300 public wire bits
+        5 ports
+      780 port bits
+       32 cells
+        8   $alu
+        8   $and
+        8   $mux
+        8   $not
+        8 submodules
+        8   hapi_fp32_sqrt
+
+=== hapi_fp32_sqrt ===
+
+        +----------Local Count, excluding submodules.
+        | 
+      486 wires
+    11865 wire bits
+       32 public wires
+      710 public wire bits
+        2 ports
+       64 port bits
+      381 cells
+       58   $alu
+        2   $and
+        1   $eq
+       27   $logic_and
+       26   $logic_not
+        1   $macc_v2
+      110   $mux
+       54   $not
+       41   $or
+       27   $reduce_and
+        1   $reduce_bool
+       29   $reduce_or
+        1   $shiftx
+        2   $shl
+        1   $shr
+
+=== design hierarchy ===
+
+        +----------Count including submodules.
+        | 
+     3080 atum_vfsqrt
+      381 hapi_fp32_sqrt
+
+        +----------Count including submodules.
+        | 
+     3949 wires
+    96324 wire bits
+      285 public wires
+     6980 public wire bits
+       21 ports
+     1292 port bits
+        - memories
+        - memory bits
+        - processes
+     3080 cells
+      472   $alu
+       24   $and
+        8   $eq
+      216   $logic_and
+      208   $logic_not
+        8   $macc_v2
+      888   $mux
+      440   $not
+      328   $or
+      216   $reduce_and
+        8   $reduce_bool
+      232   $reduce_or
+        8   $shiftx
+       16   $shl
+        8   $shr
+        8 submodules
+        8   hapi_fp32_sqrt
+

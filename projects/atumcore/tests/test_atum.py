@@ -431,6 +431,22 @@ def test_vfdiv_fp():
     assert np.array_equal(vu.read_f32(4), rexp.astype(np.float32))
 
 
+def test_vfsqrt_fp():
+    vu = g.VectorUnit()
+    x = np.array([0.0, 1.0, 4.0, 9.0, 25.0, 2.0, 100.0, 0.25], np.float32)
+    vu.load_f32(1, x)
+    vu.vfsqrt(2, 1)
+    assert np.array_equal(vu.read_f32(2), np.sqrt(x))        # exact RNE
+    # negative -> NaN, +inf -> +inf
+    z = np.array([-1.0, np.inf, -0.0, 16.0, 0.0, 1e30, 1e-30, 49.0], np.float32)
+    vu.load_f32(3, z)
+    with np.errstate(invalid="ignore"):
+        vu.vfsqrt(4, 3)
+    got = vu.read_f32(4)
+    assert np.isnan(got[0]) and np.isinf(got[1]) and got[1] > 0
+    assert got[3] == 4.0 and got[7] == 7.0
+
+
 def test_vmfcmp_fp():
     vu = g.VectorUnit()
     x = np.array([1.0, 2.0, np.nan, 0.0, -0.0, np.inf, -1.0, 3.0], np.float32)
