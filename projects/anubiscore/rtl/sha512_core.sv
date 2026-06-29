@@ -1,20 +1,23 @@
-// AnubisCore — SHA-512 core (KemetCore Phase 2 RTL)
+// AnubisCore — SHA-512 / SHA-384 core (KemetCore Phase 2 RTL)
 //
 // Multicycle implementation mirroring sha256_core, widened to the SHA-512 parameters:
 // 64-bit words, 80 rounds per 1024-bit block, output 512-bit digest. The message
 // schedule uses a 16-word sliding window so only 16 words are stored. `init` selects
 // the IV (first block) vs. continuing the running hash (chaining), so multi-block
-// messages are driven by streaming padded 1024-bit blocks.
+// messages are driven by streaming padded 1024-bit blocks. `alg` selects SHA-512 (0)
+// or SHA-384 (1): identical compression, different IV; the SHA-384 digest is the top
+// 384 bits of `hash` (hash[511:128]).
 //
-// Constants (80 K, 8 IV) are the standard FIPS 180-4 SHA-512 values (cube/square roots
-// of the first primes), generated exactly. Bit-exact against hashlib.sha512 and the
-// Python golden (projects/anubiscore/golden/anubis_hash.py) — see tb/test_sha512.py.
+// The 80 K and the two 8-word IV sets are the standard FIPS 180-4 values (cube/square
+// roots of the first primes), generated exactly. Bit-exact against hashlib.sha512 /
+// hashlib.sha384 — see tb/test_sha512.py.
 
 module sha512_core (
     input  logic          clk,
     input  logic          rst_n,
     input  logic          start,     // pulse 1 cycle to begin a block
     input  logic          init,      // 1: start from IV, 0: continue chaining
+    input  logic          alg,       // 0: SHA-512, 1: SHA-384 (digest = hash[511:128])
     input  logic [1023:0] block,     // padded 1024-bit message block (W0 = MSBs)
     output logic          busy,
     output logic          done,      // 1-cycle pulse when block is absorbed
@@ -83,18 +86,34 @@ module sha512_core (
         endcase
     endfunction
 
-    function automatic logic [63:0] iv(input logic [2:0] i);
-        case (i)
-            3'd0: iv=64'h6a09e667f3bcc908;
-            3'd1: iv=64'hbb67ae8584caa73b;
-            3'd2: iv=64'h3c6ef372fe94f82b;
-            3'd3: iv=64'ha54ff53a5f1d36f1;
-            3'd4: iv=64'h510e527fade682d1;
-            3'd5: iv=64'h9b05688c2b3e6c1f;
-            3'd6: iv=64'h1f83d9abfb41bd6b;
-            3'd7: iv=64'h5be0cd19137e2179;
-            default: iv = 64'h0;
-        endcase
+    // alg = 0 -> SHA-512 IV, alg = 1 -> SHA-384 IV (same compression, different IV +
+    // truncated digest). Both are the standard FIPS 180-4 constants.
+    function automatic logic [63:0] iv(input logic a, input logic [2:0] i);
+        if (a) begin
+            case (i)                         // SHA-384
+                3'd0: iv=64'hcbbb9d5dc1059ed8;
+                3'd1: iv=64'h629a292a367cd507;
+                3'd2: iv=64'h9159015a3070dd17;
+                3'd3: iv=64'h152fecd8f70e5939;
+                3'd4: iv=64'h67332667ffc00b31;
+                3'd5: iv=64'h8eb44a8768581511;
+                3'd6: iv=64'hdb0c2e0d64f98fa7;
+                3'd7: iv=64'h47b5481dbefa4fa4;
+                default: iv = 64'h0;
+            endcase
+        end else begin
+            case (i)                         // SHA-512
+                3'd0: iv=64'h6a09e667f3bcc908;
+                3'd1: iv=64'hbb67ae8584caa73b;
+                3'd2: iv=64'h3c6ef372fe94f82b;
+                3'd3: iv=64'ha54ff53a5f1d36f1;
+                3'd4: iv=64'h510e527fade682d1;
+                3'd5: iv=64'h9b05688c2b3e6c1f;
+                3'd6: iv=64'h1f83d9abfb41bd6b;
+                3'd7: iv=64'h5be0cd19137e2179;
+                default: iv = 64'h0;
+            endcase
+        end
     endfunction
 
     typedef enum logic [1:0] {IDLE, RUN, FIN} state_t;
@@ -120,7 +139,9 @@ module sha512_core (
             busy  <= 1'b0;
             done  <= 1'b0;
             rc    <= 7'd0;
-            for (i = 0; i < 8; i = i + 1) H[i] <= iv(i[2:0]);
+            // reset value is a constant (async reset requires it); H is reloaded from
+            // the alg-selected IV on the first `init` block before it is ever used.
+            for (i = 0; i < 8; i = i + 1) H[i] <= iv(1'b0, i[2:0]);
         end else begin
             done <= 1'b0;
             case (state)
@@ -129,15 +150,15 @@ module sha512_core (
                     if (start) begin
                         for (i = 0; i < 16; i = i + 1)
                             w[i] <= block[(15 - i) * 64 +: 64];
-                        if (init) for (i = 0; i < 8; i = i + 1) H[i] <= iv(i[2:0]);
-                        a <= init ? iv(3'd0) : H[0];
-                        b <= init ? iv(3'd1) : H[1];
-                        c <= init ? iv(3'd2) : H[2];
-                        d <= init ? iv(3'd3) : H[3];
-                        e <= init ? iv(3'd4) : H[4];
-                        f <= init ? iv(3'd5) : H[5];
-                        g <= init ? iv(3'd6) : H[6];
-                        h <= init ? iv(3'd7) : H[7];
+                        if (init) for (i = 0; i < 8; i = i + 1) H[i] <= iv(alg, i[2:0]);
+                        a <= init ? iv(alg, 3'd0) : H[0];
+                        b <= init ? iv(alg, 3'd1) : H[1];
+                        c <= init ? iv(alg, 3'd2) : H[2];
+                        d <= init ? iv(alg, 3'd3) : H[3];
+                        e <= init ? iv(alg, 3'd4) : H[4];
+                        f <= init ? iv(alg, 3'd5) : H[5];
+                        g <= init ? iv(alg, 3'd6) : H[6];
+                        h <= init ? iv(alg, 3'd7) : H[7];
                         rc    <= 7'd0;
                         busy  <= 1'b1;
                         state <= RUN;
