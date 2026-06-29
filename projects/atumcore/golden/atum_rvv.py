@@ -187,6 +187,27 @@ class VectorUnit:
         """Arithmetic rounding shift-right (signed value)."""
         self._wr_int(vd, self._vssr(vs1, vs2, True), mask)
 
+    def vnmsac(self, vd, vs1, vs2, mask=None):
+        """vd -= vs1*vs2 (integer multiply-subtract, modular 2^32)."""
+        a = self.vreg[vs1].astype(np.int64)
+        b = self.vreg[vs2].astype(np.int64)
+        c = self.vreg[vd].astype(np.int64)
+        self._wr_int(vd, c - a * b, mask)
+
+    def vmadd(self, vd, vs1, vs2, mask=None):
+        """vd = vs1*vd + vs2 (vd is the multiplicand; modular 2^32)."""
+        a = self.vreg[vs1].astype(np.int64)
+        b = self.vreg[vs2].astype(np.int64)
+        c = self.vreg[vd].astype(np.int64)
+        self._wr_int(vd, a * c + b, mask)
+
+    def vnmsub(self, vd, vs1, vs2, mask=None):
+        """vd = vs2 - vs1*vd (modular 2^32)."""
+        a = self.vreg[vs1].astype(np.int64)
+        b = self.vreg[vs2].astype(np.int64)
+        c = self.vreg[vd].astype(np.int64)
+        self._wr_int(vd, b - a * c, mask)
+
     # -- compare ops (vd = mask, 1 bit per lane) --------------------------- #
     def _cmp(self, vs1, vs2, fn, signed, mask):
         """Per-lane compare producing a length-VLMAX 0/1 mask. A lane bit is set
