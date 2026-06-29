@@ -150,6 +150,36 @@ def fp32_class(a):
     return y
 
 
+
+def int_to_fp32(x, is_signed):
+    """int32 -> fp32 (RNE). is_signed selects two's-complement (fcvt.s.w) vs
+    unsigned (fcvt.s.wu). Magnitude normalise + keep-24 + RNE round; 32-bit ints
+    fit fp32's exponent so no overflow. Matches hapi_int_to_fp32 / AtumCore _i2f."""
+    x &= 0xFFFFFFFF
+    if is_signed and (x >> 31) & 1:
+        sign, mag = 1, (-x) & 0xFFFFFFFF
+    else:
+        sign, mag = 0, x
+    if mag == 0:
+        return 0
+    msb = mag.bit_length() - 1
+    exp = msb
+    if msb <= 23:
+        frac = (mag << (23 - msb)) & 0x7FFFFF
+    else:
+        sh = msb - 23
+        keep = mag >> sh
+        round_bit = (mag >> (sh - 1)) & 1
+        sticky = 1 if (mag & ((1 << (sh - 1)) - 1)) else 0
+        if round_bit and (sticky or (keep & 1)):
+            keep += 1
+            if keep == (1 << 24):
+                keep >>= 1
+                exp += 1
+        frac = keep & 0x7FFFFF
+    return ((sign << 31) | ((exp + 127) << 23) | frac) & 0xFFFFFFFF
+
+
 def round_bf16(x):
     """Round a real value to the nearest bf16 (8 exp / 7 mantissa), ties-to-even.
 
