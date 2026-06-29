@@ -218,6 +218,23 @@ def test_decode_ctrl_matches_step():
     assert g.decode_ctrl(g._R(0x01, 3, 2, 0x0, 5, 0x33))["is_mdu"] == 1   # M-ext
 
 
+def test_load_store_format():
+    # lw passes the whole word
+    assert g.load_format(0x2, 0, 0xDEADBEEF) == 0xDEADBEEF
+    # lb sign-extends the selected byte
+    assert g.load_format(0x0, 0, 0x000000FF) == 0xFFFFFFFF
+    assert g.load_format(0x0, 1, 0x0000FF00) == 0xFFFFFFFF
+    assert g.load_format(0x4, 0, 0x000000FF) == 0x000000FF   # lbu
+    assert g.load_format(0x1, 0, 0x0000FFFF) == 0xFFFFFFFF   # lh
+    assert g.load_format(0x5, 0, 0x0000FFFF) == 0x0000FFFF   # lhu
+    # sb merges one byte; wstrb selects it
+    assert g.store_merge(0x0, 1, 0x00000000, 0xAB) == (0x0000AB00, 0b0010)
+    # sh merges a halfword
+    assert g.store_merge(0x1, 2, 0x00000000, 0xBEEF) == (0xBEEF0000, 0b1100)
+    # sw replaces the whole word
+    assert g.store_merge(0x2, 0, 0x12345678, 0xCAFEBABE) == (0xCAFEBABE, 0b1111)
+
+
 def test_branch_taken():
     assert g.branch_taken(0b000, 5, 5) is True            # beq
     assert g.branch_taken(0b001, 5, 5) is False           # bne

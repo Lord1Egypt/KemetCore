@@ -210,6 +210,44 @@ def decode_aluop(op, f3, f7):
     return 0
 
 
+def load_format(funct3, addr_lo, mem_word):
+    """Word-addressed load formatting (mirrors seth_lsu / seth_core): select the
+    byte/half at addr_lo within the aligned word and sign/zero-extend."""
+    mem_word = u32(mem_word)
+    boff = (addr_lo & 3) * 8
+    shifted = mem_word >> boff
+    f3 = funct3 & 0x7
+    if f3 == 0x2:
+        return mem_word                                    # lw
+    if f3 == 0x1:
+        return u32(_sext(shifted & 0xFFFF, 16))            # lh
+    if f3 == 0x0:
+        return u32(_sext(shifted & 0xFF, 8))               # lb
+    if f3 == 0x5:
+        return shifted & 0xFFFF                            # lhu
+    if f3 == 0x4:
+        return shifted & 0xFF                              # lbu
+    return mem_word
+
+
+def store_merge(funct3, addr_lo, mem_word, store_data):
+    """Word-addressed store merge (mirrors seth_lsu / seth_core): returns
+    (store_word, wstrb) — the read-modify-write word and per-byte strobe."""
+    mem_word = u32(mem_word)
+    store_data = u32(store_data)
+    boff = (addr_lo & 3) * 8
+    f3 = funct3 & 0x7
+    if f3 == 0x0:                                          # sb
+        mask = (0xFF << boff) & MASK
+        sw = u32((mem_word & (~mask & MASK)) | ((store_data & 0xFF) << boff))
+        return sw, (0b0001 << addr_lo) & 0xF
+    if f3 == 0x1:                                          # sh
+        mask = (0xFFFF << boff) & MASK
+        sw = u32((mem_word & (~mask & MASK)) | ((store_data & 0xFFFF) << boff))
+        return sw, (0b0011 << addr_lo) & 0xF
+    return store_data, 0xF                                 # sw
+
+
 def branch_taken(funct3, a, b):
     """RV32I conditional-branch test (mirrors Cpu._branch); invalid encodings
     (funct3 010/011) read as not-taken, matching seth_branch's default."""
