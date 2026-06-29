@@ -63,6 +63,8 @@ jobs:
         run: ./projects/sethcore/rtl/tb/run_sim.sh CORE=decode
       - name: Run SethCore CSR testbench
         run: ./projects/sethcore/rtl/tb/run_sim.sh CORE=csr
+      - name: Run SethCore branch testbench
+        run: ./projects/sethcore/rtl/tb/run_sim.sh CORE=branch
       - name: Run SethCore integrated single-cycle core testbench
         run: ./projects/sethcore/rtl/tb/run_sim.sh CORE=core
       - name: Run SethCore 5-stage pipeline testbench

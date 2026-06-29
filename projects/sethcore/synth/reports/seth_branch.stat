@@ -1,0 +1,23 @@
+
+3. Printing statistics.
+
+=== seth_branch ===
+
+        +----------Local Count, excluding submodules.
+        | 
+      183 wires
+      247 wire bits
+        4 public wires
+       68 public wire bits
+        4 ports
+       68 port bits
+      180 cells
+        8   $_ANDNOT_
+       48   $_AND_
+        1   $_MUX_
+       49   $_NAND_
+        8   $_NOR_
+       57   $_ORNOT_
+        3   $_OR_
+        6   $_XNOR_
+
