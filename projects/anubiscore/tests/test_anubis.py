@@ -1,4 +1,5 @@
 import hashlib
+import hmac as _hmac
 import os
 
 import anubis_hash as g
@@ -34,6 +35,21 @@ def test_sha3_512_vs_hashlib():
     for n in [0, 1, 71, 72, 73, 143, 144, 500, 1000]:
         data = os.urandom(n)
         assert g.sha3_512(data).hex() == hashlib.sha3_512(data).hexdigest()
+
+
+def test_hmac_sha256_vs_stdlib():
+    cases = [
+        (b"key", b"The quick brown fox jumps over the lazy dog"),
+        (b"", b""),
+        (b"Jefe", b"what do ya want for nothing?"),
+        (b"x" * 80, b"long key gets hashed first"),  # key > block size
+    ]
+    for key, msg in cases:
+        assert g.hmac_sha256(key, msg) == _hmac.new(key, msg, hashlib.sha256).digest()
+    for _ in range(20):
+        key = os.urandom(os.urandom(1)[0] % 100)
+        msg = os.urandom(os.urandom(1)[0])
+        assert g.hmac_sha256(key, msg) == _hmac.new(key, msg, hashlib.sha256).digest()
 
 
 def test_known_vectors():

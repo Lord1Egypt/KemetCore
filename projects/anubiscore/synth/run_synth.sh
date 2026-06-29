@@ -17,4 +17,14 @@ for core in sha256_core sha3_224_core sha3_256_core sha3_384_core sha3_512_core 
     "
     echo "  -> reports/${core}.stat (0 latches asserted)"
 done
+
+# HMAC-SHA256 composes sha256_core, so its synthesis reads both sources.
+echo "=== synthesizing hmac_sha256_core ==="
+"$YOSYS" -ql "reports/hmac_sha256_core.log" -p "
+    read_verilog -sv ../rtl/hmac_sha256_core.sv ../rtl/sha256_core.sv;
+    synth -top hmac_sha256_core;
+    select -assert-none t:\$_DLATCH_* t:\$dlatch;
+    tee -o reports/hmac_sha256_core.stat stat
+"
+echo "  -> reports/hmac_sha256_core.stat (0 latches asserted)"
 echo "ALL SYNTHESIZED ✅ (no latches)"

@@ -61,6 +61,19 @@ def sha256(data, on_round=None):
     return b"".join(struct.pack(">L", x) for x in h)
 
 
+def hmac_sha256(key, msg):
+    """HMAC-SHA256 (RFC 2104), built on the from-scratch sha256 above."""
+    block = 64
+    key = bytes(key)
+    if len(key) > block:
+        key = sha256(key)
+    key = key + b"\x00" * (block - len(key))
+    ipad = bytes(b ^ 0x36 for b in key)
+    opad = bytes(b ^ 0x5c for b in key)
+    inner = sha256(ipad + bytes(msg))
+    return sha256(opad + inner)
+
+
 # --------------------------------------------------------------------------- #
 # SHA-3 / Keccak-f[1600]
 # --------------------------------------------------------------------------- #
