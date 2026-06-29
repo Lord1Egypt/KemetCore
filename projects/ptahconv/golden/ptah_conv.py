@@ -75,3 +75,15 @@ def dot_seq(avec, bvec):
         with np.errstate(over="ignore", invalid="ignore"):
             acc = np.float32(acc + np.float32(a * b))
     return int(np.frombuffer(struct.pack("<f", acc), np.uint32)[0])
+
+
+def matmul_seq(A, B, M, N, K):
+    """Sequential fp32 GEMM C[M][N]=A[M][K]@B[K][N] using dot_seq per output
+    element (matches the ptah_gemm hardware). A: M x K, B: K x N raw fp32 bits.
+    Returns M x N raw fp32 bit patterns."""
+    out = [[0] * N for _ in range(M)]
+    for i in range(M):
+        for j in range(N):
+            out[i][j] = dot_seq([A[i][k] for k in range(K)],
+                                [B[k][j] for k in range(K)])
+    return out
