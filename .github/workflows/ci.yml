@@ -157,6 +157,8 @@ jobs:
         run: ./projects/atumcore/rtl/tb/run_sim.sh CORE=vfdiv
       - name: Run AtumCore fp32 square-root testbench
         run: ./projects/atumcore/rtl/tb/run_sim.sh CORE=vfsqrt
+      - name: Run AtumCore fp32 sum-reduction testbench
+        run: ./projects/atumcore/rtl/tb/run_sim.sh CORE=vfredu
 
   synth-yosys:
     name: Phase 3 synthesis (Yosys, 0-latch check)
