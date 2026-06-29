@@ -149,6 +149,8 @@ jobs:
         run: ./projects/ptahconv/rtl/tb/run_sim.sh CORE=mac
       - name: Run PtahConv fp32 GEMM engine testbench
         run: ./projects/ptahconv/rtl/tb/run_sim.sh CORE=gemm
+      - name: Run RaCore KAI register block testbench
+        run: ./projects/racore/rtl/tb/run_sim.sh CORE=kai
       - name: Run GebCore 2:4 sparse-MAC testbench
         run: ./projects/gebcore/rtl/tb/run_sim.sh CORE=spmac
       - name: Run GebCore 2:4 pruner testbench
@@ -253,3 +255,5 @@ jobs:
         run: YOSYS=yosys ./projects/atumcore/synth/run_synth.sh
       - name: Synthesize PtahConv fp32 MAC (asserts no latches)
         run: YOSYS=yosys ./projects/ptahconv/synth/run_synth.sh
+      - name: Synthesize RaCore KAI register block (asserts no latches)
+        run: YOSYS=yosys ./projects/racore/synth/run_synth.sh

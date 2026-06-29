@@ -65,3 +65,28 @@ def test_axpy_end2end():
     # operands flowed through the DMA, and the accelerator reported DONE
     assert dma.bytes_moved == 2 * 4 * n
     assert dev.mmio_read(r.KAI_PERF) == n
+
+
+def test_kai_regs_model():
+    import ra_soc as g
+    r = g.KaiRegs(block_id=0x05)
+    # ID is read-only magic with block id in top byte
+    assert r.read(g.KAI_ID) == ((0x05 << 24) | g.KAI_MAGIC)
+    # write/read descriptor
+    r.write(g.KAI_SRC, 0x1000); r.write(g.KAI_DST, 0x2000); r.write(g.KAI_LEN, 64)
+    assert r.read(g.KAI_SRC) == 0x1000 and r.read(g.KAI_DST) == 0x2000
+    assert r.read(g.KAI_LEN) == 64
+    # GO sets BUSY + pulses go
+    r.write(g.KAI_CTRL, g.CTRL_GO)
+    assert r.go == 1 and r.read(g.KAI_STATUS) == g.STATUS_BUSY
+    # finish latches DONE + PERF
+    r.finish(1234, err=0)
+    assert r.read(g.KAI_STATUS) == g.STATUS_DONE and r.read(g.KAI_PERF) == 1234
+    # error path
+    r.finish(7, err=1)
+    assert r.read(g.KAI_STATUS) == (g.STATUS_DONE | g.STATUS_ERR)
+    # ABORT clears status; ID/STATUS not host-writable
+    r.write(g.KAI_CTRL, 1 << 1)
+    assert r.read(g.KAI_STATUS) == 0
+    r.write(g.KAI_ID, 0xDEAD)
+    assert r.read(g.KAI_ID) == ((0x05 << 24) | g.KAI_MAGIC)
