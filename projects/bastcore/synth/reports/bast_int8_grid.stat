@@ -1,0 +1,78 @@
+
+4. Printing statistics.
+
+=== bast_int8_grid ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     1065 wires
+     2060 wire bits
+       81 public wires
+     1076 public wire bits
+        9 ports
+      116 port bits
+     1208 cells
+        4   $_ANDNOT_
+      466   $_AND_
+      192   $_DFFE_PN0P_
+      544   $_NAND_
+        2   $_NOR_
+       16 submodules
+       16   bast_int8_mac
+
+=== bast_int8_mac ===
+
+        +----------Local Count, excluding submodules.
+        | 
+      577 wires
+      653 wire bits
+        8 public wires
+       84 public wire bits
+        7 ports
+       52 port bits
+      633 cells
+       48   $_ANDNOT_
+       89   $_AND_
+       32   $_DFFE_PN0P_
+        6   $_MUX_
+      244   $_NAND_
+        1   $_NOR_
+        1   $_NOT_
+        9   $_ORNOT_
+        5   $_OR_
+       44   $_XNOR_
+      154   $_XOR_
+
+=== design hierarchy ===
+
+        +----------Count including submodules.
+        | 
+    11336 bast_int8_grid
+      633 bast_int8_mac
+
+        +----------Count including submodules.
+        | 
+    10297 wires
+    12508 wire bits
+      209 public wires
+     2420 public wire bits
+      121 ports
+      948 port bits
+        - memories
+        - memory bits
+        - processes
+    11336 cells
+      772   $_ANDNOT_
+     1890   $_AND_
+      704   $_DFFE_PN0P_
+       96   $_MUX_
+     4448   $_NAND_
+       18   $_NOR_
+       16   $_NOT_
+      144   $_ORNOT_
+       80   $_OR_
+      704   $_XNOR_
+     2464   $_XOR_
+       16 submodules
+       16   bast_int8_mac
+

@@ -45,3 +45,14 @@ def matmul(A, B):
         prod = round_bf16(A[:, k:k + 1] * B[k:k + 1, :])
         out = (out + prod).astype(np.float32)
     return out
+
+
+def int8_matmul(Ab, Bb, K, R, C):
+    """Signed INT8 matmul, INT32 wrapping accumulate, returning R x C low-32-bit
+    patterns (matches bast_int8_grid). Ab: R x K, Bb: K x C raw byte patterns."""
+    out = [[0] * C for _ in range(R)]
+    for i in range(R):
+        for j in range(C):
+            out[i][j] = int8_dot([Ab[i][k] for k in range(K)],
+                                 [Bb[k][j] for k in range(K)])
+    return out

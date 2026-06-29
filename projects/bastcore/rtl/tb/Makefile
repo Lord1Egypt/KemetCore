@@ -2,6 +2,7 @@
 #   make CORE=mac    (default)   -> bast_mac single PE (+ hapi_bf16_mul, hapi_fp32_add)
 #   make CORE=grid               -> bast_mac_grid RxC systolic array (+ bast_mac, hapi)
 #   make CORE=int8               -> bast_int8_mac INT8 MAC cell (pure integer)
+#   make CORE=int8grid           -> bast_int8_grid RxC INT8 systolic array (+ int8_mac)
 TOPLEVEL_LANG = verilog
 SIM ?= verilator
 CORE ?= mac
@@ -10,7 +11,11 @@ PWD := $(shell pwd)
 HAPI := $(PWD)/../../../hapicore/rtl
 
 # bast_mac instantiates the verified HapiCore primitives, so they are compiled in.
-ifeq ($(CORE),int8)
+ifeq ($(CORE),int8grid)
+  VERILOG_SOURCES = $(PWD)/../bast_int8_grid.sv $(PWD)/../bast_int8_mac.sv
+  TOPLEVEL = bast_int8_grid
+  MODULE   = test_int8_grid
+else ifeq ($(CORE),int8)
   VERILOG_SOURCES = $(PWD)/../bast_int8_mac.sv
   TOPLEVEL = bast_int8_mac
   MODULE   = test_int8_mac
