@@ -581,6 +581,14 @@ class VectorUnit:
         with np.errstate(divide="ignore", invalid="ignore", over="ignore"):
             self._wr_f32(vd, b / a, mask)
 
+    def vfsqrt(self, vd, vs2, mask=None):
+        # vd = sqrt(vs2), correctly-rounded (RNE) IEEE-754 fp32 sqrt. numpy fp32 sqrt
+        # is correctly rounded, matching the HapiCore sqrt unit bit-for-bit. Negative
+        # operands (and NaN) yield NaN.
+        a = self.vreg[vs2].view(np.float32)
+        with np.errstate(invalid="ignore"):
+            self._wr_f32(vd, np.sqrt(a), mask)
+
     def _wr_f32(self, vd, result, mask):
         act = self._active(mask)
         idx = np.arange(VLMAX) < self.vl
