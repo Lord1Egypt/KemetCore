@@ -107,3 +107,21 @@ def test_noc_crossbar():
     assert x2.arbitrate([True, True, False, False]) == 0
     # grant counters accumulate
     assert x2.grants[2] == 1 and x2.grants[3] == 1 and x2.grants[0] == 1
+
+
+def test_dma_copies():
+    import ra_soc as g
+    # 1D copy
+    scr = g.Scratchpad(256)
+    scr.write(0, bytes(range(32)))
+    dma = g.Dma(scr); dma.copy(0, 100, 32)
+    assert scr.read(100, 32) == bytes(range(32))
+    assert dma.bytes_moved == 32
+    # 2D strided copy
+    scr2 = g.Scratchpad(256)
+    scr2.write(0, bytes(range(64)))
+    dma2 = g.Dma(scr2)
+    dma2.copy_2d(0, 128, rows=4, row_bytes=4, src_stride=8, dst_stride=4)
+    for r in range(4):
+        assert scr2.read(128 + r * 4, 4) == bytes(range(r * 8, r * 8 + 4))
+    assert dma2.bytes_moved == 16

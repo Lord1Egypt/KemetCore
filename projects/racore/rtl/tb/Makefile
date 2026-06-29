@@ -1,12 +1,17 @@
 # cocotb + Verilator testbenches for RaCore.
 #   make CORE=kai  (default)  -> ra_kai_regs (KAI MMIO register block)
 #   make CORE=noc             -> ra_noc_arbiter (round-robin NoC arbiter)
+#   make CORE=dma             -> ra_dma (descriptor DMA engine, 1D + 2D)
 TOPLEVEL_LANG = verilog
 SIM ?= verilator
 CORE ?= kai
 PWD := $(shell pwd)
 
-ifeq ($(CORE),noc)
+ifeq ($(CORE),dma)
+  VERILOG_SOURCES = $(PWD)/../ra_dma.sv
+  TOPLEVEL = ra_dma
+  MODULE   = test_dma
+else ifeq ($(CORE),noc)
   VERILOG_SOURCES = $(PWD)/../ra_noc_arbiter.sv
   TOPLEVEL = ra_noc_arbiter
   MODULE   = test_noc
