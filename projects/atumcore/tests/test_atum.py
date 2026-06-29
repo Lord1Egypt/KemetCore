@@ -447,6 +447,21 @@ def test_vfsqrt_fp():
     assert got[3] == 4.0 and got[7] == 7.0
 
 
+def test_vfredu_fp():
+    vu = g.VectorUnit()
+    x = np.array([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0], np.float32)
+    vu.load_f32(1, x)
+    r = vu.vfredosum(1)                               # 1+2+...+8 = 36
+    assert np.float32(np.uint32(r).view(np.float32)) == np.float32(36.0)
+    assert vu.vfredusum(1) == r                       # unordered == ordered here
+    vu.vl = 0                                          # empty reduction -> +0.0
+    assert vu.vfredosum(1) == 0x00000000
+    vu.vl = 8
+    m = [True, False, True, False, True, False, True, False]
+    rm = vu.vfredosum(1, mask=m)                       # 1+3+5+7 = 16
+    assert np.uint32(rm).view(np.float32) == np.float32(16.0)
+
+
 def test_vmfcmp_fp():
     vu = g.VectorUnit()
     x = np.array([1.0, 2.0, np.nan, 0.0, -0.0, np.inf, -1.0, 3.0], np.float32)

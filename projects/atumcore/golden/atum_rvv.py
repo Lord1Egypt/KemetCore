@@ -856,6 +856,23 @@ class VectorUnit:
         act = self._active(mask)[:self.vl]
         return int(self.vreg[vs][:self.vl].astype(np.int64)[act].sum() & U32)
 
+    def vfredosum(self, vs, mask=None):
+        """Ordered fp32 sum reduction: +0.0 then add each active lane left-to-right
+        (acc = fp32(acc + lane)). Inactive lanes add +0.0 (exact no-op). Returns the
+        fp32 result as a uint32 bit pattern."""
+        act = self._active(mask)[:self.vl]
+        vals = self.vreg[vs].view(np.float32)
+        acc = np.float32(0.0)
+        for i in range(self.vl):
+            if act[i]:
+                acc = np.float32(np.float32(acc) + np.float32(vals[i]))
+        return int(np.float32(acc).view(np.uint32))
+
+    def vfredusum(self, vs, mask=None):
+        """Unordered fp32 sum reduction. Our hardware accumulates left-to-right, so the
+        result is identical to vfredosum (a legal unordered ordering)."""
+        return self.vfredosum(vs, mask)
+
     def vredmax(self, vs, mask=None):
         act = self._active(mask)[:self.vl]
         vals = self.vreg[vs][:self.vl].astype(np.int64)[act]

@@ -397,6 +397,29 @@ else
     echo "=== skipping atum_vfsqrt synth under CI (apt-yosys OOMs on many fp sqrt units) ==="
 fi
 
+# atum_vfredu is a chain of VLMAX fp32 adders (like atum_vfpu's adder cluster). Full ABC
+# mapping is large, so under $CI we stop at the coarse 0-latch netlist; committed
+# reports/atum_vfredu.stat is the full gate-level evidence.
+HAPI_RED="../../hapicore/rtl"
+if [ -z "${CI:-}" ]; then
+    echo "=== synthesizing atum_vfredu (fp32 sum reduction, full) ==="
+    "$YOSYS" -ql "reports/atum_vfredu.log" -p "
+        read_verilog -sv $HAPI_RED/hapi_fp32_add.sv ../rtl/atum_vfredu.sv;
+        synth -top atum_vfredu;
+        select -assert-none t:\$_DLATCH_* t:\$dlatch;
+        tee -o reports/atum_vfredu.stat stat
+    "
+    echo "  -> reports/atum_vfredu.stat (0 latches asserted)"
+else
+    echo "=== synthesizing atum_vfredu (coarse 0-latch check under CI) ==="
+    "$YOSYS" -ql "reports/atum_vfredu.log" -p "
+        read_verilog -sv $HAPI_RED/hapi_fp32_add.sv ../rtl/atum_vfredu.sv;
+        synth -top atum_vfredu -run :fine;
+        select -assert-none t:\$_DLATCH_* t:\$dlatch;
+        stat
+    "
+fi
+
 # atum_vmulh embeds VLMAX wide multipliers (3 sign-variant 64-bit products / lane). Like
 # valu, full ABC mapping is heavy on apt-yosys, so under $CI stop at the coarse 0-latch
 # netlist; committed reports/atum_vmulh.stat is the full gate-level evidence.
