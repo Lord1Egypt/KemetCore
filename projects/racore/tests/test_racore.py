@@ -125,3 +125,21 @@ def test_dma_copies():
     for r in range(4):
         assert scr2.read(128 + r * 4, 4) == bytes(range(r * 8, r * 8 + 4))
     assert dma2.bytes_moved == 16
+
+
+def test_kai_dma_device_model():
+    """The KAI-DMA device == KaiRegs descriptor + Dma.copy on GO (golden-level)."""
+    import ra_soc as g
+    scr = g.Scratchpad(1024)
+    scr.write(0, bytes(range(40)))
+    regs = g.KaiRegs(block_id=0x0D)
+    regs.write(g.KAI_SRC, 0)
+    regs.write(g.KAI_DST, 200)
+    regs.write(g.KAI_LEN, 40)
+    regs.write(g.KAI_CTRL, g.CTRL_GO)
+    assert regs.go == 1 and regs.read(g.KAI_STATUS) == g.STATUS_BUSY
+    dma = g.Dma(scr); dma.copy(regs.src, regs.dst, regs.len)   # the GO action
+    regs.finish(dma.bytes_moved, err=0)
+    assert scr.read(200, 40) == bytes(range(40))
+    assert regs.read(g.KAI_STATUS) == g.STATUS_DONE
+    assert regs.read(g.KAI_ID) == ((0x0D << 24) | g.KAI_MAGIC)
