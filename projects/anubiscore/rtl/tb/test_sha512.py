@@ -27,6 +27,7 @@ async def reset(dut):
     dut.rst_n.value = 0
     dut.start.value = 0
     dut.init.value = 0
+    dut.alg.value = 0
     dut.block.value = 0
     for _ in range(3):
         await RisingEdge(dut.clk)
@@ -34,9 +35,10 @@ async def reset(dut):
     await RisingEdge(dut.clk)
 
 
-async def absorb(dut, blk_bytes, init):
+async def absorb(dut, blk_bytes, init, alg):
     dut.block.value = int.from_bytes(blk_bytes, "big")
     dut.init.value = 1 if init else 0
+    dut.alg.value = alg
     dut.start.value = 1
     await RisingEdge(dut.clk)
     dut.start.value = 0
@@ -46,11 +48,11 @@ async def absorb(dut, blk_bytes, init):
             break
 
 
-async def sha512(dut, msg):
+async def hash512(dut, msg, alg):
     padded = pad(msg)
     blocks = [padded[i:i + 128] for i in range(0, len(padded), 128)]
     for i, blk in enumerate(blocks):
-        await absorb(dut, blk, init=(i == 0))
+        await absorb(dut, blk, init=(i == 0), alg=alg)
     await RisingEdge(dut.clk)          # let the final H += vars settle
     return int(dut.hash.value)
 
@@ -62,8 +64,15 @@ async def test_vectors(dut):
 
     msgs = [b"", b"abc", b"a" * 111, b"a" * 112, b"a" * 128, b"a" * 239,
             b"hello kemet", os.urandom(200), os.urandom(400)]
+    # SHA-512 (alg=0): full 512-bit digest
     for m in msgs:
-        got = await sha512(dut, m)
+        got = await hash512(dut, m, alg=0)
         exp = int.from_bytes(hashlib.sha512(m).digest(), "big")
-        assert got == exp, f"len {len(m)}: got {got:0128x} != exp {exp:0128x}"
-    dut._log.info(f"SHA-512 RTL verified bit-exact on {len(msgs)} messages")
+        assert got == exp, f"sha512 len {len(m)}: got {got:0128x} != exp {exp:0128x}"
+    # SHA-384 (alg=1): digest is the top 384 bits of the 512-bit state
+    for m in msgs:
+        full = await hash512(dut, m, alg=1)
+        got = full >> 128
+        exp = int.from_bytes(hashlib.sha384(m).digest(), "big")
+        assert got == exp, f"sha384 len {len(m)}: got {got:096x} != exp {exp:096x}"
+    dut._log.info(f"SHA-512 + SHA-384 RTL verified bit-exact on {len(msgs)} messages each")
