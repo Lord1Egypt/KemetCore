@@ -1,0 +1,24 @@
+
+3. Printing statistics.
+
+=== atum_vdiv ===
+
+        +----------Local Count, excluding submodules.
+        | 
+      203 wires
+     4562 wire bits
+        7 public wires
+     1038 public wire bits
+        7 ports
+     1038 port bits
+      188 cells
+        8   $alu
+        8   $div
+       35   $eq
+       16   $logic_and
+        9   $logic_not
+        8   $mod
+       88   $mux
+        8   $not
+        8   $pmux
+

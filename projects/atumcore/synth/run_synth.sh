@@ -345,6 +345,22 @@ echo "=== synthesizing atum_vssr (rounding shift-right unit, full) ==="
 "
 echo "  -> reports/atum_vssr.stat (0 latches asserted)"
 
+# atum_vdiv embeds VLMAX*4 integer dividers (unsigned+signed div+mod / lane). apt-yosys
+# OOMs/hangs expanding that many $div/$mod (like the fma path), so under $CI we SKIP it.
+# Locally we still build+0-latch-check the coarse netlist (committed .stat = evidence).
+if [ -z "${CI:-}" ]; then
+    echo "=== synthesizing atum_vdiv (integer divide/remainder, coarse 0-latch) ==="
+    "$YOSYS" -ql "reports/atum_vdiv.log" -p "
+        read_verilog -sv ../rtl/atum_vdiv.sv;
+        synth -top atum_vdiv -run :fine;
+        select -assert-none t:\$_DLATCH_* t:\$dlatch;
+        tee -o reports/atum_vdiv.stat stat
+    "
+    echo "  -> reports/atum_vdiv.stat (0 latches asserted)"
+else
+    echo "=== skipping atum_vdiv synth under CI (apt-yosys OOMs on many dividers) ==="
+fi
+
 # atum_vmulh embeds VLMAX wide multipliers (3 sign-variant 64-bit products / lane). Like
 # valu, full ABC mapping is heavy on apt-yosys, so under $CI stop at the coarse 0-latch
 # netlist; committed reports/atum_vmulh.stat is the full gate-level evidence.

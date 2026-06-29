@@ -249,6 +249,44 @@ class VectorUnit:
         b = self.vreg[vs2].astype(np.int64)              # zero-extended (non-negative)
         self._wr_int(vd, (a * b) >> 32, mask)
 
+    def _divrem(self, vs1, vs2, signed, rem):
+        """RVV integer divide/remainder with the no-trap special cases: b==0 gives
+        quotient all-ones / remainder a; signed INT_MIN/-1 gives quotient INT_MIN /
+        remainder 0. Division truncates toward zero; remainder takes the dividend sign."""
+        av = self.vreg[vs1]
+        bv = self.vreg[vs2]
+        out = np.zeros(VLMAX, dtype=np.int64)
+        for i in range(VLMAX):
+            a = int(av[i])
+            b = int(bv[i])
+            if signed:
+                if a & 0x80000000:
+                    a -= (1 << 32)
+                if b & 0x80000000:
+                    b -= (1 << 32)
+            if b == 0:
+                out[i] = a if rem else -1                     # -1 == UINT_MAX after mask
+            elif signed and a == -(2**31) and b == -1:
+                out[i] = 0 if rem else -(2**31)
+            else:
+                q = abs(a) // abs(b)
+                if (a < 0) != (b < 0):
+                    q = -q
+                out[i] = (a - q * b) if rem else q
+        return out
+
+    def vdivu(self, vd, vs1, vs2, mask=None):
+        self._wr_int(vd, self._divrem(vs1, vs2, False, False), mask)
+
+    def vdiv(self, vd, vs1, vs2, mask=None):
+        self._wr_int(vd, self._divrem(vs1, vs2, True, False), mask)
+
+    def vremu(self, vd, vs1, vs2, mask=None):
+        self._wr_int(vd, self._divrem(vs1, vs2, False, True), mask)
+
+    def vrem(self, vd, vs1, vs2, mask=None):
+        self._wr_int(vd, self._divrem(vs1, vs2, True, True), mask)
+
     # -- compare ops (vd = mask, 1 bit per lane) --------------------------- #
     def _cmp(self, vs1, vs2, fn, signed, mask):
         """Per-lane compare producing a length-VLMAX 0/1 mask. A lane bit is set
