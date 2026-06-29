@@ -132,10 +132,15 @@ def _cbd(rng):
     """Centered binomial noise polynomial in [-ETA, ETA]."""
     out = [0] * N
     for i in range(N):
-        a = sum(rng.getrandbits(1) for _ in range(ETA))
-        b = sum(rng.getrandbits(1) for _ in range(ETA))
-        out[i] = (a - b) % Q
+        a_bits = [rng.getrandbits(1) for _ in range(ETA)]
+        b_bits = [rng.getrandbits(1) for _ in range(ETA)]
+        out[i] = _cbd_coeff(a_bits, b_bits)
     return out
+
+
+def _cbd_coeff(a_bits, b_bits):
+    """One CBD coefficient from 2*ETA bits: (popcount(a) - popcount(b)) mod Q."""
+    return (sum(a_bits) - sum(b_bits)) % Q
 
 
 def _uniform(rng):

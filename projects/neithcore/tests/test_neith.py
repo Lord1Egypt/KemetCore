@@ -57,6 +57,18 @@ def test_msgcodec():
     assert g._decode(poly)[:4] == [0, 1, 1, 0]
 
 
+def test_cbd_coeff():
+    # ETA=2: out in {0,1,2,Q-1,Q-2} per (a_bits, b_bits)
+    assert g._cbd_coeff([0, 0], [0, 0]) == 0
+    assert g._cbd_coeff([1, 1], [0, 0]) == 2
+    assert g._cbd_coeff([0, 0], [1, 1]) == (g.Q - 2)
+    assert g._cbd_coeff([1, 0], [0, 1]) == 0
+    # _cbd uses _cbd_coeff and stays in the centered range
+    import random as _r
+    noise = g._cbd(_r.Random(3))
+    assert all(c in (0, 1, 2, g.Q - 1, g.Q - 2) for c in noise)
+
+
 def test_kem_correctness():
     for seed in range(30):
         rng = random.Random(seed)
