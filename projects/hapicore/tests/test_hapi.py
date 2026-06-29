@@ -176,3 +176,28 @@ def test_pymodel_matches_golden():
         a, b, c = rng.standard_normal(3) * 4
         assert p.add(a, b) == g.fp_add(a, b, "bf16")
         assert p.fma(a, b, c) == g.fp_fma(a, b, c, "bf16")
+
+
+def test_fp32_to_bf16():
+    import struct
+
+    def f2b(x):
+        return struct.unpack("<I", struct.pack("<f", np.float32(x)))[0]
+
+    # exact (low 16 bits zero) passes through unchanged
+    assert g.fp32_to_bf16(f2b(1.0)) == (f2b(1.0) >> 16)
+    assert g.fp32_to_bf16(f2b(-2.0)) == (f2b(-2.0) >> 16)
+    # round-half-to-even at bit 16
+    assert g.fp32_to_bf16(0x3F808000) == 0x3F80          # tie -> even (down)
+    assert g.fp32_to_bf16(0x3F818000) == 0x3F82          # tie -> even (up)
+    assert g.fp32_to_bf16(0x3F808001) == 0x3F81          # above tie -> up
+    # Inf passes through; max finite overflows to Inf
+    assert g.fp32_to_bf16(0x7F800000) == 0x7F80
+    assert g.fp32_to_bf16(0x7F7FFFFF) == 0x7F80
+    # NaN preserved as a quiet bf16 NaN (not collapsed to Inf)
+    assert g.fp32_to_bf16(0x7F800001) == 0x7FC0
+    assert g.fp32_to_bf16(0xFFABCDEF) == 0xFFC0
+    # vs round_bf16 top-16 for finite values
+    for x in [0.0, 1.5, -3.25, 1e20, 1e-20, np.pi]:
+        rb = f2b(g.round_bf16(x)) >> 16
+        assert g.fp32_to_bf16(f2b(x)) == rb

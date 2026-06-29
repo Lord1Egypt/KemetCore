@@ -10,13 +10,18 @@
 #   make CORE=fp16fma             -> hapi_fp16_fma (hapi_fma_core)
 #   make CORE=fp32div             -> hapi_fp32_div
 #   make CORE=fp32sqrt            -> hapi_fp32_sqrt
+#   make CORE=fp32tobf16          -> hapi_fp32_to_bf16 (RNE narrowing convert)
 TOPLEVEL_LANG = verilog
 SIM ?= verilator
 CORE ?= mul
 
 PWD := $(shell pwd)
 
-ifeq ($(CORE),add)
+ifeq ($(CORE),fp32tobf16)
+  VERILOG_SOURCES = $(PWD)/../hapi_fp32_to_bf16.sv
+  TOPLEVEL = hapi_fp32_to_bf16
+  MODULE   = test_fp32_to_bf16
+else ifeq ($(CORE),add)
   VERILOG_SOURCES = $(PWD)/../hapi_bf16_add.sv
   TOPLEVEL = hapi_bf16_add
   MODULE   = test_bf16_add
