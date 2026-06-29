@@ -69,6 +69,17 @@ def test_cbd_coeff():
     assert all(c in (0, 1, 2, g.Q - 1, g.Q - 2) for c in noise)
 
 
+def test_polymul_pipeline():
+    # the hardware pipeline (ntt -> pointwise -> intt) equals both golden multipliers
+    rng = random.Random(13)
+    for _ in range(20):
+        a = [rng.randrange(g.Q) for _ in range(g.N)]
+        b = [rng.randrange(g.Q) for _ in range(g.N)]
+        ref = g.poly_mul_schoolbook(a, b)
+        assert g.intt(g.pointwise(g.ntt(a), g.ntt(b))) == ref
+        assert g.poly_mul_ntt(a, b) == ref
+
+
 def test_kem_correctness():
     for seed in range(30):
         rng = random.Random(seed)
