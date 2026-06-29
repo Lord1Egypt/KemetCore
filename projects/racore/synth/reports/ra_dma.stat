@@ -1,0 +1,29 @@
+
+3. Printing statistics.
+
+=== ra_dma ===
+
+        +----------Local Count, excluding submodules.
+        | 
+    38480 wires
+    45789 wire bits
+     1043 public wires
+     8352 public wire bits
+       16 ports
+      126 port bits
+    45673 cells
+      105   $_ANDNOT_
+     5959   $_AND_
+     8192   $_DFFE_PP_
+        2   $_DFF_P_
+    20224   $_MUX_
+     6569   $_NAND_
+       12   $_NOR_
+       11   $_NOT_
+     1463   $_ORNOT_
+     2771   $_OR_
+       33   $_SDFFE_PP0P_
+        1   $_SDFF_PP0_
+      127   $_XNOR_
+      204   $_XOR_
+

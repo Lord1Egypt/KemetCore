@@ -21,4 +21,13 @@ echo "=== synthesizing ra_noc_arbiter ==="
     tee -o reports/ra_noc_arbiter.stat stat
 "
 echo "  -> reports/ra_noc_arbiter.stat (0 latches asserted)"
+
+echo "=== synthesizing ra_dma ==="
+"$YOSYS" -ql "reports/ra_dma.log" -p "
+    read_verilog -sv ../rtl/ra_dma.sv;
+    synth -top ra_dma;
+    select -assert-none t:\$_DLATCH_* t:\$dlatch;
+    tee -o reports/ra_dma.stat stat
+"
+echo "  -> reports/ra_dma.stat (0 latches asserted)"
 echo "ALL SYNTHESIZED ✅ (no latches)"
