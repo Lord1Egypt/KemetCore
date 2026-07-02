@@ -1,6 +1,9 @@
 # 𓆎 KemetCore — Open-Source Silicon Laboratory
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
+[![Release](https://img.shields.io/github/v/release/Lord1Egypt/KemetCore)](https://github.com/Lord1Egypt/KemetCore/releases)
+[![Stars](https://img.shields.io/github/stars/Lord1Egypt/KemetCore)](https://github.com/Lord1Egypt/KemetCore/stargazers)
+[![CI](https://github.com/Lord1Egypt/KemetCore/actions/workflows/kemetcore-ci.yml/badge.svg)](https://github.com/Lord1Egypt/KemetCore/actions)
 [![RTL](https://img.shields.io/badge/RTL-SystemVerilog-3480c0)](https://en.wikipedia.org/wiki/SystemVerilog)
 [![Verification](https://img.shields.io/badge/Verification-cocotb-00c853)](https://docs.cocotb.org/)
 [![Simulation](https://img.shields.io/badge/Simulation-Verilator-ff6d00)](https://verilator.org/)
@@ -193,7 +196,7 @@ See [ROADMAP.md](ROADMAP.md) for the current status of all projects.
 
 ## License
 
-All projects in KemetCore are released under the [MIT License](LICENSE) unless otherwise noted.
+All projects in KemetCore are released under the [Apache License 2.0](LICENSE) unless otherwise noted.
 
 ---
 
