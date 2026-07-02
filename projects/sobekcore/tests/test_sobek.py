@@ -71,3 +71,27 @@ def test_fp32_dot3_order_and_bits():
     ab = [f.bits(v) for v in a]
     bb = [f.bits(v) for v in b]
     assert f.dot3_bits(ab, bb) == f.bits(expect)
+
+
+def test_fp32_cross_basis_and_order():
+    """sobek_fp32.cross is the fp32 datapath the sobek_cross RTL matches:
+    each component two fp32 products then an fp32 subtract."""
+    import sobek_fp32 as f
+
+    # right-handed basis identities
+    assert f.cross([1, 0, 0], [0, 1, 0]) == [np.float32(0), np.float32(0), np.float32(1)]
+    assert f.cross([0, 1, 0], [0, 0, 1]) == [np.float32(1), np.float32(0), np.float32(0)]
+    # parallel vectors -> zero
+    assert f.cross([2, 3, 4], [2, 3, 4]) == [np.float32(0)] * 3
+    # anti-symmetry: a x b == -(b x a)
+    a, b = [1.5, -2.0, 0.5], [0.25, 3.0, -1.0]
+    ab = f.cross(a, b)
+    ba = f.cross(b, a)
+    assert ab == [np.float32(-x) for x in ba]
+    # matches explicit fixed-order fp32 evaluation of component 2
+    c2 = np.float32(np.float32(a[0]) * np.float32(b[1]) - np.float32(a[1]) * np.float32(b[0]))
+    assert ab[2] == c2
+    # cross_bits agrees with cross
+    abits = [f.bits(v) for v in a]
+    bbits = [f.bits(v) for v in b]
+    assert f.cross_bits(abits, bbits) == [f.bits(v) for v in ab]
