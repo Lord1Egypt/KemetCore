@@ -15,4 +15,13 @@ echo "=== synthesizing sobek_dot3 ==="
     tee -o reports/sobek_dot3.stat stat
 "
 echo "  -> reports/sobek_dot3.stat (0 latches asserted)"
+
+echo "=== synthesizing sobek_cross ==="
+"$YOSYS" -ql "reports/sobek_cross.log" -p "
+    read_verilog -sv ${HAPI}/hapi_fp32_mul.sv ${HAPI}/hapi_fp32_add.sv ../rtl/sobek_cross.sv;
+    synth -top sobek_cross;
+    select -assert-none t:\$_DLATCH_* t:\$dlatch;
+    tee -o reports/sobek_cross.stat stat
+"
+echo "  -> reports/sobek_cross.stat (0 latches asserted)"
 echo "ALL SYNTHESIZED ✅ (no latches)"

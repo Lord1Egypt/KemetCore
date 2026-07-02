@@ -41,3 +41,26 @@ def dot3_bits(ab, bb):
     a = [frombits(u) for u in ab]
     b = [frombits(u) for u in bb]
     return bits(dot3(a, b))
+
+
+def cross(a, b):
+    """3-D fp32 cross product a x b, each component evaluated as two fp32 products
+    then an fp32 subtract (a - b == a + (-b), exact negation) — the order the
+    datapath uses:
+        c0 = a1*b2 - a2*b1
+        c1 = a2*b0 - a0*b2
+        c2 = a0*b1 - a1*b0
+    Returns three fp32 values."""
+    def sub(p, q):
+        return f32(f32(p) - f32(q))
+    c0 = sub(f32(a[1]) * f32(b[2]), f32(a[2]) * f32(b[1]))
+    c1 = sub(f32(a[2]) * f32(b[0]), f32(a[0]) * f32(b[2]))
+    c2 = sub(f32(a[0]) * f32(b[1]), f32(a[1]) * f32(b[0]))
+    return [f32(c0), f32(c1), f32(c2)]
+
+
+def cross_bits(ab, bb):
+    """cross over 32-bit input patterns, returning three 32-bit result patterns."""
+    a = [frombits(u) for u in ab]
+    b = [frombits(u) for u in bb]
+    return [bits(c) for c in cross(a, b)]
