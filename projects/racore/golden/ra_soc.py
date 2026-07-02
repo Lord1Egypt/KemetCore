@@ -40,6 +40,19 @@ class Scratchpad:
     def write(self, addr, data):
         self.mem[addr:addr + len(data)] = data
 
+    def write_word(self, word_addr, be, wdata):
+        """32-bit word write with per-byte write-enable `be` (bit i -> byte i).
+        Matches the ra_scratchpad RTL byte-enabled store port."""
+        base = word_addr * 4
+        for i in range(4):
+            if be & (1 << i):
+                self.mem[base + i] = (wdata >> (8 * i)) & 0xFF
+
+    def read_word(self, word_addr):
+        """32-bit little-endian word read, as ra_scratchpad returns it."""
+        base = word_addr * 4
+        return int.from_bytes(self.mem[base:base + 4], "little")
+
 
 class KaiDevice:
     """Base class: any accelerator that obeys KAI subclasses this."""
