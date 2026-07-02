@@ -1,0 +1,20 @@
+
+3. Printing statistics.
+
+=== ra_scratchpad ===
+
+        +----------Local Count, excluding submodules.
+        | 
+    20529 wires
+    28568 wire bits
+      263 public wires
+     8271 public wire bits
+        7 ports
+       79 port bits
+    28521 cells
+        9   $_ANDNOT_
+     6838   $_AND_
+     8224   $_DFFE_PP_
+    13446   $_NAND_
+        4   $_NOR_
+

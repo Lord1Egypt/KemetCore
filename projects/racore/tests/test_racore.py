@@ -127,6 +127,24 @@ def test_dma_copies():
     assert dma2.bytes_moved == 16
 
 
+def test_scratchpad_byte_enabled_word():
+    """Scratchpad.write_word honours per-byte enables and read_word is LE —
+    the golden truth the ra_scratchpad RTL is checked against."""
+    import ra_soc as g
+    scr = g.Scratchpad(64)
+    scr.write_word(0, 0xF, 0xAABBCCDD)
+    assert scr.read_word(0) == 0xAABBCCDD
+    # mask keeps the untouched bytes: only byte0 and byte2 written
+    scr.write_word(0, 0b0101, 0x11223344)
+    assert scr.read_word(0) == 0xAA22CC44
+    # be=0 is a no-op
+    scr.write_word(0, 0x0, 0xFFFFFFFF)
+    assert scr.read_word(0) == 0xAA22CC44
+    # independent words, little-endian byte order
+    scr.write_word(3, 0xF, 0x00000001)
+    assert scr.read(12, 4) == b"\x01\x00\x00\x00"
+
+
 def test_kai_dma_device_model():
     """The KAI-DMA device == KaiRegs descriptor + Dma.copy on GO (golden-level)."""
     import ra_soc as g
