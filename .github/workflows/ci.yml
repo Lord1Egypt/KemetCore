@@ -155,6 +155,8 @@ jobs:
         run: ./projects/sobekcore/rtl/tb/run_sim.sh CORE=dot3
       - name: Run SobekCore fp32 cross-product testbench
         run: ./projects/sobekcore/rtl/tb/run_sim.sh CORE=cross
+      - name: Run SobekCore fp32 vector-subtract testbench
+        run: ./projects/sobekcore/rtl/tb/run_sim.sh CORE=vsub
       - name: Run RaCore KAI register block testbench
         run: ./projects/racore/rtl/tb/run_sim.sh CORE=kai
       - name: Run RaCore NoC arbiter testbench

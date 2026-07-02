@@ -1,6 +1,7 @@
 # cocotb + Verilator testbenches for SobekCore.
 #   make CORE=dot3  (default)  -> sobek_dot3 fp32 3-element dot product (+ hapi fp32)
 #   make CORE=cross            -> sobek_cross fp32 3-D cross product (+ hapi fp32)
+#   make CORE=vsub             -> sobek_vsub fp32 3-vector subtract (+ hapi fp32)
 TOPLEVEL_LANG = verilog
 SIM ?= verilator
 CORE ?= dot3
@@ -9,7 +10,11 @@ PWD := $(shell pwd)
 HAPI := $(PWD)/../../../hapicore/rtl
 
 # The Sobek primitives instantiate the verified HapiCore fp32 blocks, so they compile in.
-ifeq ($(CORE),cross)
+ifeq ($(CORE),vsub)
+VERILOG_SOURCES = $(PWD)/../sobek_vsub.sv $(HAPI)/hapi_fp32_add.sv
+TOPLEVEL = sobek_vsub
+MODULE   = test_vsub
+else ifeq ($(CORE),cross)
 VERILOG_SOURCES = $(PWD)/../sobek_cross.sv $(HAPI)/hapi_fp32_mul.sv $(HAPI)/hapi_fp32_add.sv
 TOPLEVEL = sobek_cross
 MODULE   = test_cross

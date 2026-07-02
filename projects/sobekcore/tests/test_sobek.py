@@ -95,3 +95,23 @@ def test_fp32_cross_basis_and_order():
     abits = [f.bits(v) for v in a]
     bbits = [f.bits(v) for v in b]
     assert f.cross_bits(abits, bbits) == [f.bits(v) for v in ab]
+
+
+def test_fp32_vsub():
+    """sobek_fp32.vsub is the per-lane fp32 subtract the sobek_vsub RTL matches."""
+    import sobek_fp32 as f
+
+    assert f.vsub([1.0, 2.0, 3.0], [0.5, 0.5, 0.5]) == [np.float32(0.5),
+                                                        np.float32(1.5),
+                                                        np.float32(2.5)]
+    assert f.vsub([1, 1, 1], [1, 1, 1]) == [np.float32(0)] * 3
+    # a - b == -(b - a) per lane
+    a, b = [0.1, -2.5, 7.0], [3.3, 0.25, -1.0]
+    assert f.vsub(a, b) == [np.float32(-x) for x in f.vsub(b, a)]
+    # matches explicit fp32 subtract
+    assert f.vsub(a, b) == [np.float32(np.float32(a[i]) - np.float32(b[i]))
+                            for i in range(3)]
+    # vsub_bits agrees
+    abits = [f.bits(v) for v in a]
+    bbits = [f.bits(v) for v in b]
+    assert f.vsub_bits(abits, bbits) == [f.bits(v) for v in f.vsub(a, b)]

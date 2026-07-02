@@ -64,3 +64,16 @@ def cross_bits(ab, bb):
     a = [frombits(u) for u in ab]
     b = [frombits(u) for u in bb]
     return [bits(c) for c in cross(a, b)]
+
+
+def vsub(a, b):
+    """3-vector fp32 subtract a - b, per lane (a_i + (-b_i), exact negation).
+    Builds the Moller-Trumbore edge vectors e1=v1-v0, e2=v2-v0, tvec=o-v0."""
+    return [f32(f32(a[i]) - f32(b[i])) for i in range(3)]
+
+
+def vsub_bits(ab, bb):
+    """vsub over 32-bit input patterns, returning three 32-bit result patterns."""
+    a = [frombits(u) for u in ab]
+    b = [frombits(u) for u in bb]
+    return [bits(c) for c in vsub(a, b)]
