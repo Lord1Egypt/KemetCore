@@ -151,6 +151,8 @@ jobs:
         run: ./projects/ptahconv/rtl/tb/run_sim.sh CORE=gemm
       - name: Run PtahConv 2D convolution engine testbench
         run: ./projects/ptahconv/rtl/tb/run_sim.sh CORE=conv2d
+      - name: Run SobekCore fp32 dot3 testbench
+        run: ./projects/sobekcore/rtl/tb/run_sim.sh CORE=dot3
       - name: Run RaCore KAI register block testbench
         run: ./projects/racore/rtl/tb/run_sim.sh CORE=kai
       - name: Run RaCore NoC arbiter testbench
@@ -265,5 +267,7 @@ jobs:
         run: YOSYS=yosys ./projects/atumcore/synth/run_synth.sh
       - name: Synthesize PtahConv fp32 MAC (asserts no latches)
         run: YOSYS=yosys ./projects/ptahconv/synth/run_synth.sh
+      - name: Synthesize SobekCore fp32 dot3 (asserts no latches)
+        run: YOSYS=yosys ./projects/sobekcore/synth/run_synth.sh
       - name: Synthesize RaCore KAI register block (asserts no latches)
         run: YOSYS=yosys ./projects/racore/synth/run_synth.sh
