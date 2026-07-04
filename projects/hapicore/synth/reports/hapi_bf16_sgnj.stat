@@ -1,0 +1,17 @@
+
+3. Printing statistics.
+
+=== hapi_bf16_sgnj ===
+
+        +----------Local Count, excluding submodules.
+        | 
+        6 wires
+       52 wire bits
+        5 public wires
+       51 public wire bits
+        4 ports
+       50 port bits
+        2 cells
+        1   $_MUX_
+        1   $_XOR_
+

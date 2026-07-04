@@ -127,6 +127,8 @@ jobs:
         run: ./projects/hapicore/rtl/tb/run_sim.sh CORE=bf16cmp
       - name: Run HapiCore bf16 classify testbench
         run: ./projects/hapicore/rtl/tb/run_sim.sh CORE=bf16class
+      - name: Run HapiCore bf16 sign-inject testbench
+        run: ./projects/hapicore/rtl/tb/run_sim.sh CORE=bf16sgnj
       - name: Run HapiCore fp32 compare testbench
         run: ./projects/hapicore/rtl/tb/run_sim.sh CORE=fp32cmp
       - name: Run HapiCore fp32 classify testbench
