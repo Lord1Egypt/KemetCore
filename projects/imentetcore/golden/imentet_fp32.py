@@ -88,3 +88,30 @@ def av_context_bits(wb, Vb):
     w = [frombits(u) for u in wb]
     V = [[frombits(Vb[j * DV + k]) for k in range(DV)] for j in range(L)]
     return [bits(c) for c in av_context(w, V)]
+
+
+# ---- softmax numerical-stabilization prep (the exp-free, bit-exact part) ------ #
+LS = 8  # scores per softmax row tile
+
+
+def rowmax_sub(x):
+    """Subtract the row maximum from a length-LS score vector — the numerically-
+    stable softmax pre-step (so the largest logit becomes 0 and exp() can't
+    overflow). Fixed datapath order:
+        m    = max_i x_i        (sequential fp32 max, RISC-V fmax ordering; a new
+                                 element replaces the running max only when strictly
+                                 greater, so ties keep the earlier index)
+        y_j  = x_j - m          (fp32 subtract, exact negation)
+    Defined for finite / -inf scores (the attention domain incl. causal -inf mask);
+    NaN inputs are out of scope. Returns LS fp32 values (each <= 0)."""
+    m = f32(x[0])
+    for i in range(1, LS):
+        if f32(x[i]) > f32(m):
+            m = f32(x[i])
+    return [f32(f32(x[j]) - f32(m)) for j in range(LS)]
+
+
+def rowmax_sub_bits(xb):
+    """rowmax_sub over LS 32-bit input patterns, returning LS 32-bit patterns."""
+    x = [frombits(u) for u in xb]
+    return [bits(c) for c in rowmax_sub(x)]

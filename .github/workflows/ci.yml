@@ -181,6 +181,8 @@ jobs:
         run: ./projects/imentetcore/rtl/tb/run_sim.sh CORE=qkscore
       - name: Run ImentetCore fp32 weighted value accumulation testbench
         run: ./projects/imentetcore/rtl/tb/run_sim.sh CORE=av
+      - name: Run ImentetCore softmax stabilization (x-max) testbench
+        run: ./projects/imentetcore/rtl/tb/run_sim.sh CORE=rowmax
       - name: Run RaCore KAI register block testbench
         run: ./projects/racore/rtl/tb/run_sim.sh CORE=kai
       - name: Run RaCore NoC arbiter testbench
