@@ -12,7 +12,11 @@ PWD := $(shell pwd)
 HAPI := $(PWD)/../../../hapicore/rtl
 
 # bast_mac instantiates the verified HapiCore primitives, so they are compiled in.
-ifeq ($(CORE),fp16)
+ifeq ($(CORE),fp16grid)
+  VERILOG_SOURCES = $(PWD)/../bast_fp16_grid.sv $(PWD)/../bast_fp16_mac.sv $(HAPI)/hapi_fp16_mul.sv $(HAPI)/hapi_fp16_to_fp32.sv $(HAPI)/hapi_fp32_add.sv
+  TOPLEVEL = bast_fp16_grid
+  MODULE   = test_fp16_grid
+else ifeq ($(CORE),fp16)
   VERILOG_SOURCES = $(PWD)/../bast_fp16_mac.sv $(HAPI)/hapi_fp16_mul.sv $(HAPI)/hapi_fp16_to_fp32.sv $(HAPI)/hapi_fp32_add.sv
   TOPLEVEL = bast_fp16_mac
   MODULE   = test_fp16
