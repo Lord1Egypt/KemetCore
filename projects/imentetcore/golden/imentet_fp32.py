@@ -136,3 +136,19 @@ def softmax_norm_bits(eb):
     """softmax_norm over LS 32-bit input patterns, returning LS 32-bit patterns."""
     e = [frombits(u) for u in eb]
     return [bits(c) for c in softmax_norm(e)]
+
+
+def mask_add(x, m):
+    """Apply an additive attention mask to a length-LS score row: y_j = x_j + m_j,
+    each a correctly-rounded fp32 add. The mask is 0.0 for visible positions and
+    -inf for masked (causal / padding) positions, so a masked score becomes -inf
+    and contributes exp(-inf)=0 to softmax. `x`, `m` elements are fp32 values;
+    returns LS fp32 values."""
+    return [f32(f32(x[j]) + f32(m[j])) for j in range(LS)]
+
+
+def mask_add_bits(xb, mb):
+    """mask_add over LS 32-bit input patterns (x, m), returning LS 32-bit patterns."""
+    x = [frombits(u) for u in xb]
+    m = [frombits(u) for u in mb]
+    return [bits(c) for c in mask_add(x, m)]

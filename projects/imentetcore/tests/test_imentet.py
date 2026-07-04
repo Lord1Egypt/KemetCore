@@ -147,3 +147,22 @@ def test_fp32_softmax_norm_order_and_bits():
     # bits agree
     eb = [f.bits(v) for v in e]
     assert f.softmax_norm_bits(eb) == [f.bits(v) for v in f.softmax_norm(e)]
+
+
+def test_fp32_mask_add_order_and_bits():
+    """imentet_fp32.mask_add is LS parallel fp32 adds of score + mask term."""
+    import imentet_fp32 as f
+
+    LS = f.LS
+    x = [float(i) for i in range(LS)]
+    m = [0.0] * LS
+    m[3] = float("-inf")
+    r = f.mask_add(x, m)
+    assert r[0] == np.float32(0.0) and np.isneginf(float(r[3]))
+    # matches explicit fp32 add
+    x2 = [0.5 * (i + 1) for i in range(LS)]
+    m2 = [(-1.0) ** i * 0.25 * i for i in range(LS)]
+    assert f.mask_add(x2, m2) == [np.float32(np.float32(x2[j]) + np.float32(m2[j])) for j in range(LS)]
+    xb = [f.bits(v) for v in x2]
+    mb = [f.bits(v) for v in m2]
+    assert f.mask_add_bits(xb, mb) == [f.bits(v) for v in f.mask_add(x2, m2)]
