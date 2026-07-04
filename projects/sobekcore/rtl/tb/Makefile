@@ -9,6 +9,7 @@
 #   make CORE=lerp             -> sobek_lerp fp32 a+t*(b-a) (+ hapi mul/add)
 #   make CORE=length           -> sobek_length fp32 ||v|| (+ dot3 + hapi sqrt)
 #   make CORE=distance         -> sobek_distance fp32 ||a-b|| (+ length + hapi add)
+#   make CORE=faceforward      -> sobek_faceforward orient normal (+ dot3 + hapi mul/add)
 TOPLEVEL_LANG = verilog
 SIM ?= verilator
 CORE ?= dot3
@@ -58,6 +59,11 @@ VERILOG_SOURCES = $(PWD)/../sobek_distance.sv $(PWD)/../sobek_length.sv $(PWD)/.
                   $(HAPI)/hapi_fp32_mul.sv $(HAPI)/hapi_fp32_add.sv $(HAPI)/hapi_fp32_sqrt.sv
 TOPLEVEL = sobek_distance
 MODULE   = test_distance
+else ifeq ($(CORE),faceforward)
+VERILOG_SOURCES = $(PWD)/../sobek_faceforward.sv $(PWD)/../sobek_dot3.sv \
+                  $(HAPI)/hapi_fp32_mul.sv $(HAPI)/hapi_fp32_add.sv
+TOPLEVEL = sobek_faceforward
+MODULE   = test_faceforward
 else ifeq ($(CORE),dot3)
 VERILOG_SOURCES = $(PWD)/../sobek_dot3.sv $(HAPI)/hapi_fp32_mul.sv $(HAPI)/hapi_fp32_add.sv
 TOPLEVEL = sobek_dot3

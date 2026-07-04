@@ -171,6 +171,8 @@ jobs:
         run: ./projects/sobekcore/rtl/tb/run_sim.sh CORE=length
       - name: Run SobekCore fp32 distance testbench
         run: ./projects/sobekcore/rtl/tb/run_sim.sh CORE=distance
+      - name: Run SobekCore fp32 faceforward testbench
+        run: ./projects/sobekcore/rtl/tb/run_sim.sh CORE=faceforward
       - name: Run RaCore KAI register block testbench
         run: ./projects/racore/rtl/tb/run_sim.sh CORE=kai
       - name: Run RaCore NoC arbiter testbench

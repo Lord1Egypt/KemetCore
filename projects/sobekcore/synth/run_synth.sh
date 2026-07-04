@@ -61,6 +61,15 @@ echo "=== synthesizing sobek_lerp ==="
 "
 echo "  -> reports/sobek_lerp.stat (0 latches asserted)"
 
+echo "=== synthesizing sobek_faceforward ==="
+"$YOSYS" -ql "reports/sobek_faceforward.log" -p "
+    read_verilog -sv ${HAPI}/hapi_fp32_mul.sv ${HAPI}/hapi_fp32_add.sv ../rtl/sobek_dot3.sv ../rtl/sobek_faceforward.sv;
+    synth -top sobek_faceforward;
+    select -assert-none t:\$_DLATCH_* t:\$dlatch;
+    tee -o reports/sobek_faceforward.stat stat
+"
+echo "  -> reports/sobek_faceforward.stat (0 latches asserted)"
+
 # sobek_recip wraps the HapiCore divider (hapi_fp32_div, $div/$mod -> ~41K gates),
 # whose big combinational cloud the stock apt Yosys on the CI runner OOM-chokes on
 # (same as HapiCore's own div synth). So this heavy synth is skipped under CI
