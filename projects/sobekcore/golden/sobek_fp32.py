@@ -80,3 +80,15 @@ def scale_bits(sb, vb):
     s = frombits(sb)
     v = [frombits(u) for u in vb]
     return [bits(c) for c in scale(s, v)]
+
+
+def recip(x):
+    """fp32 reciprocal 1/x — the Moller-Trumbore inv_det step (inv_det = 1/det),
+    a single correctly-rounded fp32 divide of the constant 1.0 by x. `x` is an
+    fp32 value; returns the fp32 result."""
+    return f32(f32(1.0) / f32(x))
+
+
+def recip_bits(xb):
+    """recip over a 32-bit input pattern, returning the 32-bit result pattern."""
+    return bits(recip(frombits(xb)))
