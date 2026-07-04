@@ -64,3 +64,19 @@ def cross_bits(ab, bb):
     a = [frombits(u) for u in ab]
     b = [frombits(u) for u in bb]
     return [bits(c) for c in cross(a, b)]
+
+
+def scale(s, v):
+    """fp32 scalar-vector product s * [v0, v1, v2], each component one fp32
+    multiply — the datapath the barycentric weighting (u = dot * inv_det, …)
+    uses. `s` and the `v` elements are fp32 values; returns three fp32 values."""
+    s = f32(s)
+    return [f32(s * f32(v[0])), f32(s * f32(v[1])), f32(s * f32(v[2]))]
+
+
+def scale_bits(sb, vb):
+    """scale over 32-bit input patterns (scalar sb, vector vb), returning three
+    32-bit result patterns."""
+    s = frombits(sb)
+    v = [frombits(u) for u in vb]
+    return [bits(c) for c in scale(s, v)]
