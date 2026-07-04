@@ -1,5 +1,6 @@
 # cocotb + Verilator testbenches for ImentetCore.
 #   make CORE=qkscore  (default) -> imentet_qk_score fp32 scaled dot-product score (+ hapi fp32)
+#   make CORE=av       -> imentet_av_context fp32 weighted value accumulation (+ hapi fp32)
 TOPLEVEL_LANG = verilog
 SIM ?= verilator
 CORE ?= qkscore
@@ -8,7 +9,11 @@ PWD := $(shell pwd)
 HAPI := $(PWD)/../../../hapicore/rtl
 
 # The Imentet primitives instantiate the verified HapiCore fp32 blocks.
-ifeq ($(CORE),qkscore)
+ifeq ($(CORE),av)
+VERILOG_SOURCES = $(PWD)/../imentet_av_context.sv $(HAPI)/hapi_fp32_mul.sv $(HAPI)/hapi_fp32_add.sv
+TOPLEVEL = imentet_av_context
+MODULE   = test_av_context
+else ifeq ($(CORE),qkscore)
 VERILOG_SOURCES = $(PWD)/../imentet_qk_score.sv $(HAPI)/hapi_fp32_mul.sv $(HAPI)/hapi_fp32_add.sv
 TOPLEVEL = imentet_qk_score
 MODULE   = test_qk_score

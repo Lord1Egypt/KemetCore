@@ -78,3 +78,27 @@ def test_fp32_score_order_and_bits():
     qb = [f.bits(v) for v in q]
     kb = [f.bits(v) for v in k]
     assert f.score_bits(qb, kb, f.bits(s)) == f.bits(f.score(q, k, s))
+
+
+def test_fp32_av_context_order_and_bits():
+    """imentet_fp32.av_context is the fixed-order fp32 datapath imentet_av_context
+    matches: per output k, products w[j]*V[j][k] into a left-to-right acc fold."""
+    import imentet_fp32 as f
+
+    L, DV = f.L, f.DV
+    # picking row 0 with a one-hot weight returns V[0]
+    V = [[float(10 * j + k) for k in range(DV)] for j in range(L)]
+    w = [1.0] + [0.0] * (L - 1)
+    assert f.av_context(w, V) == [np.float32(V[0][k]) for k in range(DV)]
+    # matches explicit fixed-order fp32 evaluation
+    w = [0.1, 0.2, 0.3, 0.4][:L]
+    for k in range(DV):
+        prods = [np.float32(np.float32(w[j]) * np.float32(V[j][k])) for j in range(L)]
+        acc = prods[0]
+        for j in range(1, L):
+            acc = np.float32(np.float32(acc) + np.float32(prods[j]))
+        assert f.av_context(w, V)[k] == acc
+    # av_context_bits agrees
+    wb = [f.bits(x) for x in w]
+    Vb = [f.bits(V[j][k]) for j in range(L) for k in range(DV)]
+    assert f.av_context_bits(wb, Vb) == [f.bits(x) for x in f.av_context(w, V)]

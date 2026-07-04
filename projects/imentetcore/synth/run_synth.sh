@@ -15,4 +15,13 @@ echo "=== synthesizing imentet_qk_score ==="
     tee -o reports/imentet_qk_score.stat stat
 "
 echo "  -> reports/imentet_qk_score.stat (0 latches asserted)"
+
+echo "=== synthesizing imentet_av_context ==="
+"$YOSYS" -ql "reports/imentet_av_context.log" -p "
+    read_verilog -sv ${HAPI}/hapi_fp32_mul.sv ${HAPI}/hapi_fp32_add.sv ../rtl/imentet_av_context.sv;
+    synth -top imentet_av_context;
+    select -assert-none t:\$_DLATCH_* t:\$dlatch;
+    tee -o reports/imentet_av_context.stat stat
+"
+echo "  -> reports/imentet_av_context.stat (0 latches asserted)"
 echo "ALL SYNTHESIZED ✅ (no latches)"
