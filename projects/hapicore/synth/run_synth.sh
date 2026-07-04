@@ -86,3 +86,11 @@ echo "=== synthesizing hapi_fp16_sgnj ==="
     tee -o reports/hapi_fp16_sgnj.stat stat
 "
 echo "  -> reports/hapi_fp16_sgnj.stat (0 latches asserted)"
+echo "=== synthesizing hapi_bf16_minmax ==="
+"$YOSYS" -ql "reports/hapi_bf16_minmax.log" -p "
+    read_verilog -sv ../rtl/hapi_bf16_minmax.sv;
+    synth -top hapi_bf16_minmax;
+    select -assert-none t:\$_DLATCH_* t:\$dlatch;
+    tee -o reports/hapi_bf16_minmax.stat stat
+"
+echo "  -> reports/hapi_bf16_minmax.stat (0 latches asserted)"

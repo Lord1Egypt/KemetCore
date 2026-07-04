@@ -507,3 +507,23 @@ def fp16_sgnj(a, b, op):
     else:
         sgn = ((a >> 15) & 1) ^ ((b >> 15) & 1)
     return (sgn << 15) | (a & 0x7FFF)
+
+
+def bf16_minmax(a, b, op):
+    """RISC-V bf16 fmin (op=0) / fmax (op=1): one NaN -> other, both NaN ->
+    canonical qNaN 0x7FC0, else smaller/larger with -0.0 < +0.0 via a 16-bit
+    monotonic key. bf16 layout 1/8/7. Matches hapi_bf16_minmax."""
+    a &= 0xFFFF
+    b &= 0xFFFF
+    a_nan = (a & 0x7F80) == 0x7F80 and (a & 0x007F) != 0
+    b_nan = (b & 0x7F80) == 0x7F80 and (b & 0x007F) != 0
+    if a_nan and b_nan:
+        return 0x7FC0
+    if a_nan:
+        return b
+    if b_nan:
+        return a
+    ka = a ^ (0xFFFF if (a >> 15) & 1 else 0x8000)
+    kb = b ^ (0xFFFF if (b >> 15) & 1 else 0x8000)
+    a_le_b = ka <= kb
+    return (b if a_le_b else a) if op else (a if a_le_b else b)
