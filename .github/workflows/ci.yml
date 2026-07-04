@@ -175,6 +175,8 @@ jobs:
         run: ./projects/ptahconv/rtl/tb/run_sim.sh CORE=gemm
       - name: Run PtahConv 2D convolution engine testbench
         run: ./projects/ptahconv/rtl/tb/run_sim.sh CORE=conv2d
+      - name: Run PtahConv bias-add + ReLU epilogue testbench
+        run: ./projects/ptahconv/rtl/tb/run_sim.sh CORE=biasrelu
       - name: Run SobekCore fp32 dot3 testbench
         run: ./projects/sobekcore/rtl/tb/run_sim.sh CORE=dot3
       - name: Run SobekCore fp32 cross-product testbench

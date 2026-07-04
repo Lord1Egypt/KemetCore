@@ -115,3 +115,20 @@ def conv2d_seq(x_bits, w_bits, Cin, H, W, Cout, KH, KW, stride, pad):
                             bvec.append(w_bits[((co * Cin + ic) * KH + ky) * KW + kx])
                 out.append(dot_seq(avec, bvec))
     return out
+
+
+def bias_relu(x_bits, bias_bits):
+    """The conv epilogue applied elementwise: y = relu(x + bias), fp32. The add is
+    one correctly-rounded fp32 add (matches hapi_fp32_add); relu keeps a strictly
+    positive finite/Inf result and forces everything else (+/-0, negatives, NaN) to
+    +0.0. Inputs/outputs are 32-bit fp32 patterns. Bit-exact golden for the
+    ptah_bias_relu datapath."""
+    import numpy as np
+    x = np.frombuffer(np.uint32(x_bits & 0xFFFFFFFF).tobytes(), np.float32)[0]
+    b = np.frombuffer(np.uint32(bias_bits & 0xFFFFFFFF).tobytes(), np.float32)[0]
+    s = np.float32(x) + np.float32(b)                       # fp32 add (may be NaN/Inf)
+    u = int(np.float32(s).view(np.uint32))
+    sign = (u >> 31) & 1
+    is_nan = ((u >> 23) & 0xFF) == 0xFF and (u & 0x7FFFFF) != 0
+    positive_nonzero = (sign == 0) and ((u & 0x7FFFFFFF) != 0) and not is_nan
+    return u if positive_nonzero else 0x00000000
