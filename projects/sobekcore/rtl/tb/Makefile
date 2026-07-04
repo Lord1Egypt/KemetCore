@@ -7,6 +7,7 @@
 #   make CORE=reflect          -> sobek_reflect fp32 d-2(d.n)n (+ dot3 + hapi mul/add)
 #   make CORE=raypoint         -> sobek_ray_point fp32 o+t*d (+ hapi mul/add)
 #   make CORE=lerp             -> sobek_lerp fp32 a+t*(b-a) (+ hapi mul/add)
+#   make CORE=length           -> sobek_length fp32 ||v|| (+ dot3 + hapi sqrt)
 TOPLEVEL_LANG = verilog
 SIM ?= verilator
 CORE ?= dot3
@@ -46,6 +47,11 @@ else ifeq ($(CORE),lerp)
 VERILOG_SOURCES = $(PWD)/../sobek_lerp.sv $(HAPI)/hapi_fp32_mul.sv $(HAPI)/hapi_fp32_add.sv
 TOPLEVEL = sobek_lerp
 MODULE   = test_lerp
+else ifeq ($(CORE),length)
+VERILOG_SOURCES = $(PWD)/../sobek_length.sv $(PWD)/../sobek_dot3.sv \
+                  $(HAPI)/hapi_fp32_mul.sv $(HAPI)/hapi_fp32_add.sv $(HAPI)/hapi_fp32_sqrt.sv
+TOPLEVEL = sobek_length
+MODULE   = test_length
 else ifeq ($(CORE),dot3)
 VERILOG_SOURCES = $(PWD)/../sobek_dot3.sv $(HAPI)/hapi_fp32_mul.sv $(HAPI)/hapi_fp32_add.sv
 TOPLEVEL = sobek_dot3
