@@ -32,6 +32,12 @@ class CpuZ(Cpu):
         self.csr.mstatus = ms & MSTATUS_WMASK
         return u32(ret)
 
+    CAUSE_ILLEGAL = 2
+
+    def _illegal(self, ins, npc):
+        """Illegal instruction -> M-mode trap with mcause=2, mtval=the instruction."""
+        return self._trap(self.CAUSE_ILLEGAL, 0, ins & 0xFFFFFFFF)
+
     def _system(self, ins, f3, rd, rs1, npc):
         funct12 = (ins >> 20) & 0xFFF
         if f3 == 0:

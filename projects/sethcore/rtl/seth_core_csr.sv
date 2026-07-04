@@ -50,7 +50,12 @@ module seth_core_csr #(
     wire is_ecall  = is_system && (f3 == 3'd0) && (funct12 == 12'h000);
     wire is_ebreak = is_system && (f3 == 3'd0) && (funct12 == 12'h001);
     wire is_mret   = is_system && (f3 == 3'd0) && (funct12 == 12'h302);
-    wire is_trap   = is_ecall || is_ebreak;
+    // any opcode outside the RV32IM + Zicsr set is illegal -> exception (cause 2)
+    wire is_legal  = (op == 7'h33) || (op == 7'h13) || (op == 7'h03) || (op == 7'h23)
+                  || (op == 7'h63) || (op == 7'h37) || (op == 7'h17) || (op == 7'h6F)
+                  || (op == 7'h67) || (op == 7'h73);
+    wire is_illegal = ~is_legal;
+    wire is_trap   = is_ecall || is_ebreak || is_illegal;
 
     // ---- CSR storage + WARL read (same policy as seth_mcsr) ---------------- //
     localparam logic [11:0] MSTATUS=12'h300, MISA=12'h301, MIE=12'h304, MTVEC=12'h305,
@@ -86,7 +91,7 @@ module seth_core_csr #(
     end
 
     // ---- trap vectoring --------------------------------------------------- //
-    wire [30:0] trap_cause = is_ebreak ? 31'd3 : 31'd11;    // ebreak=3, ecall-from-M=11
+    wire [30:0] trap_cause = is_illegal ? 31'd2 : (is_ebreak ? 31'd3 : 31'd11); // illegal/ebreak/ecall
     logic [31:0] enter_target, enter_mepc, enter_mcause, enter_mstatus, ret_target, ret_mstatus;
     seth_trap u_trap (
         .pc(pc), .cause(trap_cause), .is_interrupt(1'b0),
@@ -96,7 +101,7 @@ module seth_core_csr #(
 
     // ---- register read/write ---------------------------------------------- //
     logic [31:0] rdata1, rdata2, wb_data, wb_data_final;
-    wire reg_write_final = (reg_write | is_csr) & ~load_en;   // CSR writes rd too
+    wire reg_write_final = (reg_write | is_csr) & ~load_en & ~is_trap;   // CSR writes rd; traps write nothing
     seth_regfile u_rf (
         .clk(clk), .rst(rst), .we(reg_write_final), .waddr(rd), .wdata(wb_data_final),
         .raddr1(rs1), .raddr2(rs2), .rdata1(rdata1), .rdata2(rdata2));
@@ -177,7 +182,7 @@ module seth_core_csr #(
             wmem[load_addr[AW+1:2]] <= load_data;
         end else begin
             pc <= npc;
-            if (mem_write) wmem[alu_y[AW+1:2]] <= store_word;
+            if (mem_write && !is_trap) wmem[alu_y[AW+1:2]] <= store_word;
             // CSR instruction store (WARL legalisation)
             if (csr_we) begin
                 case (funct12)
@@ -196,7 +201,7 @@ module seth_core_csr #(
                 mepc_s    <= enter_mepc;
                 mcause_s  <= enter_mcause;
                 mstatus_s <= enter_mstatus & MSTATUS_WMASK;
-                mtval_s   <= is_ebreak ? pc : 32'd0;
+                mtval_s   <= is_illegal ? ins : (is_ebreak ? pc : 32'd0);
             end
             // mret restores mstatus
             if (is_mret) mstatus_s <= ret_mstatus & MSTATUS_WMASK;
