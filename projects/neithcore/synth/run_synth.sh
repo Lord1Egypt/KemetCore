@@ -87,4 +87,12 @@ if [ -z "${CI:-}" ]; then
 else
     echo "=== skipping neith_polymul synth under CI (apt-yosys heavy on the full engine) ==="
 fi
+echo "=== synthesizing neith_decompress ==="
+"$YOSYS" -ql "reports/neith_decompress.log" -p "
+    read_verilog -sv ../rtl/neith_decompress.sv;
+    synth -top neith_decompress;
+    select -assert-none t:\$_DLATCH_* t:\$dlatch;
+    tee -o reports/neith_decompress.stat stat
+"
+echo "  -> reports/neith_decompress.stat (0 latches asserted)"
 echo "ALL SYNTHESIZED ✅ (no latches)"

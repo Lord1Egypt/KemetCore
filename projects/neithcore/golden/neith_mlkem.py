@@ -214,3 +214,20 @@ def encaps(pk, rng):
 def decaps(sk, ct):
     bits = decrypt(sk, ct)
     return hashlib.sha256(bytes(bits)).digest()
+
+
+# ---- ciphertext compression (ML-KEM Compress_q / Decompress_q) ---------------- #
+# Lossy rounding of coefficients to d bits, exactly as in FIPS-203 but at this
+# module's NTT-friendly Q=7681. These are the bit-exact goldens the neith_compress
+# / neith_decompress RTL match.
+
+def compress(x, d):
+    """Compress_q(x, d) = round(2^d / Q * x) mod 2^d, for a coefficient x in
+    [0, Q). Rounding is round-half-up via integer floor((2^d*x + Q//2) / Q)."""
+    return (((x << d) + (Q // 2)) // Q) & ((1 << d) - 1)
+
+
+def decompress(y, d):
+    """Decompress_q(y, d) = round(Q / 2^d * y), for y in [0, 2^d). Rounding is
+    round-half-up via floor((Q*y + 2^(d-1)) / 2^d) = (Q*y + 2^(d-1)) >> d."""
+    return (Q * y + (1 << (d - 1))) >> d
