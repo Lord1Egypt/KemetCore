@@ -1,0 +1,24 @@
+
+3. Printing statistics.
+
+=== ptah_maxpool ===
+
+        +----------Local Count, excluding submodules.
+        | 
+      719 wires
+     1060 wire bits
+       11 public wires
+      352 public wire bits
+        5 ports
+      160 port bits
+      740 cells
+        6   $_ANDNOT_
+      145   $_AND_
+       93   $_MUX_
+      184   $_NAND_
+        7   $_NOR_
+       31   $_ORNOT_
+       80   $_OR_
+      109   $_XNOR_
+       85   $_XOR_
+

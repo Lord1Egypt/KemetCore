@@ -49,4 +49,12 @@ echo "=== synthesizing ptah_bias_relu ==="
     tee -o reports/ptah_bias_relu.stat stat
 "
 echo "  -> reports/ptah_bias_relu.stat (0 latches asserted)"
+echo "=== synthesizing ptah_maxpool ==="
+"$YOSYS" -ql "reports/ptah_maxpool.log" -p "
+    read_verilog -sv ../rtl/ptah_maxpool.sv;
+    synth -top ptah_maxpool;
+    select -assert-none t:\$_DLATCH_* t:\$dlatch;
+    tee -o reports/ptah_maxpool.stat stat
+"
+echo "  -> reports/ptah_maxpool.stat (0 latches asserted)"
 echo "ALL SYNTHESIZED ✅ (no latches)"

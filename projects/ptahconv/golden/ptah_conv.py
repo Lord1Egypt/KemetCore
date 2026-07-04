@@ -132,3 +132,20 @@ def bias_relu(x_bits, bias_bits):
     is_nan = ((u >> 23) & 0xFF) == 0xFF and (u & 0x7FFFFF) != 0
     positive_nonzero = (sign == 0) and ((u & 0x7FFFFFFF) != 0) and not is_nan
     return u if positive_nonzero else 0x00000000
+
+
+def maxpool2x2(a_bits, b_bits, c_bits, d_bits):
+    """2x2 max-pooling over four fp32 lanes: return the maximum by IEEE total order
+    (monotonic key k = x ^ (x[31] ? 0xFFFFFFFF : 0x80000000), so -0 < +0 and the
+    usual signed ordering holds). Inputs/outputs are 32-bit fp32 patterns. This is
+    a plain total-order max (no fmin/fmax NaN special-casing); the bit-exact golden
+    for ptah_maxpool."""
+    def key(u):
+        u &= 0xFFFFFFFF
+        return u ^ (0xFFFFFFFF if (u >> 31) & 1 else 0x80000000)
+
+    def mx(x, y):
+        return x if key(x) >= key(y) else y
+
+    return mx(mx(a_bits & 0xFFFFFFFF, b_bits & 0xFFFFFFFF),
+              mx(c_bits & 0xFFFFFFFF, d_bits & 0xFFFFFFFF))
