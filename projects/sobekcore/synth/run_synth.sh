@@ -49,7 +49,21 @@ if [ -z "${CI:-}" ]; then
         tee -o reports/sobek_recip.stat stat
     "
     echo "  -> reports/sobek_recip.stat (0 latches asserted)"
+
+    # sobek_normalize pulls in both the divider and the sqrt (hapi_fp32_sqrt,
+    # ~27K gates) — even heavier, so it is in the same CI-skipped, coarse-synth
+    # bucket. Committed reports/sobek_normalize.stat is the 0-latch evidence.
+    echo "=== synthesizing sobek_normalize (coarse, 0-latch check) ==="
+    "$YOSYS" -ql "reports/sobek_normalize.log" -p "
+        read_verilog -sv ${HAPI}/hapi_fp32_mul.sv ${HAPI}/hapi_fp32_add.sv \
+                         ${HAPI}/hapi_fp32_sqrt.sv ${HAPI}/hapi_fp32_div.sv \
+                         ../rtl/sobek_dot3.sv ../rtl/sobek_normalize.sv;
+        synth -top sobek_normalize -run :fine;
+        select -assert-none t:\$_DLATCH_* t:\$dlatch;
+        tee -o reports/sobek_normalize.stat stat
+    "
+    echo "  -> reports/sobek_normalize.stat (0 latches asserted)"
 else
-    echo "=== skipping heavy sobek_recip synth (hapi_fp32_div) under CI (see committed reports/sobek_recip.stat) ==="
+    echo "=== skipping heavy sobek_recip / sobek_normalize synth (hapi_fp32_div/sqrt) under CI (see committed reports/*.stat) ==="
 fi
 echo "ALL SYNTHESIZED ✅ (no latches)"

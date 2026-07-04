@@ -92,3 +92,25 @@ def recip(x):
 def recip_bits(xb):
     """recip over a 32-bit input pattern, returning the 32-bit result pattern."""
     return bits(recip(frombits(xb)))
+
+
+def normalize(v):
+    """fp32 vector normalize v / ||v|| — the ray-direction conditioning step, in
+    the exact datapath order the hardware uses:
+        d   = dot3(v, v)      (fp32 fixed-order sum of squares)
+        len = sqrt(d)         (correctly-rounded fp32 sqrt)
+        inv = 1 / len         (correctly-rounded fp32 reciprocal)
+        c_i = inv * v_i       (fp32 scale)
+    Each step is a correctly-rounded fp32 op (numpy float32 == the HapiCore /
+    SobekCore primitives). `v` elements are fp32 values; returns three fp32
+    values."""
+    d = dot3(v, v)
+    length = f32(np.sqrt(f32(d)))
+    inv = recip(length)
+    return scale(inv, v)
+
+
+def normalize_bits(vb):
+    """normalize over 32-bit input patterns, returning three 32-bit patterns."""
+    v = [frombits(u) for u in vb]
+    return [bits(c) for c in normalize(v)]
