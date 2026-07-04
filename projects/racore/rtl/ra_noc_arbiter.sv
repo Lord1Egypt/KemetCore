@@ -28,15 +28,18 @@ module ra_noc_arbiter #(
 
     // round-robin: first requester at or after (last+1), wrapping. N must be a
     // power of two so the wrap is a W-bit truncation (the SoC instantiates N=4/8).
+    // Scan k=1..N low->high and latch the FIRST match (the `!grant_valid` guard
+    // freezes the winner), so the closest requester after `last` wins — exactly
+    // the golden NocCrossbar.arbitrate order. (Equivalent to, but clearer than,
+    // the old high->low guarded-overwrite form; re-verified bit-exact.)
     logic [W-1:0] cand;
     always_comb begin
         grant_valid = 1'b0;
         grant_idx   = '0;
         cand        = '0;
-        for (int k = N; k >= 1; k--) begin
-            // iterate high->low so the LOWEST k (closest after `last`) wins
+        for (int k = 1; k <= N; k++) begin
             cand = last + k[W-1:0];
-            if (requests[cand]) begin
+            if (requests[cand] && !grant_valid) begin
                 grant_valid = 1'b1;
                 grant_idx   = cand;
             end

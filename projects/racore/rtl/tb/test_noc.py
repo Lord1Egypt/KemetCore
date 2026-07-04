@@ -25,6 +25,33 @@ async def test_noc(dut):
     await RisingEdge(dut.clk)
 
     ref = g.NocCrossbar(N)
+
+    # --- directed round-robin proof (the case a naive "always last+1" arbiter
+    # would get wrong): after granting master 0, only a FARTHER master requests,
+    # so the grant must skip the idle master at last+1, not stall on it. ---
+    async def grant(req_mask):
+        dut.requests.value = req_mask
+        dut.advance.value = 1
+        await Timer(1, units="ns")
+        gi = int(dut.grant_idx.value) if int(dut.grant_valid.value) else None
+        await RisingEdge(dut.clk)
+        await Timer(1, units="ns")
+        return gi
+
+    # all four request: classic round-robin cycles 1,2,3,0 (last starts at N-1=3)
+    seq = [await grant(0b1111) for _ in range(4)]
+    assert seq == [0, 1, 2, 3], f"round-robin order broken: {seq}"
+    # now last=3; only master 2 requests (1<<2). last+1=0 is idle, so it must
+    # skip 0/1 and grant 2 — this is exactly what the auditor doubted.
+    assert (await grant(0b0100)) == 2, "arbiter failed to skip idle masters (round-robin bug)"
+    # only master 1 requests while last=2 -> wrap past 3,0 to 1
+    assert (await grant(0b0010)) == 1, "arbiter wrap-around broken"
+    # keep the reference model in lockstep for the random phase below
+    ref.arbitrate([True, True, True, True]); ref.arbitrate([True, True, True, True])
+    ref.arbitrate([True, True, True, True]); ref.arbitrate([True, True, True, True])
+    ref.arbitrate([False, False, True, False])
+    ref.arbitrate([False, True, False, False])
+
     rng = random.Random(0x404C)
 
     for _ in range(4000):
