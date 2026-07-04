@@ -16,6 +16,15 @@ echo "=== synthesizing imentet_qk_score ==="
 "
 echo "  -> reports/imentet_qk_score.stat (0 latches asserted)"
 
+echo "=== synthesizing imentet_mask_add ==="
+"$YOSYS" -ql "reports/imentet_mask_add.log" -p "
+    read_verilog -sv ${HAPI}/hapi_fp32_add.sv ../rtl/imentet_mask_add.sv;
+    synth -top imentet_mask_add;
+    select -assert-none t:\$_DLATCH_* t:\$dlatch;
+    tee -o reports/imentet_mask_add.stat stat
+"
+echo "  -> reports/imentet_mask_add.stat (0 latches asserted)"
+
 echo "=== synthesizing imentet_av_context ==="
 "$YOSYS" -ql "reports/imentet_av_context.log" -p "
     read_verilog -sv ${HAPI}/hapi_fp32_mul.sv ${HAPI}/hapi_fp32_add.sv ../rtl/imentet_av_context.sv;
