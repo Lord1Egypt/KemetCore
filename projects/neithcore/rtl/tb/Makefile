@@ -7,13 +7,18 @@
 #   make CORE=msgcodec              -> neith_msgcodec (ML-KEM message encode / decode)
 #   make CORE=cbd                   -> neith_cbd (centered binomial noise sampler)
 #   make CORE=polymul               -> neith_polymul (full negacyclic a*b: ntt+pointwise+intt)
+#   make CORE=decompress            -> neith_decompress (ML-KEM Decompress_q, D-bit -> Z_Q)
 TOPLEVEL_LANG = verilog
 SIM ?= verilator
 CORE ?= modmul
 
 PWD := $(shell pwd)
 
-ifeq ($(CORE),polymul)
+ifeq ($(CORE),decompress)
+  VERILOG_SOURCES = $(PWD)/../neith_decompress.sv
+  TOPLEVEL = neith_decompress
+  MODULE   = test_decompress
+else ifeq ($(CORE),polymul)
   VERILOG_SOURCES = $(PWD)/../neith_polymul.sv $(PWD)/../neith_ntt.sv \
                     $(PWD)/../neith_butterfly.sv $(PWD)/../neith_pointwise.sv \
                     $(PWD)/../neith_modmul.sv

@@ -96,3 +96,28 @@ def test_pymodel_ntt():
     assert p.forward(a) == g.ntt(a)
     assert p.stages == LOG2N
     assert p.butterflies == LOG2N * BUTTERFLIES_PER_STAGE
+
+
+def test_compress_decompress_roundtrip():
+    """ML-KEM Compress_q/Decompress_q at Q=7681: compress maps [0,Q)->[0,2^d),
+    decompress is its round-half-up inverse, and the round-trip error is bounded
+    by ceil(Q/2^d) (the analysis bound that keeps decryption correct)."""
+    import neith_mlkem as g
+
+    # exact known values
+    assert g.compress(0, 4) == 0 and g.decompress(0, 4) == 0
+    assert g.decompress(1, 1) == (g.Q + 1) // 2          # round(Q/2)
+    for d in (1, 4, 5, 10, 11):
+        lim = 1 << d
+        # compress lands in range
+        for x in (0, 1, g.Q // 2, g.Q - 1):
+            c = g.compress(x, d)
+            assert 0 <= c < lim
+        # decompress lands in the ring, and round-trips within the compression bound
+        bound = (g.Q + lim - 1) // lim          # ceil(Q / 2^d)
+        for x in range(0, g.Q, max(1, g.Q // 97)):
+            c = g.compress(x, d)
+            r = g.decompress(c, d)
+            assert 0 <= r < g.Q
+            diff = min((r - x) % g.Q, (x - r) % g.Q)
+            assert diff <= bound, f"d={d} x={x}: round-trip err {diff} > {bound}"

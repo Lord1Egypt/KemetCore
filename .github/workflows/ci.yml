@@ -137,6 +137,8 @@ jobs:
         run: ./projects/neithcore/rtl/tb/run_sim.sh CORE=cbd
       - name: Run NeithCore full polynomial multiply testbench
         run: ./projects/neithcore/rtl/tb/run_sim.sh CORE=polymul
+      - name: Run NeithCore Decompress_q testbench
+        run: ./projects/neithcore/rtl/tb/run_sim.sh CORE=decompress
       - name: Run BastCore MAC testbench
         run: ./projects/bastcore/rtl/tb/run_sim.sh CORE=mac
       - name: Run BastCore MAC grid (systolic array) testbench
