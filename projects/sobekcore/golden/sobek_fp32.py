@@ -193,3 +193,20 @@ def length_bits(vb):
     """length over a 32-bit input pattern vector, returning the 32-bit result."""
     v = [frombits(u) for u in vb]
     return bits(length(v))
+
+
+def distance(a, b):
+    """fp32 Euclidean distance ||a - b|| between two points. Fixed datapath order:
+        e_i = a_i - b_i    (fp32 subtract, exact negation)
+        d   = e.e          (fp32 sum of squares)
+        len = sqrt(d)      (correctly-rounded fp32 sqrt)
+    `a`, `b` elements are fp32 values; returns one fp32 scalar."""
+    e = [f32(f32(a[i]) - f32(b[i])) for i in range(3)]
+    return length(e)
+
+
+def distance_bits(ab, bb):
+    """distance over 32-bit input patterns (a, b), returning the 32-bit result."""
+    a = [frombits(u) for u in ab]
+    b = [frombits(u) for u in bb]
+    return bits(distance(a, b))
