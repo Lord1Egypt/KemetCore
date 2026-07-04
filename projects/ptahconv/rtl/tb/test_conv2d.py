@@ -76,4 +76,40 @@ async def test_conv2d(dut):
             assert int(dut.rd_data.value) == exp[i], \
                 f"cfg Cin{Cin}H{H}W{W}Co{Cout}K{KH}s{stride}p{pad} out[{i}]: " \
                 f"{int(dut.rd_data.value):08x}!={exp[i]:08x}"
+
+    # --- P0.4 hardening proof: a stray preload asserted DURING a convolution must
+    # be ignored (IDLE-gated), so it cannot corrupt imem/wmem mid-flight. ---
+    Cin, H, W, Cout, KH, KW, stride, pad = 1, 4, 4, 1, 3, 3, 1, 0
+    xb = [f2b(rng.gauss(0, 1)) for _ in range(Cin * H * W)]
+    wb = [f2b(rng.gauss(0, 1)) for _ in range(Cout * Cin * KH * KW)]
+    exp = golden.conv2d_seq(xb, wb, Cin, H, W, Cout, KH, KW, stride, pad)
+    await preload(dut, "ld_in_en", "ld_in_addr", "ld_in_data", xb)
+    await preload(dut, "ld_w_en", "ld_w_addr", "ld_w_data", wb)
+    for fld in ("Cin", "H", "W", "Cout", "KH", "KW", "stride", "pad"):
+        getattr(dut, fld).value = locals()[fld]
+    dut.start.value = 1
+    await RisingEdge(dut.clk)
+    dut.start.value = 0
+    # while BUSY, hammer imem[0]/wmem[0] with garbage — the gate must drop these
+    injected = 0
+    for _ in range(Cin * KH * KW + 6):
+        await RisingEdge(dut.clk)
+        if int(dut.busy.value) == 1:
+            dut.ld_in_en.value = 1; dut.ld_in_addr.value = 0; dut.ld_in_data.value = 0xDEADBEEF
+            dut.ld_w_en.value = 1;  dut.ld_w_addr.value = 0;  dut.ld_w_data.value = 0xDEADBEEF
+            injected += 1
+        if int(dut.done.value) == 1:
+            break
+    dut.ld_in_en.value = 0; dut.ld_w_en.value = 0
+    while int(dut.done.value) == 0:
+        await RisingEdge(dut.clk)
+    assert injected > 0, "test bug: never injected a load during busy"
+    n = Cout * ((H + 2*pad - KH)//stride + 1) * ((W + 2*pad - KW)//stride + 1)
+    for i in range(n):
+        dut.rd_addr.value = i
+        await Timer(1, units="ns")
+        assert int(dut.rd_data.value) == exp[i], \
+            f"load-during-busy corrupted out[{i}]: {int(dut.rd_data.value):08x}!={exp[i]:08x}"
+    dut._log.info(f"ptah_conv2d load-gate proof OK ({injected} mid-busy loads dropped)")
+
     dut._log.info("ptah_conv2d verified bit-exact vs golden conv2d_seq")
