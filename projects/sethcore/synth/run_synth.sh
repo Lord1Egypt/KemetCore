@@ -58,4 +58,12 @@ echo "=== synthesizing seth_mcsr ==="
     tee -o reports/seth_mcsr.stat stat
 "
 echo "  -> reports/seth_mcsr.stat (0 latches asserted)"
+echo "=== synthesizing seth_trap ==="
+"$YOSYS" -ql "reports/seth_trap.log" -p "
+    read_verilog -sv ../rtl/seth_trap.sv;
+    synth -top seth_trap;
+    select -assert-none t:\$_DLATCH_* t:\$dlatch;
+    tee -o reports/seth_trap.stat stat
+"
+echo "  -> reports/seth_trap.stat (0 latches asserted)"
 echo "ALL SYNTHESIZED ✅ (no latches)"

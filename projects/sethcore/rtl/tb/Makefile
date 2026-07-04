@@ -8,6 +8,7 @@
 #   make CORE=csr                -> seth_csr (Zicsr CSR datapath unit)
 #   make CORE=csru               -> seth_csru (Zicsr CSR register bank + seth_csr)
 #   make CORE=mcsr               -> seth_mcsr (M-mode CSR file: mstatus/mtvec/mepc/... WARL)
+#   make CORE=trap               -> seth_trap (M-mode trap vectoring + mepc/mcause/mstatus)
 #   make CORE=branch             -> seth_branch (branch-condition unit)
 #   make CORE=lsu                -> seth_lsu (load/store format unit)
 #   make CORE=core               -> seth_core (integrated single-cycle RV32IM)
@@ -18,7 +19,11 @@ SIM ?= verilator
 CORE ?= alu
 PWD := $(shell pwd)
 
-ifeq ($(CORE),mcsr)
+ifeq ($(CORE),trap)
+  VERILOG_SOURCES = $(PWD)/../seth_trap.sv
+  TOPLEVEL = seth_trap
+  MODULE   = test_trap
+else ifeq ($(CORE),mcsr)
   VERILOG_SOURCES = $(PWD)/../seth_mcsr.sv
   TOPLEVEL = seth_mcsr
   MODULE   = test_mcsr
