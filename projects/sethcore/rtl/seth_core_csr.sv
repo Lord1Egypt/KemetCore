@@ -18,6 +18,9 @@ module seth_core_csr #(
     input  logic        load_en,
     input  logic [31:0] load_addr,
     input  logic [31:0] load_data,
+    input  logic        irq_soft,      // machine software interrupt (mip.MSIP)
+    input  logic        irq_timer,     // machine timer interrupt    (mip.MTIP)
+    input  logic        irq_ext,       // machine external interrupt (mip.MEIP)
     output logic [31:0] dbg_pc
 );
     localparam int AW = $clog2(WORDS);
@@ -55,14 +58,25 @@ module seth_core_csr #(
                   || (op == 7'h63) || (op == 7'h37) || (op == 7'h17) || (op == 7'h6F)
                   || (op == 7'h67) || (op == 7'h73);
     wire is_illegal = ~is_legal;
-    wire is_trap   = is_ecall || is_ebreak || is_illegal;
+    wire is_exc    = is_ecall || is_ebreak || is_illegal;   // synchronous exception
+
+    // asynchronous machine interrupts: taken at the instruction boundary when
+    // globally (mstatus.MIE) and individually (mie) enabled; priority MEI>MSI>MTI.
+    wire        m_ie   = mstatus_s[3];
+    wire [31:0] ready  = mip_val & (mie_s & MIE_WMASK);
+    wire        take_int = m_ie && (|ready);
+    wire [30:0] int_cause = ready[11] ? 31'd11 : (ready[3] ? 31'd3 : 31'd7);
+    wire        do_enter = take_int || is_exc;              // any trap entry this cycle
 
     // ---- CSR storage + WARL read (same policy as seth_mcsr) ---------------- //
     localparam logic [11:0] MSTATUS=12'h300, MISA=12'h301, MIE=12'h304, MTVEC=12'h305,
-                            MSCRATCH=12'h340, MEPC=12'h341, MCAUSE=12'h342, MTVAL=12'h343;
+                            MSCRATCH=12'h340, MEPC=12'h341, MCAUSE=12'h342, MTVAL=12'h343, MIP=12'h344;
     localparam logic [31:0] MISA_VAL=32'h4000_1100, MSTATUS_WMASK=(32'h1<<3)|(32'h1<<7),
                             MSTATUS_MPP=32'h3<<11, MIE_WMASK=(32'h1<<3)|(32'h1<<7)|(32'h1<<11);
     logic [31:0] mstatus_s, mtvec_s, mie_s, mscratch_s, mepc_s, mcause_s, mtval_s;
+    // machine interrupt-pending vector, driven by the external interrupt lines
+    wire [31:0] mip_val = ({31'd0, irq_soft} << 3) | ({31'd0, irq_timer} << 7)
+                        | ({31'd0, irq_ext} << 11);
 
     function automatic logic [31:0] csr_read(input logic [11:0] a);
         case (a)
@@ -74,6 +88,7 @@ module seth_core_csr #(
             MEPC:     csr_read = mepc_s & 32'hFFFF_FFFE;
             MCAUSE:   csr_read = mcause_s;
             MTVAL:    csr_read = mtval_s;
+            MIP:      csr_read = mip_val;    // read-only (writes ignored, WARL)
             default:  csr_read = 32'h0;
         endcase
     endfunction
@@ -91,17 +106,20 @@ module seth_core_csr #(
     end
 
     // ---- trap vectoring --------------------------------------------------- //
-    wire [30:0] trap_cause = is_illegal ? 31'd2 : (is_ebreak ? 31'd3 : 31'd11); // illegal/ebreak/ecall
+    // interrupts preempt the instruction's own exception; pick the cause + kind
+    wire [30:0] exc_cause  = is_illegal ? 31'd2 : (is_ebreak ? 31'd3 : 31'd11);
+    wire [30:0] trap_cause = take_int ? int_cause : exc_cause;
+    wire        trap_isint = take_int;
     logic [31:0] enter_target, enter_mepc, enter_mcause, enter_mstatus, ret_target, ret_mstatus;
     seth_trap u_trap (
-        .pc(pc), .cause(trap_cause), .is_interrupt(1'b0),
+        .pc(pc), .cause(trap_cause), .is_interrupt(trap_isint),
         .mtvec(csr_read(MTVEC)), .mstatus(csr_read(MSTATUS)), .mepc(csr_read(MEPC)),
         .enter_target(enter_target), .enter_mepc(enter_mepc), .enter_mcause(enter_mcause),
         .enter_mstatus(enter_mstatus), .ret_target(ret_target), .ret_mstatus(ret_mstatus));
 
     // ---- register read/write ---------------------------------------------- //
     logic [31:0] rdata1, rdata2, wb_data, wb_data_final;
-    wire reg_write_final = (reg_write | is_csr) & ~load_en & ~is_trap;   // CSR writes rd; traps write nothing
+    wire reg_write_final = (reg_write | is_csr) & ~load_en & ~do_enter;  // CSR writes rd; traps write nothing
     seth_regfile u_rf (
         .clk(clk), .rst(rst), .we(reg_write_final), .waddr(rd), .wdata(wb_data_final),
         .raddr1(rs1), .raddr2(rs2), .rdata1(rdata1), .rdata2(rdata2));
@@ -155,7 +173,7 @@ module seth_core_csr #(
     end
     logic [31:0] npc;
     always_comb begin
-        if (is_trap)              npc = enter_target;
+        if (do_enter)             npc = enter_target;
         else if (is_mret)         npc = ret_target;
         else if (jump)            npc = jalr ? ((rdata1 + imm) & ~32'd1) : (pc + imm);
         else if (branch && take_branch) npc = pc + imm;
@@ -182,9 +200,9 @@ module seth_core_csr #(
             wmem[load_addr[AW+1:2]] <= load_data;
         end else begin
             pc <= npc;
-            if (mem_write && !is_trap) wmem[alu_y[AW+1:2]] <= store_word;
+            if (mem_write && !do_enter) wmem[alu_y[AW+1:2]] <= store_word;
             // CSR instruction store (WARL legalisation)
-            if (csr_we) begin
+            if (csr_we && !take_int) begin
                 case (funct12)
                     MSTATUS:  mstatus_s  <= csr_raw & MSTATUS_WMASK;
                     MIE:      mie_s      <= csr_raw & MIE_WMASK;
@@ -197,11 +215,11 @@ module seth_core_csr #(
                 endcase
             end
             // trap entry side-effects (mutually exclusive with csr_we)
-            if (is_trap) begin
+            if (do_enter) begin
                 mepc_s    <= enter_mepc;
                 mcause_s  <= enter_mcause;
                 mstatus_s <= enter_mstatus & MSTATUS_WMASK;
-                mtval_s   <= is_illegal ? ins : (is_ebreak ? pc : 32'd0);
+                mtval_s   <= take_int ? 32'd0 : (is_illegal ? ins : (is_ebreak ? pc : 32'd0));
             end
             // mret restores mstatus
             if (is_mret) mstatus_s <= ret_mstatus & MSTATUS_WMASK;

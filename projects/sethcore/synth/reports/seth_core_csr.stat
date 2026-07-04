@@ -128,27 +128,27 @@
 
         +----------Local Count, excluding submodules.
         | 
-      213 wires
-     3035 wire bits
-       69 public wires
-     1163 public wire bits
-        6 ports
-       99 port bits
-      168 cells
+      231 wires
+     3193 wire bits
+       80 public wires
+     1222 public wire bits
+        9 ports
+      102 port bits
+      181 cells
         4   $alu
-        4   $and
-       31   $eq
-        8   $logic_and
-        4   $logic_not
-       11   $logic_or
+        5   $and
+       32   $eq
+       10   $logic_and
+        5   $logic_not
+       12   $logic_or
         1   $mem_v2
-       50   $mux
+       54   $mux
         9   $not
-        6   $or
+        8   $or
         6   $pmux
         8   $reduce_and
         8   $reduce_bool
-        5   $reduce_or
+        6   $reduce_or
         8   $sdffe
         2   $shl
         1   $shr
@@ -166,7 +166,7 @@
 
         +----------Count including submodules.
         | 
-      292 seth_core_csr
+      305 seth_core_csr
        23 seth_alu
        18 seth_aluctl
        23 seth_decode
@@ -177,33 +177,33 @@
 
         +----------Count including submodules.
         | 
-      382 wires
-     5482 wire bits
-      131 public wires
-     2298 public wire bits
-       52 ports
-      892 port bits
+      400 wires
+     5640 wire bits
+      142 public wires
+     2357 public wire bits
+       55 ports
+      895 port bits
         - memories
         - memory bits
         - processes
-      292 cells
+      305 cells
         7   $alu
-        5   $and
+        6   $and
         1   $div
-       80   $eq
-       11   $logic_and
-       10   $logic_not
-       11   $logic_or
+       81   $eq
+       13   $logic_and
+       11   $logic_not
+       12   $logic_or
         3   $macc_v2
         2   $mem_v2
         1   $mod
-       86   $mux
+       90   $mux
         9   $not
-        9   $or
+       11   $or
        11   $pmux
         8   $reduce_and
         9   $reduce_bool
-       10   $reduce_or
+       11   $reduce_or
         8   $sdffe
         3   $shl
         2   $shr
