@@ -36,6 +36,9 @@ async def load_program(dut, words):
     dut.load_en.value = 0
     dut.load_addr.value = 0
     dut.load_data.value = 0
+    dut.irq_soft.value = 0
+    dut.irq_timer.value = 0
+    dut.irq_ext.value = 0
     for _ in range(2):
         await RisingEdge(dut.clk)
     dut.rst.value = 0                      # deassert BEFORE loading (load path is under !rst)
@@ -47,13 +50,15 @@ async def load_program(dut, words):
     dut.load_en.value = 0
 
 
-async def run_and_check(dut, words, cycles, tag):
+async def run_and_check(dut, words, cycles, tag, irq=(0, 0, 0)):
     await load_program(dut, words)
+    dut.irq_soft.value, dut.irq_timer.value, dut.irq_ext.value = irq
     for _ in range(cycles):
         await RisingEdge(dut.clk)
-    # golden
+    # golden (same interrupt lines held constant)
     ref = CpuZ()
     ref.load(words)
+    ref.irq_soft, ref.irq_timer, ref.irq_ext = irq
     for _ in range(cycles):
         ref.step()
     # compare regfile
@@ -123,4 +128,27 @@ async def test_illegal_instruction_trap(dut):
     assert int(dut.mtval_s.value) == ILLEGAL, f"mtval={int(dut.mtval_s.value):08x}"
     assert int(dut.mepc_s.value) == 0x0C
     assert int(dut.u_rf.regs[10].value) == 0     # instruction after illegal never ran
+
+@cocotb.test()
+async def test_timer_interrupt(dut):
+    cocotb.start_soon(Clock(dut.clk, 10, units="ns").start())
+    MIE = 0x304
+    prog = [
+        addi(5, 0, 0x40),               # 0x00 mtvec base 0x40 (direct)
+        csr(MTVEC, 5, CSRRW, 0),        # 0x04 mtvec = 0x40
+        addi(6, 0, 0x80),               # 0x08 x6 = MTIE (bit7)
+        csr(MIE, 6, CSRRW, 0),          # 0x0C mie = 0x80
+        csr(MSTATUS, 8, CSRRWI, 0),     # 0x10 mstatus.MIE = 1  -> ints enabled
+        addi(9, 0, 1),                  # 0x14 main marker (runs after the ISR returns)
+        jal(0, 0),                      # 0x18 self-loop
+    ] + [NOP] * 9 + [                   # pad to word 16 (0x40)
+        addi(10, 0, 2),                 # 0x40 ISR: marker
+        csr(MIE, 0, CSRRW, 0),          # 0x44 mie = 0 (stop re-firing)
+        MRET,                           # 0x48 return to mepc (0x14)
+    ]
+    # timer irq held high throughout; the interrupt fires right after 0x10 enables MIE
+    await run_and_check(dut, prog, 30, "timer_int", irq=(0, 1, 0))
+    assert int(dut.u_rf.regs[9].value) == 1     # main instruction eventually ran
+    assert int(dut.u_rf.regs[10].value) == 2    # ISR ran
+    assert int(dut.mcause_s.value) == ((1 << 31) | 7)   # interrupt | timer cause
 

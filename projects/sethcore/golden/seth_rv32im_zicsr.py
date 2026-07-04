@@ -14,9 +14,45 @@ CAUSE_ECALL_M = 11
 
 
 class CpuZ(Cpu):
+    MIP = 0x344
+    # pending-interrupt bit positions
+    B_MSI, B_MTI, B_MEI = 3, 7, 11
+
     def __init__(self):
         super().__init__()
         self.csr = MCsr()
+        self.irq_soft = 0     # machine software interrupt line  (mip.MSIP)
+        self.irq_timer = 0    # machine timer interrupt line     (mip.MTIP)
+        self.irq_ext = 0      # machine external interrupt line  (mip.MEIP)
+
+    def _mip(self):
+        return ((self.irq_soft & 1) << self.B_MSI) | ((self.irq_timer & 1) << self.B_MTI) \
+            | ((self.irq_ext & 1) << self.B_MEI)
+
+    def _pending_cause(self):
+        """Highest-priority enabled+pending machine interrupt cause, or None. Global
+        gate is mstatus.MIE; per-source gate is mie. Priority: MEI > MSI > MTI."""
+        if not (self.csr.read(MSTATUS) >> 3) & 1:      # mstatus.MIE
+            return None
+        mie = self.csr.read(0x304)
+        ready = self._mip() & mie
+        if ready & (1 << self.B_MEI): return 11        # machine external
+        if ready & (1 << self.B_MSI): return 3         # machine software
+        if ready & (1 << self.B_MTI): return 7         # machine timer
+        return None
+
+    def step(self):
+        cause = self._pending_cause()
+        if cause is not None:
+            # take the async interrupt BEFORE executing the current instruction
+            tgt, mepc, mcause, ms = trap_enter(self.pc, cause, 1,
+                                               self.csr.read(MTVEC), self.csr.read(MSTATUS))
+            self.csr.mepc = mepc & 0xFFFFFFFE
+            self.csr.mcause = mcause
+            self.csr.mstatus = ms & MSTATUS_WMASK
+            self.pc = u32(tgt)
+            return
+        super().step()
 
     def _trap(self, cause, is_int, tval):
         tgt, mepc, mcause, ms = trap_enter(
@@ -49,7 +85,7 @@ class CpuZ(Cpu):
                 return self._mret()
             return npc                # wfi / fence.i / other -> nop
         # CSR read/modify/write (csrrw/csrrs/csrrc + immediate forms)
-        old = self.csr.read(funct12)
-        self.csr.step(1, f3, funct12, self.x[rs1], rs1)   # rs1 field doubles as zimm
+        old = self._mip() if funct12 == self.MIP else self.csr.read(funct12)
+        self.csr.step(1, f3, funct12, self.x[rs1], rs1)   # rs1 field doubles as zimm (mip is RO)
         self._wr(rd, old)
         return npc
