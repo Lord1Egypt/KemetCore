@@ -3,6 +3,7 @@
 #   make CORE=cross            -> sobek_cross fp32 3-D cross product (+ hapi fp32)
 #   make CORE=scale            -> sobek_scale fp32 scalar-vector product (+ hapi fp32)
 #   make CORE=recip            -> sobek_recip fp32 reciprocal 1/x (+ hapi fp32 div)
+#   make CORE=normalize        -> sobek_normalize fp32 v/||v|| (+ dot3 + hapi sqrt/div/mul)
 TOPLEVEL_LANG = verilog
 SIM ?= verilator
 CORE ?= dot3
@@ -23,6 +24,12 @@ else ifeq ($(CORE),recip)
 VERILOG_SOURCES = $(PWD)/../sobek_recip.sv $(HAPI)/hapi_fp32_div.sv
 TOPLEVEL = sobek_recip
 MODULE   = test_recip
+else ifeq ($(CORE),normalize)
+VERILOG_SOURCES = $(PWD)/../sobek_normalize.sv $(PWD)/../sobek_dot3.sv \
+                  $(HAPI)/hapi_fp32_mul.sv $(HAPI)/hapi_fp32_add.sv \
+                  $(HAPI)/hapi_fp32_sqrt.sv $(HAPI)/hapi_fp32_div.sv
+TOPLEVEL = sobek_normalize
+MODULE   = test_normalize
 else ifeq ($(CORE),dot3)
 VERILOG_SOURCES = $(PWD)/../sobek_dot3.sv $(HAPI)/hapi_fp32_mul.sv $(HAPI)/hapi_fp32_add.sv
 TOPLEVEL = sobek_dot3

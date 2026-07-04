@@ -1,0 +1,199 @@
+
+8. Printing statistics.
+
+=== sobek_normalize ===
+
+        +----------Local Count, excluding submodules.
+        | 
+        9 wires
+      288 wire bits
+        9 public wires
+      288 public wire bits
+        6 ports
+      192 port bits
+        6 submodules
+        1   hapi_fp32_div
+        3   hapi_fp32_mul
+        1   hapi_fp32_sqrt
+        1   sobek_dot3
+
+=== sobek_dot3 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+       11 wires
+      352 wire bits
+       11 public wires
+      352 public wire bits
+        7 ports
+      224 port bits
+        5 submodules
+        2   hapi_fp32_add
+        3   hapi_fp32_mul
+
+=== hapi_fp32_div ===
+
+        +----------Local Count, excluding submodules.
+        | 
+      311 wires
+     1927 wire bits
+       48 public wires
+      735 public wire bits
+        3 ports
+       96 port bits
+      265 cells
+       13   $alu
+        2   $and
+        1   $div
+        2   $eq
+       53   $logic_and
+       50   $logic_not
+        2   $logic_or
+        2   $macc_v2
+        1   $mod
+      112   $mux
+        3   $not
+        4   $or
+        3   $reduce_and
+        2   $reduce_bool
+        5   $reduce_or
+        1   $shiftx
+        3   $shl
+        1   $shr
+        5   $xor
+
+=== hapi_fp32_sqrt ===
+
+        +----------Local Count, excluding submodules.
+        | 
+      486 wires
+    11865 wire bits
+       32 public wires
+      710 public wire bits
+        2 ports
+       64 port bits
+      381 cells
+       58   $alu
+        2   $and
+        1   $eq
+       27   $logic_and
+       26   $logic_not
+        1   $macc_v2
+      110   $mux
+       54   $not
+       41   $or
+       27   $reduce_and
+        1   $reduce_bool
+       29   $reduce_or
+        1   $shiftx
+        2   $shl
+        1   $shr
+
+=== hapi_fp32_add ===
+
+        +----------Local Count, excluding submodules.
+        | 
+      186 wires
+     2517 wire bits
+       42 public wires
+      663 public wire bits
+        3 ports
+       96 port bits
+      146 cells
+       14   $alu
+        4   $and
+       50   $eq
+        9   $logic_and
+        7   $logic_not
+        2   $logic_or
+       24   $mux
+        1   $ne
+        7   $not
+        7   $or
+        1   $pmux
+        4   $reduce_and
+        3   $reduce_bool
+        7   $reduce_or
+        3   $shl
+        2   $shr
+        1   $xor
+
+=== hapi_fp32_mul ===
+
+        +----------Local Count, excluding submodules.
+        | 
+      143 wires
+     1484 wire bits
+       31 public wires
+      446 public wire bits
+        3 ports
+       96 port bits
+      116 cells
+        7   $alu
+        2   $and
+       49   $eq
+       10   $logic_and
+        4   $logic_not
+        5   $logic_or
+        2   $macc_v2
+       14   $mux
+        4   $not
+        5   $or
+        1   $pmux
+        3   $reduce_and
+        2   $reduce_bool
+        4   $reduce_or
+        2   $shl
+        1   $shr
+        1   $xor
+
+=== design hierarchy ===
+
+        +----------Count including submodules.
+        | 
+     1634 sobek_normalize
+      265 hapi_fp32_div
+      116 hapi_fp32_mul
+      381 hapi_fp32_sqrt
+      146   hapi_fp32_add
+      116   hapi_fp32_mul
+
+        +----------Count including submodules.
+        | 
+     2047 wires
+    28370 wire bits
+      370 public wires
+     6087 public wire bits
+       42 ports
+     1344 port bits
+        - memories
+        - memory bits
+        - processes
+     1634 cells
+      141   $alu
+       24   $and
+        1   $div
+      397   $eq
+      158   $logic_and
+      114   $logic_not
+       36   $logic_or
+       15   $macc_v2
+        1   $mod
+      354   $mux
+        2   $ne
+       95   $not
+       89   $or
+        8   $pmux
+       56   $reduce_and
+       21   $reduce_bool
+       72   $reduce_or
+        2   $shiftx
+       23   $shl
+       12   $shr
+       13   $xor
+        6 submodules
+        1   hapi_fp32_div
+        3   hapi_fp32_mul
+        1   hapi_fp32_sqrt
+        1   sobek_dot3
+
