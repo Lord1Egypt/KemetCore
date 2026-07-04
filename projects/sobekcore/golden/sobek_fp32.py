@@ -177,3 +177,19 @@ def lerp_bits(ab, bb, tb):
     a = [frombits(u) for u in ab]
     b = [frombits(u) for u in bb]
     return [bits(c) for c in lerp(a, b, frombits(tb))]
+
+
+def length(v):
+    """fp32 vector length ||v|| = sqrt(v.v) — the ray-segment distance primitive.
+    Fixed datapath order:
+        d   = dot3(v, v)   (fp32 fixed-order sum of squares)
+        len = sqrt(d)      (correctly-rounded fp32 sqrt)
+    `v` elements are fp32 values; returns one fp32 scalar."""
+    d = dot3(v, v)
+    return f32(np.sqrt(f32(d)))
+
+
+def length_bits(vb):
+    """length over a 32-bit input pattern vector, returning the 32-bit result."""
+    v = [frombits(u) for u in vb]
+    return bits(length(v))
