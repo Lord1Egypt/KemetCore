@@ -54,3 +54,11 @@ else
     echo "=== skipping heavy FPU synth (fma/div/sqrt) under CI (see committed reports/*.stat) ==="
 fi
 echo "ALL SYNTHESIZED ✅ (no latches)"
+echo "=== synthesizing hapi_fp16_minmax ==="
+"$YOSYS" -ql "reports/hapi_fp16_minmax.log" -p "
+    read_verilog -sv ../rtl/hapi_fp16_minmax.sv;
+    synth -top hapi_fp16_minmax;
+    select -assert-none t:\$_DLATCH_* t:\$dlatch;
+    tee -o reports/hapi_fp16_minmax.stat stat
+"
+echo "  -> reports/hapi_fp16_minmax.stat (0 latches asserted)"

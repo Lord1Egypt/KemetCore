@@ -420,3 +420,26 @@ def _is_nan(x):
         return math.isnan(float(x))
     except (TypeError, ValueError):
         return False
+
+
+def fp16_minmax(a, b, op):
+    """RISC-V fp16 fmin (op=0) / fmax (op=1): one NaN -> the other operand, both
+    NaN -> canonical qNaN 0x7E00, else smaller/larger with -0.0 < +0.0 via a
+    monotonic total-order key. The fp16 analogue of fp32_minmax; matches
+    hapi_fp16_minmax."""
+    a &= 0xFFFF
+    b &= 0xFFFF
+    a_nan = (a & 0x7C00) == 0x7C00 and (a & 0x03FF) != 0
+    b_nan = (b & 0x7C00) == 0x7C00 and (b & 0x03FF) != 0
+    if a_nan and b_nan:
+        return 0x7E00
+    if a_nan:
+        return b
+    if b_nan:
+        return a
+    ka = a ^ (0xFFFF if (a >> 15) & 1 else 0x8000)
+    kb = b ^ (0xFFFF if (b >> 15) & 1 else 0x8000)
+    a_le_b = ka <= kb
+    smaller = a if a_le_b else b
+    larger = b if a_le_b else a
+    return larger if op else smaller
