@@ -253,3 +253,20 @@ def project_bits(ab_bits, bb_bits):
     a = [frombits(u) for u in ab_bits]
     b = [frombits(u) for u in bb_bits]
     return [bits(c) for c in project(a, b)]
+
+
+def reject(a, b):
+    """fp32 vector rejection of a from b = a - proj_b(a) — the component of a
+    perpendicular to b. Fixed datapath order:
+        p_i = project(a, b)_i    (parallel component)
+        r_i = a_i - p_i          (fp32 subtract, exact negation)
+    `a`, `b` elements are fp32 values; returns three fp32 values."""
+    p = project(a, b)
+    return [f32(f32(a[i]) - f32(p[i])) for i in range(3)]
+
+
+def reject_bits(ab_bits, bb_bits):
+    """reject over 32-bit input patterns (a, b), returning three 32-bit patterns."""
+    a = [frombits(u) for u in ab_bits]
+    b = [frombits(u) for u in bb_bits]
+    return [bits(c) for c in reject(a, b)]
