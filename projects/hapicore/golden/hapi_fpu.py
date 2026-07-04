@@ -527,3 +527,24 @@ def bf16_minmax(a, b, op):
     kb = b ^ (0xFFFF if (b >> 15) & 1 else 0x8000)
     a_le_b = ka <= kb
     return (b if a_le_b else a) if op else (a if a_le_b else b)
+
+
+def bf16_cmp(a, b, op):
+    """RISC-V bf16 compare -> 1-bit. op 0 feq, 1 flt, 2 fle. Any NaN -> 0;
+    +0==-0. bf16 layout 1/8/7. Matches hapi_bf16_cmp."""
+    a &= 0xFFFF
+    b &= 0xFFFF
+    a_nan = (a & 0x7F80) == 0x7F80 and (a & 0x007F) != 0
+    b_nan = (b & 0x7F80) == 0x7F80 and (b & 0x007F) != 0
+    if a_nan or b_nan:
+        return 0
+    both_zero = (a & 0x7FFF) == 0 and (b & 0x7FFF) == 0
+    ka = a ^ (0xFFFF if (a >> 15) & 1 else 0x8000)
+    kb = b ^ (0xFFFF if (b >> 15) & 1 else 0x8000)
+    eqv = both_zero or (a == b)
+    ltv = (ka < kb) and not both_zero
+    if op == 0:
+        return 1 if eqv else 0
+    if op == 1:
+        return 1 if ltv else 0
+    return 1 if (ltv or eqv) else 0
