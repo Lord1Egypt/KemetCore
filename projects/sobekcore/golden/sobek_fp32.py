@@ -210,3 +210,24 @@ def distance_bits(ab, bb):
     a = [frombits(u) for u in ab]
     b = [frombits(u) for u in bb]
     return bits(distance(a, b))
+
+
+def faceforward(n, d):
+    """Orient normal n to point against ray direction d — the shading-normal
+    convention. If dot3(d, n) > 0 the normal faces the same way as the ray, so it
+    is negated; otherwise returned unchanged:
+        k = dot3(d, n)                    (fp32 fixed-order dot product)
+        return -n if k > 0 else n         (exact fp32 negation)
+    The k>0 test follows IEEE fp32 ordering: +0, -0, negatives and NaN all give
+    k>0 == False (no flip); only a strictly positive finite/Inf k flips. `n`, `d`
+    elements are fp32 values; returns three fp32 values."""
+    k = dot3(d, n)
+    flip = bool(f32(k) > f32(0.0))
+    return [f32(-x) if flip else f32(x) for x in n]
+
+
+def faceforward_bits(nb, db):
+    """faceforward over 32-bit input patterns (n, d), returning three patterns."""
+    n = [frombits(u) for u in nb]
+    d = [frombits(u) for u in db]
+    return [bits(c) for c in faceforward(n, d)]
