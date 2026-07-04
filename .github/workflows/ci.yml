@@ -179,6 +179,8 @@ jobs:
         run: ./projects/ptahconv/rtl/tb/run_sim.sh CORE=biasrelu
       - name: Run PtahConv 2x2 max-pooling testbench
         run: ./projects/ptahconv/rtl/tb/run_sim.sh CORE=maxpool
+      - name: Run PtahConv 2x2 average-pooling testbench
+        run: ./projects/ptahconv/rtl/tb/run_sim.sh CORE=avgpool
       - name: Run SobekCore fp32 dot3 testbench
         run: ./projects/sobekcore/rtl/tb/run_sim.sh CORE=dot3
       - name: Run SobekCore fp32 cross-product testbench

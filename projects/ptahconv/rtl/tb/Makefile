@@ -4,6 +4,7 @@
 #   make CORE=conv2d          -> ptah_conv2d direct convolution engine (+ ptah_mac, hapi)
 #   make CORE=biasrelu        -> ptah_bias_relu fp32 bias-add + ReLU epilogue (+ hapi_fp32_add)
 #   make CORE=maxpool         -> ptah_maxpool fp32 2x2 max-pooling (no hapi deps)
+#   make CORE=avgpool         -> ptah_avgpool fp32 2x2 average-pooling (+ hapi add/mul)
 TOPLEVEL_LANG = verilog
 SIM ?= verilator
 CORE ?= mac
@@ -12,7 +13,11 @@ PWD := $(shell pwd)
 HAPI := $(PWD)/../../../hapicore/rtl
 
 # ptah_mac instantiates the verified HapiCore fp32 primitives, so they are compiled in.
-ifeq ($(CORE),maxpool)
+ifeq ($(CORE),avgpool)
+  VERILOG_SOURCES = $(PWD)/../ptah_avgpool.sv $(HAPI)/hapi_fp32_add.sv $(HAPI)/hapi_fp32_mul.sv
+  TOPLEVEL = ptah_avgpool
+  MODULE   = test_avgpool
+else ifeq ($(CORE),maxpool)
   VERILOG_SOURCES = $(PWD)/../ptah_maxpool.sv
   TOPLEVEL = ptah_maxpool
   MODULE   = test_maxpool
