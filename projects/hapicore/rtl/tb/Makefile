@@ -20,6 +20,7 @@
 #   make CORE=fp16class           -> hapi_fp16_class (fp16 fclass 10-bit one-hot)
 #   make CORE=fp16sgnj            -> hapi_fp16_sgnj (fp16 fsgnj / fsgnjn / fsgnjx)
 #   make CORE=bf16minmax          -> hapi_bf16_minmax (bf16 fmin / fmax)
+#   make CORE=bf16cmp             -> hapi_bf16_cmp (bf16 feq / flt / fle)
 #   make CORE=fp32cmp             -> hapi_fp32_cmp (feq / flt / fle)
 #   make CORE=fp32class           -> hapi_fp32_class (fclass 10-bit one-hot)
 #   make CORE=inttofp32           -> hapi_int_to_fp32 (fcvt.s.w / fcvt.s.wu)
@@ -31,7 +32,11 @@ CORE ?= mul
 
 PWD := $(shell pwd)
 
-ifeq ($(CORE),bf16minmax)
+ifeq ($(CORE),bf16cmp)
+  VERILOG_SOURCES = $(PWD)/../hapi_bf16_cmp.sv
+  TOPLEVEL = hapi_bf16_cmp
+  MODULE   = test_bf16_cmp
+else ifeq ($(CORE),bf16minmax)
   VERILOG_SOURCES = $(PWD)/../hapi_bf16_minmax.sv
   TOPLEVEL = hapi_bf16_minmax
   MODULE   = test_bf16_minmax
