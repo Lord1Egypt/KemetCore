@@ -71,6 +71,8 @@ jobs:
         run: ./projects/sethcore/rtl/tb/run_sim.sh CORE=csru
       - name: Run SethCore M-mode CSR file testbench
         run: ./projects/sethcore/rtl/tb/run_sim.sh CORE=mcsr
+      - name: Run SethCore trap controller testbench
+        run: ./projects/sethcore/rtl/tb/run_sim.sh CORE=trap
       - name: Run SethCore branch testbench
         run: ./projects/sethcore/rtl/tb/run_sim.sh CORE=branch
       - name: Run SethCore LSU testbench

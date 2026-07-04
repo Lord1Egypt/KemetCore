@@ -1,0 +1,21 @@
+
+3. Printing statistics.
+
+=== seth_trap ===
+
+        +----------Local Count, excluding submodules.
+        | 
+      175 wires
+      577 wire bits
+       17 public wires
+      419 public wire bits
+       12 ports
+      352 port bits
+      188 cells
+        3   $_AND_
+       28   $_MUX_
+       98   $_NAND_
+       12   $_OR_
+       13   $_XNOR_
+       34   $_XOR_
+
