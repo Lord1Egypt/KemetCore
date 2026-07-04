@@ -2,6 +2,7 @@
 #   make CORE=qkscore  (default) -> imentet_qk_score fp32 scaled dot-product score (+ hapi fp32)
 #   make CORE=av       -> imentet_av_context fp32 weighted value accumulation (+ hapi fp32)
 #   make CORE=rowmax   -> imentet_rowmax_sub softmax stabilization x-max(x) (+ hapi add)
+#   make CORE=norm     -> imentet_softmax_norm softmax normalize e/sum(e) (+ hapi add/div/mul)
 TOPLEVEL_LANG = verilog
 SIM ?= verilator
 CORE ?= qkscore
@@ -10,7 +11,11 @@ PWD := $(shell pwd)
 HAPI := $(PWD)/../../../hapicore/rtl
 
 # The Imentet primitives instantiate the verified HapiCore fp32 blocks.
-ifeq ($(CORE),rowmax)
+ifeq ($(CORE),norm)
+VERILOG_SOURCES = $(PWD)/../imentet_softmax_norm.sv $(HAPI)/hapi_fp32_add.sv $(HAPI)/hapi_fp32_div.sv $(HAPI)/hapi_fp32_mul.sv
+TOPLEVEL = imentet_softmax_norm
+MODULE   = test_softmax_norm
+else ifeq ($(CORE),rowmax)
 VERILOG_SOURCES = $(PWD)/../imentet_rowmax_sub.sv $(HAPI)/hapi_fp32_add.sv
 TOPLEVEL = imentet_rowmax_sub
 MODULE   = test_rowmax_sub
