@@ -314,7 +314,7 @@ PROJECTS = [
     {
         "key": "imentetcore", "num": "03", "name": "ImentetCore", "deity": "Imentet (welcome)",
         "domain": "Transformer attention unit", "doc": "docs/03_ImentetCore_Attention.md",
-        "depends": ["ptahconv", "gebcore"], "phase": P01,
+        "depends": ["ptahconv", "gebcore"], "phase": P23,
         "scope": "Phase 0/1 implements scaled dot-product attention with numerically-stable "
                  "softmax golden and a flash-style tiled pymodel.",
         "checkpoints": [
