@@ -136,3 +136,22 @@ def reflect_bits(db, nb):
     d = [frombits(u) for u in db]
     n = [frombits(u) for u in nb]
     return [bits(c) for c in reflect(d, n)]
+
+
+def ray_point(o, t, d):
+    """fp32 ray parametric point p = o + t*d — evaluate the position at distance t
+    along a ray, the single most-used ray operation (e.g. the hit point once the
+    Moller-Trumbore t is known). Fixed datapath order:
+        s_i = t * d_i     (fp32 scale)
+        p_i = o_i + s_i   (fp32 add)
+    Each step correctly-rounded fp32. `o`, `d` elements and `t` are fp32 values;
+    returns three fp32 values."""
+    s = scale(t, d)
+    return [f32(f32(o[i]) + f32(s[i])) for i in range(3)]
+
+
+def ray_point_bits(ob, tb, db):
+    """ray_point over 32-bit patterns (origin ob, scalar tb, dir db) -> 3 patterns."""
+    o = [frombits(u) for u in ob]
+    d = [frombits(u) for u in db]
+    return [bits(c) for c in ray_point(o, frombits(tb), d)]
