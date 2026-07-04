@@ -7,6 +7,7 @@
 #   make CORE=decode             -> seth_decode
 #   make CORE=csr                -> seth_csr (Zicsr CSR datapath unit)
 #   make CORE=csru               -> seth_csru (Zicsr CSR register bank + seth_csr)
+#   make CORE=mcsr               -> seth_mcsr (M-mode CSR file: mstatus/mtvec/mepc/... WARL)
 #   make CORE=branch             -> seth_branch (branch-condition unit)
 #   make CORE=lsu                -> seth_lsu (load/store format unit)
 #   make CORE=core               -> seth_core (integrated single-cycle RV32IM)
@@ -17,7 +18,11 @@ SIM ?= verilator
 CORE ?= alu
 PWD := $(shell pwd)
 
-ifeq ($(CORE),lsu)
+ifeq ($(CORE),mcsr)
+  VERILOG_SOURCES = $(PWD)/../seth_mcsr.sv
+  TOPLEVEL = seth_mcsr
+  MODULE   = test_mcsr
+else ifeq ($(CORE),lsu)
   VERILOG_SOURCES = $(PWD)/../seth_lsu.sv
   TOPLEVEL = seth_lsu
   MODULE   = test_lsu

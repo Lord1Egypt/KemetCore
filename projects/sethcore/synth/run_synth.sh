@@ -50,4 +50,12 @@ if [ -z "${CI:-}" ]; then
 else
     echo "=== skipping CPU synth (seth_core/seth_pipeline) under CI (see committed reports/*.stat) ==="
 fi
+echo "=== synthesizing seth_mcsr ==="
+"$YOSYS" -ql "reports/seth_mcsr.log" -p "
+    read_verilog -sv ../rtl/seth_mcsr.sv;
+    synth -top seth_mcsr;
+    select -assert-none t:\$_DLATCH_* t:\$dlatch;
+    tee -o reports/seth_mcsr.stat stat
+"
+echo "  -> reports/seth_mcsr.stat (0 latches asserted)"
 echo "ALL SYNTHESIZED ✅ (no latches)"
