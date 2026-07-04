@@ -102,3 +102,11 @@ echo "=== synthesizing hapi_bf16_cmp ==="
     tee -o reports/hapi_bf16_cmp.stat stat
 "
 echo "  -> reports/hapi_bf16_cmp.stat (0 latches asserted)"
+echo "=== synthesizing hapi_bf16_class ==="
+"$YOSYS" -ql "reports/hapi_bf16_class.log" -p "
+    read_verilog -sv ../rtl/hapi_bf16_class.sv;
+    synth -top hapi_bf16_class;
+    select -assert-none t:\$_DLATCH_* t:\$dlatch;
+    tee -o reports/hapi_bf16_class.stat stat
+"
+echo "  -> reports/hapi_bf16_class.stat (0 latches asserted)"
