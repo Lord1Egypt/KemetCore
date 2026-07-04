@@ -105,3 +105,22 @@ async def test_trap_roundtrip(dut):
     assert int(dut.u_rf.regs[11].value) == 2
     assert int(dut.u_rf.regs[12].value) == 3
     assert int(dut.mcause_s.value) == 11
+
+@cocotb.test()
+async def test_illegal_instruction_trap(dut):
+    cocotb.start_soon(Clock(dut.clk, 10, units="ns").start())
+    ILLEGAL = 0x0000000B                 # custom-0 opcode 0x0B -> illegal in RV32IM+Zicsr
+    prog = [
+        addi(5, 0, 0x14),                # 0x00 x5 = handler @ 0x14 (word 5)
+        csr(MTVEC, 5, CSRRW, 0),         # 0x04 mtvec = 0x14
+        addi(9, 0, 7),                   # 0x08 x9 = 7 (marker)
+        ILLEGAL,                         # 0x0C illegal -> trap (mcause=2, mtval=ins, mepc=0x0C)
+        addi(10, 0, 9),                  # 0x10 (skipped; handler doesn't return here)
+        jal(0, 0),                       # 0x14 handler: self-loop
+    ]
+    await run_and_check(dut, prog, 15, "illegal")
+    assert int(dut.mcause_s.value) == 2, f"mcause={int(dut.mcause_s.value)}"
+    assert int(dut.mtval_s.value) == ILLEGAL, f"mtval={int(dut.mtval_s.value):08x}"
+    assert int(dut.mepc_s.value) == 0x0C
+    assert int(dut.u_rf.regs[10].value) == 0     # instruction after illegal never ran
+

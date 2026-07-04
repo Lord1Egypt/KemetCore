@@ -376,8 +376,13 @@ class Cpu:
         elif op == 0x73:      # SYSTEM (ecall/ebreak/CSR/mret) -> overridable hook
             npc = self._system(ins, f3, rd, rs1, npc)
         else:
-            raise ValueError(f"unimplemented opcode 0x{op:02x} @ pc=0x{self.pc:x}")
+            npc = self._illegal(ins, npc)
         self.pc = npc
+
+    def _illegal(self, ins, npc):
+        """Illegal-instruction handler (unsupported opcode). Base RV32IM raises; the
+        Zicsr subclass overrides this to trap (mcause=2). Returns the next pc."""
+        raise ValueError(f"unimplemented opcode 0x{ins & 0x7F:02x} @ pc=0x{self.pc:x}")
 
     def _system(self, ins, f3, rd, rs1, npc):
         """SYSTEM-opcode (0x73) handler. Base RV32IM halts on any of them (ecall/
