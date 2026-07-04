@@ -88,3 +88,19 @@ def prune_group(group):
     mask = sum(1 << i for i in range(4) if keep[i])
     kept = [(i, bits[i]) for i in range(4) if keep[i]]
     return mask, kept
+
+
+def compress_group(group):
+    """Compress one pruned group of 4 fp32 values into 2 kept lanes, matching
+    compress_2of4's per-column logic: order lanes as [nonzero ascending] ++
+    [zero ascending] and take the first two as (value, index) pairs. `group` is a
+    list/array of 4 fp32 values; returns (val0, idx0, val1, idx1). A value is
+    "nonzero" iff its magnitude bits are set (so +/-0 count as zero, like
+    np.nonzero). Bit-exact golden for geb_compress."""
+    import numpy as np
+    g = [np.float32(x) for x in group]
+    nz = [i for i in range(4) if (int(np.float32(g[i]).view(np.uint32)) & 0x7FFFFFFF) != 0]
+    zero = [i for i in range(4) if i not in nz]
+    order = nz + zero
+    i0, i1 = order[0], order[1]
+    return g[i0], i0, g[i1], i1

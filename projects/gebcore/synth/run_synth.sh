@@ -25,4 +25,12 @@ echo "=== synthesizing geb_prune ==="
     tee -o reports/geb_prune.stat stat
 "
 echo "  -> reports/geb_prune.stat (0 latches asserted)"
+echo "=== synthesizing geb_compress ==="
+"$YOSYS" -ql "reports/geb_compress.log" -p "
+    read_verilog -sv ../rtl/geb_compress.sv;
+    synth -top geb_compress;
+    select -assert-none t:\$_DLATCH_* t:\$dlatch;
+    tee -o reports/geb_compress.stat stat
+"
+echo "  -> reports/geb_compress.stat (0 latches asserted)"
 echo "ALL SYNTHESIZED ✅ (no latches)"

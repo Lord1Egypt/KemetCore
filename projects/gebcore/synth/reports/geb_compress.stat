@@ -1,0 +1,22 @@
+
+3. Printing statistics.
+
+=== geb_compress ===
+
+        +----------Local Count, excluding submodules.
+        | 
+      338 wires
+      531 wire bits
+        7 public wires
+      200 public wire bits
+        5 ports
+      196 port bits
+      399 cells
+        9   $_ANDNOT_
+      120   $_AND_
+       98   $_MUX_
+       75   $_NAND_
+       91   $_NOR_
+        4   $_ORNOT_
+        2   $_OR_
+
