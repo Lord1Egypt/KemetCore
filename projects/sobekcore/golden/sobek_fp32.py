@@ -114,3 +114,25 @@ def normalize_bits(vb):
     """normalize over 32-bit input patterns, returning three 32-bit patterns."""
     v = [frombits(u) for u in vb]
     return [bits(c) for c in normalize(v)]
+
+
+def reflect(d, n):
+    """fp32 specular reflection r = d - 2*(d.n)*n of incident vector d about a
+    (unit) normal n, in the fixed datapath order:
+        k     = dot3(d, n)      (fp32 fixed-order dot product)
+        two_k = 2 * k           (fp32 multiply by exact 2.0)
+        s     = scale(two_k, n) (fp32 scalar-vector product)
+        r_i   = d_i - s_i       (fp32 subtract, exact negation)
+    Each step is a correctly-rounded fp32 op. `d`, `n` elements are fp32 values;
+    returns three fp32 values."""
+    k = dot3(d, n)
+    two_k = f32(f32(2.0) * f32(k))
+    s = scale(two_k, n)
+    return [f32(f32(d[i]) - f32(s[i])) for i in range(3)]
+
+
+def reflect_bits(db, nb):
+    """reflect over 32-bit input patterns (d, n), returning three 32-bit patterns."""
+    d = [frombits(u) for u in db]
+    n = [frombits(u) for u in nb]
+    return [bits(c) for c in reflect(d, n)]
