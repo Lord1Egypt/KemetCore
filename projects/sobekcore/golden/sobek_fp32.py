@@ -155,3 +155,25 @@ def ray_point_bits(ob, tb, db):
     o = [frombits(u) for u in ob]
     d = [frombits(u) for u in db]
     return [bits(c) for c in ray_point(o, frombits(tb), d)]
+
+
+def lerp(a, b, t):
+    """fp32 linear interpolation r = a + t*(b - a) — blend two 3-vectors (e.g.
+    interpolate a shading normal or attribute across a triangle). Fixed datapath
+    order:
+        e_i = b_i - a_i    (fp32 subtract, exact negation)
+        s_i = t * e_i      (fp32 scale)
+        r_i = a_i + s_i    (fp32 add)
+    Each step correctly-rounded fp32. `a`, `b` elements and `t` are fp32 values;
+    returns three fp32 values. Note t=0 -> a exactly; t=1 gives a + (b-a), the
+    fp32-rounded value (the standard lerp trade-off), not necessarily b."""
+    e = [f32(f32(b[i]) - f32(a[i])) for i in range(3)]
+    s = scale(t, e)
+    return [f32(f32(a[i]) + f32(s[i])) for i in range(3)]
+
+
+def lerp_bits(ab, bb, tb):
+    """lerp over 32-bit input patterns (a, b, scalar t) -> three 32-bit patterns."""
+    a = [frombits(u) for u in ab]
+    b = [frombits(u) for u in bb]
+    return [bits(c) for c in lerp(a, b, frombits(tb))]
