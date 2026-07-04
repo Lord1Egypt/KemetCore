@@ -443,3 +443,24 @@ def fp16_minmax(a, b, op):
     smaller = a if a_le_b else b
     larger = b if a_le_b else a
     return larger if op else smaller
+
+
+def fp16_cmp(a, b, op):
+    """RISC-V fp16 compare -> 1-bit. op: 0 feq, 1 flt, 2 fle. Any NaN -> 0;
+    +0.0 == -0.0. The fp16 analogue of fp32_cmp; matches hapi_fp16_cmp."""
+    a &= 0xFFFF
+    b &= 0xFFFF
+    a_nan = (a & 0x7C00) == 0x7C00 and (a & 0x03FF) != 0
+    b_nan = (b & 0x7C00) == 0x7C00 and (b & 0x03FF) != 0
+    if a_nan or b_nan:
+        return 0
+    both_zero = (a & 0x7FFF) == 0 and (b & 0x7FFF) == 0
+    ka = a ^ (0xFFFF if (a >> 15) & 1 else 0x8000)
+    kb = b ^ (0xFFFF if (b >> 15) & 1 else 0x8000)
+    eqv = both_zero or (a == b)
+    ltv = (ka < kb) and not both_zero
+    if op == 0:
+        return 1 if eqv else 0
+    if op == 1:
+        return 1 if ltv else 0
+    return 1 if (ltv or eqv) else 0
