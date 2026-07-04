@@ -24,4 +24,13 @@ echo "=== synthesizing imentet_av_context ==="
     tee -o reports/imentet_av_context.stat stat
 "
 echo "  -> reports/imentet_av_context.stat (0 latches asserted)"
+
+echo "=== synthesizing imentet_rowmax_sub ==="
+"$YOSYS" -ql "reports/imentet_rowmax_sub.log" -p "
+    read_verilog -sv ${HAPI}/hapi_fp32_add.sv ../rtl/imentet_rowmax_sub.sv;
+    synth -top imentet_rowmax_sub;
+    select -assert-none t:\$_DLATCH_* t:\$dlatch;
+    tee -o reports/imentet_rowmax_sub.stat stat
+"
+echo "  -> reports/imentet_rowmax_sub.stat (0 latches asserted)"
 echo "ALL SYNTHESIZED ✅ (no latches)"

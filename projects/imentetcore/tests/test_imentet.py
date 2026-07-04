@@ -102,3 +102,27 @@ def test_fp32_av_context_order_and_bits():
     wb = [f.bits(x) for x in w]
     Vb = [f.bits(V[j][k]) for j in range(L) for k in range(DV)]
     assert f.av_context_bits(wb, Vb) == [f.bits(x) for x in f.av_context(w, V)]
+
+
+def test_fp32_rowmax_sub_order_and_bits():
+    """imentet_fp32.rowmax_sub subtracts the sequential fp32 row max (strictly-
+    greater replace) from each element — the exp-free stable-softmax pre-step."""
+    import imentet_fp32 as f
+
+    LS = f.LS
+    x = [1.0, 3.0, 2.0, 0.0, -1.0, 3.0, -5.0, 2.0][:LS]
+    m = x[0]
+    for v in x[1:]:
+        if np.float32(v) > np.float32(m):
+            m = v
+    assert f.rowmax_sub(x) == [np.float32(np.float32(v) - np.float32(m)) for v in x]
+    # every output <= 0 and the max position maps to exactly 0.0
+    r = f.rowmax_sub(x)
+    assert max(float(v) for v in r) == 0.0
+    # -inf (causal mask) survives as -inf
+    x2 = [0.0, float("-inf"), 1.0, 2.0, 0.0, -1.0, -3.0, float("-inf")][:LS]
+    r2 = f.rowmax_sub(x2)
+    assert np.isneginf(float(r2[1]))
+    # bits agree
+    xb = [f.bits(v) for v in x]
+    assert f.rowmax_sub_bits(xb) == [f.bits(v) for v in f.rowmax_sub(x)]
