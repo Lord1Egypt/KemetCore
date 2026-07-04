@@ -185,6 +185,8 @@ jobs:
         run: ./projects/imentetcore/rtl/tb/run_sim.sh CORE=rowmax
       - name: Run ImentetCore softmax normalization (e/sum) testbench
         run: ./projects/imentetcore/rtl/tb/run_sim.sh CORE=norm
+      - name: Run ImentetCore additive attention mask testbench
+        run: ./projects/imentetcore/rtl/tb/run_sim.sh CORE=mask
       - name: Run RaCore KAI register block testbench
         run: ./projects/racore/rtl/tb/run_sim.sh CORE=kai
       - name: Run RaCore NoC arbiter testbench
