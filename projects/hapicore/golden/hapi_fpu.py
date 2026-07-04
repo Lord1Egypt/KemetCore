@@ -575,3 +575,17 @@ def bf16_class(a):
     if is_nan and snan:        y |= 1 << 8
     if is_nan and not snan:    y |= 1 << 9
     return y
+
+
+def bf16_sgnj(a, b, op):
+    """RISC-V bf16 sign-injection: a's magnitude, sign from b. op 0 fsgnj (b.sign),
+    1 fsgnjn (~b.sign), 2 fsgnjx (a^b). Exact. Matches hapi_bf16_sgnj."""
+    a &= 0xFFFF
+    b &= 0xFFFF
+    if op == 0:
+        sgn = (b >> 15) & 1
+    elif op == 1:
+        sgn = ((b >> 15) & 1) ^ 1
+    else:
+        sgn = ((a >> 15) & 1) ^ ((b >> 15) & 1)
+    return (sgn << 15) | (a & 0x7FFF)
