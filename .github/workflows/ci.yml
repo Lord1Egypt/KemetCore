@@ -149,6 +149,8 @@ jobs:
         run: ./projects/bastcore/rtl/tb/run_sim.sh CORE=int8
       - name: Run BastCore INT8 grid (systolic array) testbench
         run: ./projects/bastcore/rtl/tb/run_sim.sh CORE=int8grid
+      - name: Run BastCore fp16 MAC testbench
+        run: ./projects/bastcore/rtl/tb/run_sim.sh CORE=fp16
       - name: Run PtahConv fp32 MAC testbench
         run: ./projects/ptahconv/rtl/tb/run_sim.sh CORE=mac
       - name: Run PtahConv fp32 GEMM engine testbench
