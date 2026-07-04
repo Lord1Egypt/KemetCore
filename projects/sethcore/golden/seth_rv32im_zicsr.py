@@ -83,7 +83,13 @@ class CpuZ(Cpu):
                 return self._trap(CAUSE_EBREAK, 0, self.pc)
             if funct12 == 0x302:      # mret
                 return self._mret()
-            return npc                # wfi / fence.i / other -> nop
+            if funct12 == 0x105:      # wfi: stall (re-execute) until an enabled
+                # interrupt is pending; advance past it once one is (or if MIE, the
+                # pre-step interrupt check will have already taken it).
+                if (self._mip() & self.csr.read(0x304)) != 0:
+                    return npc
+                return self.pc
+            return npc                # fence.i / other SYSTEM hints -> nop
         # CSR read/modify/write (csrrw/csrrs/csrrc + immediate forms)
         old = self._mip() if funct12 == self.MIP else self.csr.read(funct12)
         self.csr.step(1, f3, funct12, self.x[rs1], rs1)   # rs1 field doubles as zimm (mip is RO)

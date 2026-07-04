@@ -128,25 +128,26 @@
 
         +----------Local Count, excluding submodules.
         | 
-      231 wires
-     3193 wire bits
-       80 public wires
-     1222 public wire bits
+      240 wires
+     3233 wire bits
+       82 public wires
+     1224 public wire bits
         9 ports
       102 port bits
-      181 cells
+      190 cells
         4   $alu
         5   $and
-       32   $eq
-       10   $logic_and
+       33   $eq
+       13   $logic_and
         5   $logic_not
        12   $logic_or
         1   $mem_v2
-       54   $mux
-        9   $not
+       55   $mux
+        1   $ne
+       11   $not
         8   $or
         6   $pmux
-        8   $reduce_and
+        9   $reduce_and
         8   $reduce_bool
         6   $reduce_or
         8   $sdffe
@@ -166,7 +167,7 @@
 
         +----------Count including submodules.
         | 
-      305 seth_core_csr
+      314 seth_core_csr
        23 seth_alu
        18 seth_aluctl
        23 seth_decode
@@ -177,31 +178,32 @@
 
         +----------Count including submodules.
         | 
-      400 wires
-     5640 wire bits
-      142 public wires
-     2357 public wire bits
+      409 wires
+     5680 wire bits
+      144 public wires
+     2359 public wire bits
        55 ports
       895 port bits
         - memories
         - memory bits
         - processes
-      305 cells
+      314 cells
         7   $alu
         6   $and
         1   $div
-       81   $eq
-       13   $logic_and
+       82   $eq
+       16   $logic_and
        11   $logic_not
        12   $logic_or
         3   $macc_v2
         2   $mem_v2
         1   $mod
-       90   $mux
-        9   $not
+       91   $mux
+        1   $ne
+       11   $not
        11   $or
        11   $pmux
-        8   $reduce_and
+        9   $reduce_and
         9   $reduce_bool
        11   $reduce_or
         8   $sdffe

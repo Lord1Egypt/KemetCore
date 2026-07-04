@@ -152,3 +152,22 @@ async def test_timer_interrupt(dut):
     assert int(dut.u_rf.regs[10].value) == 2    # ISR ran
     assert int(dut.mcause_s.value) == ((1 << 31) | 7)   # interrupt | timer cause
 
+@cocotb.test()
+async def test_wfi(dut):
+    cocotb.start_soon(Clock(dut.clk, 10, units="ns").start())
+    MIE = 0x304
+    WFI = 0x10500073
+    prog = [
+        addi(6, 0, 0x80),               # 0x00 x6 = MTIE
+        csr(MIE, 6, CSRRW, 0),          # 0x04 mie = MTIE (mstatus.MIE stays 0 -> no trap)
+        WFI,                            # 0x08 wait for interrupt
+        addi(9, 0, 3),                  # 0x0C runs only once wfi wakes
+        jal(0, 0),                      # 0x10 self-loop
+    ]
+    # no interrupt pending -> wfi stalls forever, x9 never written (matches CpuZ)
+    await run_and_check(dut, prog, 20, "wfi_stall", irq=(0, 0, 0))
+    assert int(dut.u_rf.regs[9].value) == 0
+    # timer pending (MIE=0 so not taken as a trap, but wfi wakes) -> proceeds
+    await run_and_check(dut, prog, 20, "wfi_wake", irq=(0, 1, 0))
+    assert int(dut.u_rf.regs[9].value) == 3
+

@@ -53,6 +53,7 @@ module seth_core_csr #(
     wire is_ecall  = is_system && (f3 == 3'd0) && (funct12 == 12'h000);
     wire is_ebreak = is_system && (f3 == 3'd0) && (funct12 == 12'h001);
     wire is_mret   = is_system && (f3 == 3'd0) && (funct12 == 12'h302);
+    wire is_wfi    = is_system && (f3 == 3'd0) && (funct12 == 12'h105);
     // any opcode outside the RV32IM + Zicsr set is illegal -> exception (cause 2)
     wire is_legal  = (op == 7'h33) || (op == 7'h13) || (op == 7'h03) || (op == 7'h23)
                   || (op == 7'h63) || (op == 7'h37) || (op == 7'h17) || (op == 7'h6F)
@@ -67,6 +68,8 @@ module seth_core_csr #(
     wire        take_int = m_ie && (|ready);
     wire [30:0] int_cause = ready[11] ? 31'd11 : (ready[3] ? 31'd3 : 31'd7);
     wire        do_enter = take_int || is_exc;              // any trap entry this cycle
+    // wfi: hold pc (re-execute) until an mie-enabled interrupt is pending
+    wire        wfi_stall = is_wfi && ~(|(mip_val & (mie_s & MIE_WMASK))) && ~take_int;
 
     // ---- CSR storage + WARL read (same policy as seth_mcsr) ---------------- //
     localparam logic [11:0] MSTATUS=12'h300, MISA=12'h301, MIE=12'h304, MTVEC=12'h305,
@@ -174,6 +177,7 @@ module seth_core_csr #(
     logic [31:0] npc;
     always_comb begin
         if (do_enter)             npc = enter_target;
+        else if (wfi_stall)       npc = pc;                  // wait for interrupt
         else if (is_mret)         npc = ret_target;
         else if (jump)            npc = jalr ? ((rdata1 + imm) & ~32'd1) : (pc + imm);
         else if (branch && take_branch) npc = pc + imm;
