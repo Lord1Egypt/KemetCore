@@ -175,6 +175,8 @@ jobs:
         run: ./projects/sobekcore/rtl/tb/run_sim.sh CORE=faceforward
       - name: Run SobekCore fp32 projection testbench
         run: ./projects/sobekcore/rtl/tb/run_sim.sh CORE=project
+      - name: Run SobekCore fp32 rejection testbench
+        run: ./projects/sobekcore/rtl/tb/run_sim.sh CORE=reject
       - name: Run RaCore KAI register block testbench
         run: ./projects/racore/rtl/tb/run_sim.sh CORE=kai
       - name: Run RaCore NoC arbiter testbench
