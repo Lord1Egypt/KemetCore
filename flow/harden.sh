@@ -8,7 +8,10 @@ IMAGE="${ORFS_IMAGE:-openroad/orfs:latest}"
 CFG="/work/flow/designs/asap7/${DESIGN}/config.mk"
 MAKE_ARGS="${ORFS_MAKE_ARGS:-NUM_CORES=4}"       # cap workers -> bound peak RAM
 echo "▶ Hardening '${DESIGN}' on ASAP7 via ${IMAGE} (repo ${REPO})"
-docker run --rm -v "${REPO}:/work" -e KEMETCORE=/work \
+# LEC_CHECK=0: skip ORFS's post-resize logical-equivalence check — its bundled
+# formal binary (KEPLER_FORMAL_EXE) uses AVX-512 and SIGILLs on non-AVX512 CPUs
+# (e.g. Coffee Lake). The flow is otherwise fully local. See FLOW.md.
+docker run --rm -v "${REPO}:/work" -e KEMETCORE=/work -e LEC_CHECK=0 \
     -w /OpenROAD-flow-scripts/flow "${IMAGE}" \
     bash -lc "source /OpenROAD-flow-scripts/env.sh 2>/dev/null || true;
               make DESIGN_CONFIG=${CFG} WORK_HOME=/work/flow ${MAKE_ARGS} &&
