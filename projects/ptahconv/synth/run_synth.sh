@@ -57,4 +57,12 @@ echo "=== synthesizing ptah_maxpool ==="
     tee -o reports/ptah_maxpool.stat stat
 "
 echo "  -> reports/ptah_maxpool.stat (0 latches asserted)"
+echo "=== synthesizing ptah_avgpool ==="
+"$YOSYS" -ql "reports/ptah_avgpool.log" -p "
+    read_verilog -sv ${HAPI}/hapi_fp32_add.sv ${HAPI}/hapi_fp32_mul.sv ../rtl/ptah_avgpool.sv;
+    synth -top ptah_avgpool;
+    select -assert-none t:\$_DLATCH_* t:\$dlatch;
+    tee -o reports/ptah_avgpool.stat stat
+"
+echo "  -> reports/ptah_avgpool.stat (0 latches asserted)"
 echo "ALL SYNTHESIZED ✅ (no latches)"

@@ -149,3 +149,20 @@ def maxpool2x2(a_bits, b_bits, c_bits, d_bits):
 
     return mx(mx(a_bits & 0xFFFFFFFF, b_bits & 0xFFFFFFFF),
               mx(c_bits & 0xFFFFFFFF, d_bits & 0xFFFFFFFF))
+
+
+def avgpool2x2(a_bits, b_bits, c_bits, d_bits):
+    """2x2 average-pooling over four fp32 lanes: mean = (((a+b)+c)+d) * 0.25 in the
+    fixed left-to-right fp32 datapath order (three correctly-rounded fp32 adds then
+    one exact multiply by 0.25). Inputs/outputs are 32-bit fp32 patterns. Bit-exact
+    golden for ptah_avgpool."""
+    import numpy as np
+
+    def val(u):
+        return np.frombuffer(np.uint32(u & 0xFFFFFFFF).tobytes(), np.float32)[0]
+
+    s = np.float32(val(a_bits)) + np.float32(val(b_bits))
+    s = np.float32(s) + np.float32(val(c_bits))
+    s = np.float32(s) + np.float32(val(d_bits))
+    m = np.float32(s) * np.float32(0.25)
+    return int(np.float32(m).view(np.uint32))
