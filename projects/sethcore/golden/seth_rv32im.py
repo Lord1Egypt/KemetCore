@@ -373,11 +373,18 @@ class Cpu:
             t = u32((a + imm) & ~1)
             self._wr(rd, npc)
             npc = t
-        elif op == 0x73:      # ecall/ebreak -> halt
-            self.halted = True
+        elif op == 0x73:      # SYSTEM (ecall/ebreak/CSR/mret) -> overridable hook
+            npc = self._system(ins, f3, rd, rs1, npc)
         else:
             raise ValueError(f"unimplemented opcode 0x{op:02x} @ pc=0x{self.pc:x}")
         self.pc = npc
+
+    def _system(self, ins, f3, rd, rs1, npc):
+        """SYSTEM-opcode (0x73) handler. Base RV32IM halts on any of them (ecall/
+        ebreak/CSR/mret); the Zicsr subclass overrides this to execute CSRs and
+        take/return from traps. Returns the next pc."""
+        self.halted = True
+        return npc
 
     def _wr(self, rd, val):
         if rd != 0:
