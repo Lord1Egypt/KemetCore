@@ -66,4 +66,21 @@ echo "=== synthesizing seth_trap ==="
     tee -o reports/seth_trap.stat stat
 "
 echo "  -> reports/seth_trap.stat (0 latches asserted)"
+# seth_core_csr embeds seth_muldiv (combinational 32-bit divider -> explodes under
+# full generic Yosys synth), so it is coarse (-run :fine) + CI-skipped like the
+# other divider-bearing tops; committed reports/seth_core_csr.stat = 0-latch evidence.
+if [ -z "${CI:-}" ]; then
+    echo "=== synthesizing seth_core_csr (coarse, 0-latch check) ==="
+    "$YOSYS" -ql "reports/seth_core_csr.log" -p "
+        read_verilog -sv ../rtl/seth_core_csr.sv ../rtl/seth_decode.sv ../rtl/seth_imm.sv \
+                         ../rtl/seth_aluctl.sv ../rtl/seth_alu.sv ../rtl/seth_muldiv.sv \
+                         ../rtl/seth_regfile.sv ../rtl/seth_trap.sv;
+        synth -top seth_core_csr -run :fine;
+        select -assert-none t:\$_DLATCH_* t:\$dlatch;
+        tee -o reports/seth_core_csr.stat stat
+    "
+    echo "  -> reports/seth_core_csr.stat (0 latches asserted)"
+else
+    echo "=== skipping heavy seth_core_csr synth (seth_muldiv divider) under CI (see committed reports/seth_core_csr.stat) ==="
+fi
 echo "ALL SYNTHESIZED ✅ (no latches)"
