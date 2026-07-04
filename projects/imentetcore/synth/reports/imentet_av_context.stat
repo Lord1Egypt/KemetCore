@@ -1,0 +1,95 @@
+
+5. Printing statistics.
+
+=== imentet_av_context ===
+
+        +----------Local Count, excluding submodules.
+        | 
+       35 wires
+     1792 wire bits
+       35 public wires
+     1792 public wire bits
+        3 ports
+      768 port bits
+       28 submodules
+       12   hapi_fp32_add
+       16   hapi_fp32_mul
+
+=== hapi_fp32_add ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     1778 wires
+     2228 wire bits
+       18 public wires
+      468 public wire bits
+        3 ports
+       96 port bits
+     1792 cells
+       97   $_ANDNOT_
+      486   $_AND_
+      342   $_MUX_
+      415   $_NAND_
+       68   $_NOR_
+       43   $_NOT_
+      156   $_ORNOT_
+      114   $_OR_
+       49   $_XNOR_
+       22   $_XOR_
+
+=== hapi_fp32_mul ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     5028 wires
+     5288 wire bits
+       14 public wires
+      274 public wire bits
+        3 ports
+       96 port bits
+     5046 cells
+       96   $_ANDNOT_
+     1282   $_AND_
+      290   $_MUX_
+     1871   $_NAND_
+       53   $_NOR_
+       98   $_NOT_
+       74   $_ORNOT_
+       82   $_OR_
+      119   $_XNOR_
+     1081   $_XOR_
+
+=== design hierarchy ===
+
+        +----------Count including submodules.
+        | 
+   102240 imentet_av_context
+     1792 hapi_fp32_add
+     5046 hapi_fp32_mul
+
+        +----------Count including submodules.
+        | 
+   101819 wires
+   113136 wire bits
+      475 public wires
+    11792 public wire bits
+       87 ports
+     3456 port bits
+        - memories
+        - memory bits
+        - processes
+   102240 cells
+     2700   $_ANDNOT_
+    26344   $_AND_
+     8744   $_MUX_
+    34916   $_NAND_
+     1664   $_NOR_
+     2084   $_NOT_
+     3056   $_ORNOT_
+     2680   $_OR_
+     2492   $_XNOR_
+    17560   $_XOR_
+       28 submodules
+       12   hapi_fp32_add
+       16   hapi_fp32_mul
+

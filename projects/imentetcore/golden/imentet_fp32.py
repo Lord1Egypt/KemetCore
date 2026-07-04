@@ -56,3 +56,35 @@ def score_bits(qb, kb, sb):
     q = [frombits(u) for u in qb]
     k = [frombits(u) for u in kb]
     return bits(score(q, k, frombits(sb)))
+
+
+# ---- weighted value accumulation (the second half of attention) -------------- #
+L = 4   # keys/values per av_context tile
+DV = 4  # value/context width per av_context tile
+
+
+def av_context(w, V):
+    """Weighted sum of value vectors: context[k] = sum_j w[j] * V[j][k], the
+    second half of attention (probabilities · values). Each output element is a
+    fixed left-to-right fp32 MAC over the L keys:
+        p_j    = w[j] * V[j][k]
+        ctx[k] = (((p_0 + p_1) + …) + p_{L-1})
+    `w` is L fp32 weights, `V` is an L×DV row-major fp32 value matrix; returns DV
+    fp32 context values. (The weights come from softmax, which stays float64 in
+    the math model; given the weights, this accumulation is bit-exact.)"""
+    out = []
+    for k in range(DV):
+        p = [f32(f32(w[j]) * f32(V[j][k])) for j in range(L)]
+        acc = p[0]
+        for j in range(1, L):
+            acc = f32(f32(acc) + f32(p[j]))
+        out.append(f32(acc))
+    return out
+
+
+def av_context_bits(wb, Vb):
+    """av_context over 32-bit patterns: wb is L patterns, Vb is L*DV row-major
+    patterns (V[j][k] at index j*DV+k). Returns DV 32-bit patterns."""
+    w = [frombits(u) for u in wb]
+    V = [[frombits(Vb[j * DV + k]) for k in range(DV)] for j in range(L)]
+    return [bits(c) for c in av_context(w, V)]
