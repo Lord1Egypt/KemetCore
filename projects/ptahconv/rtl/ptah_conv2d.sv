@@ -38,6 +38,12 @@ module ptah_conv2d #(
     logic [31:0] wmem [0:MAX_W-1];
     logic [31:0] omem [0:MAX_OUT-1];
 
+    // Address widths derived from the buffer capacities so the memory indices are
+    // never silently truncated if MAX_* are raised above 256 (P0.3 hardening).
+    localparam int AWI = (MAX_IN  > 1) ? $clog2(MAX_IN)  : 1;
+    localparam int AWW = (MAX_W   > 1) ? $clog2(MAX_W)   : 1;
+    localparam int AWO = (MAX_OUT > 1) ? $clog2(MAX_OUT) : 1;
+
     logic [7:0]  OH, OW;
     logic [7:0]  co, oh, ow, ic, ky, kx;
     // signed source coordinates (for padding compare)
@@ -54,8 +60,8 @@ module ptah_conv2d #(
     wire        first_tap = (ic == 8'd0) && (ky == 8'd0) && (kx == 8'd0);
 
     // ptah_mac PE
-    wire [31:0] a_op = in_range ? imem[in_idx[7:0]] : 32'h0000_0000;   // pad -> +0.0
-    wire [31:0] b_op = wmem[w_idx[7:0]];
+    wire [31:0] a_op = in_range ? imem[in_idx[AWI-1:0]] : 32'h0000_0000;   // pad -> +0.0
+    wire [31:0] b_op = wmem[w_idx[AWW-1:0]];
     logic       mac_en, mac_clear;
     logic [31:0] mac_acc;
     ptah_mac u_mac (.clk(clk), .rst_n(~rst), .en(mac_en), .clear(mac_clear),
@@ -77,8 +83,10 @@ module ptah_conv2d #(
             co<=0; oh<=0; ow<=0; ic<=0; ky<=0; kx<=0; OH<=0; OW<=0;
         end else begin
             done <= 1'b0;
-            if (ld_in_en) imem[ld_in_addr[7:0]] <= ld_in_data;
-            if (ld_w_en)  wmem[ld_w_addr[7:0]]  <= ld_w_data;
+            // preload only while IDLE: gating with (state == IDLE) prevents a
+            // stray load from corrupting imem/wmem during an in-flight convolution.
+            if (ld_in_en && state == IDLE) imem[ld_in_addr[AWI-1:0]] <= ld_in_data;
+            if (ld_w_en  && state == IDLE) wmem[ld_w_addr[AWW-1:0]]  <= ld_w_data;
             case (state)
                 IDLE: begin
                     busy <= 1'b0;
@@ -100,7 +108,7 @@ module ptah_conv2d #(
                     end else kx <= kx + 8'd1;
                 end
                 WB: begin
-                    omem[o_idx[7:0]] <= mac_acc;
+                    omem[o_idx[AWO-1:0]] <= mac_acc;
                     ic<=0; ky<=0; kx<=0;
                     if (ow == OW - 8'd1) begin
                         ow <= 0;
@@ -118,5 +126,5 @@ module ptah_conv2d #(
         end
     end
 
-    assign rd_data = omem[rd_addr[7:0]];
+    assign rd_data = omem[rd_addr[AWO-1:0]];
 endmodule
