@@ -24,6 +24,9 @@ def _ph(p0, p1, p2, p3, p4, p5):
 # Every project currently has Phase 0 (golden) + Phase 1 (pymodel) implemented and
 # tested in Python; Phases 2-5 (RTL -> GDSII) are not started (the RAM-heavy part).
 P01 = _ph("done", "done", "todo", "todo", "todo", "todo")
+# RTL + generic 0-latch synthesis in progress (Phase 2/3 building blocks landed,
+# not yet a fully integrated / tech-mapped top): golden+pymodel done, P2/P3 partial.
+P23 = _ph("done", "done", "partial", "partial", "todo", "todo")
 
 PROJECTS = [
     {
@@ -261,7 +264,7 @@ PROJECTS = [
     {
         "key": "ptahconv", "num": "02", "name": "PtahConv", "deity": "Ptah (craftsmen)",
         "domain": "Direct convolution accelerator", "doc": "docs/02_PtahConv_Convolution.md",
-        "depends": ["bastcore"], "phase": P01,
+        "depends": ["bastcore"], "phase": P23,
         "scope": "Phase 0/1 implements conv2d (NCHW, stride/pad) via im2col+matmul golden and "
                  "a tiled dataflow pymodel.",
         "checkpoints": [
@@ -375,7 +378,7 @@ PROJECTS = [
     {
         "key": "sobekcore", "num": "08", "name": "SobekCore", "deity": "Sobek (Nile)",
         "domain": "Ray-triangle intersector", "doc": "docs/08_SobekCore_RayTrace.md",
-        "depends": [], "phase": P01,
+        "depends": [], "phase": P23,
         "scope": "Phase 0/1 implements watertight Moller-Trumbore ray-triangle intersection "
                  "golden and a pipelined pymodel.",
         "checkpoints": [
@@ -395,7 +398,7 @@ PROJECTS = [
     {
         "key": "atumcore", "num": "10", "name": "AtumCore", "deity": "Atum (creator)",
         "domain": "RISC-V Vector (RVV) unit", "doc": "docs/10_AtumCore_RVV.md",
-        "depends": ["sethcore", "hapicore"], "phase": P01,
+        "depends": ["sethcore", "hapicore"], "phase": P23,
         "scope": "Phase 0/1 implements an RVV-subset golden (vsetvl, vadd/vsub/vmul/vmacc, "
                  "logic/shift, masked ops, vfadd/vfmul, vredsum) and an 8-lane pymodel. Phase 2 "
                  "IN PROGRESS: atum_valu.sv — a VLMAX(=8)-lane combinational vector integer ALU "
@@ -467,7 +470,7 @@ PROJECTS = [
         "domain": "Heterogeneous AI SoC (capstone)", "doc": "docs/00_RaCore_SoC.md",
         "depends": ["sethcore", "atumcore", "hapicore", "anubiscore", "bastcore",
                     "ptahconv", "gebcore", "imentetcore", "neithcore", "sobekcore"],
-        "phase": _ph("done", "done", "todo", "todo", "todo", "todo"),
+        "phase": _ph("done", "done", "partial", "partial", "todo", "todo"),
         "scope": "Phase 0/1 implements the KAI register/DMA contract model, a NoC + "
                  "descriptor-DMA functional model, a KAI conformance harness, and an "
                  "end-to-end axpy that drives a KAI accelerator through the fabric.",
