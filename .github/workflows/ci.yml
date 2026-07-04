@@ -161,6 +161,12 @@ jobs:
         run: ./projects/sobekcore/rtl/tb/run_sim.sh CORE=recip
       - name: Run SobekCore fp32 vector-normalize testbench
         run: ./projects/sobekcore/rtl/tb/run_sim.sh CORE=normalize
+      - name: Run SobekCore fp32 reflection testbench
+        run: ./projects/sobekcore/rtl/tb/run_sim.sh CORE=reflect
+      - name: Run SobekCore fp32 ray-point testbench
+        run: ./projects/sobekcore/rtl/tb/run_sim.sh CORE=raypoint
+      - name: Run SobekCore fp32 lerp testbench
+        run: ./projects/sobekcore/rtl/tb/run_sim.sh CORE=lerp
       - name: Run RaCore KAI register block testbench
         run: ./projects/racore/rtl/tb/run_sim.sh CORE=kai
       - name: Run RaCore NoC arbiter testbench

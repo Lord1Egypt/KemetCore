@@ -4,6 +4,9 @@
 #   make CORE=scale            -> sobek_scale fp32 scalar-vector product (+ hapi fp32)
 #   make CORE=recip            -> sobek_recip fp32 reciprocal 1/x (+ hapi fp32 div)
 #   make CORE=normalize        -> sobek_normalize fp32 v/||v|| (+ dot3 + hapi sqrt/div/mul)
+#   make CORE=reflect          -> sobek_reflect fp32 d-2(d.n)n (+ dot3 + hapi mul/add)
+#   make CORE=raypoint         -> sobek_ray_point fp32 o+t*d (+ hapi mul/add)
+#   make CORE=lerp             -> sobek_lerp fp32 a+t*(b-a) (+ hapi mul/add)
 TOPLEVEL_LANG = verilog
 SIM ?= verilator
 CORE ?= dot3
@@ -30,6 +33,19 @@ VERILOG_SOURCES = $(PWD)/../sobek_normalize.sv $(PWD)/../sobek_dot3.sv \
                   $(HAPI)/hapi_fp32_sqrt.sv $(HAPI)/hapi_fp32_div.sv
 TOPLEVEL = sobek_normalize
 MODULE   = test_normalize
+else ifeq ($(CORE),reflect)
+VERILOG_SOURCES = $(PWD)/../sobek_reflect.sv $(PWD)/../sobek_dot3.sv \
+                  $(HAPI)/hapi_fp32_mul.sv $(HAPI)/hapi_fp32_add.sv
+TOPLEVEL = sobek_reflect
+MODULE   = test_reflect
+else ifeq ($(CORE),raypoint)
+VERILOG_SOURCES = $(PWD)/../sobek_ray_point.sv $(HAPI)/hapi_fp32_mul.sv $(HAPI)/hapi_fp32_add.sv
+TOPLEVEL = sobek_ray_point
+MODULE   = test_raypoint
+else ifeq ($(CORE),lerp)
+VERILOG_SOURCES = $(PWD)/../sobek_lerp.sv $(HAPI)/hapi_fp32_mul.sv $(HAPI)/hapi_fp32_add.sv
+TOPLEVEL = sobek_lerp
+MODULE   = test_lerp
 else ifeq ($(CORE),dot3)
 VERILOG_SOURCES = $(PWD)/../sobek_dot3.sv $(HAPI)/hapi_fp32_mul.sv $(HAPI)/hapi_fp32_add.sv
 TOPLEVEL = sobek_dot3

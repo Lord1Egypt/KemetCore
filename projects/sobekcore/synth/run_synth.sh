@@ -34,6 +34,33 @@ echo "=== synthesizing sobek_scale ==="
 "
 echo "  -> reports/sobek_scale.stat (0 latches asserted)"
 
+echo "=== synthesizing sobek_reflect ==="
+"$YOSYS" -ql "reports/sobek_reflect.log" -p "
+    read_verilog -sv ${HAPI}/hapi_fp32_mul.sv ${HAPI}/hapi_fp32_add.sv ../rtl/sobek_dot3.sv ../rtl/sobek_reflect.sv;
+    synth -top sobek_reflect;
+    select -assert-none t:\$_DLATCH_* t:\$dlatch;
+    tee -o reports/sobek_reflect.stat stat
+"
+echo "  -> reports/sobek_reflect.stat (0 latches asserted)"
+
+echo "=== synthesizing sobek_ray_point ==="
+"$YOSYS" -ql "reports/sobek_ray_point.log" -p "
+    read_verilog -sv ${HAPI}/hapi_fp32_mul.sv ${HAPI}/hapi_fp32_add.sv ../rtl/sobek_ray_point.sv;
+    synth -top sobek_ray_point;
+    select -assert-none t:\$_DLATCH_* t:\$dlatch;
+    tee -o reports/sobek_ray_point.stat stat
+"
+echo "  -> reports/sobek_ray_point.stat (0 latches asserted)"
+
+echo "=== synthesizing sobek_lerp ==="
+"$YOSYS" -ql "reports/sobek_lerp.log" -p "
+    read_verilog -sv ${HAPI}/hapi_fp32_mul.sv ${HAPI}/hapi_fp32_add.sv ../rtl/sobek_lerp.sv;
+    synth -top sobek_lerp;
+    select -assert-none t:\$_DLATCH_* t:\$dlatch;
+    tee -o reports/sobek_lerp.stat stat
+"
+echo "  -> reports/sobek_lerp.stat (0 latches asserted)"
+
 # sobek_recip wraps the HapiCore divider (hapi_fp32_div, $div/$mod -> ~41K gates),
 # whose big combinational cloud the stock apt Yosys on the CI runner OOM-chokes on
 # (same as HapiCore's own div synth). So this heavy synth is skipped under CI
