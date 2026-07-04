@@ -231,3 +231,25 @@ def faceforward_bits(nb, db):
     n = [frombits(u) for u in nb]
     d = [frombits(u) for u in db]
     return [bits(c) for c in faceforward(n, d)]
+
+
+def project(a, b):
+    """fp32 vector projection of a onto b = (a.b / b.b) * b — the component of a
+    along b (used to decompose a direction into parallel/perpendicular parts).
+    Fixed datapath order:
+        ab = dot3(a, b)          (fp32 fixed-order dot product)
+        bb = dot3(b, b)          (fp32 sum of squares of b)
+        s  = ab / bb             (correctly-rounded fp32 divide)
+        c_i = s * b_i            (fp32 scale)
+    `a`, `b` elements are fp32 values; returns three fp32 values."""
+    ab = dot3(a, b)
+    bb = dot3(b, b)
+    s = f32(f32(ab) / f32(bb))
+    return scale(s, b)
+
+
+def project_bits(ab_bits, bb_bits):
+    """project over 32-bit input patterns (a, b), returning three 32-bit patterns."""
+    a = [frombits(u) for u in ab_bits]
+    b = [frombits(u) for u in bb_bits]
+    return [bits(c) for c in project(a, b)]
