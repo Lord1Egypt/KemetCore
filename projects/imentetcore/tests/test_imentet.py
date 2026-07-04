@@ -49,3 +49,32 @@ def test_causal_mask():
     assert np.allclose(out, flash, atol=1e-9)
     # row 0 attends only to position 0 -> output equals V[0]
     assert np.allclose(out[0], V[0], atol=1e-9)
+
+
+def test_fp32_score_order_and_bits():
+    """imentet_fp32.score is the fixed-order fp32 datapath the imentet_qk_score RTL
+    matches: p_i = q_i*k_i, a left-to-right acc fold, then one multiply by the
+    1/sqrt(d) scale — all round-to-nearest fp32."""
+    import imentet_fp32 as f
+
+    D = f.D
+    # exact small-integer dot: sum_{i<D} i = D(D-1)/2
+    assert f.dot(list(range(D)), [1.0] * D) == np.float32(D * (D - 1) // 2)
+    # matches an explicit left-to-right fp32 evaluation
+    q = [0.1 * i for i in range(D)]
+    k = [0.2 * (i + 1) for i in range(D)]
+    prods = [np.float32(np.float32(q[i]) * np.float32(k[i])) for i in range(D)]
+    acc = prods[0]
+    for i in range(1, D):
+        acc = np.float32(np.float32(acc) + np.float32(prods[i]))
+    assert f.dot(q, k) == acc
+    # score applies one more fp32 multiply by the scale
+    s = np.float32(1.0 / np.sqrt(D))
+    assert f.score(q, k, s) == np.float32(np.float32(acc) * s)
+    # bit round-trip helpers are consistent
+    for x in (0.0, 1.0, -3.5, 1e20, -1e-20):
+        assert f.frombits(f.bits(x)) == np.float32(x)
+    # score_bits agrees with score on patterns
+    qb = [f.bits(v) for v in q]
+    kb = [f.bits(v) for v in k]
+    assert f.score_bits(qb, kb, f.bits(s)) == f.bits(f.score(q, k, s))
