@@ -115,3 +115,24 @@ def rowmax_sub_bits(xb):
     """rowmax_sub over LS 32-bit input patterns, returning LS 32-bit patterns."""
     x = [frombits(u) for u in xb]
     return [bits(c) for c in rowmax_sub(x)]
+
+
+def softmax_norm(e):
+    """Normalise a length-LS vector of (already exp'd) weights into probabilities
+    p_j = e_j / sum_i e_i — the divide half of softmax. Fixed datapath order:
+        s   = ((e_0 + e_1) + …) + e_{LS-1}   (fp32 fixed-order sum)
+        inv = 1 / s                          (correctly-rounded fp32 reciprocal)
+        p_j = e_j * inv                      (fp32 scale)
+    `e` elements are fp32 values (the exp() itself stays in the float64 math model,
+    not bit-matched); returns LS fp32 probabilities. Bit-exact given e."""
+    acc = f32(e[0])
+    for i in range(1, LS):
+        acc = f32(f32(acc) + f32(e[i]))
+    inv = f32(f32(1.0) / f32(acc))
+    return [f32(f32(e[j]) * inv) for j in range(LS)]
+
+
+def softmax_norm_bits(eb):
+    """softmax_norm over LS 32-bit input patterns, returning LS 32-bit patterns."""
+    e = [frombits(u) for u in eb]
+    return [bits(c) for c in softmax_norm(e)]

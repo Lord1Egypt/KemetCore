@@ -126,3 +126,24 @@ def test_fp32_rowmax_sub_order_and_bits():
     # bits agree
     xb = [f.bits(v) for v in x]
     assert f.rowmax_sub_bits(xb) == [f.bits(v) for v in f.rowmax_sub(x)]
+
+
+def test_fp32_softmax_norm_order_and_bits():
+    """imentet_fp32.softmax_norm turns exp'd weights into probabilities via a
+    fixed fp32 sum, one reciprocal, then per-element scale."""
+    import imentet_fp32 as f
+
+    LS = f.LS
+    # uniform weights -> 1/LS each; probabilities sum to ~1
+    r = f.softmax_norm([1.0] * LS)
+    assert r == [np.float32(np.float32(1.0) * np.float32(1.0 / LS))] * LS
+    # matches explicit fixed-order evaluation
+    e = [0.5 * (i + 1) for i in range(LS)]
+    acc = np.float32(e[0])
+    for i in range(1, LS):
+        acc = np.float32(np.float32(acc) + np.float32(e[i]))
+    inv = np.float32(np.float32(1.0) / np.float32(acc))
+    assert f.softmax_norm(e) == [np.float32(np.float32(e[j]) * inv) for j in range(LS)]
+    # bits agree
+    eb = [f.bits(v) for v in e]
+    assert f.softmax_norm_bits(eb) == [f.bits(v) for v in f.softmax_norm(e)]
