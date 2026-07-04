@@ -43,4 +43,12 @@ echo "=== synthesizing bast_int8_grid (default 4x4 INT8 systolic array) ==="
     tee -o reports/bast_int8_grid.stat stat
 "
 echo "  -> reports/bast_int8_grid.stat (0 latches asserted)"
+echo "=== synthesizing bast_fp16_mac ==="
+"$YOSYS" -ql "reports/bast_fp16_mac.log" -p "
+    read_verilog -sv ${HAPI}/hapi_fp16_mul.sv ${HAPI}/hapi_fp16_to_fp32.sv ${HAPI}/hapi_fp32_add.sv ../rtl/bast_fp16_mac.sv;
+    synth -top bast_fp16_mac;
+    select -assert-none t:\$_DLATCH_* t:\$dlatch;
+    tee -o reports/bast_fp16_mac.stat stat
+"
+echo "  -> reports/bast_fp16_mac.stat (0 latches asserted)"
 echo "ALL SYNTHESIZED ✅ (no latches)"

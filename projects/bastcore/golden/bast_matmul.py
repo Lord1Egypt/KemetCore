@@ -56,3 +56,15 @@ def int8_matmul(Ab, Bb, K, R, C):
             out[i][j] = int8_dot([Ab[i][k] for k in range(K)],
                                  [Bb[k][j] for k in range(K)])
     return out
+
+
+def fp16_dot(avec, bvec):
+    """fp16 x fp16 -> fp16 product (single round), widened exact to fp32, then
+    fp32 left-to-right accumulate — the bast_fp16_mac datapath (hapi_fp16_mul +
+    hapi_fp16_to_fp32 + hapi_fp32_add). `avec`/`bvec` are fp16 values; returns the
+    fp32 accumulator value."""
+    acc = np.float32(0.0)
+    for a, b in zip(avec, bvec):
+        p = np.float16(a) * np.float16(b)          # fp16 product, single rounding
+        acc = np.float32(np.float32(acc) + np.float32(p))
+    return acc

@@ -1,0 +1,121 @@
+
+6. Printing statistics.
+
+=== bast_fp16_mac ===
+
+        +----------Local Count, excluding submodules.
+        | 
+       11 wires
+      180 wire bits
+       11 public wires
+      180 public wire bits
+        7 ports
+       68 port bits
+       64 cells
+       32   $_ANDNOT_
+       32   $_DFFE_PN0P_
+        3 submodules
+        1   hapi_fp16_mul
+        1   hapi_fp16_to_fp32
+        1   hapi_fp32_add
+
+=== hapi_fp32_add ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     1778 wires
+     2228 wire bits
+       18 public wires
+      468 public wire bits
+        3 ports
+       96 port bits
+     1792 cells
+       97   $_ANDNOT_
+      486   $_AND_
+      342   $_MUX_
+      415   $_NAND_
+       68   $_NOR_
+       43   $_NOT_
+      156   $_ORNOT_
+      114   $_OR_
+       49   $_XNOR_
+       22   $_XOR_
+
+=== hapi_fp16_to_fp32 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+      118 wires
+      215 wire bits
+        8 public wires
+      105 public wire bits
+        2 ports
+       48 port bits
+      126 cells
+       10   $_ANDNOT_
+       32   $_AND_
+       18   $_MUX_
+       33   $_NAND_
+        7   $_NOR_
+       13   $_ORNOT_
+       13   $_OR_
+
+=== hapi_fp16_mul ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     1388 wires
+     1522 wire bits
+       14 public wires
+      148 public wire bits
+        3 ports
+       48 port bits
+     1390 cells
+       51   $_ANDNOT_
+      393   $_AND_
+      103   $_MUX_
+      449   $_NAND_
+       25   $_NOR_
+       38   $_NOT_
+       35   $_ORNOT_
+       39   $_OR_
+       47   $_XNOR_
+      210   $_XOR_
+
+=== design hierarchy ===
+
+        +----------Count including submodules.
+        | 
+     3372 bast_fp16_mac
+     1390 hapi_fp16_mul
+      126 hapi_fp16_to_fp32
+     1792 hapi_fp32_add
+
+        +----------Count including submodules.
+        | 
+     3295 wires
+     4145 wire bits
+       51 public wires
+      901 public wire bits
+       15 ports
+      260 port bits
+        - memories
+        - memory bits
+        - processes
+     3372 cells
+      190   $_ANDNOT_
+      911   $_AND_
+       32   $_DFFE_PN0P_
+      463   $_MUX_
+      897   $_NAND_
+      100   $_NOR_
+       81   $_NOT_
+      204   $_ORNOT_
+      166   $_OR_
+       96   $_XNOR_
+      232   $_XOR_
+        3 submodules
+        1   hapi_fp16_mul
+        1   hapi_fp16_to_fp32
+        1   hapi_fp32_add
+
