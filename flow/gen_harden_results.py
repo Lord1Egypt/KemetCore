@@ -17,6 +17,8 @@ LOGD = os.path.join(ROOT, "flow/logs/asap7")
 LABEL = {
     "sha256_core":   ("AnubisCore",  "SHA-256 core"),
     "seth_regfile":  ("SethCore",    "RV32 register file"),
+    "seth_alu":      ("SethCore",    "RV32I ALU (registered)"),
+    "hapi_fp32_add": ("HapiCore",    "fp32 adder (registered)"),
     "bast_mac":      ("BastCore",    "BF16 MAC"),
     "bast_mac_grid": ("BastCore",    "4x4 BF16 systolic grid"),
     "bast_int8_mac": ("BastCore",    "int8 MAC"),
@@ -30,9 +32,9 @@ LABEL = {
     "ptah_mac":      ("PtahConv",    "fp32 conv MAC"),
 }
 # canonical harden order (cores 00..10)
-ORDER = ["ra_noc_arbiter","seth_regfile","ptah_mac","imentet_qk_score","geb_spmac",
-         "bast_mac","bast_mac_grid","bast_int8_mac","sha256_core","neith_ntt",
-         "sobek_dot3","hapi_fp32_mul","atum_valu"]
+ORDER = ["ra_noc_arbiter","seth_regfile","seth_alu","ptah_mac","imentet_qk_score",
+         "geb_spmac","bast_mac","bast_mac_grid","bast_int8_mac","sha256_core",
+         "neith_ntt","sobek_dot3","hapi_fp32_mul","hapi_fp32_add","atum_valu"]
 
 
 def num(path, pat, last=True, grp=1, cast=float):
