@@ -29,6 +29,8 @@ P01 = _ph("done", "done", "todo", "todo", "todo", "todo")
 # RTL + generic 0-latch synthesis in progress (Phase 2/3 building blocks landed,
 # not yet a fully integrated / tech-mapped top): golden+pymodel done, P2/P3 partial.
 P23 = _ph("done", "done", "partial", "partial", "partial", "todo")
+# same, but with a formal-proof signoff started (Phase 5 partial).
+P235 = _ph("done", "done", "partial", "partial", "partial", "partial")
 
 PROJECTS = [
     {
@@ -343,7 +345,7 @@ PROJECTS = [
         "key": "neithcore", "num": "07", "name": "NeithCore", "deity": "Neith (war/wisdom)",
         "domain": "ML-KEM (Kyber) lattice KEM", "doc": "docs/07_NeithCore_MLKEM.md",
         "depends": [],
-        "phase": _ph("done", "done", "partial", "partial", "partial", "todo"),
+        "phase": _ph("done", "done", "partial", "partial", "partial", "partial"),
         "scope": "Phase 0/1: negacyclic NTT over Z_q (q=7681, NTT-friendly) plus a "
                  "Kyber-512-style module-LWE KEM that is self-consistent (decaps recovers the "
                  "encaps shared secret). Phase 2 IN PROGRESS: neith_modmul (Barrett mult "
@@ -372,6 +374,7 @@ PROJECTS = [
             ("N.9", "Synthesis: generic Yosys, 0 latches + gate count", 3, "done"),
             ("N.10", "Synthesis: ASAP7 liberty tech-mapping + SRAM macro", 3, "todo"),
             ("N.11", "P&R: GDSII", 4, "partial"),
+            ("N.12", "Signoff: formal proof of Barrett modmul r==(a*b)%Q (yosys-smtbmc+z3, all a,b<Q)", 5, "partial"),
         ],
         "tests": [
             ("test_ntt_roundtrip", "intt(ntt(p)) == p", "pass"),
@@ -386,7 +389,7 @@ PROJECTS = [
     {
         "key": "sobekcore", "num": "08", "name": "SobekCore", "deity": "Sobek (Nile)",
         "domain": "Ray-triangle intersector", "doc": "docs/08_SobekCore_RayTrace.md",
-        "depends": [], "phase": P23,
+        "depends": [], "phase": P235,
         "scope": "Phase 0/1 implements watertight Moller-Trumbore ray-triangle intersection "
                  "golden and a pipelined pymodel.",
         "checkpoints": [
@@ -394,6 +397,7 @@ PROJECTS = [
             ("SB.2", "pymodel: pipelined intersector", 1, "done"),
             ("SB.3", "RTL: intersection datapath", 2, "todo"),
             ("SB.4", "P&R: GDSII", 4, "partial"),
+            ("SB.5", "Signoff: formal proof of sobek_dot3 commutativity (yosys-smtbmc+z3, all inputs)", 5, "partial"),
         ],
         "tests": [
             ("test_hit_center", "ray through triangle centroid hits, t correct", "pass"),
@@ -406,7 +410,7 @@ PROJECTS = [
     {
         "key": "atumcore", "num": "10", "name": "AtumCore", "deity": "Atum (creator)",
         "domain": "RISC-V Vector (RVV) unit", "doc": "docs/10_AtumCore_RVV.md",
-        "depends": ["sethcore", "hapicore"], "phase": P23,
+        "depends": ["sethcore", "hapicore"], "phase": P235,
         "scope": "Phase 0/1 implements an RVV-subset golden (vsetvl, vadd/vsub/vmul/vmacc, "
                  "logic/shift, masked ops, vfadd/vfmul, vredsum) and an 8-lane pymodel. Phase 2 "
                  "IN PROGRESS: atum_valu.sv — a VLMAX(=8)-lane combinational vector integer ALU "
@@ -456,6 +460,7 @@ PROJECTS = [
             ("AT.11", "RTL: vector register file (atum_vregfile) + vsetvl (atum_vsetvl) + cocotb", 2, "done"),
             ("AT.12", "RTL: single-cycle vector core (atum_vcore) + vector memory (VLD/VST) running strip-mined programs", 2, "done"),
             ("AT.13", "P&R: GDSII at 500 MHz", 4, "partial"),
+            ("AT.14", "Signoff: formal proof of atum_valu lane algebra (yosys-smtbmc+z3, exhaustive)", 5, "partial"),
         ],
         "tests": [
             ("test_vadd_vmul", "integer vector ops == numpy", "pass"),
