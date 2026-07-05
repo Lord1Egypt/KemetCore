@@ -50,6 +50,12 @@ else ifeq ($(CORE),csr)
   VERILOG_SOURCES = $(PWD)/../seth_csr.sv
   TOPLEVEL = seth_csr
   MODULE   = test_csr
+else ifeq ($(CORE),coreseq)
+  VERILOG_SOURCES = $(PWD)/../seth_core_seq.sv $(PWD)/../seth_decode.sv $(PWD)/../seth_imm.sv \
+                    $(PWD)/../seth_aluctl.sv $(PWD)/../seth_alu.sv $(PWD)/../seth_muldiv_seq.sv \
+                    $(PWD)/../seth_regfile.sv $(PWD)/../seth_trap.sv
+  TOPLEVEL = seth_core_seq
+  MODULE   = test_core_seq
 else ifeq ($(CORE),muldivseq)
   VERILOG_SOURCES = $(PWD)/../seth_muldiv_seq.sv
   TOPLEVEL = seth_muldiv_seq

@@ -77,6 +77,8 @@ jobs:
         run: ./projects/sethcore/rtl/tb/run_sim.sh CORE=trap
       - name: Run SethCore integrated RV32IMZicsr core testbench
         run: ./projects/sethcore/rtl/tb/run_sim.sh CORE=corecsr
+      - name: Run SethCore multi-cycle RV32IMZicsr core testbench
+        run: ./projects/sethcore/rtl/tb/run_sim.sh CORE=coreseq
       - name: Run SethCore branch testbench
         run: ./projects/sethcore/rtl/tb/run_sim.sh CORE=branch
       - name: Run SethCore LSU testbench

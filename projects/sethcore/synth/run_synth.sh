@@ -84,4 +84,21 @@ if [ -z "${CI:-}" ]; then
 else
     echo "=== skipping heavy seth_core_csr synth (seth_muldiv divider) under CI (see committed reports/seth_core_csr.stat) ==="
 fi
+# seth_core_seq is the multi-cycle CPU using the ITERATIVE seth_muldiv_seq (no
+# combinational divider), so its coarse 0-latch check is cheap; still coarse
+# (memory -> $mem) + CI-skipped for parity with the other integrated CPU tops.
+if [ -z "${CI:-}" ]; then
+    echo "=== synthesizing seth_core_seq (coarse, 0-latch check) ==="
+    "$YOSYS" -ql "reports/seth_core_seq.log" -p "
+        read_verilog -sv ../rtl/seth_core_seq.sv ../rtl/seth_decode.sv ../rtl/seth_imm.sv \
+                         ../rtl/seth_aluctl.sv ../rtl/seth_alu.sv ../rtl/seth_muldiv_seq.sv \
+                         ../rtl/seth_regfile.sv ../rtl/seth_trap.sv;
+        synth -top seth_core_seq -run :fine;
+        select -assert-none t:\$_DLATCH_* t:\$dlatch;
+        tee -o reports/seth_core_seq.stat stat
+    "
+    echo "  -> reports/seth_core_seq.stat (0 latches asserted)"
+else
+    echo "=== skipping heavy seth_core_seq synth under CI (see committed reports/seth_core_seq.stat) ==="
+fi
 echo "ALL SYNTHESIZED ✅ (no latches)"
