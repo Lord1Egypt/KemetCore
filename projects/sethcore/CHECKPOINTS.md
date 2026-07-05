@@ -22,5 +22,6 @@ _Auto-generated from `tools/manifest.py`._
 | S2.9 | P3 | Synthesis: ALU Yosys, 0 latches | ✅ |
 | S2.11 | P2 | cocotb: per-instruction vs Spike | ⬜ |
 | S2.14 | P4 | P&R: core macro | 🔧 |
+| S2.20 | P5 | Signoff: formal proof of seth_alu algebraic identities (yosys-smtbmc+z3, exhaustive) | 🔧 |
 
-**Progress:** 16/18 checkpoints complete (33% of phases).
+**Progress:** 16/19 checkpoints complete (33% of phases).
