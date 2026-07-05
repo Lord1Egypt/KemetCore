@@ -15,5 +15,6 @@ _Auto-generated from `tools/manifest.py`._
 | AT.11 | P2 | RTL: vector register file (atum_vregfile) + vsetvl (atum_vsetvl) + cocotb | ✅ |
 | AT.12 | P2 | RTL: single-cycle vector core (atum_vcore) + vector memory (VLD/VST) running strip-mined programs | ✅ |
 | AT.13 | P4 | P&R: GDSII at 500 MHz | 🔧 |
+| AT.14 | P5 | Signoff: formal proof of atum_valu lane algebra (yosys-smtbmc+z3, exhaustive) | 🔧 |
 
-**Progress:** 10/11 checkpoints complete (33% of phases).
+**Progress:** 10/12 checkpoints complete (33% of phases).

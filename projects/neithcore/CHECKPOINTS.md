@@ -15,5 +15,6 @@ _Auto-generated from `tools/manifest.py`._
 | N.9 | P3 | Synthesis: generic Yosys, 0 latches + gate count | ✅ |
 | N.10 | P3 | Synthesis: ASAP7 liberty tech-mapping + SRAM macro | ⬜ |
 | N.11 | P4 | P&R: GDSII | 🔧 |
+| N.12 | P5 | Signoff: formal proof of Barrett modmul r==(a*b)%Q (yosys-smtbmc+z3, all a,b<Q) | 🔧 |
 
-**Progress:** 9/11 checkpoints complete (33% of phases).
+**Progress:** 9/12 checkpoints complete (33% of phases).

@@ -369,3 +369,9 @@ jobs:
         run: YOSYS=yosys SMTBMC=yosys-smtbmc ./projects/hapicore/formal/run_formal.sh
       - name: SethCore formal proofs (seth_alu algebraic identities)
         run: YOSYS=yosys SMTBMC=yosys-smtbmc ./projects/sethcore/formal/run_formal.sh
+      - name: SobekCore formal proofs (fp32 dot3 commutativity)
+        run: YOSYS=yosys SMTBMC=yosys-smtbmc ./projects/sobekcore/formal/run_formal.sh
+      - name: AtumCore formal proofs (vector-ALU lane algebra)
+        run: YOSYS=yosys SMTBMC=yosys-smtbmc ./projects/atumcore/formal/run_formal.sh
+      - name: NeithCore formal proofs (Barrett modmul correctness mod Q)
+        run: YOSYS=yosys SMTBMC=yosys-smtbmc ./projects/neithcore/formal/run_formal.sh

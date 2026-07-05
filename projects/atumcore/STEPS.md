@@ -16,7 +16,7 @@ _Auto-generated from `tools/manifest.py` — do not edit by hand; edit the manif
 | 4 | P2 | Write SystemVerilog RTL + cocotb testbench (Verilator); coverage >= 90% | 🔧 |
 | 5 | P3 | Yosys synthesis: 0 latches, gate count <= target | 🔧 |
 | 6 | P4 | OpenROAD P&R on ASAP7: DRC clean, timing closed at target Fmax -> GDSII | 🔧 |
-| 7 | P5 | CI pipeline + docs finalization; `make all` green | ⬜ |
+| 7 | P5 | CI pipeline + docs finalization; `make all` green | 🔧 |
 
 **Depends on:** [sethcore](../sethcore/STEPS.md), [hapicore](../hapicore/STEPS.md)
 
