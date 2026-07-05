@@ -8,6 +8,6 @@ _Auto-generated from `tools/manifest.py`._
 | I.2 | P0 | Golden: stable softmax | ✅ |
 | I.3 | P1 | pymodel: flash-tiled attention | ✅ |
 | I.4 | P2 | RTL: softmax (LUT exp + Newton) | ⬜ |
-| I.5 | P4 | P&R: GDSII | ⬜ |
+| I.5 | P4 | P&R: GDSII | 🔧 |
 
 **Progress:** 3/5 checkpoints complete (33% of phases).
