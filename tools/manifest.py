@@ -236,6 +236,7 @@ PROJECTS = [
             ("S2.4", "pymodel: hazard forwarding", 1, "done"),
             ("S2.7", "RTL: ALU (seth_alu) + cocotb vs golden", 2, "done"),
             ("S2.8", "RTL: mul/div (seth_muldiv) + cocotb vs golden", 2, "done"),
+            ("S2.8b", "RTL: iterative mul/div (seth_muldiv_seq, P&R-friendly) + cocotb", 2, "done"),
             ("S2.12", "RTL: immediate generator (seth_imm) + cocotb vs golden", 2, "done"),
             ("S2.13", "RTL: register file (seth_regfile) + cocotb vs reference", 2, "done"),
             ("S2.15", "RTL: ALU-control decoder (seth_aluctl) + exhaustive cocotb", 2, "done"),
