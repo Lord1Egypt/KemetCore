@@ -10,6 +10,7 @@ _Auto-generated from `tools/manifest.py`._
 | S2.4 | P1 | pymodel: hazard forwarding | ✅ |
 | S2.7 | P2 | RTL: ALU (seth_alu) + cocotb vs golden | ✅ |
 | S2.8 | P2 | RTL: mul/div (seth_muldiv) + cocotb vs golden | ✅ |
+| S2.8b | P2 | RTL: iterative mul/div (seth_muldiv_seq, P&R-friendly) + cocotb | ✅ |
 | S2.12 | P2 | RTL: immediate generator (seth_imm) + cocotb vs golden | ✅ |
 | S2.13 | P2 | RTL: register file (seth_regfile) + cocotb vs reference | ✅ |
 | S2.15 | P2 | RTL: ALU-control decoder (seth_aluctl) + exhaustive cocotb | ✅ |
@@ -21,4 +22,4 @@ _Auto-generated from `tools/manifest.py`._
 | S2.11 | P2 | cocotb: per-instruction vs Spike | ⬜ |
 | S2.14 | P4 | P&R: core macro | 🔧 |
 
-**Progress:** 14/16 checkpoints complete (33% of phases).
+**Progress:** 15/17 checkpoints complete (33% of phases).

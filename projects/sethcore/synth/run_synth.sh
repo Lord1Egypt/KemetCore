@@ -4,10 +4,11 @@ set -euo pipefail
 cd "$(dirname "$0")"
 YOSYS="${YOSYS:-$HOME/miniconda3/envs/eda/bin/yosys}"
 mkdir -p reports
-# NOTE: seth_muldiv is intentionally excluded — a purely combinational 32-bit
-# divider explodes under generic Yosys synth (minutes+). A real flow uses a
-# sequential/iterative divider or a DesignWare-style macro; tracked for Phase 3.
-for core in seth_alu seth_imm seth_regfile seth_aluctl seth_decode seth_csr seth_branch seth_lsu; do
+# NOTE: the combinational seth_muldiv is intentionally excluded — its 32-bit
+# divide explodes under generic Yosys synth (minutes+). seth_muldiv_seq is the
+# ITERATIVE replacement (longest path = one 32-bit subtract), so it synthesizes
+# fully in <1s and IS included below.
+for core in seth_alu seth_imm seth_regfile seth_aluctl seth_decode seth_csr seth_branch seth_lsu seth_muldiv_seq; do
     "$YOSYS" -ql "reports/${core}.log" -p "
         read_verilog -sv ../rtl/${core}.sv;
         synth -top ${core};

@@ -57,6 +57,8 @@ jobs:
         run: ./projects/sethcore/rtl/tb/run_sim.sh CORE=alu
       - name: Run SethCore mul/div testbench
         run: ./projects/sethcore/rtl/tb/run_sim.sh CORE=muldiv
+      - name: Run SethCore sequential mul/div testbench
+        run: ./projects/sethcore/rtl/tb/run_sim.sh CORE=muldivseq
       - name: Run SethCore immediate-generator testbench
         run: ./projects/sethcore/rtl/tb/run_sim.sh CORE=imm
       - name: Run SethCore register-file testbench
