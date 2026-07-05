@@ -1,0 +1,235 @@
+
+10. Printing statistics.
+
+=== seth_trap ===
+
+        +----------Local Count, excluding submodules.
+        | 
+       23 wires
+      580 wire bits
+       17 public wires
+      419 public wire bits
+       12 ports
+      352 port bits
+        5 cells
+        1   $alu
+        1   $logic_and
+        1   $mux
+        2   $or
+
+=== seth_regfile ===
+
+        +----------Local Count, excluding submodules.
+        | 
+       22 wires
+      352 wire bits
+        9 public wires
+      114 public wire bits
+        9 ports
+      114 port bits
+       14 cells
+        1   $logic_and
+        2   $logic_not
+        1   $mem_v2
+        9   $mux
+        1   $reduce_bool
+
+=== seth_muldiv_seq ===
+
+        +----------Local Count, excluding submodules.
+        | 
+      139 wires
+     2197 wire bits
+       32 public wires
+      728 public wire bits
+        9 ports
+      104 port bits
+      117 cells
+        7   $alu
+        7   $and
+        1   $dff
+        7   $dffe
+       12   $eq
+        4   $logic_and
+        4   $logic_not
+        2   $logic_or
+        3   $macc_v2
+       25   $mux
+        6   $ne
+       11   $not
+        1   $or
+        6   $pmux
+        7   $reduce_and
+        5   $reduce_bool
+        5   $reduce_or
+        1   $sdff
+        2   $sdffe
+        1   $xor
+
+=== seth_alu ===
+
+        +----------Local Count, excluding submodules.
+        | 
+       30 wires
+      560 wire bits
+        4 public wires
+      100 public wire bits
+        4 ports
+      100 port bits
+       23 cells
+        2   $alu
+        1   $and
+        9   $eq
+        1   $logic_not
+        2   $mux
+        1   $or
+        1   $pmux
+        1   $shl
+        1   $shr
+        1   $sshr
+        3   $xor
+
+=== seth_aluctl ===
+
+        +----------Local Count, excluding submodules.
+        | 
+       21 wires
+       53 wire bits
+        5 public wires
+       25 public wire bits
+        4 ports
+       21 port bits
+       18 cells
+       11   $eq
+        1   $logic_not
+        5   $mux
+        1   $pmux
+
+=== seth_imm ===
+
+        +----------Local Count, excluding submodules.
+        | 
+       14 wires
+      139 wire bits
+        7 public wires
+      129 public wire bits
+        2 ports
+       64 port bits
+       11 cells
+        8   $eq
+        1   $pmux
+        2   $reduce_or
+
+=== seth_decode ===
+
+        +----------Local Count, excluding submodules.
+        | 
+       26 wires
+       70 wire bits
+       13 public wires
+       57 public wire bits
+       11 ports
+       43 port bits
+       23 cells
+       10   $eq
+        9   $mux
+        1   $pmux
+        3   $reduce_or
+
+=== seth_core_seq ===
+
+        +----------Local Count, excluding submodules.
+        | 
+      265 wires
+     3360 wire bits
+       89 public wires
+     1262 public wire bits
+        9 ports
+      102 port bits
+      213 cells
+        4   $alu
+        6   $and
+       33   $eq
+       18   $logic_and
+        9   $logic_not
+       12   $logic_or
+        1   $mem_v2
+       61   $mux
+        1   $ne
+       12   $not
+        8   $or
+        6   $pmux
+       11   $reduce_and
+        9   $reduce_bool
+        6   $reduce_or
+       11   $sdffe
+        2   $shl
+        1   $shr
+        2   $xor
+        7 submodules
+        1   seth_alu
+        1   seth_aluctl
+        1   seth_decode
+        1   seth_imm
+        1   seth_muldiv_seq
+        1   seth_regfile
+        1   seth_trap
+
+=== design hierarchy ===
+
+        +----------Count including submodules.
+        | 
+      424 seth_core_seq
+       23 seth_alu
+       18 seth_aluctl
+       23 seth_decode
+       11 seth_imm
+      117 seth_muldiv_seq
+       14 seth_regfile
+        5 seth_trap
+
+        +----------Count including submodules.
+        | 
+      540 wires
+     7311 wire bits
+      176 public wires
+     2834 public wire bits
+       60 ports
+      900 port bits
+        - memories
+        - memory bits
+        - processes
+      424 cells
+       14   $alu
+       14   $and
+        1   $dff
+        7   $dffe
+       83   $eq
+       24   $logic_and
+       17   $logic_not
+       14   $logic_or
+        3   $macc_v2
+        2   $mem_v2
+      112   $mux
+        7   $ne
+       23   $not
+       12   $or
+       16   $pmux
+       18   $reduce_and
+       15   $reduce_bool
+       16   $reduce_or
+        1   $sdff
+       13   $sdffe
+        3   $shl
+        2   $shr
+        1   $sshr
+        6   $xor
+        7 submodules
+        1   seth_alu
+        1   seth_aluctl
+        1   seth_decode
+        1   seth_imm
+        1   seth_muldiv_seq
+        1   seth_regfile
+        1   seth_trap
+

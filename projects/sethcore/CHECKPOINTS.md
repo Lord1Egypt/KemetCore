@@ -18,8 +18,9 @@ _Auto-generated from `tools/manifest.py`._
 | S2.17 | P2 | RTL: integrated single-cycle core (seth_core) + cocotb vs ISA sim | ✅ |
 | S2.18 | P2 | RTL: 5-stage interlocked pipeline (seth_pipeline) + cocotb vs ISA sim | ✅ |
 | S2.10 | P2 | RTL: forwarding pipeline (seth_pipeline_fwd) + cocotb vs interlock & ISA sim | ✅ |
+| S2.19 | P2 | RTL: multi-cycle RV32IMZicsr core (seth_core_seq, iterative div, stall) vs CpuZ | ✅ |
 | S2.9 | P3 | Synthesis: ALU Yosys, 0 latches | ✅ |
 | S2.11 | P2 | cocotb: per-instruction vs Spike | ⬜ |
 | S2.14 | P4 | P&R: core macro | 🔧 |
 
-**Progress:** 15/17 checkpoints complete (33% of phases).
+**Progress:** 16/18 checkpoints complete (33% of phases).
