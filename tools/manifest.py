@@ -21,19 +21,21 @@ def _ph(p0, p1, p2, p3, p4, p5):
     return {0: p0, 1: p1, 2: p2, 3: p3, 4: p4, 5: p5}
 
 
-# Every project currently has Phase 0 (golden) + Phase 1 (pymodel) implemented and
-# tested in Python; Phases 2-5 (RTL -> GDSII) are not started (the RAM-heavy part).
+# Every project has Phase 0 (golden) + Phase 1 (pymodel) done in Python. Phase 2/3
+# (RTL + Yosys 0-latch synth) is in progress across all 11 cores. Phase 4 (ASAP7
+# 7nm P&R -> routed GDSII, timing closed) is now demonstrated on a representative
+# block of every core -> see flow/HARDEN_RESULTS.md (13 signed-off blocks, 11 cores).
 P01 = _ph("done", "done", "todo", "todo", "todo", "todo")
 # RTL + generic 0-latch synthesis in progress (Phase 2/3 building blocks landed,
 # not yet a fully integrated / tech-mapped top): golden+pymodel done, P2/P3 partial.
-P23 = _ph("done", "done", "partial", "partial", "todo", "todo")
+P23 = _ph("done", "done", "partial", "partial", "partial", "todo")
 
 PROJECTS = [
     {
         "key": "hapicore", "num": "09", "name": "HapiCore", "deity": "Hapi (Nile flood)",
         "domain": "IEEE-754 FPU library", "doc": "docs/09_HapiCore_FPU.md",
         "depends": [],
-        "phase": _ph("done", "done", "partial", "partial", "todo", "todo"),
+        "phase": _ph("done", "done", "partial", "partial", "partial", "todo"),
         "scope": "Phase 0/1: fp16/bf16/fp32 add, mul, fma, cmp, classify with correct "
                  "bf16 round-to-nearest-even. Phase 2 IN PROGRESS: bf16 AND fp32 multiplier "
                  "+ adder RTL (hapi_bf16_mul/add, hapi_fp32_mul/add), each cocotb-verified "
@@ -77,7 +79,8 @@ PROJECTS = [
                  "Golden fp_sqrt rounds the exact real sqrt via math.isqrt with exact tie "
                  "detection. cocotb bit-exact on 210K+ roots (incl 4K perfect squares); 0-latch "
                  "(coarse ~381 cells; abc-fast ~27K gates, sqrt synth also CI-skipped). HapiCore "
-                 "FPU now has mul+add+fma(x3 fmts)+div+sqrt. ASAP7 + P&R (Phase 4) pending.",
+                 "FPU now has mul+add+fma(x3 fmts)+div+sqrt. Phase 4: hapi_fp32_mul signed "
+                 "off on ASAP7 7nm (registered boundary, WNS 0.00 @286 MHz, 531 um^2).",
         "checkpoints": [
             ("HA.1", "Golden: fp16/bf16/fp32 add", 0, "done"),
             ("HA.2", "Golden: mul + fma", 0, "done"),
@@ -97,7 +100,7 @@ PROJECTS = [
             ("HA.17", "RTL: fp32 sqrt (hapi_fp32_sqrt) + cocotb vs correctly-rounded golden", 2, "done"),
             ("HA.13", "Synthesis: generic Yosys, 0 latches + gate count", 3, "done"),
             ("HA.14", "Synthesis: ASAP7 liberty tech-mapping", 3, "todo"),
-            ("HA.15", "P&R: bf16/fp32 add+mul GDSII", 4, "todo"),
+            ("HA.15", "P&R: bf16/fp32 add+mul GDSII", 4, "partial"),
         ],
         "tests": [
             ("test_add_matches_numpy", "fp16/fp32 add == numpy IEEE result", "pass"),
@@ -129,12 +132,13 @@ PROJECTS = [
         "key": "anubiscore", "num": "06", "name": "AnubisCore", "deity": "Anubis (embalming)",
         "domain": "SHA-256 / SHA-3 hash engine", "doc": "docs/06_AnubisCore_HashEngine.md",
         "depends": [],
-        "phase": _ph("done", "done", "done", "partial", "todo", "todo"),
+        "phase": _ph("done", "done", "done", "partial", "partial", "todo"),
         "scope": "Phase 0/1: full SHA-256 + Keccak/SHA3-256 in pure Python vs hashlib. "
                  "Phase 2 DONE: SHA-256 + SHA3-256/Keccak RTL, each verified bit-exact in "
                  "cocotb/Verilator 5.020. Phase 3 IN PROGRESS: generic Yosys synth passes "
                  "with 0 latches (sha256 ~6.4K cells, sha3 ~15.8K cells); ASAP7 liberty "
-                 "tech-mapping + OpenROAD P&R (Phase 4) pending (no PDK/OpenROAD locally).",
+                 "Phase 4: sha256_core signed off on ASAP7 7nm (routed GDSII, WNS 0.00, "
+                 "1286 um^2, 0 route-DRC) via OpenROAD-flow-scripts locally.",
         "checkpoints": [
             ("A1.1", "Golden: SHA-256 vs hashlib", 0, "done"),
             ("A1.2", "Golden: Keccak-f[1600] / SHA3-256 vs hashlib", 0, "done"),
@@ -145,7 +149,7 @@ PROJECTS = [
             ("A1.7", "RTL: Keccak-f[1600] + cocotb (Verilator)", 2, "done"),
             ("A1.8", "Synthesis: generic Yosys, 0 latches + gate count", 3, "done"),
             ("A1.9", "Synthesis: ASAP7 liberty tech-mapping", 3, "todo"),
-            ("A1.10", "P&R: GDSII", 4, "todo"),
+            ("A1.10", "P&R: GDSII", 4, "partial"),
         ],
         "tests": [
             ("test_sha256_vs_hashlib", "random + fixed messages == hashlib.sha256", "pass"),
@@ -160,7 +164,7 @@ PROJECTS = [
         "key": "bastcore", "num": "05", "name": "BastCore", "deity": "Bastet (protection)",
         "domain": "BF16 tensor core", "doc": "docs/05_BastCore_BF16Tensor.md",
         "depends": ["hapicore"],
-        "phase": _ph("done", "done", "partial", "partial", "todo", "todo"),
+        "phase": _ph("done", "done", "partial", "partial", "partial", "todo"),
         "scope": "Phase 0/1: bf16 matmul (bf16 inputs, fp32 accumulate) + 16x16 systolic "
                  "dataflow pymodel. Phase 2 IN PROGRESS: bast_mac.sv — the MAC processing "
                  "element (bf16 multiply -> exact bf16->fp32 widen -> registered fp32 "
@@ -180,7 +184,7 @@ PROJECTS = [
             ("B2.5", "RTL: mac_cell (bf16 mul + fp32 accumulate) + cocotb vs golden", 2, "done"),
             ("B2.6", "RTL: mac_grid RxC systolic array (abuttable to 16x16) + cocotb", 2, "done"),
             ("B2.8", "Synthesis: generic Yosys, 0 latches + gate count", 3, "done"),
-            ("B2.9", "P&R: full array GDSII", 4, "todo"),
+            ("B2.9", "P&R: full array GDSII", 4, "partial"),
         ],
         "tests": [
             ("test_matmul_vs_numpy", "bf16 matmul within bf16 tolerance of fp32 ref", "pass"),
@@ -194,7 +198,7 @@ PROJECTS = [
         "key": "sethcore", "num": "01", "name": "SethCore", "deity": "Seth (strength)",
         "domain": "RV32IM pipelined CPU", "doc": "docs/01_SethCore_RV32IM_CPU.md",
         "depends": ["hapicore"],
-        "phase": _ph("done", "done", "partial", "partial", "todo", "todo"),
+        "phase": _ph("done", "done", "partial", "partial", "partial", "todo"),
         "scope": "Phase 0/1: RV32I+M ISA sim + 5-stage pymodel. Phase 2 IN PROGRESS: "
                  "seth_alu.sv (RV32 ALU), seth_muldiv.sv (RV32M mul/div/rem) and seth_imm.sv "
                  "(RV32 immediate generator: I/S/B/U/J formats, sign-extended per ISA) and "
@@ -241,7 +245,7 @@ PROJECTS = [
             ("S2.10", "RTL: forwarding pipeline (seth_pipeline_fwd) + cocotb vs interlock & ISA sim", 2, "done"),
             ("S2.9", "Synthesis: ALU Yosys, 0 latches", 3, "done"),
             ("S2.11", "cocotb: per-instruction vs Spike", 2, "todo"),
-            ("S2.14", "P&R: core macro", 4, "todo"),
+            ("S2.14", "P&R: core macro", 4, "partial"),
         ],
         "tests": [
             ("test_arith_program", "sum-1..10 loop returns 55", "pass"),
@@ -271,7 +275,7 @@ PROJECTS = [
             ("PC.1", "Golden: conv2d (stride/pad) vs reference", 0, "done"),
             ("PC.2", "pymodel: tiled im2col dataflow", 1, "done"),
             ("PC.3", "RTL: systolic conv array", 2, "todo"),
-            ("PC.4", "P&R: GDSII (tile-abutted)", 4, "todo"),
+            ("PC.4", "P&R: GDSII (tile-abutted)", 4, "partial"),
         ],
         "tests": [
             ("test_conv_vs_reference", "im2col conv == naive loop reference", "pass"),
@@ -283,7 +287,7 @@ PROJECTS = [
         "key": "gebcore", "num": "04", "name": "GebCore", "deity": "Geb (earth)",
         "domain": "2:4 structured sparse matmul", "doc": "docs/04_GebCore_SparseMatmul.md",
         "depends": ["bastcore"],
-        "phase": _ph("done", "done", "partial", "partial", "todo", "todo"),
+        "phase": _ph("done", "done", "partial", "partial", "partial", "todo"),
         "scope": "Phase 0/1 implements 2:4 structured-sparse matmul (compress to 2-of-4 + "
                  "metadata) and a pymodel that skips pruned MACs. Phase 2 IN PROGRESS: "
                  "geb_spmac.sv — the sparse-MAC processing element: a 2-bit lane index (the "
@@ -302,7 +306,7 @@ PROJECTS = [
             ("G.3", "RTL: sparse-MAC cell (lane-select + fp32 MAC) + cocotb vs golden", 2, "done"),
             ("G.4", "Synthesis: generic Yosys, 0 latches + gate count", 3, "done"),
             ("G.5", "RTL: sparse PE array (abuttable)", 2, "todo"),
-            ("G.6", "P&R: GDSII", 4, "todo"),
+            ("G.6", "P&R: GDSII", 4, "partial"),
         ],
         "tests": [
             ("test_sparse_equals_dense", "sparse matmul == dense matmul on 2:4 weights", "pass"),
@@ -322,7 +326,7 @@ PROJECTS = [
             ("I.2", "Golden: stable softmax", 0, "done"),
             ("I.3", "pymodel: flash-tiled attention", 1, "done"),
             ("I.4", "RTL: softmax (LUT exp + Newton)", 2, "todo"),
-            ("I.5", "P&R: GDSII", 4, "todo"),
+            ("I.5", "P&R: GDSII", 4, "partial"),
         ],
         "tests": [
             ("test_attention_vs_reference", "attention == numpy reference", "pass"),
@@ -335,7 +339,7 @@ PROJECTS = [
         "key": "neithcore", "num": "07", "name": "NeithCore", "deity": "Neith (war/wisdom)",
         "domain": "ML-KEM (Kyber) lattice KEM", "doc": "docs/07_NeithCore_MLKEM.md",
         "depends": [],
-        "phase": _ph("done", "done", "partial", "partial", "todo", "todo"),
+        "phase": _ph("done", "done", "partial", "partial", "partial", "todo"),
         "scope": "Phase 0/1: negacyclic NTT over Z_q (q=7681, NTT-friendly) plus a "
                  "Kyber-512-style module-LWE KEM that is self-consistent (decaps recovers the "
                  "encaps shared secret). Phase 2 IN PROGRESS: neith_modmul (Barrett mult "
@@ -363,7 +367,7 @@ PROJECTS = [
             ("N.8", "RTL: psi pre/post-multiply for full negacyclic ntt()/intt()", 2, "done"),
             ("N.9", "Synthesis: generic Yosys, 0 latches + gate count", 3, "done"),
             ("N.10", "Synthesis: ASAP7 liberty tech-mapping + SRAM macro", 3, "todo"),
-            ("N.11", "P&R: GDSII", 4, "todo"),
+            ("N.11", "P&R: GDSII", 4, "partial"),
         ],
         "tests": [
             ("test_ntt_roundtrip", "intt(ntt(p)) == p", "pass"),
@@ -385,7 +389,7 @@ PROJECTS = [
             ("SB.1", "Golden: Moller-Trumbore intersection", 0, "done"),
             ("SB.2", "pymodel: pipelined intersector", 1, "done"),
             ("SB.3", "RTL: intersection datapath", 2, "todo"),
-            ("SB.4", "P&R: GDSII", 4, "todo"),
+            ("SB.4", "P&R: GDSII", 4, "partial"),
         ],
         "tests": [
             ("test_hit_center", "ray through triangle centroid hits, t correct", "pass"),
@@ -447,7 +451,7 @@ PROJECTS = [
             ("AT.10", "RTL: integrated vector execute unit (atum_vexec) + cocotb vs golden", 2, "done"),
             ("AT.11", "RTL: vector register file (atum_vregfile) + vsetvl (atum_vsetvl) + cocotb", 2, "done"),
             ("AT.12", "RTL: single-cycle vector core (atum_vcore) + vector memory (VLD/VST) running strip-mined programs", 2, "done"),
-            ("AT.13", "P&R: GDSII at 500 MHz", 4, "todo"),
+            ("AT.13", "P&R: GDSII at 500 MHz", 4, "partial"),
         ],
         "tests": [
             ("test_vadd_vmul", "integer vector ops == numpy", "pass"),
@@ -470,7 +474,7 @@ PROJECTS = [
         "domain": "Heterogeneous AI SoC (capstone)", "doc": "docs/00_RaCore_SoC.md",
         "depends": ["sethcore", "atumcore", "hapicore", "anubiscore", "bastcore",
                     "ptahconv", "gebcore", "imentetcore", "neithcore", "sobekcore"],
-        "phase": _ph("done", "done", "partial", "partial", "todo", "todo"),
+        "phase": _ph("done", "done", "partial", "partial", "partial", "todo"),
         "scope": "Phase 0/1 implements the KAI register/DMA contract model, a NoC + "
                  "descriptor-DMA functional model, a KAI conformance harness, and an "
                  "end-to-end axpy that drives a KAI accelerator through the fabric.",
@@ -481,7 +485,7 @@ PROJECTS = [
             ("RA.4", "pymodel: arbitration + DMA timing", 1, "done"),
             ("RA.5", "RTL: NoC + DMA", 2, "todo"),
             ("RA.7", "RTL: RaCore-Lite top integration", 2, "todo"),
-            ("RA.10", "P&R: Lite hierarchical GDSII", 4, "todo"),
+            ("RA.10", "P&R: Lite hierarchical GDSII", 4, "partial"),
             ("RA.11", "Flagship demo: CNN inference + attestation", 5, "todo"),
         ],
         "tests": [

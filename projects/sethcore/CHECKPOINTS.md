@@ -19,6 +19,6 @@ _Auto-generated from `tools/manifest.py`._
 | S2.10 | P2 | RTL: forwarding pipeline (seth_pipeline_fwd) + cocotb vs interlock & ISA sim | ✅ |
 | S2.9 | P3 | Synthesis: ALU Yosys, 0 latches | ✅ |
 | S2.11 | P2 | cocotb: per-instruction vs Spike | ⬜ |
-| S2.14 | P4 | P&R: core macro | ⬜ |
+| S2.14 | P4 | P&R: core macro | 🔧 |
 
 **Progress:** 14/16 checkpoints complete (33% of phases).

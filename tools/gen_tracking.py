@@ -156,9 +156,12 @@ def gen_progress():
         "## What 'done' means today",
         "",
         "Every project's **Phase 0 (golden reference)** and **Phase 1 (pymodel)** are "
-        "implemented in pure Python and covered by passing pytest. These are RAM-trivial "
-        "(<0.5 GB) and run on any laptop. **Phases 2–5 (RTL → GDSII)** are the RAM-heavy "
-        "part and are not started — see RAM budget below.",
+        "implemented in pure Python and covered by passing pytest. **Phase 2/3 (RTL + "
+        "Yosys 0-latch synth)** is in progress across all 11 cores. **Phase 4 (ASAP7 7nm "
+        "P&R → routed GDSII, timing closed, 0 route-DRC)** is now demonstrated on a "
+        "representative block of **every** core — 13 signed-off blocks, see "
+        "[flow/HARDEN_RESULTS.md](flow/HARDEN_RESULTS.md). Full-core P&R and Phase 5 "
+        "signoff remain; the RAM wall for large flat cores is noted below.",
         "",
         "## RAM budget for the remaining phases (the OOM risk)",
         "",

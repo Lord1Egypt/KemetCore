@@ -13,6 +13,6 @@ _Auto-generated from `tools/manifest.py`._
 | A1.7 | P2 | RTL: Keccak-f[1600] + cocotb (Verilator) | ✅ |
 | A1.8 | P3 | Synthesis: generic Yosys, 0 latches + gate count | ✅ |
 | A1.9 | P3 | Synthesis: ASAP7 liberty tech-mapping | ⬜ |
-| A1.10 | P4 | P&R: GDSII | ⬜ |
+| A1.10 | P4 | P&R: GDSII | 🔧 |
 
 **Progress:** 8/10 checkpoints complete (50% of phases).

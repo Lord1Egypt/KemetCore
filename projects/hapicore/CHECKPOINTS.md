@@ -22,6 +22,6 @@ _Auto-generated from `tools/manifest.py`._
 | HA.17 | P2 | RTL: fp32 sqrt (hapi_fp32_sqrt) + cocotb vs correctly-rounded golden | ✅ |
 | HA.13 | P3 | Synthesis: generic Yosys, 0 latches + gate count | ✅ |
 | HA.14 | P3 | Synthesis: ASAP7 liberty tech-mapping | ⬜ |
-| HA.15 | P4 | P&R: bf16/fp32 add+mul GDSII | ⬜ |
+| HA.15 | P4 | P&R: bf16/fp32 add+mul GDSII | 🔧 |
 
 **Progress:** 17/19 checkpoints complete (33% of phases).
