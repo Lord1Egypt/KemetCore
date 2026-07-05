@@ -375,3 +375,9 @@ jobs:
         run: YOSYS=yosys SMTBMC=yosys-smtbmc ./projects/atumcore/formal/run_formal.sh
       - name: NeithCore formal proofs (Barrett modmul correctness mod Q)
         run: YOSYS=yosys SMTBMC=yosys-smtbmc ./projects/neithcore/formal/run_formal.sh
+      - name: GebCore formal proofs (2:4 sparsity invariant)
+        run: YOSYS=yosys SMTBMC=yosys-smtbmc ./projects/gebcore/formal/run_formal.sh
+      - name: PtahConv formal proofs (ReLU non-negativity)
+        run: YOSYS=yosys SMTBMC=yosys-smtbmc ./projects/ptahconv/formal/run_formal.sh
+      - name: ImentetCore formal proofs (QK-score commutativity)
+        run: YOSYS=yosys SMTBMC=yosys-smtbmc ./projects/imentetcore/formal/run_formal.sh

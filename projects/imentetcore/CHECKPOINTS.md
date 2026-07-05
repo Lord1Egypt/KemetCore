@@ -9,5 +9,6 @@ _Auto-generated from `tools/manifest.py`._
 | I.3 | P1 | pymodel: flash-tiled attention | ✅ |
 | I.4 | P2 | RTL: softmax (LUT exp + Newton) | ⬜ |
 | I.5 | P4 | P&R: GDSII | 🔧 |
+| I.6 | P5 | Signoff: formal proof of imentet_qk_score q<->k commutativity (yosys-smtbmc+z3) | 🔧 |
 
-**Progress:** 3/5 checkpoints complete (33% of phases).
+**Progress:** 3/6 checkpoints complete (33% of phases).
