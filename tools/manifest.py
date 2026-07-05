@@ -35,7 +35,7 @@ PROJECTS = [
         "key": "hapicore", "num": "09", "name": "HapiCore", "deity": "Hapi (Nile flood)",
         "domain": "IEEE-754 FPU library", "doc": "docs/09_HapiCore_FPU.md",
         "depends": [],
-        "phase": _ph("done", "done", "partial", "partial", "partial", "todo"),
+        "phase": _ph("done", "done", "partial", "partial", "partial", "partial"),
         "scope": "Phase 0/1: fp16/bf16/fp32 add, mul, fma, cmp, classify with correct "
                  "bf16 round-to-nearest-even. Phase 2 IN PROGRESS: bf16 AND fp32 multiplier "
                  "+ adder RTL (hapi_bf16_mul/add, hapi_fp32_mul/add), each cocotb-verified "
@@ -101,6 +101,7 @@ PROJECTS = [
             ("HA.13", "Synthesis: generic Yosys, 0 latches + gate count", 3, "done"),
             ("HA.14", "Synthesis: ASAP7 liberty tech-mapping", 3, "todo"),
             ("HA.15", "P&R: bf16/fp32 add+mul GDSII", 4, "partial"),
+            ("HA.16", "Signoff: formal proof of fp32 mul/add commutativity (yosys-smtbmc+z3, all 2^64)", 5, "partial"),
         ],
         "tests": [
             ("test_add_matches_numpy", "fp16/fp32 add == numpy IEEE result", "pass"),
@@ -198,7 +199,7 @@ PROJECTS = [
         "key": "sethcore", "num": "01", "name": "SethCore", "deity": "Seth (strength)",
         "domain": "RV32IM pipelined CPU", "doc": "docs/01_SethCore_RV32IM_CPU.md",
         "depends": ["hapicore"],
-        "phase": _ph("done", "done", "partial", "partial", "partial", "todo"),
+        "phase": _ph("done", "done", "partial", "partial", "partial", "partial"),
         "scope": "Phase 0/1: RV32I+M ISA sim + 5-stage pymodel. Phase 2 IN PROGRESS: "
                  "seth_alu.sv (RV32 ALU), seth_muldiv.sv (RV32M mul/div/rem) and seth_imm.sv "
                  "(RV32 immediate generator: I/S/B/U/J formats, sign-extended per ISA) and "
@@ -248,6 +249,7 @@ PROJECTS = [
             ("S2.9", "Synthesis: ALU Yosys, 0 latches", 3, "done"),
             ("S2.11", "cocotb: per-instruction vs Spike", 2, "todo"),
             ("S2.14", "P&R: core macro", 4, "partial"),
+            ("S2.20", "Signoff: formal proof of seth_alu algebraic identities (yosys-smtbmc+z3, exhaustive)", 5, "partial"),
         ],
         "tests": [
             ("test_arith_program", "sum-1..10 loop returns 55", "pass"),

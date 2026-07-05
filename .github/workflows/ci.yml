@@ -349,3 +349,23 @@ jobs:
         run: YOSYS=yosys ./projects/imentetcore/synth/run_synth.sh
       - name: Synthesize RaCore KAI register block (asserts no latches)
         run: YOSYS=yosys ./projects/racore/synth/run_synth.sh
+
+  formal:
+    name: Phase 5 formal (yosys-smtbmc + z3)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install Yosys (incl. yosys-smtbmc) + z3 solver
+        run: |
+          sudo apt-get update && sudo apt-get install -y yosys
+          pip install z3-solver
+          yosys --version
+          yosys-smtbmc --help >/dev/null
+          z3 --version   # z3-solver wheel puts the z3 binary on the setup-python PATH
+      - name: HapiCore formal proofs (fp32 mul/add over all 2^64 inputs)
+        run: YOSYS=yosys SMTBMC=yosys-smtbmc ./projects/hapicore/formal/run_formal.sh
+      - name: SethCore formal proofs (seth_alu algebraic identities)
+        run: YOSYS=yosys SMTBMC=yosys-smtbmc ./projects/sethcore/formal/run_formal.sh
