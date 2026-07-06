@@ -8,7 +8,7 @@ command -v z3 >/dev/null || export PATH="$HOME/miniconda3/bin:$PATH"
 mkdir -p build
 prove() {
     local top="$1" extra="$2"
-    "$YOSYS" -ql "build/${top}.log" -p "read_verilog -sv -formal ${top}.sv ${extra}; prep -top ${top}; write_smt2 -wires build/${top}.smt2" >/dev/null 2>&1
+    "$YOSYS" -ql "build/${top}.log" -p "read_verilog -sv -formal ${top}.sv ${extra}; prep -top ${top}; async2sync; write_smt2 -wires build/${top}.smt2" >/dev/null 2>&1
     printf '%-24s ' "$top"
     "$SMTBMC" -s z3 -t 1 "build/${top}.smt2" 2>&1 | grep -qi "PASSED" && echo "PROVED ✅" || { echo "FAILED ❌"; exit 1; }
 }
