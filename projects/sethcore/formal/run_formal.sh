@@ -23,4 +23,8 @@ prove formal_alu "../rtl/seth_alu.sv"   # XOR/AND/OR/ADD-SUB/SLT-SLTU algebraic 
 # Iterative divider == combinational reference for the short-latency paths
 # (multiplies + special-case divides). BMC from reset, anyconst operands.
 prove_seq formal_muldiv_equiv 8 "../rtl/seth_muldiv.sv ../rtl/seth_muldiv_seq.sv"
+# Handshake control-safety of the iterative divider: done⊕busy mutual exclusion +
+# done is a single-cycle pulse, over all free input sequences to depth 40
+# (covers a full ~34-cycle divide plus restarts).
+prove_seq formal_muldiv_handshake 40 "../rtl/seth_muldiv_seq.sv"
 echo "SethCore formal proofs PROVED ✅"

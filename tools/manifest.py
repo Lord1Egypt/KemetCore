@@ -256,6 +256,8 @@ PROJECTS = [
             ("S2.20", "Signoff: formal proof of seth_alu algebraic identities (yosys-smtbmc+z3, exhaustive)", 5, "partial"),
             ("S2.21", "Signoff: formal equivalence seth_muldiv_seq==seth_muldiv on short-latency paths "
                       "(multiplies + special-case divides) — BMC from reset, anyconst operands, mutation-tested", 5, "partial"),
+            ("S2.22", "Signoff: formal control-safety of seth_muldiv_seq handshake (done⊕busy mutual exclusion "
+                      "+ single-cycle done pulse) — BMC over all input sequences to depth 40, mutation-tested", 5, "partial"),
         ],
         "tests": [
             ("test_arith_program", "sum-1..10 loop returns 55", "pass"),
