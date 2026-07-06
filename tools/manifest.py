@@ -153,7 +153,7 @@ PROJECTS = [
             ("A1.8", "Synthesis: generic Yosys, 0 latches + gate count", 3, "done"),
             ("A1.9", "Synthesis: ASAP7 liberty tech-mapping", 3, "todo"),
             ("A1.10", "P&R: GDSII", 4, "partial"),
-            ("A1.11", "Signoff: formal SHA-256 FSM control-safety — round counter bounded 0..63 + no illegal state (k-induction, yosys-smtbmc+z3)", 5, "partial"),
+            ("A1.11", "Signoff: formal SHA-256 FSM control-safety — exactly-64-rounds (FIN=>rc==63) + no illegal state (k-induction, yosys-smtbmc+z3)", 5, "partial"),
         ],
         "tests": [
             ("test_sha256_vs_hashlib", "random + fixed messages == hashlib.sha256", "pass"),
