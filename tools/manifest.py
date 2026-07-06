@@ -274,7 +274,7 @@ PROJECTS = [
     {
         "key": "ptahconv", "num": "02", "name": "PtahConv", "deity": "Ptah (craftsmen)",
         "domain": "Direct convolution accelerator", "doc": "docs/02_PtahConv_Convolution.md",
-        "depends": ["bastcore"], "phase": P23,
+        "depends": ["bastcore"], "phase": P235,
         "scope": "Phase 0/1 implements conv2d (NCHW, stride/pad) via im2col+matmul golden and "
                  "a tiled dataflow pymodel.",
         "checkpoints": [
@@ -282,6 +282,7 @@ PROJECTS = [
             ("PC.2", "pymodel: tiled im2col dataflow", 1, "done"),
             ("PC.3", "RTL: systolic conv array", 2, "todo"),
             ("PC.4", "P&R: GDSII (tile-abutted)", 4, "partial"),
+            ("PC.5", "Signoff: formal proof of ptah_bias_relu non-negativity (yosys-smtbmc+z3, all lanes)", 5, "partial"),
         ],
         "tests": [
             ("test_conv_vs_reference", "im2col conv == naive loop reference", "pass"),
@@ -293,7 +294,7 @@ PROJECTS = [
         "key": "gebcore", "num": "04", "name": "GebCore", "deity": "Geb (earth)",
         "domain": "2:4 structured sparse matmul", "doc": "docs/04_GebCore_SparseMatmul.md",
         "depends": ["bastcore"],
-        "phase": _ph("done", "done", "partial", "partial", "partial", "todo"),
+        "phase": _ph("done", "done", "partial", "partial", "partial", "partial"),
         "scope": "Phase 0/1 implements 2:4 structured-sparse matmul (compress to 2-of-4 + "
                  "metadata) and a pymodel that skips pruned MACs. Phase 2 IN PROGRESS: "
                  "geb_spmac.sv — the sparse-MAC processing element: a 2-bit lane index (the "
@@ -313,6 +314,7 @@ PROJECTS = [
             ("G.4", "Synthesis: generic Yosys, 0 latches + gate count", 3, "done"),
             ("G.5", "RTL: sparse PE array (abuttable)", 2, "todo"),
             ("G.6", "P&R: GDSII", 4, "partial"),
+            ("G.7", "Signoff: formal proof of geb_prune 2:4 invariant (exactly 2 kept, yosys-smtbmc+z3)", 5, "partial"),
         ],
         "tests": [
             ("test_sparse_equals_dense", "sparse matmul == dense matmul on 2:4 weights", "pass"),
@@ -324,7 +326,7 @@ PROJECTS = [
     {
         "key": "imentetcore", "num": "03", "name": "ImentetCore", "deity": "Imentet (welcome)",
         "domain": "Transformer attention unit", "doc": "docs/03_ImentetCore_Attention.md",
-        "depends": ["ptahconv", "gebcore"], "phase": P23,
+        "depends": ["ptahconv", "gebcore"], "phase": P235,
         "scope": "Phase 0/1 implements scaled dot-product attention with numerically-stable "
                  "softmax golden and a flash-style tiled pymodel.",
         "checkpoints": [
@@ -333,6 +335,7 @@ PROJECTS = [
             ("I.3", "pymodel: flash-tiled attention", 1, "done"),
             ("I.4", "RTL: softmax (LUT exp + Newton)", 2, "todo"),
             ("I.5", "P&R: GDSII", 4, "partial"),
+            ("I.6", "Signoff: formal proof of imentet_qk_score q<->k commutativity (yosys-smtbmc+z3)", 5, "partial"),
         ],
         "tests": [
             ("test_attention_vs_reference", "attention == numpy reference", "pass"),
