@@ -27,4 +27,7 @@ prove_seq formal_muldiv_equiv 8 "../rtl/seth_muldiv.sv ../rtl/seth_muldiv_seq.sv
 # done is a single-cycle pulse, over all free input sequences to depth 40
 # (covers a full ~34-cycle divide plus restarts).
 prove_seq formal_muldiv_handshake 40 "../rtl/seth_muldiv_seq.sv"
+# Bounded termination: the iterative divide always finishes — busy is never
+# continuously high longer than the proven-tight worst case (33 cycles).
+prove_seq formal_muldiv_liveness 50 "../rtl/seth_muldiv_seq.sv"
 echo "SethCore formal proofs PROVED ✅"

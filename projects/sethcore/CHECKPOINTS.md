@@ -25,5 +25,6 @@ _Auto-generated from `tools/manifest.py`._
 | S2.20 | P5 | Signoff: formal proof of seth_alu algebraic identities (yosys-smtbmc+z3, exhaustive) | 🔧 |
 | S2.21 | P5 | Signoff: formal equivalence seth_muldiv_seq==seth_muldiv on short-latency paths (multiplies + special-case divides) — BMC from reset, anyconst operands, mutation-tested | 🔧 |
 | S2.22 | P5 | Signoff: formal control-safety of seth_muldiv_seq handshake (done⊕busy mutual exclusion + single-cycle done pulse) — BMC over all input sequences to depth 40, mutation-tested | 🔧 |
+| S2.23 | P5 | Signoff: formal bounded-termination of seth_muldiv_seq (iterative divide always finishes; busy never continuously high >33 cycles, bound proven tight) — mutation-tested | 🔧 |
 
-**Progress:** 16/21 checkpoints complete (33% of phases).
+**Progress:** 16/22 checkpoints complete (33% of phases).
