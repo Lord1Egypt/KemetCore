@@ -103,7 +103,7 @@ PROJECTS = [
             ("HA.13", "Synthesis: generic Yosys, 0 latches + gate count", 3, "done"),
             ("HA.14", "Synthesis: ASAP7 liberty tech-mapping", 3, "todo"),
             ("HA.15", "P&R: bf16/fp32 add+mul GDSII", 4, "partial"),
-            ("HA.16", "Signoff: formal proof of fp32 mul/add commutativity (yosys-smtbmc+z3, all 2^64)", 5, "partial"),
+            ("HA.16", "Signoff: formal proof of fp32 mul commutativity+sign (all 2^64) + fp32 add additive-identity x+0==x (yosys-smtbmc+z3)", 5, "partial"),
         ],
         "tests": [
             ("test_add_matches_numpy", "fp16/fp32 add == numpy IEEE result", "pass"),
@@ -336,7 +336,7 @@ PROJECTS = [
             ("I.3", "pymodel: flash-tiled attention", 1, "done"),
             ("I.4", "RTL: softmax (LUT exp + Newton)", 2, "todo"),
             ("I.5", "P&R: GDSII", 4, "partial"),
-            ("I.6", "Signoff: formal proof of imentet_qk_score q<->k commutativity (yosys-smtbmc+z3)", 5, "partial"),
+            ("I.6", "Signoff: formal proof of attention-mask semantics — visible(m=0)=>score kept, masked(m=-inf)=>-inf (yosys-smtbmc+z3, all scores)", 5, "partial"),
         ],
         "tests": [
             ("test_attention_vs_reference", "attention == numpy reference", "pass"),
@@ -378,7 +378,7 @@ PROJECTS = [
             ("N.9", "Synthesis: generic Yosys, 0 latches + gate count", 3, "done"),
             ("N.10", "Synthesis: ASAP7 liberty tech-mapping + SRAM macro", 3, "todo"),
             ("N.11", "P&R: GDSII", 4, "partial"),
-            ("N.12", "Signoff: formal proof of Barrett modmul r==(a*b)%Q (yosys-smtbmc+z3, all a,b<Q)", 5, "partial"),
+            ("N.12", "Signoff: formal proof of Barrett modmul range r<Q — always a valid reduced field element (yosys-smtbmc+z3, all a,b<Q)", 5, "partial"),
         ],
         "tests": [
             ("test_ntt_roundtrip", "intt(ntt(p)) == p", "pass"),
@@ -401,7 +401,7 @@ PROJECTS = [
             ("SB.2", "pymodel: pipelined intersector", 1, "done"),
             ("SB.3", "RTL: intersection datapath", 2, "todo"),
             ("SB.4", "P&R: GDSII", 4, "partial"),
-            ("SB.5", "Signoff: formal proof of sobek_dot3 commutativity (yosys-smtbmc+z3, all inputs)", 5, "partial"),
+            ("SB.5", "Signoff: formal proof of sobek_scale multiply-commutativity s*v==v*s all 3 lanes (yosys-smtbmc+z3, all fp32)", 5, "partial"),
         ],
         "tests": [
             ("test_hit_center", "ray through triangle centroid hits, t correct", "pass"),
