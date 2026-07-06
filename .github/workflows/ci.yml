@@ -381,3 +381,7 @@ jobs:
         run: YOSYS=yosys SMTBMC=yosys-smtbmc ./projects/ptahconv/formal/run_formal.sh
       - name: ImentetCore formal proofs (QK-score commutativity)
         run: YOSYS=yosys SMTBMC=yosys-smtbmc ./projects/imentetcore/formal/run_formal.sh
+      - name: RaCore formal proofs (NoC arbiter grant safety, k-induction)
+        run: YOSYS=yosys SMTBMC=yosys-smtbmc ./projects/racore/formal/run_formal.sh
+      - name: BastCore formal proofs (int8 MAC commutativity, k-induction)
+        run: YOSYS=yosys SMTBMC=yosys-smtbmc ./projects/bastcore/formal/run_formal.sh
