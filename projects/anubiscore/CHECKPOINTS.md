@@ -14,5 +14,6 @@ _Auto-generated from `tools/manifest.py`._
 | A1.8 | P3 | Synthesis: generic Yosys, 0 latches + gate count | ✅ |
 | A1.9 | P3 | Synthesis: ASAP7 liberty tech-mapping | ⬜ |
 | A1.10 | P4 | P&R: GDSII | 🔧 |
+| A1.11 | P5 | Signoff: formal SHA-256 FSM control-safety — exactly-64-rounds (FIN=>rc==63) + no illegal state (k-induction, yosys-smtbmc+z3) | 🔧 |
 
-**Progress:** 8/10 checkpoints complete (50% of phases).
+**Progress:** 8/11 checkpoints complete (50% of phases).

@@ -135,7 +135,7 @@ PROJECTS = [
         "key": "anubiscore", "num": "06", "name": "AnubisCore", "deity": "Anubis (embalming)",
         "domain": "SHA-256 / SHA-3 hash engine", "doc": "docs/06_AnubisCore_HashEngine.md",
         "depends": [],
-        "phase": _ph("done", "done", "done", "partial", "partial", "todo"),
+        "phase": _ph("done", "done", "done", "partial", "partial", "partial"),
         "scope": "Phase 0/1: full SHA-256 + Keccak/SHA3-256 in pure Python vs hashlib. "
                  "Phase 2 DONE: SHA-256 + SHA3-256/Keccak RTL, each verified bit-exact in "
                  "cocotb/Verilator 5.020. Phase 3 IN PROGRESS: generic Yosys synth passes "
@@ -153,6 +153,7 @@ PROJECTS = [
             ("A1.8", "Synthesis: generic Yosys, 0 latches + gate count", 3, "done"),
             ("A1.9", "Synthesis: ASAP7 liberty tech-mapping", 3, "todo"),
             ("A1.10", "P&R: GDSII", 4, "partial"),
+            ("A1.11", "Signoff: formal SHA-256 FSM control-safety — exactly-64-rounds (FIN=>rc==63) + no illegal state (k-induction, yosys-smtbmc+z3)", 5, "partial"),
         ],
         "tests": [
             ("test_sha256_vs_hashlib", "random + fixed messages == hashlib.sha256", "pass"),

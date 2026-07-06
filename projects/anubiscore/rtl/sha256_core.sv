@@ -174,4 +174,20 @@ module sha256_core (
     end
 
     assign hash = {H[0], H[1], H[2], H[3], H[4], H[5], H[6], H[7]};
+
+`ifdef FORMAL
+    // ---- Phase 5: embedded control-safety properties -------------------- //
+    // Proved exhaustively by k-induction (yosys-smtbmc + z3); see
+    // formal/formal_sha256_ctrl.sv. Compiled only under -DFORMAL, so cocotb
+    // (Verilator) and synthesis are completely unaffected. Embedded here (rather
+    // than in a wrapper) because yosys 0.65 resolves neither cross-module
+    // hierarchical references nor `bind` to reach the internal state/rc regs.
+    //
+    // (1) EXACTLY-64-ROUNDS: the FSM reaches FIN only when the round counter has
+    //     run the full 0..63 schedule — no block is absorbed with the wrong
+    //     number of compression rounds.
+    always_comb if (state == FIN) assert (rc == 6'd63);
+    // (2) NO-ILLEGAL-STATE: state never enters the unused 4th encoding.
+    always_comb assert (state != 2'd3);
+`endif
 endmodule
