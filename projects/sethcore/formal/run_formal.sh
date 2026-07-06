@@ -12,5 +12,15 @@ prove() {
     printf '%-24s ' "$top"
     "$SMTBMC" -s z3 -t 1 "build/${top}.smt2" 2>&1 | grep -qi "PASSED" && echo "PROVED ✅" || { echo "FAILED ❌"; exit 1; }
 }
+# Sequential (multicycle) proof by BMC from reset — needs dffunmap + more steps.
+prove_seq() {
+    local top="$1" steps="$2" extra="$3"
+    "$YOSYS" -ql "build/${top}.log" -p "read_verilog -sv -formal ${top}.sv ${extra}; prep -top ${top}; async2sync; dffunmap; write_smt2 -wires build/${top}.smt2" >/dev/null 2>&1
+    printf '%-24s ' "$top"
+    "$SMTBMC" -s z3 -t "${steps}" "build/${top}.smt2" 2>&1 | grep -qi "PASSED" && echo "PROVED ✅" || { echo "FAILED ❌"; exit 1; }
+}
 prove formal_alu "../rtl/seth_alu.sv"   # XOR/AND/OR/ADD-SUB/SLT-SLTU algebraic identities
+# Iterative divider == combinational reference for the short-latency paths
+# (multiplies + special-case divides). BMC from reset, anyconst operands.
+prove_seq formal_muldiv_equiv 8 "../rtl/seth_muldiv.sv ../rtl/seth_muldiv_seq.sv"
 echo "SethCore formal proofs PROVED ✅"

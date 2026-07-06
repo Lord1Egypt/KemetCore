@@ -367,7 +367,7 @@ jobs:
           z3 --version   # z3-solver wheel puts the z3 binary on the setup-python PATH
       - name: HapiCore formal proofs (fp32 mul/add over all 2^64 inputs)
         run: YOSYS=yosys SMTBMC=yosys-smtbmc ./projects/hapicore/formal/run_formal.sh
-      - name: SethCore formal proofs (seth_alu algebraic identities)
+      - name: SethCore formal proofs (seth_alu identities + iterative-divider equivalence)
         run: YOSYS=yosys SMTBMC=yosys-smtbmc ./projects/sethcore/formal/run_formal.sh
       - name: SobekCore formal proofs (fp32 dot3 commutativity)
         run: YOSYS=yosys SMTBMC=yosys-smtbmc ./projects/sobekcore/formal/run_formal.sh

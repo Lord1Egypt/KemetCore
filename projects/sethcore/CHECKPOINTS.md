@@ -23,5 +23,6 @@ _Auto-generated from `tools/manifest.py`._
 | S2.11 | P2 | cocotb: per-instruction vs Spike | ⬜ |
 | S2.14 | P4 | P&R: core macro | 🔧 |
 | S2.20 | P5 | Signoff: formal proof of seth_alu algebraic identities (yosys-smtbmc+z3, exhaustive) | 🔧 |
+| S2.21 | P5 | Signoff: formal equivalence seth_muldiv_seq==seth_muldiv on short-latency paths (multiplies + special-case divides) — BMC from reset, anyconst operands, mutation-tested | 🔧 |
 
-**Progress:** 16/19 checkpoints complete (33% of phases).
+**Progress:** 16/20 checkpoints complete (33% of phases).

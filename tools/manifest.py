@@ -254,6 +254,8 @@ PROJECTS = [
             ("S2.11", "cocotb: per-instruction vs Spike", 2, "todo"),
             ("S2.14", "P&R: core macro", 4, "partial"),
             ("S2.20", "Signoff: formal proof of seth_alu algebraic identities (yosys-smtbmc+z3, exhaustive)", 5, "partial"),
+            ("S2.21", "Signoff: formal equivalence seth_muldiv_seq==seth_muldiv on short-latency paths "
+                      "(multiplies + special-case divides) — BMC from reset, anyconst operands, mutation-tested", 5, "partial"),
         ],
         "tests": [
             ("test_arith_program", "sum-1..10 loop returns 55", "pass"),
