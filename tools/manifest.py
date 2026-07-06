@@ -167,7 +167,7 @@ PROJECTS = [
         "key": "bastcore", "num": "05", "name": "BastCore", "deity": "Bastet (protection)",
         "domain": "BF16 tensor core", "doc": "docs/05_BastCore_BF16Tensor.md",
         "depends": ["hapicore"],
-        "phase": _ph("done", "done", "partial", "partial", "partial", "todo"),
+        "phase": _ph("done", "done", "partial", "partial", "partial", "partial"),
         "scope": "Phase 0/1: bf16 matmul (bf16 inputs, fp32 accumulate) + 16x16 systolic "
                  "dataflow pymodel. Phase 2 IN PROGRESS: bast_mac.sv — the MAC processing "
                  "element (bf16 multiply -> exact bf16->fp32 widen -> registered fp32 "
@@ -188,6 +188,7 @@ PROJECTS = [
             ("B2.6", "RTL: mac_grid RxC systolic array (abuttable to 16x16) + cocotb", 2, "done"),
             ("B2.8", "Synthesis: generic Yosys, 0 latches + gate count", 3, "done"),
             ("B2.9", "P&R: full array GDSII", 4, "partial"),
+            ("B2.10", "Signoff: formal proof of int8 MAC commutativity (k-induction, yosys-smtbmc+z3)", 5, "partial"),
         ],
         "tests": [
             ("test_matmul_vs_numpy", "bf16 matmul within bf16 tolerance of fp32 ref", "pass"),
@@ -486,7 +487,7 @@ PROJECTS = [
         "domain": "Heterogeneous AI SoC (capstone)", "doc": "docs/00_RaCore_SoC.md",
         "depends": ["sethcore", "atumcore", "hapicore", "anubiscore", "bastcore",
                     "ptahconv", "gebcore", "imentetcore", "neithcore", "sobekcore"],
-        "phase": _ph("done", "done", "partial", "partial", "partial", "todo"),
+        "phase": _ph("done", "done", "partial", "partial", "partial", "partial"),
         "scope": "Phase 0/1 implements the KAI register/DMA contract model, a NoC + "
                  "descriptor-DMA functional model, a KAI conformance harness, and an "
                  "end-to-end axpy that drives a KAI accelerator through the fabric.",
@@ -498,6 +499,7 @@ PROJECTS = [
             ("RA.5", "RTL: NoC + DMA", 2, "todo"),
             ("RA.7", "RTL: RaCore-Lite top integration", 2, "todo"),
             ("RA.10", "P&R: Lite hierarchical GDSII", 4, "partial"),
+            ("RA.11", "Signoff: formal proof of NoC arbiter grant safety (k-induction, yosys-smtbmc+z3)", 5, "partial"),
             ("RA.11", "Flagship demo: CNN inference + attestation", 5, "todo"),
         ],
         "tests": [

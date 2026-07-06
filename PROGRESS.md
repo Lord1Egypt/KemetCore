@@ -12,12 +12,12 @@ Legend: ✅ done · 🔧 in progress · ⬜ todo
 
 | # | Project | Domain | P0 Golden | P1 pymodel | P2 RTL | P3 Synth | P4 P&R | P5 Signoff | % | Tracking |
 |:-:|---------|--------|:---------:|:----------:|:------:|:--------:|:------:|:----------:|:-:|----------|
-| 00 | **RaCore** | Heterogeneous AI SoC (capstone) | ✅ | ✅ | 🔧 | 🔧 | 🔧 | ⬜ | 33% | [steps](projects/racore/STEPS.md) · [chk](projects/racore/CHECKPOINTS.md) · [tests](projects/racore/TESTS.md) |
+| 00 | **RaCore** | Heterogeneous AI SoC (capstone) | ✅ | ✅ | 🔧 | 🔧 | 🔧 | 🔧 | 33% | [steps](projects/racore/STEPS.md) · [chk](projects/racore/CHECKPOINTS.md) · [tests](projects/racore/TESTS.md) |
 | 01 | **SethCore** | RV32IM pipelined CPU | ✅ | ✅ | 🔧 | 🔧 | 🔧 | 🔧 | 33% | [steps](projects/sethcore/STEPS.md) · [chk](projects/sethcore/CHECKPOINTS.md) · [tests](projects/sethcore/TESTS.md) |
 | 02 | **PtahConv** | Direct convolution accelerator | ✅ | ✅ | 🔧 | 🔧 | 🔧 | 🔧 | 33% | [steps](projects/ptahconv/STEPS.md) · [chk](projects/ptahconv/CHECKPOINTS.md) · [tests](projects/ptahconv/TESTS.md) |
 | 03 | **ImentetCore** | Transformer attention unit | ✅ | ✅ | 🔧 | 🔧 | 🔧 | 🔧 | 33% | [steps](projects/imentetcore/STEPS.md) · [chk](projects/imentetcore/CHECKPOINTS.md) · [tests](projects/imentetcore/TESTS.md) |
 | 04 | **GebCore** | 2:4 structured sparse matmul | ✅ | ✅ | 🔧 | 🔧 | 🔧 | 🔧 | 33% | [steps](projects/gebcore/STEPS.md) · [chk](projects/gebcore/CHECKPOINTS.md) · [tests](projects/gebcore/TESTS.md) |
-| 05 | **BastCore** | BF16 tensor core | ✅ | ✅ | 🔧 | 🔧 | 🔧 | ⬜ | 33% | [steps](projects/bastcore/STEPS.md) · [chk](projects/bastcore/CHECKPOINTS.md) · [tests](projects/bastcore/TESTS.md) |
+| 05 | **BastCore** | BF16 tensor core | ✅ | ✅ | 🔧 | 🔧 | 🔧 | 🔧 | 33% | [steps](projects/bastcore/STEPS.md) · [chk](projects/bastcore/CHECKPOINTS.md) · [tests](projects/bastcore/TESTS.md) |
 | 06 | **AnubisCore** | SHA-256 / SHA-3 hash engine | ✅ | ✅ | ✅ | 🔧 | 🔧 | ⬜ | 50% | [steps](projects/anubiscore/STEPS.md) · [chk](projects/anubiscore/CHECKPOINTS.md) · [tests](projects/anubiscore/TESTS.md) |
 | 07 | **NeithCore** | ML-KEM (Kyber) lattice KEM | ✅ | ✅ | 🔧 | 🔧 | 🔧 | 🔧 | 33% | [steps](projects/neithcore/STEPS.md) · [chk](projects/neithcore/CHECKPOINTS.md) · [tests](projects/neithcore/TESTS.md) |
 | 08 | **SobekCore** | Ray-triangle intersector | ✅ | ✅ | 🔧 | 🔧 | 🔧 | 🔧 | 33% | [steps](projects/sobekcore/STEPS.md) · [chk](projects/sobekcore/CHECKPOINTS.md) · [tests](projects/sobekcore/TESTS.md) |
