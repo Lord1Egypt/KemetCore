@@ -193,4 +193,26 @@ module neith_ntt (
     assign out_data = mem[rd_addr];
     assign busy     = (state == S_LOAD) || (state == S_RUN) || (state == S_SCALE);
     assign done     = (state == S_DONE);
+
+`ifdef FORMAL
+    // ---- Phase 5: embedded control-safety properties -------------------- //
+    // Proved exhaustively by temporal k-induction (yosys-smtbmc + z3), for every
+    // reachable state and any start/mode/nega/in_valid sequence; see
+    // formal/formal_ntt_ctrl.sv. Compiled ONLY under -DFORMAL, so cocotb
+    // (Verilator) and synthesis never see them. Embedded in the DUT (not a
+    // wrapper) because yosys 0.65 resolves neither cross-module hierarchical
+    // references nor `bind` to reach the internal state/mode_reg registers.
+    //
+    // (1) NO-ILLEGAL-STATE: the 3-bit state register has 5 valid encodings
+    //     (S_IDLE..S_DONE = 0..4); it never enters an unused code 5/6/7. A 3-bit
+    //     register CAN physically hold those codes, so this is non-tautological —
+    //     it proves the control logic never drives one (the `default` arm is a
+    //     safety net, not a reachable transition).
+    always_comb assert (state <= S_DONE);
+    // (2) SCALE-IS-INVERSE: the inverse-only 1/N (+psi^-i) scaling pass runs ONLY
+    //     when the latched transform direction is inverse. Couples the control
+    //     FSM to the mode latched at start — a forward NTT can never enter the
+    //     scaling pass (which would corrupt its result by the 256^-1 factor).
+    always_comb if (state == S_SCALE) assert (mode_reg);
+`endif
 endmodule
