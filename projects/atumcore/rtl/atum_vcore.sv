@@ -134,4 +134,28 @@ module atum_vcore #(
             end
         end
     end
+
+`ifdef FORMAL
+    // ---- Phase 5: embedded control-safety properties -------------------- //
+    // Proved by temporal k-induction (yosys-smtbmc + z3) over every reachable
+    // state and any program / preload sequence; see formal/formal_vcore_ctrl.sv.
+    // Compiled ONLY under -DFORMAL (invisible to cocotb/Verilator and synthesis).
+    // Embedded in the DUT because yosys 0.65 resolves neither hierarchical refs
+    // nor `bind to reach the internal vl/halted registers. The heavy vector
+    // datapath (atum_vexec / atum_vregfile) is blackboxed for the proof — vl,
+    // halted and pc do not depend on their outputs — so it stays tractable.
+    //
+    // (1) VL-IN-RANGE: the architectural vector length never exceeds VLMAX. This
+    //     is the RVV safety invariant the whole core relies on — every VLD/VST
+    //     gather/scatter loop and every masked lane write gates on `i < vl`, so a
+    //     vl > VLMAX would drive out-of-range element/memory indices. Non-
+    //     tautological: vl is a $clog2(VLMAX+1)-bit register (4 bits at VLMAX=8),
+    //     so it CAN hold 9..15; the proof shows vsetvl's saturation keeps it <=8.
+    always_comb assert (vl <= VLW'(VLMAX));
+    // (2) HALT-IS-STICKY: once the core halts (VHALT) it never spuriously
+    //     un-halts until reset — so `halted`/`dbg_pc` are a stable terminus a
+    //     testbench (or the golden-compare harness) can rely on.
+    always_ff @(posedge clk)
+        if (!rst && $past(halted) && !$past(rst)) assert (halted);
+`endif
 endmodule
