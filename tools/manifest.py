@@ -386,6 +386,7 @@ PROJECTS = [
             ("N.10", "Synthesis: ASAP7 liberty tech-mapping + SRAM macro", 3, "todo"),
             ("N.11", "P&R: GDSII", 4, "partial"),
             ("N.12", "Signoff: formal proof of Barrett modmul range r<Q — always a valid reduced field element (yosys-smtbmc+z3, all a,b<Q)", 5, "partial"),
+            ("N.13", "Signoff: formal control-safety of the 256-pt NTT FSM — no illegal state + inverse-only scale pass (temporal k-induction, mutation-tested)", 5, "partial"),
         ],
         "tests": [
             ("test_ntt_roundtrip", "intt(ntt(p)) == p", "pass"),
