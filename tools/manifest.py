@@ -291,6 +291,7 @@ PROJECTS = [
             ("PC.3", "RTL: systolic conv array", 2, "todo"),
             ("PC.4", "P&R: GDSII (tile-abutted)", 4, "partial"),
             ("PC.5", "Signoff: formal proof of ptah_bias_relu non-negativity (yosys-smtbmc+z3, all lanes)", 5, "partial"),
+            ("PC.6", "Signoff: formal control-safety of the conv2d FSM — no illegal state + done only at rest (temporal k-induction, mutation-tested)", 5, "partial"),
         ],
         "tests": [
             ("test_conv_vs_reference", "im2col conv == naive loop reference", "pass"),

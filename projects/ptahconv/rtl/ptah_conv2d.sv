@@ -127,4 +127,25 @@ module ptah_conv2d #(
     end
 
     assign rd_data = omem[rd_addr[AWO-1:0]];
+
+`ifdef FORMAL
+    // ---- Phase 5: embedded control-safety properties -------------------- //
+    // Proved exhaustively by temporal k-induction (yosys-smtbmc + z3) over every
+    // reachable state and any start/preload/config sequence; see
+    // formal/formal_conv2d_ctrl.sv. Compiled ONLY under -DFORMAL, so cocotb
+    // (Verilator) and synthesis never see them. Embedded in the DUT (not a
+    // wrapper) because yosys 0.65 resolves neither cross-module hierarchical
+    // references nor `bind` to reach the internal state/done registers.
+    //
+    // (1) NO-ILLEGAL-STATE: the 2-bit state register has 3 valid encodings
+    //     (IDLE/TAP/WB = 0/1/2); it never enters the unused 4th code 2'd3. A
+    //     2-bit register CAN physically hold it, so this is non-tautological
+    //     (the `default` arm is a safety net, not a reachable transition).
+    always_comb assert (state != 2'd3);
+    // (2) DONE-ONLY-AT-REST: the completion pulse is asserted ONLY in IDLE — it
+    //     never fires mid-convolution, so a consumer that reads omem on `done`
+    //     can never latch a partial result. Couples the output handshake to the
+    //     FSM having actually returned to rest.
+    always_comb if (done) assert (state == IDLE);
+`endif
 endmodule
