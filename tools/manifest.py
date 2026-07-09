@@ -474,6 +474,7 @@ PROJECTS = [
             ("AT.12", "RTL: single-cycle vector core (atum_vcore) + vector memory (VLD/VST) running strip-mined programs", 2, "done"),
             ("AT.13", "P&R: GDSII at 500 MHz", 4, "partial"),
             ("AT.14", "Signoff: formal proof of atum_valu lane algebra (yosys-smtbmc+z3, exhaustive)", 5, "partial"),
+            ("AT.15", "Signoff: formal control-safety of atum_vcore — vl<=VLMAX (RVV lane/mem bound) + halt-sticky (temporal k-induction, datapath blackboxed, mutation-tested)", 5, "partial"),
         ],
         "tests": [
             ("test_vadd_vmul", "integer vector ops == numpy", "pass"),
