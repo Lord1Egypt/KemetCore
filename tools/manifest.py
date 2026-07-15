@@ -285,7 +285,8 @@ PROJECTS = [
         "domain": "Direct convolution accelerator", "doc": "docs/02_PtahConv_Convolution.md",
         "depends": ["bastcore"], "phase": P235,
         "scope": "Phase 0/1 implements conv2d (NCHW, stride/pad) via im2col+matmul golden and "
-                 "a tiled dataflow pymodel.",
+                 "a tiled dataflow pymodel. Phase 4: ptah_mac, ptah_bias_relu, and ptah_avgpool "
+                 "signed off on ASAP7 7nm.",
         "checkpoints": [
             ("PC.1", "Golden: conv2d (stride/pad) vs reference", 0, "done"),
             ("PC.2", "pymodel: tiled im2col dataflow", 1, "done"),

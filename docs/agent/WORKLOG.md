@@ -86,3 +86,5 @@
 - **PR**: #179
 2026-07-15 | `feat/ptahconv-bias-relu-p4` | Hardened ptah_bias_relu (Phase 4 P&R). Created wrapper ptah_bias_relu_p4top to bound 8x hapi_fp32_add and ReLUs. Configured OpenROAD for 166 MHz clock (6000 ps period). | `./flow/harden.sh ptah_bias_relu` | 0aa71a9 | #180
 2026-07-15 | `feat/racore-kai-regs-p4` | Hardened ra_kai_regs (Phase 4 P&R). Configured OpenROAD for 666 MHz clock (1500 ps period). | `./flow/harden.sh ra_kai_regs` | b5f358d | #181
+2026-07-15 | `feat/sethcore-muldiv-p4` | Hardened seth_muldiv (Phase 4 P&R). Created wrapper seth_muldiv_p4top to bound combinational logic. Configured OpenROAD for 100 MHz clock (10000 ps period). | `./flow/harden.sh seth_muldiv` | 088b9c80bfe3cb93fa3430feb82fd9ce71940564 | #182
+2026-07-15 | `feat/ptahconv-avgpool-p4` | Hardened ptah_avgpool (Phase 4 P&R). Created wrapper ptah_avgpool_p4top to bound combinational logic. Configured OpenROAD for 100 MHz clock (10000 ps period). | `./flow/harden.sh ptah_avgpool` | TBD | #183
