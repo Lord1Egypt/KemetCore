@@ -40,6 +40,7 @@ LABEL = {
     "atum_vsadd":    ("AtumCore",    "RVV vector saturating add (registered)"),
     "atum_vcompress":("AtumCore",    "RVV vector compress (registered)"),
     "atum_viota":    ("AtumCore",    "RVV vector iota / index (registered)"),
+    "atum_vmask":    ("AtumCore",    "RVV vector compare-to-mask (registered)"),
     "ptah_mac":      ("PtahConv",    "fp32 MAC PE (registered)"),
     "ptah_bias_relu":("PtahConv",    "fp32 bias+relu epilogue (registered)"),
     "ptah_avgpool":  ("PtahConv",    "fp32 2x2 average pooling (registered)"),
@@ -49,7 +50,7 @@ ORDER = ["ra_noc_arbiter","ra_kai_regs","seth_regfile","seth_alu","seth_muldiv",
          "ptah_mac","ptah_bias_relu","ptah_avgpool","imentet_qk_score","imentet_mask_add",
          "geb_spmac","bast_mac","bast_mac_grid","bast_int8_mac","sha256_core",
          "neith_ntt","neith_polyaddsub","sobek_dot3","sobek_cross","sobek_scale","hapi_fp32_mul",
-         "hapi_fp16_mul","hapi_fp32_add","hapi_fp32_to_int","atum_valu","atum_vredu","atum_vsadd","atum_vcompress","atum_viota"]
+         "hapi_fp16_mul","hapi_fp32_add","hapi_fp32_to_int","atum_valu","atum_vredu","atum_vsadd","atum_vcompress","atum_viota","atum_vmask"]
 
 
 def num(path, pat, last=True, grp=1, cast=float):

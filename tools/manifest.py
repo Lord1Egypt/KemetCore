@@ -465,7 +465,7 @@ PROJECTS = [
                  "integer axpy (vsetvl + VLD/VMACC/VST over a length-20 array) and the TB checks the "
                  "whole machine state (vregfile + data memory) vs the golden runner on the axpy + 40 "
                  "random load/store/op/reduction programs. AtumCore is a complete working vector processor. "
-                 "Phase 4: atum_valu, atum_vredu, atum_vsadd, atum_vcompress, and atum_viota signed off on ASAP7 7nm (registered boundaries).",
+                 "Phase 4: atum_valu, atum_vredu, atum_vsadd, atum_vcompress, atum_viota, and atum_vmask signed off on ASAP7 7nm (registered boundaries).",
         "checkpoints": [
             ("AT.1", "Golden: RVV subset + vsetvl semantics", 0, "done"),
             ("AT.2", "Golden: masked ops + reductions", 0, "done"),
