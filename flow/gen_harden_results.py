@@ -33,13 +33,16 @@ LABEL = {
     "imentet_qk_score":("ImentetCore","attention QK score (registered)"),
     "atum_valu":     ("AtumCore",    "RVV int vector ALU (registered)"),
     "atum_vredu":    ("AtumCore",    "RVV vector reduction (registered)"),
-    "ptah_mac":      ("PtahConv",    "fp32 conv MAC"),
+    "ptah_mac":      ("PtahConv",    "fp32 MAC PE (registered)"),
     "ptah_bias_relu":("PtahConv",    "fp32 bias+relu epilogue (registered)"),
+    "ptah_avgpool":  ("PtahConv",    "fp32 2x2 average pooling (registered)"),
 }
 # canonical harden order (cores 00..10)
-ORDER = ["ra_noc_arbiter","ra_kai_regs","seth_regfile","seth_alu","seth_muldiv","ptah_mac","ptah_bias_relu","imentet_qk_score",
+ORDER = ["ra_noc_arbiter","ra_kai_regs","seth_regfile","seth_alu","seth_muldiv",
+         "ptah_mac","ptah_bias_relu","ptah_avgpool","imentet_qk_score",
          "geb_spmac","bast_mac","bast_mac_grid","bast_int8_mac","sha256_core",
-         "neith_ntt","sobek_dot3","sobek_cross","hapi_fp32_mul","hapi_fp16_mul","hapi_fp32_add","atum_valu","atum_vredu"]
+         "neith_ntt","sobek_dot3","sobek_cross","hapi_fp32_mul","hapi_fp16_mul",
+         "hapi_fp32_add","atum_valu","atum_vredu"]
 
 
 def num(path, pat, last=True, grp=1, cast=float):
