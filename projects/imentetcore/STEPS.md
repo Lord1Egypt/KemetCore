@@ -4,7 +4,7 @@
 
 _Auto-generated from `tools/manifest.py` — do not edit by hand; edit the manifest and run `python tools/gen_tracking.py`._
 
-**Scope (current):** Phase 0/1 implements scaled dot-product attention with numerically-stable softmax golden and a flash-style tiled pymodel.
+**Scope (current):** Phase 0/1 implements scaled dot-product attention with numerically-stable softmax golden and a flash-style tiled pymodel. Phase 4: imentet_qk_score and imentet_mask_add signed off on ASAP7 7nm.
 
 ## Ordered steps (6-phase lifecycle)
 
