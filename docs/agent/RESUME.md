@@ -9,21 +9,22 @@
 ---
 
 ## Current state
-- **Branch to work from:** `main` (branch off it for each task).
-- **Last verified:** GebCore G.7 formal proof merged (this PR #174). Safe restore
-  tags: `safe-baseline-2026-07-15` + rolling `safe-auto-*` after each merge.
+- **Branch to work from:** `main` (tip after PR #175). ALWAYS `git pull` first.
+- **Last verified:** GebCore G.7 full formal proof + `/goal` mode merged (#175).
+  Safe restore tags: `safe-baseline-2026-07-15`, `safe-2026-07-15-post-geb`.
 - **Tests:** `pytest projects/ -q` → 146 passed (green).
-- **Tracker:** GebCore now 5/7 checkpoints (G.7 done). Overall P5 phase % unchanged.
-- **Open PRs:** none expected after #174 lands.
-- **Anything half-finished?** No. Clean slate for the next task.
+- **Open PRs:** none. Clean slate.
+- **⛔ Formal proofs are SATURATED** — do NOT re-run existing proofs or flip
+  `partial`→`done`. See TASK_MENU "Formal breadth status".
 
-## NEXT STEP (do this when told "continue kemetcore")
+## NEXT STEP (on "continue kemetcore" or `/goal`)
 1. `git checkout main && git pull && pytest projects/ -q` (must be green).
 2. Read the tail of `WORKLOG.md` to see the last few steps.
-3. Pick ONE small task from `TASK_MENU.md` (default: add one Phase-2 RTL module
-   bit-exact vs golden, or harden one more Phase-4 block, or deepen one tractable
-   formal proof).
-4. Follow the loop in `PLAYBOOK.md`. Stop at the PR — do NOT merge.
+3. Pick ONE small **NEW** task from `TASK_MENU.md` — default: add one **Phase-2 RTL
+   module** (a golden function with no RTL/testbench yet → build it bit-exact +
+   0-latch) or harden one more **Phase-4 P&R block** to closed-timing GDSII.
+   **NOT formal — it is saturated; do not re-run proofs or flip `partial`→`done`.**
+4. Follow the loop in `PLAYBOOK.md` (in `/goal` mode, `GOAL_MODE.md`).
 
 ## Before you end EVERY session (mandatory)
 - Overwrite the "Current state" + "NEXT STEP" above to reflect reality now
