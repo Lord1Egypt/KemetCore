@@ -323,7 +323,7 @@ PROJECTS = [
             ("G.4", "Synthesis: generic Yosys, 0 latches + gate count", 3, "done"),
             ("G.5", "RTL: sparse PE array (abuttable)", 2, "todo"),
             ("G.6", "P&R: GDSII", 4, "partial"),
-            ("G.7", "Signoff: formal proof of geb_prune 2:4 invariant (exactly 2 kept, yosys-smtbmc+z3)", 5, "partial"),
+            ("G.7", "Signoff: formal proof of geb_prune 2:4 invariant (exactly 2 kept, yosys-smtbmc+z3)", 5, "done"),
         ],
         "tests": [
             ("test_sparse_equals_dense", "sparse matmul == dense matmul on 2:4 weights", "pass"),

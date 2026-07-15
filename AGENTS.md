@@ -112,6 +112,12 @@ its result, the commit hash, and the PR number. No entry = the step didn't happe
   **not** merge authorization.
 - After a merge: `git checkout main && git pull`. If other PRs are open, they are
   now behind — rebase each on the new main and regenerate tracking (see PLAYBOOK).
+- **EXCEPTION — GOAL MODE** (when Mohamed runs the `/goal` command, see
+  [`docs/agent/GOAL_MODE.md`](docs/agent/GOAL_MODE.md)): you ARE authorized to
+  self-merge, but ONLY when every local gate passed AND both required CI checks are
+  green AND the self-review checklist is clean. A failing gate or pending/red CI =
+  do not merge, full stop. After every goal-mode merge, cut a rolling restore tag
+  `safe-auto-<date>-N`. Outside goal mode, the wait-for-Mohamed rule above stands.
 
 ---
 
@@ -127,7 +133,11 @@ its result, the commit hash, and the PR number. No entry = the step didn't happe
 - ❌ Never `git checkout main` while a background merge/rebase job is using the tree.
 - ❌ Never use `gh pr edit` (broken on this repo — GraphQL error). Use
   `gh api --method PATCH repos/Lord1Egypt/KemetCore/pulls/<N> -f title=.. -f body=..`.
-- ❌ Never self-merge without Mohamed's explicit word.
+- ❌ Never self-merge without Mohamed's explicit word (EXCEPT in GOAL MODE, §5).
+- ❌ Never rewrite `AGENTS.md` or any `docs/agent/` contract file. It is the fixed
+  contract. The ONLY files you update as state are `docs/agent/RESUME.md` (overwrite)
+  and `docs/agent/WORKLOG.md` (append). Always `git pull` main before branching so
+  you have the latest kit — a stale branch is how duplicate contract files happen.
 
 ---
 

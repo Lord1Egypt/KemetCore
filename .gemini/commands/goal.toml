@@ -1,0 +1,29 @@
+description = "GOAL MODE — autonomously build, verify, self-review, and self-merge KemetCore tasks in a loop until a STOP condition. Reviews happen between tasks."
+
+prompt = """
+Enter GOAL MODE for KemetCore. First read, in full: AGENTS.md, docs/agent/GOAL_MODE.md,
+docs/agent/PLAYBOOK.md, docs/agent/AVOID_LIST.md, docs/agent/TASK_MENU.md,
+docs/agent/REVIEW_CHECKLIST.md, and the tail of docs/agent/WORKLOG.md and
+docs/agent/RESUME.md. Then execute the autonomous loop defined in
+docs/agent/GOAL_MODE.md, repeating task after task until a STOP condition.
+
+Non-negotiable rails (full list in GOAL_MODE.md — obey exactly):
+- ONE small task per PR. Branch off fresh main (git pull first).
+- Verify EVERY applicable gate before merge: cocotb bit-exact, Yosys 0-latch, and
+  formal proofs must be NON-VACUOUS (grep assert the .smt2) AND mutation-tested.
+- SELF-MERGE ONLY when every local gate passed AND both required CI checks
+  (Phase 0/1, Phase 2 RTL) are green AND self-review is clean. Never merge on a
+  failing gate or pending/red CI — fix the root cause or STOP.
+- After every merge: sync main and cut a rolling restore tag safe-auto-<date>-<n>.
+- Never rewrite AGENTS.md or any docs/agent contract file. Only update RESUME.md and
+  append to WORKLOG.md. Never force-push, never touch main history / branch
+  protection / tags / the backup. Honest tracker: partial != done.
+- STOP (halt + summarize in WORKLOG/RESUME) when TASK_MENU is exhausted, a task
+  needs a human decision, a task fails 3 times, or a big-lever task (full-core
+  GDSII, RaCore SoC) is next — propose a plan and wait.
+
+Log every step to WORKLOG.md with the exact test command + result, commit hash, and
+PR number, so Mohamed and Claude can review and rate between your tasks.
+
+Optional focus for this run (if provided): {{args}}
+"""
