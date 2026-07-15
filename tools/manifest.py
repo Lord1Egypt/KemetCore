@@ -339,7 +339,8 @@ PROJECTS = [
         "domain": "Transformer attention unit", "doc": "docs/03_ImentetCore_Attention.md",
         "depends": ["ptahconv", "gebcore"], "phase": P235,
         "scope": "Phase 0/1 implements scaled dot-product attention with numerically-stable "
-                 "softmax golden and a flash-style tiled pymodel.",
+                 "softmax golden and a flash-style tiled pymodel. Phase 4: imentet_qk_score and "
+                 "imentet_mask_add signed off on ASAP7 7nm.",
         "checkpoints": [
             ("I.1", "Golden: scaled dot-product attention", 0, "done"),
             ("I.2", "Golden: stable softmax", 0, "done"),
