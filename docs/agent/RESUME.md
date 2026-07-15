@@ -9,9 +9,9 @@
 ---
 
 ## Current state
-- **Branch to work from:** `main` (tip after PR #177). ALWAYS `git pull` first.
-- **Last verified:** SobekCore sobek_cross Phase 4 P&R + `/goal` mode merged (#177).
-  Safe restore tags: `safe-auto-2026-07-15-2`.
+- **Branch to work from:** `main` (tip after PR #178). ALWAYS `git pull` first.
+- **Last verified:** HapiCore hapi_fp16_mul Phase 4 P&R + `/goal` mode merged (#178).
+  Safe restore tags: `safe-auto-2026-07-15-3`.
 - **Tests:** `pytest projects/ -q` → 146 passed (green).
 - **Open PRs:** none. Clean slate.
 - **⛔ Formal proofs are SATURATED** — do NOT re-run existing proofs or flip
