@@ -10,12 +10,12 @@
 
 ## Current state
 - **Branch to work from:** `main` (branch off it for each task).
-- **main tip / last verified:** `4022947` (merge PR #172). Safe restore tag:
-  `safe-baseline-2026-07-15`.
+- **Last verified:** GebCore G.7 formal proof merged (this PR #174). Safe restore
+  tags: `safe-baseline-2026-07-15` + rolling `safe-auto-*` after each merge.
 - **Tests:** `pytest projects/ -q` → 146 passed (green).
-- **Tracker:** 34% (23/66). All 11 cores P0/P1 ✅; P2/P3/P4/P5 partial 🔧.
-- **Open PRs:** #173 (docs — the agent instruction set; may already be merged).
-- **Anything half-finished?** No RTL/formal work in flight. Clean slate.
+- **Tracker:** GebCore now 5/7 checkpoints (G.7 done). Overall P5 phase % unchanged.
+- **Open PRs:** none expected after #174 lands.
+- **Anything half-finished?** No. Clean slate for the next task.
 
 ## NEXT STEP (do this when told "continue kemetcore")
 1. `git checkout main && git pull && pytest projects/ -q` (must be green).
