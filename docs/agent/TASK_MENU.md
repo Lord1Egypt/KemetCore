@@ -23,11 +23,15 @@ state moves, and always regenerate `PROGRESS.md` after any manifest change.
    at a realistic clock, commit config + SDC only. Small/medium blocks only (they
    close on this laptop). See PLAYBOOK Part D.
 
-3. **Deepen a formal proof where z3 stays tractable.** Add a genuine, non-vacuous,
-   mutation-tested property to a core that only has a shallow one. AVOID the
-   intractable miters (fp32-adder / divider / Barrett-modulo equivalence — z3 never
-   converges). Range, identity, commutativity-of-mul, and FSM control-safety
-   invariants all converge fast. See PLAYBOOK Part C.
+3. **Formal proofs — LOWEST priority, and mostly SATURATED.** Prefer options 1 and 2
+   above. Only touch formal if you are adding a *genuinely new, deeper* property to a
+   core, with a NEW proof file or NEW `` `ifdef FORMAL `` asserts — non-vacuous and
+   mutation-tested. AVOID intractable miters (fp32-adder / divider / Barrett-modulo —
+   z3 never converges). **⛔ Do NOT re-run an existing proof and flip its checkpoint
+   `partial`→`done` — that is tracker inflation and will be rejected in review.** The
+   existing combinational proofs are deliberately `partial` (a single algebraic
+   property ≠ full functional signoff); leave them `partial` unless you actually
+   prove full functional equivalence.
 
 ## Bigger levers (higher effort / may be gated — discuss with Mohamed first)
 
@@ -46,12 +50,15 @@ state moves, and always regenerate `PROGRESS.md` after any manifest change.
 
 7. **Timing/SDC discipline** across cores (real clock targets, not just gate counts).
 
-## Formal breadth status (so you don't redo saturated work)
-Every core WITH a real control FSM already has a sequential proof (RaCore arbiter,
-SethCore muldiv_seq, BastCore int8_mac, AnubisCore sha256, NeithCore ntt, PtahConv
-conv2d, AtumCore vcore). The remaining combinational-only cores (SobekCore,
-ImentetCore, GebCore, HapiCore) have no FSM to prove — deepen their datapath
-properties instead, don't invent an FSM.
+## Formal breadth status — SATURATED (do not redo)
+Formal proofs already exist for every core that has a tractable property, and each
+combinational core already has its proof file: `formal_bias_relu.sv` (PtahConv),
+`formal_mask.sv` (ImentetCore), `formal_scale.sv` (SobekCore), `formal_int8_mac.sv`
+(BastCore), `formal_prune.sv` (GebCore), plus HapiCore/NeithCore/SethCore/AtumCore.
+Every FSM core has a sequential k-induction proof. **There is essentially no new
+formal work to pick up** — do NOT re-run these and do NOT flip their `partial`
+checkpoints to `done`. **Default to Phase-2 RTL breadth (option 1) or Phase-4 P&R
+breadth (option 2).** Those are where real, non-duplicate progress lives.
 
 ## Rule for every item
 One small PR, all gates green, tracking regenerated, worklog updated, then wait for
