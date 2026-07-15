@@ -502,7 +502,8 @@ PROJECTS = [
         "phase": _ph("done", "done", "partial", "partial", "partial", "partial"),
         "scope": "Phase 0/1 implements the KAI register/DMA contract model, a NoC + "
                  "descriptor-DMA functional model, a KAI conformance harness, and an "
-                 "end-to-end axpy that drives a KAI accelerator through the fabric.",
+                 "end-to-end axpy that drives a KAI accelerator through the fabric. "
+                 "Phase 4: ra_noc_arbiter and ra_kai_regs signed off on ASAP7 7nm.",
         "checkpoints": [
             ("RA.1", "Golden: KAI register model + conformance harness", 0, "done"),
             ("RA.2", "Golden: NoC crossbar + descriptor DMA", 0, "done"),
