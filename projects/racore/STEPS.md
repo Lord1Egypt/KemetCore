@@ -4,7 +4,7 @@
 
 _Auto-generated from `tools/manifest.py` — do not edit by hand; edit the manifest and run `python tools/gen_tracking.py`._
 
-**Scope (current):** Phase 0/1 implements the KAI register/DMA contract model, a NoC + descriptor-DMA functional model, a KAI conformance harness, and an end-to-end axpy that drives a KAI accelerator through the fabric.
+**Scope (current):** Phase 0/1 implements the KAI register/DMA contract model, a NoC + descriptor-DMA functional model, a KAI conformance harness, and an end-to-end axpy that drives a KAI accelerator through the fabric. Phase 4: ra_noc_arbiter and ra_kai_regs signed off on ASAP7 7nm.
 
 ## Ordered steps (6-phase lifecycle)
 
