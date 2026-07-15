@@ -64,3 +64,16 @@
   done; P5 phase % unchanged.
 - **Tracking:** G.7 partial→done (gebcore 5/7 checkpoints).
 - **PR:** #174 (reconciled).
+- **Date**: 2026-07-15
+- **Branch**: `feat/sobekcore-cross-p4`
+- **What**: Hardened `sobek_cross` on ASAP7 7nm (Phase 4 breadth). Added `sobek_cross_p4top` registered wrapper.
+- **Verification**: `flow/harden.sh sobek_cross` → WNS 0.00 @ 111 MHz, 0 route-DRC.
+- **Commit**: (HEAD)
+- **PR**: #177
+
+- **Date**: 2026-07-15
+- **Branch**: `feat/hapicore-fp16-mul-p4`
+- **What**: Hardened `hapi_fp16_mul` on ASAP7 7nm (Phase 4 breadth). Added `hapi_fp16_mul_p4top` registered wrapper.
+- **Verification**: `flow/harden.sh hapi_fp16_mul` → WNS 0.00 @ 285 MHz, 0 route-DRC.
+- **Commit**: (HEAD)
+- **PR**: (pending)
