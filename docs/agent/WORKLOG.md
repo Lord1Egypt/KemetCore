@@ -100,3 +100,12 @@
 2026-07-15 | `feat/sobekcore-lerp-p4` | Hardened sobek_lerp (Phase 4 P&R). Created wrapper sobek_lerp_p4top. P&R closed timing cleanly at 100 MHz (10000 ps period). | `./flow/harden.sh sobek_lerp` | TBD | #193
 2026-07-15 | `feat/sobekcore-ray-point-p4` | Hardened sobek_ray_point (Phase 4 P&R). Created wrapper sobek_ray_point_p4top. P&R closed timing cleanly at 100 MHz (10000 ps period). | `./flow/harden.sh sobek_ray_point` | TBD | #194
 2026-07-15 | `feat/sobekcore-faceforward-p4` | Hardened sobek_faceforward (Phase 4 P&R). Created wrapper sobek_faceforward_p4top. P&R closed timing cleanly at 100 MHz (10000 ps period). | `./flow/harden.sh sobek_faceforward` | TBD | #195
+2026-07-15 | `feat/sobekcore-length` (Abandoned) | Attempted to harden sobek_length (Phase 4 P&R) but it uses a deep 54-bit integer square root unrolled 27 times + 3 muls + 2 adds. Failed to close timing at 100MHz (WNS ~ -9ns). Abandoned. | `./flow/harden.sh sobek_length` | FAIL | N/A
+
+### 2026-07-16 - feat/hapi_bf16_mul_p4
+- **Task:** Harden `hapi_bf16_mul` (Phase 4 P&R).
+- **Action:** Created `hapi_bf16_mul_p4top` registered wrapper and ASAP7 configs. Ran OpenROAD flow.
+- **Verification:** `./flow/harden.sh hapi_bf16_mul` finished with WNS=0.00, 119.0 um^2 area, 0 routing DRC violations.
+- **Commit:** pending
+- **PR:** pending
+
