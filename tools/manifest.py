@@ -81,8 +81,8 @@ PROJECTS = [
                  "Golden fp_sqrt rounds the exact real sqrt via math.isqrt with exact tie "
                  "detection. cocotb bit-exact on 210K+ roots (incl 4K perfect squares); 0-latch "
                  "(coarse ~381 cells; abc-fast ~27K gates, sqrt synth also CI-skipped). HapiCore "
-                 "FPU now has mul+add+fma(x3 fmts)+div+sqrt. Phase 4: hapi_fp32_mul and "
-                 "hapi_fp16_mul signed off on ASAP7 7nm (registered boundary, WNS 0.00).",
+                 "FPU now has mul+add+fma(x3 fmts)+div+sqrt. Phase 4: hapi_fp32_mul, "
+                 "hapi_fp16_mul, hapi_fp32_add, and hapi_fp32_to_int signed off on ASAP7 7nm (registered boundary, WNS 0.00).",
         "checkpoints": [
             ("HA.1", "Golden: fp16/bf16/fp32 add", 0, "done"),
             ("HA.2", "Golden: mul + fma", 0, "done"),
