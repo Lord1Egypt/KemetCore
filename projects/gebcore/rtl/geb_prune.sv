@@ -69,4 +69,42 @@ module geb_prune (
             end
         end
     end
+
+`ifdef FORMAL
+    // Formal properties for 2:4 structured-sparsity invariant
+    always_comb begin
+        // 1. Exactly 2 kept
+        assert ((keep_mask[0] + keep_mask[1] + keep_mask[2] + keep_mask[3]) == 3'd2);
+
+        // 2. The kept values exactly match the selected weights and indices
+        if (keep_mask[0] && keep_mask[1]) begin
+            assert (val0 == w[0] && idx0 == 2'd0);
+            assert (val1 == w[1] && idx1 == 2'd1);
+        end else if (keep_mask[0] && keep_mask[2]) begin
+            assert (val0 == w[0] && idx0 == 2'd0);
+            assert (val1 == w[2] && idx1 == 2'd2);
+        end else if (keep_mask[0] && keep_mask[3]) begin
+            assert (val0 == w[0] && idx0 == 2'd0);
+            assert (val1 == w[3] && idx1 == 2'd3);
+        end else if (keep_mask[1] && keep_mask[2]) begin
+            assert (val0 == w[1] && idx0 == 2'd1);
+            assert (val1 == w[2] && idx1 == 2'd2);
+        end else if (keep_mask[1] && keep_mask[3]) begin
+            assert (val0 == w[1] && idx0 == 2'd1);
+            assert (val1 == w[3] && idx1 == 2'd3);
+        end else if (keep_mask[2] && keep_mask[3]) begin
+            assert (val0 == w[2] && idx0 == 2'd2);
+            assert (val1 == w[3] && idx1 == 2'd3);
+        end
+
+        // 3. A kept lane's magnitude must be >= a dropped lane's magnitude (or equal with lower index)
+        for (int i = 0; i < 4; i++) begin
+            for (int j = 0; j < 4; j++) begin
+                if (keep_mask[i] && !keep_mask[j]) begin
+                    assert(beats(i, j));
+                end
+            end
+        end
+    end
+`endif
 endmodule
