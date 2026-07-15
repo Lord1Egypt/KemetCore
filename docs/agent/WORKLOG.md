@@ -93,3 +93,4 @@
 2026-07-15 | `feat/atumcore-vsadd-p4` | Hardened atum_vsadd (Phase 4 P&R). Created wrapper atum_vsadd_p4top. P&R closed timing cleanly at 100 MHz (10000 ps period). Lowered utilization to 15% to accommodate >1k pins. | `./flow/harden.sh atum_vsadd` | TBD | #186
 2026-07-15 | `feat/atumcore-vcompress-p4` | Hardened atum_vcompress (Phase 4 P&R). Created wrapper atum_vcompress_p4top. P&R closed timing cleanly at 100 MHz (10000 ps period). | `./flow/harden.sh atum_vcompress` | TBD | #187
 2026-07-15 | `feat/neithcore-polyaddsub-p4` | Hardened neith_polyaddsub (Phase 4 P&R). Created wrapper neith_polyaddsub_p4top. P&R closed timing cleanly at 100 MHz (10000 ps period). | `./flow/harden.sh neith_polyaddsub` | TBD | #188
+2026-07-15 | `feat/hapicore-fp32-to-int-p4` | Hardened hapi_fp32_to_int (Phase 4 P&R). Created wrapper hapi_fp32_to_int_p4top. P&R closed timing cleanly at 100 MHz (10000 ps period). | `./flow/harden.sh hapi_fp32_to_int` | TBD | #189
