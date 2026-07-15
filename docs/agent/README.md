@@ -5,6 +5,7 @@ Antigravity / Gemini). This folder is the deep detail behind it.
 
 | File | What it is |
 |------|------------|
+| [`RESUME.md`](RESUME.md) | **"continue kemetcore" starts here** — current state + exact next step. Read at session start, overwrite at session end. |
 | [`PLAYBOOK.md`](PLAYBOOK.md) | Every step with exact commands + toolchain paths. The ground truth for how to work. |
 | [`AVOID_LIST.md`](AVOID_LIST.md) | Every mistake already made in this repo. Read before your first change. |
 | [`TASK_MENU.md`](TASK_MENU.md) | What to work on next, tractable items first. |

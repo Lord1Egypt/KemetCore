@@ -42,8 +42,10 @@ CI run and tell me when it's green" style busywork. When in doubt, use Pro-High.
 This is the short version. The full version with exact commands is in
 [`docs/agent/PLAYBOOK.md`](docs/agent/PLAYBOOK.md).
 
-1. **Orient.** Read `PROGRESS.md`, then run `pytest projects/ -q` — it must be
-   green before you start. If it is not, STOP and report; do not build on red.
+1. **Orient.** Read [`docs/agent/RESUME.md`](docs/agent/RESUME.md) first (it says
+   exactly where we stopped and the next step), then `PROGRESS.md`, then run
+   `pytest projects/ -q` — it must be green before you start. If it is not, STOP
+   and report; do not build on red.
 2. **Pick ONE small task** from [`docs/agent/TASK_MENU.md`](docs/agent/TASK_MENU.md)
    (or the task Mohamed gave you). One module / one proof / one block at a time.
 3. **Branch.** `git checkout main && git pull && git checkout -b feat/<short-name>`.
@@ -64,6 +66,10 @@ This is the short version. The full version with exact commands is in
    "merge"** (see §5 — you may not self-merge without his explicit word).
 10. **Self-review** against [`docs/agent/REVIEW_CHECKLIST.md`](docs/agent/REVIEW_CHECKLIST.md)
     before you call anything done.
+11. **Save your place (end of every session).** Overwrite
+    [`docs/agent/RESUME.md`](docs/agent/RESUME.md) with the current state + the exact
+    next step, commit it, and refresh your Antigravity memory (see §7). This is what
+    makes "continue kemetcore" work next time.
 
 ---
 
@@ -125,7 +131,28 @@ its result, the commit hash, and the PR number. No entry = the step didn't happe
 
 ---
 
-## 7. When you are unsure
+## 7. Resume state + your own memory (so "continue kemetcore" just works)
+
+Mohamed wants to resume by typing only **"continue kemetcore"**. Two mechanisms
+keep that working — do BOTH:
+
+1. **`docs/agent/RESUME.md` (the durable, in-repo resume file).** It always holds
+   the current state and the exact next step. You READ it at the start of every
+   session (loop step 1) and OVERWRITE it at the end (loop step 11). Because it is
+   committed to git, it survives anything — a new machine, a fresh agent, a lost
+   session. This is the source of truth for "where were we".
+
+2. **Your Antigravity memory (fast recall).** Save/refresh a memory that says:
+   *"KemetCore: to continue, open `/home/lordegypt/KemetCore`, read
+   `docs/agent/RESUME.md`, then follow `AGENTS.md`. Use Gemini 3 Pro High. Never
+   self-merge; stop at the PR for Mohamed."* Update this memory whenever the plan
+   materially changes. If the two ever disagree, **`RESUME.md` wins** (git is
+   truth; memory is just a shortcut).
+
+So when Mohamed says **"continue kemetcore"**: open the repo → read `RESUME.md` →
+do its NEXT STEP → follow the loop → at the end, update `RESUME.md` + memory again.
+
+## 8. When you are unsure
 
 Stop and write the question into `docs/agent/WORKLOG.md` under a `NEEDS-MOHAMED`
 heading, then work on something else that is unblocked. Do not guess on

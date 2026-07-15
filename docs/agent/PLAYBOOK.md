@@ -58,8 +58,19 @@ git status                 # must be clean (only scratchpad/ untracked is OK)
 git checkout main && git pull
 pytest projects/ -q        # MUST be green. If red, STOP and log it — do not build on red.
 ```
-Read `PROGRESS.md` top-to-bottom. Read the tail of `docs/agent/WORKLOG.md` to see
-what the previous session did and whether anything is half-finished.
+Read `docs/agent/RESUME.md` FIRST (current state + exact next step), then
+`PROGRESS.md`, then the tail of `docs/agent/WORKLOG.md` to see what the previous
+session did and whether anything is half-finished.
+
+### Step 12 — Save your place (end of EVERY session)
+Overwrite `docs/agent/RESUME.md` so the next "continue kemetcore" resumes instantly:
+```bash
+# edit docs/agent/RESUME.md: update "Current state" + "NEXT STEP" to reflect NOW
+git add docs/agent/RESUME.md
+git commit -m "docs(agent): update RESUME state" && git push
+```
+Also refresh your Antigravity memory (AGENTS.md §7): *"KemetCore → open the repo,
+read docs/agent/RESUME.md, follow AGENTS.md, Gemini 3 Pro High, never self-merge."*
 
 ### Step 2 — Pick ONE small task
 From `docs/agent/TASK_MENU.md`, or the specific thing Mohamed asked for. Scope =
