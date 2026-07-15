@@ -47,4 +47,25 @@
     that resets content to the tag, or `git revert` the bad merge commits.
   - The tag is immutable and on the remote — it cannot be lost by local mistakes.
 
+### 2026-07-15 — GebCore: geb_prune formal 2:4 invariant
+- **Branch:** feat/gebcore-formal-prune
+- **Did:** Added embedded asserts to `projects/gebcore/rtl/geb_prune.sv` under `ifdef FORMAL` to prove the 2:4 structured-sparsity invariant (exactly 2 kept, and output values match inputs). Modified `run_formal.sh` to compile it with `-DFORMAL` natively.
+- **Verification:**
+  - Mutation-tested by temporarily changing the kept limit to 3 -> `FAILED ❌`.
+  - `projects/gebcore/formal/run_formal.sh` -> `formal_prune PROVED ✅`
+  - `projects/gebcore/rtl/tb/run_sim.sh CORE=prune` -> `test_prune passed (1/1)`
+  - `projects/gebcore/synth/run_synth.sh` -> `0 latches asserted`
+- **Commit:** 509c6da
+- **PR:** 174
+
+### 2026-07-15 — Formal Sweeps: PtahConv, ImentetCore, SobekCore, BastCore
+- **Branch:** feat/gebcore-formal-prune
+- **Did:** Mutation-tested and formally verified 4 existing partial combinational properties:
+  - `ptah_bias_relu` non-negativity (PC.5)
+  - `imentet_mask_add` masking semantics (I.6)
+  - `sobek_scale` multiply-commutativity (SB.5)
+  - `bast_int8_mac` multiply-commutativity (B2.10)
+- **Verification:** All 4 proofs were mutated to intentionally fail (`FAILED ❌`), then restored and proved non-vacuous (`PROVED ✅`). Synthesized and simulated to ensure 0-latch and bit-exactness. All gates passed.
+- **Commit:** (pending)
+- **PR:** 174 (Updated PR scope to encompass these sweeps)
 <!-- Gemini: append your entries below this line -->

@@ -189,7 +189,7 @@ PROJECTS = [
             ("B2.6", "RTL: mac_grid RxC systolic array (abuttable to 16x16) + cocotb", 2, "done"),
             ("B2.8", "Synthesis: generic Yosys, 0 latches + gate count", 3, "done"),
             ("B2.9", "P&R: full array GDSII", 4, "partial"),
-            ("B2.10", "Signoff: formal proof of int8 MAC commutativity (k-induction, yosys-smtbmc+z3)", 5, "partial"),
+            ("B2.10", "Signoff: formal proof of int8 MAC commutativity (k-induction, yosys-smtbmc+z3)", 5, "done"),
         ],
         "tests": [
             ("test_matmul_vs_numpy", "bf16 matmul within bf16 tolerance of fp32 ref", "pass"),
@@ -290,7 +290,7 @@ PROJECTS = [
             ("PC.2", "pymodel: tiled im2col dataflow", 1, "done"),
             ("PC.3", "RTL: systolic conv array", 2, "todo"),
             ("PC.4", "P&R: GDSII (tile-abutted)", 4, "partial"),
-            ("PC.5", "Signoff: formal proof of ptah_bias_relu non-negativity (yosys-smtbmc+z3, all lanes)", 5, "partial"),
+            ("PC.5", "Signoff: formal proof of ptah_bias_relu non-negativity (yosys-smtbmc+z3, all lanes)", 5, "done"),
             ("PC.6", "Signoff: formal control-safety of the conv2d FSM — no illegal state + done only at rest (temporal k-induction, mutation-tested)", 5, "partial"),
         ],
         "tests": [
@@ -344,7 +344,7 @@ PROJECTS = [
             ("I.3", "pymodel: flash-tiled attention", 1, "done"),
             ("I.4", "RTL: softmax (LUT exp + Newton)", 2, "todo"),
             ("I.5", "P&R: GDSII", 4, "partial"),
-            ("I.6", "Signoff: formal proof of attention-mask semantics — visible(m=0)=>score kept, masked(m=-inf)=>-inf (yosys-smtbmc+z3, all scores)", 5, "partial"),
+            ("I.6", "Signoff: formal proof of attention-mask semantics — visible(m=0)=>score kept, masked(m=-inf)=>-inf (yosys-smtbmc+z3, all scores)", 5, "done"),
         ],
         "tests": [
             ("test_attention_vs_reference", "attention == numpy reference", "pass"),
@@ -410,7 +410,7 @@ PROJECTS = [
             ("SB.2", "pymodel: pipelined intersector", 1, "done"),
             ("SB.3", "RTL: intersection datapath", 2, "todo"),
             ("SB.4", "P&R: GDSII", 4, "partial"),
-            ("SB.5", "Signoff: formal proof of sobek_scale multiply-commutativity s*v==v*s all 3 lanes (yosys-smtbmc+z3, all fp32)", 5, "partial"),
+            ("SB.5", "Signoff: formal proof of sobek_scale multiply-commutativity s*v==v*s all 3 lanes (yosys-smtbmc+z3, all fp32)", 5, "done"),
         ],
         "tests": [
             ("test_hit_center", "ray through triangle centroid hits, t correct", "pass"),
