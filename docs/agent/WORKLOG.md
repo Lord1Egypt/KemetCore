@@ -85,3 +85,4 @@
 - **Commit**: (HEAD)
 - **PR**: #179
 2026-07-15 | `feat/ptahconv-bias-relu-p4` | Hardened ptah_bias_relu (Phase 4 P&R). Created wrapper ptah_bias_relu_p4top to bound 8x hapi_fp32_add and ReLUs. Configured OpenROAD for 166 MHz clock (6000 ps period). | `./flow/harden.sh ptah_bias_relu` | 0aa71a9 | #180
+2026-07-15 | `feat/racore-kai-regs-p4` | Hardened ra_kai_regs (Phase 4 P&R). Configured OpenROAD for 666 MHz clock (1500 ps period). | `./flow/harden.sh ra_kai_regs` | b5f358d | #181
