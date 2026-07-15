@@ -9,21 +9,17 @@
 ---
 
 ## Current state
-- **Branch to work from:** `main` (branch off it for each task).
-- **main tip / last verified:** `4022947` (merge PR #172). Safe restore tag:
-  `safe-baseline-2026-07-15`.
-- **Tests:** `pytest projects/ -q` → 146 passed (green).
-- **Tracker:** 34% (23/66). All 11 cores P0/P1 ✅; P2/P3/P4/P5 partial 🔧.
-- **Open PRs:** #173 (docs — the agent instruction set; may already be merged).
-- **Anything half-finished?** No RTL/formal work in flight. Clean slate.
+- Successfully completed a "formal sweep" across the 4 remaining partial combinational properties in `TASK_MENU.md` (GebCore, PtahConv, ImentetCore, SobekCore, BastCore).
+- All 5 formal properties are mutation-tested and passing in `yosys-smtbmc+z3`.
+- PR #174 is open with all these changes and awaiting CI completion.
+- Tracking matrix (`manifest.py` and `PROGRESS.md`) has been fully updated.
+- The `/goal` for formal proofs is COMPLETE!
 
 ## NEXT STEP (do this when told "continue kemetcore")
-1. `git checkout main && git pull && pytest projects/ -q` (must be green).
-2. Read the tail of `WORKLOG.md` to see the last few steps.
-3. Pick ONE small task from `TASK_MENU.md` (default: add one Phase-2 RTL module
-   bit-exact vs golden, or harden one more Phase-4 block, or deepen one tractable
-   formal proof).
-4. Follow the loop in `PLAYBOOK.md`. Stop at the PR — do NOT merge.
+1. Wait for CI to finish on PR #174. 
+2. Once green, Mohamed can merge PR #174. 
+3. After merging, cut a restore tag `safe-auto-<date>-N` if not already done.
+4. Pull the latest `main` and pick a new breadth task from `TASK_MENU.md` (e.g. Phase-2 RTL breadth or Phase-4 P&R).
 
 ## Before you end EVERY session (mandatory)
 - Overwrite the "Current state" + "NEXT STEP" above to reflect reality now
