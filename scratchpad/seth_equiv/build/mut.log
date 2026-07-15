@@ -1,0 +1,496 @@
+
+ /----------------------------------------------------------------------------\
+ |  yosys -- Yosys Open SYnthesis Suite                                       |
+ |  Copyright (C) 2012 - 2026  Claire Xenia Wolf <claire@yosyshq.com>         |
+ |  Distributed under an ISC-like license, type "license" to see terms        |
+ \----------------------------------------------------------------------------/
+ Yosys 0.65 (git sha1 aec814bdf3071f7e0fd0fbe43f7f711e99d01e24, g++ 14.3.0-19 -fvisibility-inlines-hidden -fmessage-length=0 -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/yosys_1778591527500/work=/usr/local/src/conda/yosys-0.65 -fdebug-prefix-map=/home/lordegypt/miniconda3/envs/eda=/usr/local/src/conda-prefix -fPIC -O3) [conda-forge/yosys-feedstock]
+
+-- Running command `read_verilog -sv -formal formal_muldiv_equiv.sv build/seth_muldiv_MUT.sv /home/lordegypt/KemetCore/projects/sethcore/rtl/seth_muldiv_seq.sv; prep -top formal_muldiv_equiv; async2sync; dffunmap; write_smt2 -wires build/mut.smt2' --
+
+1. Executing Verilog-2005 frontend: formal_muldiv_equiv.sv
+Parsing formal SystemVerilog input from `formal_muldiv_equiv.sv' to AST representation.
+Generating RTLIL representation for module `\formal_muldiv_equiv'.
+Successfully finished Verilog frontend.
+
+2. Executing Verilog-2005 frontend: build/seth_muldiv_MUT.sv
+Parsing formal SystemVerilog input from `build/seth_muldiv_MUT.sv' to AST representation.
+Generating RTLIL representation for module `\seth_muldiv'.
+Successfully finished Verilog frontend.
+
+3. Executing Verilog-2005 frontend: /home/lordegypt/KemetCore/projects/sethcore/rtl/seth_muldiv_seq.sv
+Parsing formal SystemVerilog input from `/home/lordegypt/KemetCore/projects/sethcore/rtl/seth_muldiv_seq.sv' to AST representation.
+Generating RTLIL representation for module `\seth_muldiv_seq'.
+Successfully finished Verilog frontend.
+
+4. Executing PREP pass.
+
+4.1. Executing HIERARCHY pass (managing design hierarchy).
+
+4.1.1. Analyzing design hierarchy..
+Top module:  \formal_muldiv_equiv
+Used module:     \seth_muldiv_seq
+Used module:     \seth_muldiv
+
+4.1.2. Analyzing design hierarchy..
+Top module:  \formal_muldiv_equiv
+Used module:     \seth_muldiv_seq
+Used module:     \seth_muldiv
+Removed 0 unused modules.
+Module formal_muldiv_equiv directly or indirectly contains formal properties -> setting "keep" attribute.
+
+4.2. Executing PROC pass (convert processes to netlists).
+
+4.2.1. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Cleaned up 0 empty switches.
+
+4.2.2. Executing PROC_RMDEAD pass (remove dead branches from decision trees).
+Marked 7 switch rules as full_case in process $proc$/home/lordegypt/KemetCore/projects/sethcore/rtl/seth_muldiv_seq.sv:70$76 in module seth_muldiv_seq.
+Removed 1 dead cases from process $proc$build/seth_muldiv_MUT.sv:15$31 in module seth_muldiv.
+Marked 4 switch rules as full_case in process $proc$build/seth_muldiv_MUT.sv:15$31 in module seth_muldiv.
+Removed a total of 1 dead cases.
+
+4.2.3. Executing PROC_PRUNE pass (remove redundant assignments in processes).
+Removed 2 redundant assignments.
+Promoted 8 assignments to connections.
+
+4.2.4. Executing PROC_INIT pass (extract init attributes).
+Found init rule in `\formal_muldiv_equiv.$proc$formal_muldiv_equiv.sv:12$30'.
+  Set init value: \t = 8'00000000
+
+4.2.5. Executing PROC_ARST pass (detect async resets in processes).
+
+4.2.6. Executing PROC_ROM pass (convert switches to ROMs).
+Converted 0 switches.
+
+4.2.7. Executing PROC_MUX pass (convert decision trees to multiplexers).
+Creating decoders for process `\seth_muldiv_seq.$proc$/home/lordegypt/KemetCore/projects/sethcore/rtl/seth_muldiv_seq.sv:70$76'.
+     1/11: $0\done[0:0]
+     2/11: $0\result_q[31:0]
+     3/11: $0\rq[63:0]
+     4/11: $0\divisor[31:0]
+     5/11: $0\cnt[5:0]
+     6/11: $0\neg_r[0:0]
+     7/11: $0\neg_q[0:0]
+     8/11: $0\rem_op[0:0]
+     9/11: $0\state[1:0]
+    10/11: $0\busy[0:0]
+    11/11: $0\y[31:0]
+Creating decoders for process `\seth_muldiv.$proc$build/seth_muldiv_MUT.sv:15$31'.
+     1/5: $5\y[31:0]
+     2/5: $4\y[31:0]
+     3/5: $3\y[31:0]
+     4/5: $2\y[31:0]
+     5/5: $1\y[31:0]
+Creating decoders for process `\formal_muldiv_equiv.$proc$formal_muldiv_equiv.sv:12$30'.
+Creating decoders for process `\formal_muldiv_equiv.$proc$formal_muldiv_equiv.sv:29$25'.
+     1/1: $assert$formal_muldiv_equiv.sv:29$28_EN
+Creating decoders for process `\formal_muldiv_equiv.$proc$formal_muldiv_equiv.sv:27$21'.
+Creating decoders for process `\formal_muldiv_equiv.$proc$formal_muldiv_equiv.sv:14$7'.
+Creating decoders for process `\formal_muldiv_equiv.$proc$formal_muldiv_equiv.sv:13$4'.
+     1/1: $0\t[7:0]
+
+4.2.8. Executing PROC_DLATCH pass (convert process syncs to latches).
+No latch inferred for signal `\seth_muldiv.\y' from process `\seth_muldiv.$proc$build/seth_muldiv_MUT.sv:15$31'.
+No latch inferred for signal `\seth_muldiv.\mul_ss' from process `\seth_muldiv.$proc$build/seth_muldiv_MUT.sv:15$31'.
+No latch inferred for signal `\seth_muldiv.\mul_su' from process `\seth_muldiv.$proc$build/seth_muldiv_MUT.sv:15$31'.
+No latch inferred for signal `\seth_muldiv.\mul_uu' from process `\seth_muldiv.$proc$build/seth_muldiv_MUT.sv:15$31'.
+No latch inferred for signal `\formal_muldiv_equiv.\rst' from process `\formal_muldiv_equiv.$proc$formal_muldiv_equiv.sv:14$7'.
+No latch inferred for signal `\formal_muldiv_equiv.\start' from process `\formal_muldiv_equiv.$proc$formal_muldiv_equiv.sv:14$7'.
+
+4.2.9. Executing PROC_DFF pass (convert process syncs to FFs).
+Creating register for signal `\seth_muldiv_seq.\y' using process `\seth_muldiv_seq.$proc$/home/lordegypt/KemetCore/projects/sethcore/rtl/seth_muldiv_seq.sv:70$76'.
+  created $dff cell `$procdff$347' with positive edge clock.
+Creating register for signal `\seth_muldiv_seq.\busy' using process `\seth_muldiv_seq.$proc$/home/lordegypt/KemetCore/projects/sethcore/rtl/seth_muldiv_seq.sv:70$76'.
+  created $dff cell `$procdff$348' with positive edge clock.
+Creating register for signal `\seth_muldiv_seq.\done' using process `\seth_muldiv_seq.$proc$/home/lordegypt/KemetCore/projects/sethcore/rtl/seth_muldiv_seq.sv:70$76'.
+  created $dff cell `$procdff$349' with positive edge clock.
+Creating register for signal `\seth_muldiv_seq.\state' using process `\seth_muldiv_seq.$proc$/home/lordegypt/KemetCore/projects/sethcore/rtl/seth_muldiv_seq.sv:70$76'.
+  created $dff cell `$procdff$350' with positive edge clock.
+Creating register for signal `\seth_muldiv_seq.\rem_op' using process `\seth_muldiv_seq.$proc$/home/lordegypt/KemetCore/projects/sethcore/rtl/seth_muldiv_seq.sv:70$76'.
+  created $dff cell `$procdff$351' with positive edge clock.
+Creating register for signal `\seth_muldiv_seq.\neg_q' using process `\seth_muldiv_seq.$proc$/home/lordegypt/KemetCore/projects/sethcore/rtl/seth_muldiv_seq.sv:70$76'.
+  created $dff cell `$procdff$352' with positive edge clock.
+Creating register for signal `\seth_muldiv_seq.\neg_r' using process `\seth_muldiv_seq.$proc$/home/lordegypt/KemetCore/projects/sethcore/rtl/seth_muldiv_seq.sv:70$76'.
+  created $dff cell `$procdff$353' with positive edge clock.
+Creating register for signal `\seth_muldiv_seq.\cnt' using process `\seth_muldiv_seq.$proc$/home/lordegypt/KemetCore/projects/sethcore/rtl/seth_muldiv_seq.sv:70$76'.
+  created $dff cell `$procdff$354' with positive edge clock.
+Creating register for signal `\seth_muldiv_seq.\divisor' using process `\seth_muldiv_seq.$proc$/home/lordegypt/KemetCore/projects/sethcore/rtl/seth_muldiv_seq.sv:70$76'.
+  created $dff cell `$procdff$355' with positive edge clock.
+Creating register for signal `\seth_muldiv_seq.\rq' using process `\seth_muldiv_seq.$proc$/home/lordegypt/KemetCore/projects/sethcore/rtl/seth_muldiv_seq.sv:70$76'.
+  created $dff cell `$procdff$356' with positive edge clock.
+Creating register for signal `\seth_muldiv_seq.\result_q' using process `\seth_muldiv_seq.$proc$/home/lordegypt/KemetCore/projects/sethcore/rtl/seth_muldiv_seq.sv:70$76'.
+  created $dff cell `$procdff$357' with positive edge clock.
+Creating register for signal `\formal_muldiv_equiv.\t' using process `\formal_muldiv_equiv.$proc$formal_muldiv_equiv.sv:13$4'.
+  created $dff cell `$procdff$358' with positive edge clock.
+
+4.2.10. Executing PROC_MEMWR pass (convert process memory writes to cells).
+
+4.2.11. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Found and cleaned up 9 empty switches in `\seth_muldiv_seq.$proc$/home/lordegypt/KemetCore/projects/sethcore/rtl/seth_muldiv_seq.sv:70$76'.
+Removing empty process `seth_muldiv_seq.$proc$/home/lordegypt/KemetCore/projects/sethcore/rtl/seth_muldiv_seq.sv:70$76'.
+Found and cleaned up 5 empty switches in `\seth_muldiv.$proc$build/seth_muldiv_MUT.sv:15$31'.
+Removing empty process `seth_muldiv.$proc$build/seth_muldiv_MUT.sv:15$31'.
+Removing empty process `formal_muldiv_equiv.$proc$formal_muldiv_equiv.sv:12$30'.
+Found and cleaned up 1 empty switch in `\formal_muldiv_equiv.$proc$formal_muldiv_equiv.sv:29$25'.
+Removing empty process `formal_muldiv_equiv.$proc$formal_muldiv_equiv.sv:29$25'.
+Removing empty process `formal_muldiv_equiv.$proc$formal_muldiv_equiv.sv:27$21'.
+Removing empty process `formal_muldiv_equiv.$proc$formal_muldiv_equiv.sv:14$7'.
+Found and cleaned up 1 empty switch in `\formal_muldiv_equiv.$proc$formal_muldiv_equiv.sv:13$4'.
+Removing empty process `formal_muldiv_equiv.$proc$formal_muldiv_equiv.sv:13$4'.
+Cleaned up 16 empty switches.
+
+4.2.12. Executing OPT_EXPR pass (perform const folding).
+Optimizing module seth_muldiv_seq.
+Optimizing module seth_muldiv.
+Optimizing module formal_muldiv_equiv.
+
+4.3. Executing FUTURE pass.
+
+4.4. Executing OPT_EXPR pass (perform const folding).
+Optimizing module seth_muldiv_seq.
+Optimizing module seth_muldiv.
+Optimizing module formal_muldiv_equiv.
+
+4.5. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \seth_muldiv_seq..
+Finding unused cells or wires in module \seth_muldiv..
+Finding unused cells or wires in module \formal_muldiv_equiv..
+Removed 0 unused cells and 111 unused wires.
+
+4.6. Executing CHECK pass (checking for obvious problems).
+Checking module seth_muldiv_seq...
+Checking module seth_muldiv...
+Checking module formal_muldiv_equiv...
+Found and reported 0 problems.
+
+4.7. Executing OPT pass (performing simple optimizations).
+
+4.7.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module seth_muldiv_seq.
+Optimizing module seth_muldiv.
+Optimizing module formal_muldiv_equiv.
+
+4.7.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\seth_muldiv_seq'.
+Computing hashes of 132 cells of `\seth_muldiv_seq'.
+Finding duplicate cells in `\seth_muldiv_seq'.
+Computing hashes of 116 cells of `\seth_muldiv_seq'.
+Finding duplicate cells in `\seth_muldiv_seq'.
+Finding identical cells in module `\seth_muldiv'.
+Computing hashes of 43 cells of `\seth_muldiv'.
+Finding duplicate cells in `\seth_muldiv'.
+Computing hashes of 34 cells of `\seth_muldiv'.
+Finding duplicate cells in `\seth_muldiv'.
+Computing hashes of 33 cells of `\seth_muldiv'.
+Finding duplicate cells in `\seth_muldiv'.
+Finding identical cells in module `\formal_muldiv_equiv'.
+Computing hashes of 30 cells of `\formal_muldiv_equiv'.
+Finding duplicate cells in `\formal_muldiv_equiv'.
+Removed a total of 26 cells.
+
+4.7.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \seth_muldiv_seq..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \seth_muldiv..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+    dead port 2/2 on $mux $procmux$324.
+    dead port 1/2 on $mux $procmux$322.
+    dead port 2/2 on $mux $procmux$313.
+    dead port 2/2 on $mux $procmux$307.
+    dead port 1/2 on $mux $procmux$305.
+    dead port 2/2 on $mux $procmux$332.
+Running muxtree optimizer on module \formal_muldiv_equiv..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 6 multiplexer ports.
+
+4.7.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \seth_muldiv_seq.
+  Optimizing cells in module \seth_muldiv.
+  Optimizing cells in module \formal_muldiv_equiv.
+Performed a total of 0 changes.
+
+4.7.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\seth_muldiv_seq'.
+Computing hashes of 116 cells of `\seth_muldiv_seq'.
+Finding duplicate cells in `\seth_muldiv_seq'.
+Finding identical cells in module `\seth_muldiv'.
+Computing hashes of 27 cells of `\seth_muldiv'.
+Finding duplicate cells in `\seth_muldiv'.
+Finding identical cells in module `\formal_muldiv_equiv'.
+Computing hashes of 30 cells of `\formal_muldiv_equiv'.
+Finding duplicate cells in `\formal_muldiv_equiv'.
+Removed a total of 0 cells.
+
+4.7.6. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \seth_muldiv_seq..
+Finding unused cells or wires in module \seth_muldiv..
+Finding unused cells or wires in module \formal_muldiv_equiv..
+Removed 0 unused cells and 32 unused wires.
+
+4.7.7. Executing OPT_EXPR pass (perform const folding).
+Optimizing module seth_muldiv_seq.
+Optimizing module seth_muldiv.
+Optimizing module formal_muldiv_equiv.
+
+4.7.8. Rerunning OPT passes. (Maybe there is more to do..)
+
+4.7.9. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \seth_muldiv_seq..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \seth_muldiv..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \formal_muldiv_equiv..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+
+4.7.10. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \seth_muldiv_seq.
+  Optimizing cells in module \seth_muldiv.
+  Optimizing cells in module \formal_muldiv_equiv.
+Performed a total of 0 changes.
+
+4.7.11. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\seth_muldiv_seq'.
+Computing hashes of 116 cells of `\seth_muldiv_seq'.
+Finding duplicate cells in `\seth_muldiv_seq'.
+Finding identical cells in module `\seth_muldiv'.
+Computing hashes of 27 cells of `\seth_muldiv'.
+Finding duplicate cells in `\seth_muldiv'.
+Finding identical cells in module `\formal_muldiv_equiv'.
+Computing hashes of 30 cells of `\formal_muldiv_equiv'.
+Finding duplicate cells in `\formal_muldiv_equiv'.
+Removed a total of 0 cells.
+
+4.7.12. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \seth_muldiv_seq..
+Finding unused cells or wires in module \seth_muldiv..
+Finding unused cells or wires in module \formal_muldiv_equiv..
+
+4.7.13. Executing OPT_EXPR pass (perform const folding).
+Optimizing module seth_muldiv_seq.
+Optimizing module seth_muldiv.
+Optimizing module formal_muldiv_equiv.
+
+4.7.14. Finished fast OPT passes. (There is nothing left to do.)
+
+4.8. Executing WREDUCE pass (reducing word size of cells).
+Converting cell seth_muldiv_seq.$mul$/home/lordegypt/KemetCore/projects/sethcore/rtl/seth_muldiv_seq.sv:43$52 ($mul) from unsigned to signed.
+Removed top 32 bits (of 64) from port A of cell seth_muldiv_seq.$mul$/home/lordegypt/KemetCore/projects/sethcore/rtl/seth_muldiv_seq.sv:43$52 ($mul).
+Removed top 32 bits (of 64) from port B of cell seth_muldiv_seq.$mul$/home/lordegypt/KemetCore/projects/sethcore/rtl/seth_muldiv_seq.sv:43$52 ($mul).
+Converting cell seth_muldiv_seq.$mul$/home/lordegypt/KemetCore/projects/sethcore/rtl/seth_muldiv_seq.sv:44$53 ($mul) from unsigned to signed.
+Removed top 32 bits (of 64) from port A of cell seth_muldiv_seq.$mul$/home/lordegypt/KemetCore/projects/sethcore/rtl/seth_muldiv_seq.sv:44$53 ($mul).
+Removed top 31 bits (of 64) from port B of cell seth_muldiv_seq.$mul$/home/lordegypt/KemetCore/projects/sethcore/rtl/seth_muldiv_seq.sv:44$53 ($mul).
+Removed top 31 bits (of 32) from port B of cell seth_muldiv_seq.$add$/home/lordegypt/KemetCore/projects/sethcore/rtl/seth_muldiv_seq.sv:54$64 ($add).
+Removed top 31 bits (of 32) from port B of cell seth_muldiv_seq.$add$/home/lordegypt/KemetCore/projects/sethcore/rtl/seth_muldiv_seq.sv:55$67 ($add).
+Removed top 31 bits (of 32) from port B of cell seth_muldiv_seq.$add$/home/lordegypt/KemetCore/projects/sethcore/rtl/seth_muldiv_seq.sv:67$71 ($add).
+Removed top 31 bits (of 32) from port B of cell seth_muldiv_seq.$add$/home/lordegypt/KemetCore/projects/sethcore/rtl/seth_muldiv_seq.sv:68$74 ($add).
+Removed top 1 bits (of 3) from port B of cell seth_muldiv_seq.$le$/home/lordegypt/KemetCore/projects/sethcore/rtl/seth_muldiv_seq.sv:79$77 ($le).
+Removed top 5 bits (of 6) from port B of cell seth_muldiv_seq.$sub$/home/lordegypt/KemetCore/projects/sethcore/rtl/seth_muldiv_seq.sv:115$90 ($sub).
+Removed top 1 bits (of 3) from port B of cell seth_muldiv_seq.$procmux$114_CMP0 ($eq).
+Removed top 2 bits (of 3) from port B of cell seth_muldiv_seq.$procmux$115_CMP0 ($eq).
+Removed top 1 bits (of 2) from port B of cell seth_muldiv_seq.$procmux$296_CMP0 ($eq).
+Converting cell seth_muldiv.$mul$build/seth_muldiv_MUT.sv:16$32 ($mul) from unsigned to signed.
+Removed top 32 bits (of 64) from port A of cell seth_muldiv.$mul$build/seth_muldiv_MUT.sv:16$32 ($mul).
+Removed top 32 bits (of 64) from port B of cell seth_muldiv.$mul$build/seth_muldiv_MUT.sv:16$32 ($mul).
+Converting cell seth_muldiv.$mul$build/seth_muldiv_MUT.sv:17$33 ($mul) from unsigned to signed.
+Removed top 32 bits (of 64) from port A of cell seth_muldiv.$mul$build/seth_muldiv_MUT.sv:17$33 ($mul).
+Removed top 31 bits (of 64) from port B of cell seth_muldiv.$mul$build/seth_muldiv_MUT.sv:17$33 ($mul).
+Removed top 1 bits (of 3) from port B of cell seth_muldiv.$procmux$339_CMP0 ($eq).
+Removed top 1 bits (of 3) from port B of cell seth_muldiv.$procmux$340_CMP0 ($eq).
+Removed top 2 bits (of 3) from port B of cell seth_muldiv.$procmux$341_CMP0 ($eq).
+Removed top 7 bits (of 8) from port B of cell formal_muldiv_equiv.$add$formal_muldiv_equiv.sv:13$6 ($add).
+Removed top 7 bits (of 8) from port B of cell formal_muldiv_equiv.$eq$formal_muldiv_equiv.sv:14$9 ($eq).
+Removed top 1 bits (of 3) from port B of cell formal_muldiv_equiv.$le$formal_muldiv_equiv.sv:23$10 ($le).
+Removed top 6 bits (of 8) from port B of cell formal_muldiv_equiv.$ge$formal_muldiv_equiv.sv:29$26 ($ge).
+
+4.9. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \seth_muldiv_seq..
+Finding unused cells or wires in module \seth_muldiv..
+Finding unused cells or wires in module \formal_muldiv_equiv..
+
+4.10. Executing MEMORY_COLLECT pass (generating $mem cells).
+
+4.11. Executing OPT pass (performing simple optimizations).
+
+4.11.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module seth_muldiv_seq.
+Optimizing module seth_muldiv.
+Optimizing module formal_muldiv_equiv.
+
+4.11.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\seth_muldiv_seq'.
+Computing hashes of 116 cells of `\seth_muldiv_seq'.
+Finding duplicate cells in `\seth_muldiv_seq'.
+Finding identical cells in module `\seth_muldiv'.
+Computing hashes of 27 cells of `\seth_muldiv'.
+Finding duplicate cells in `\seth_muldiv'.
+Finding identical cells in module `\formal_muldiv_equiv'.
+Computing hashes of 30 cells of `\formal_muldiv_equiv'.
+Finding duplicate cells in `\formal_muldiv_equiv'.
+Removed a total of 0 cells.
+
+4.11.3. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \seth_muldiv_seq..
+Finding unused cells or wires in module \seth_muldiv..
+Finding unused cells or wires in module \formal_muldiv_equiv..
+
+4.11.4. Finished fast OPT passes.
+
+4.12. Executing SORT pass.
+
+4.13. Printing statistics.
+
+=== formal_muldiv_equiv ===
+
+        +----------Local Count, excluding submodules.
+        | 
+       31 wires
+      178 wire bits
+       14 public wires
+      147 public wire bits
+        1 ports
+        1 port bits
+       28 cells
+        1   $add
+        3   $anyconst
+        2   $check
+        1   $dff
+        6   $eq
+        2   $ge
+        1   $le
+        4   $logic_and
+        2   $logic_not
+        3   $logic_or
+        2   $mux
+        1   $ne
+        2 submodules
+        1   seth_muldiv
+        1   seth_muldiv_seq
+
+=== seth_muldiv ===
+
+        +----------Local Count, excluding submodules.
+        | 
+       30 wires
+      624 wire bits
+        7 public wires
+      291 public wire bits
+        4 ports
+       99 port bits
+       27 cells
+        2   $div
+        9   $eq
+        1   $logic_and
+        2   $logic_not
+        2   $mod
+        3   $mul
+        6   $mux
+        1   $not
+        1   $pmux
+
+=== seth_muldiv_seq ===
+
+        +----------Local Count, excluding submodules.
+        | 
+      126 wires
+     2240 wire bits
+       32 public wires
+      727 public wire bits
+        9 ports
+      104 port bits
+      116 cells
+        4   $add
+       11   $dff
+        9   $eq
+        1   $ge
+        1   $le
+        4   $logic_and
+        3   $logic_not
+        2   $logic_or
+        3   $mul
+       63   $mux
+        4   $not
+        7   $pmux
+        1   $reduce_bool
+        2   $sub
+        1   $xor
+
+=== design hierarchy ===
+
+        +----------Count including submodules.
+        | 
+      171 formal_muldiv_equiv
+       27 seth_muldiv
+      116 seth_muldiv_seq
+
+        +----------Count including submodules.
+        | 
+      187 wires
+     3042 wire bits
+       53 public wires
+     1165 public wire bits
+       14 ports
+      204 port bits
+        - memories
+        - memory bits
+        - processes
+      171 cells
+        5   $add
+        3   $anyconst
+        2   $check
+       12   $dff
+        2   $div
+       24   $eq
+        3   $ge
+        2   $le
+        9   $logic_and
+        7   $logic_not
+        5   $logic_or
+        2   $mod
+        6   $mul
+       71   $mux
+        1   $ne
+        5   $not
+        8   $pmux
+        1   $reduce_bool
+        2   $sub
+        1   $xor
+        2 submodules
+        1   seth_muldiv
+        1   seth_muldiv_seq
+
+4.14. Executing CHECK pass (checking for obvious problems).
+Checking module formal_muldiv_equiv...
+Checking module seth_muldiv...
+Checking module seth_muldiv_seq...
+Found and reported 0 problems.
+
+5. Executing ASYNC2SYNC pass.
+
+6. Executing DFFUNMAP pass (unmap clock enable and synchronous reset from FFs).
+
+7. Executing SMT2 backend.
+
+7.1. Executing BMUXMAP pass.
+
+7.2. Executing DEMUXMAP pass.
+Creating SMT-LIBv2 representation of module seth_muldiv.
+Creating SMT-LIBv2 representation of module seth_muldiv_seq.
+Creating SMT-LIBv2 representation of module formal_muldiv_equiv.
+
+End of script. Logfile hash: 8f0bf55743, time: 0.10s, user: 0.09s, system: 0.02s, MEM: 23.88 MB peak
+Yosys 0.65 (git sha1 aec814bdf3071f7e0fd0fbe43f7f711e99d01e24, g++ 14.3.0-19 -fvisibility-inlines-hidden -fmessage-length=0 -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/yosys_1778591527500/work=/usr/local/src/conda/yosys-0.65 -fdebug-prefix-map=/home/lordegypt/miniconda3/envs/eda=/usr/local/src/conda-prefix -fPIC -O3) [conda-forge/yosys-feedstock]
+Time spent: 34% 2x check (0 sec), 24% 5x opt_clean (0 sec), ...

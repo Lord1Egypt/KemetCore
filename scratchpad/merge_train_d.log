@@ -1,0 +1,24 @@
+=== merge_train_d start Fri Jul 10 00:46:34 +03 2026 ===
+waiting on #171 CI...
+PR 171 checks green (try 1)
+#171 MERGED
+Rebasing (1/2)dropping 633d0c9ecc9bfcfc6c35f6a93347511cb90d5cfa feat(phase5): formal control-safety of PtahConv conv2d FSM (k-induction) -- patch contents already upstream
+Rebasing (2/2)[KSuccessfully rebased and updated refs/heads/feat/phase5-atum-vcore-ctrl.
+To https://github.com/Lord1Egypt/KemetCore.git
+ + 1cdc60c...2bea1fc feat/phase5-atum-vcore-ctrl -> feat/phase5-atum-vcore-ctrl (forced update)
+#172 rebased+pushed (atumcore-only)
+PR 172 checks green (try 46)
+From https://github.com/Lord1Egypt/KemetCore
+ * branch            main       -> FETCH_HEAD
+   30125f4..4022947  main       -> origin/main
+Updating 30125f4..4022947
+Fast-forward
+ projects/atumcore/CHECKPOINTS.md              |  3 +-
+ projects/atumcore/formal/formal_vcore_ctrl.sv | 42 +++++++++++++++++++++++++++
+ projects/atumcore/formal/run_formal.sh        | 13 +++++++++
+ projects/atumcore/rtl/atum_vcore.sv           | 24 +++++++++++++++
+ tools/manifest.py                             |  1 +
+ 5 files changed, 82 insertions(+), 1 deletion(-)
+ create mode 100644 projects/atumcore/formal/formal_vcore_ctrl.sv
+#172 MERGED
+=== TRAIN COMPLETE Fri Jul 10 01:20:20 +03 2026 — all 3 PRs merged ===
