@@ -98,3 +98,4 @@
 2026-07-15 | `feat/atumcore-vmask-p4` | Hardened atum_vmask (Phase 4 P&R). Created wrapper atum_vmask_p4top. P&R closed timing cleanly at 100 MHz (10000 ps period). | `./flow/harden.sh atum_vmask` | TBD | #191
 2026-07-15 | `feat/neithcore-butterfly-p4` | Hardened neith_butterfly (Phase 4 P&R). Created wrapper neith_butterfly_p4top. P&R closed timing cleanly at 100 MHz (10000 ps period). | `./flow/harden.sh neith_butterfly` | TBD | #192
 2026-07-15 | `feat/sobekcore-lerp-p4` | Hardened sobek_lerp (Phase 4 P&R). Created wrapper sobek_lerp_p4top. P&R closed timing cleanly at 100 MHz (10000 ps period). | `./flow/harden.sh sobek_lerp` | TBD | #193
+2026-07-15 | `feat/sobekcore-ray-point-p4` | Hardened sobek_ray_point (Phase 4 P&R). Created wrapper sobek_ray_point_p4top. P&R closed timing cleanly at 100 MHz (10000 ps period). | `./flow/harden.sh sobek_ray_point` | TBD | #194

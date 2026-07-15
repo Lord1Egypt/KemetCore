@@ -33,6 +33,7 @@ LABEL = {
     "hapi_fp16_mul": ("HapiCore",    "fp16 multiplier (registered)"),
     "sobek_dot3":    ("SobekCore",   "fp32 3-vec dot (registered)"),
     "sobek_lerp":    ("SobekCore",   "fp32 linear interpolation (registered)"),
+    "sobek_ray_point":("SobekCore",  "fp32 parametric point (registered)"),
     "sobek_cross":   ("SobekCore",   "fp32 3-vec cross (registered)"),
     "sobek_scale":   ("SobekCore",   "fp32 3-vec scale (registered)"),
     "imentet_qk_score":("ImentetCore","attention QK score (registered)"),
@@ -51,7 +52,7 @@ LABEL = {
 ORDER = ["ra_noc_arbiter","ra_kai_regs","seth_regfile","seth_alu","seth_muldiv",
          "ptah_mac","ptah_bias_relu","ptah_avgpool","imentet_qk_score","imentet_mask_add",
          "geb_spmac","bast_mac","bast_mac_grid","bast_int8_mac","sha256_core",
-         "neith_ntt","neith_butterfly","neith_polyaddsub","sobek_dot3","sobek_lerp","sobek_cross","sobek_scale","hapi_fp32_mul",
+         "neith_ntt","neith_butterfly","neith_polyaddsub","sobek_dot3","sobek_lerp","sobek_ray_point","sobek_cross","sobek_scale","hapi_fp32_mul",
          "hapi_fp16_mul","hapi_fp32_add","hapi_fp32_to_int","atum_valu","atum_vredu","atum_vsadd","atum_vcompress","atum_viota","atum_vmask"]
 
 
