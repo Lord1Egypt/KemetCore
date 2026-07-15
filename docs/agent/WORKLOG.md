@@ -96,3 +96,4 @@
 2026-07-15 | `feat/hapicore-fp32-to-int-p4` | Hardened hapi_fp32_to_int (Phase 4 P&R). Created wrapper hapi_fp32_to_int_p4top. P&R closed timing cleanly at 100 MHz (10000 ps period). | `./flow/harden.sh hapi_fp32_to_int` | TBD | #189
 2026-07-15 | `feat/atumcore-viota-p4` | Hardened atum_viota (Phase 4 P&R). Created wrapper atum_viota_p4top. P&R closed timing cleanly at 100 MHz (10000 ps period). | `./flow/harden.sh atum_viota` | TBD | #190
 2026-07-15 | `feat/atumcore-vmask-p4` | Hardened atum_vmask (Phase 4 P&R). Created wrapper atum_vmask_p4top. P&R closed timing cleanly at 100 MHz (10000 ps period). | `./flow/harden.sh atum_vmask` | TBD | #191
+2026-07-15 | `feat/neithcore-butterfly-p4` | Hardened neith_butterfly (Phase 4 P&R). Created wrapper neith_butterfly_p4top. P&R closed timing cleanly at 100 MHz (10000 ps period). | `./flow/harden.sh neith_butterfly` | TBD | #192

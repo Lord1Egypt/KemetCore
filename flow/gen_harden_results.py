@@ -26,6 +26,7 @@ LABEL = {
     "ra_noc_arbiter":("RaCore",      "NoC round-robin arbiter"),
     "ra_kai_regs":   ("RaCore",      "KAI memory-mapped register interface"),
     "neith_ntt":     ("NeithCore",   "ML-KEM NTT engine"),
+    "neith_butterfly":("NeithCore",  "ML-KEM NTT butterfly atom"),
     "neith_polyaddsub":("NeithCore", "ML-KEM polynomial add/sub (registered)"),
     "geb_spmac":     ("GebCore",     "2:4 sparse MAC"),
     "hapi_fp32_mul": ("HapiCore",    "fp32 multiplier (registered)"),
@@ -49,7 +50,7 @@ LABEL = {
 ORDER = ["ra_noc_arbiter","ra_kai_regs","seth_regfile","seth_alu","seth_muldiv",
          "ptah_mac","ptah_bias_relu","ptah_avgpool","imentet_qk_score","imentet_mask_add",
          "geb_spmac","bast_mac","bast_mac_grid","bast_int8_mac","sha256_core",
-         "neith_ntt","neith_polyaddsub","sobek_dot3","sobek_cross","sobek_scale","hapi_fp32_mul",
+         "neith_ntt","neith_butterfly","neith_polyaddsub","sobek_dot3","sobek_cross","sobek_scale","hapi_fp32_mul",
          "hapi_fp16_mul","hapi_fp32_add","hapi_fp32_to_int","atum_valu","atum_vredu","atum_vsadd","atum_vcompress","atum_viota","atum_vmask"]
 
 
