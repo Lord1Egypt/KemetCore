@@ -461,7 +461,8 @@ PROJECTS = [
                  "i<vl else 0, VST writes vs1 lanes to dmem[base+i]); it now runs a real STRIP-MINED "
                  "integer axpy (vsetvl + VLD/VMACC/VST over a length-20 array) and the TB checks the "
                  "whole machine state (vregfile + data memory) vs the golden runner on the axpy + 40 "
-                 "random load/store/op/reduction programs. AtumCore is a complete working vector processor.",
+                 "random load/store/op/reduction programs. AtumCore is a complete working vector processor. "
+                 "Phase 4: atum_valu and atum_vredu signed off on ASAP7 7nm (registered boundaries).",
         "checkpoints": [
             ("AT.1", "Golden: RVV subset + vsetvl semantics", 0, "done"),
             ("AT.2", "Golden: masked ops + reductions", 0, "done"),

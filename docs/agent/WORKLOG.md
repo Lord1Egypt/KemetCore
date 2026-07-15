@@ -76,4 +76,11 @@
 - **What**: Hardened `hapi_fp16_mul` on ASAP7 7nm (Phase 4 breadth). Added `hapi_fp16_mul_p4top` registered wrapper.
 - **Verification**: `flow/harden.sh hapi_fp16_mul` → WNS 0.00 @ 285 MHz, 0 route-DRC.
 - **Commit**: (HEAD)
+- **PR**: #178
+
+- **Date**: 2026-07-15
+- **Branch**: `feat/atumcore-vredu-p4`
+- **What**: Hardened `atum_vredu` on ASAP7 7nm (Phase 4 breadth). Added `atum_vredu_p4top` registered wrapper.
+- **Verification**: `flow/harden.sh atum_vredu` → WNS 0.00 @ 200 MHz, 0 route-DRC.
+- **Commit**: (HEAD)
 - **PR**: (pending)
