@@ -233,7 +233,8 @@ PROJECTS = [
                  "Phase 3: ALU + imm + regfile + aluctl + decode full-synth 0 latches (imm ~92, "
                  "regfile ~3.8K/992 DFFs, aluctl/decode ~38 cells); seth_core + seth_pipeline + "
                  "seth_pipeline_fwd coarse 0-latch (memory -> $mem, CPU synth CI-skipped); "
-                 "combinational divider full synth deferred (generic synth explodes).",
+                 "combinational divider full synth deferred (generic synth explodes). "
+                 "Phase 4: seth_regfile, seth_alu, and seth_muldiv signed off on ASAP7 7nm.",
         "checkpoints": [
             ("S2.1", "Golden: RV32I ISA simulator", 0, "done"),
             ("S2.2", "Golden: M-extension (mul/div/rem)", 0, "done"),
