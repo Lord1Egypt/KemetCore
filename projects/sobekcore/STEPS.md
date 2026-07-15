@@ -4,7 +4,7 @@
 
 _Auto-generated from `tools/manifest.py` — do not edit by hand; edit the manifest and run `python tools/gen_tracking.py`._
 
-**Scope (current):** Phase 0/1 implements watertight Moller-Trumbore ray-triangle intersection golden and a pipelined pymodel. Phase 4: sobek_dot3, sobek_cross, and sobek_scale signed off on ASAP7 7nm (registered boundary).
+**Scope (current):** Phase 0/1 implements watertight Moller-Trumbore ray-triangle intersection golden and a pipelined pymodel. Phase 4: sobek_dot3, sobek_lerp, sobek_cross, and sobek_scale signed off on ASAP7 7nm (registered boundary).
 
 ## Ordered steps (6-phase lifecycle)
 
