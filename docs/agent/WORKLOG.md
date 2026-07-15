@@ -83,4 +83,4 @@
 - **What**: Hardened `atum_vredu` on ASAP7 7nm (Phase 4 breadth). Added `atum_vredu_p4top` registered wrapper.
 - **Verification**: `flow/harden.sh atum_vredu` → WNS 0.00 @ 200 MHz, 0 route-DRC.
 - **Commit**: (HEAD)
-- **PR**: (pending)
+- **PR**: #179

@@ -32,9 +32,10 @@ LABEL = {
     "atum_valu":     ("AtumCore",    "RVV int vector ALU (registered)"),
     "atum_vredu":    ("AtumCore",    "RVV vector reduction (registered)"),
     "ptah_mac":      ("PtahConv",    "fp32 conv MAC"),
+    "ptah_bias_relu":("PtahConv",    "fp32 bias+relu epilogue (registered)"),
 }
 # canonical harden order (cores 00..10)
-ORDER = ["ra_noc_arbiter","seth_regfile","seth_alu","ptah_mac","imentet_qk_score",
+ORDER = ["ra_noc_arbiter","seth_regfile","seth_alu","ptah_mac","ptah_bias_relu","imentet_qk_score",
          "geb_spmac","bast_mac","bast_mac_grid","bast_int8_mac","sha256_core",
          "neith_ntt","sobek_dot3","sobek_cross","hapi_fp32_mul","hapi_fp16_mul","hapi_fp32_add","atum_valu","atum_vredu"]
 
