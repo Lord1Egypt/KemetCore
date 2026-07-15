@@ -1,0 +1,530 @@
+
+ /----------------------------------------------------------------------------\
+ |  yosys -- Yosys Open SYnthesis Suite                                       |
+ |  Copyright (C) 2012 - 2026  Claire Xenia Wolf <claire@yosyshq.com>         |
+ |  Distributed under an ISC-like license, type "license" to see terms        |
+ \----------------------------------------------------------------------------/
+ Yosys 0.65 (git sha1 aec814bdf3071f7e0fd0fbe43f7f711e99d01e24, g++ 14.3.0-19 -fvisibility-inlines-hidden -fmessage-length=0 -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/yosys_1778591527500/work=/usr/local/src/conda/yosys-0.65 -fdebug-prefix-map=/home/lordegypt/miniconda3/envs/eda=/usr/local/src/conda-prefix -fPIC -O3) [conda-forge/yosys-feedstock]
+
+-- Running command `read_verilog -sv -formal formal_muldiv_handshake.sv build/seq_MUT2.sv; prep -top formal_muldiv_handshake; async2sync; dffunmap; write_smt2 -wires build/hsm2.smt2' --
+
+1. Executing Verilog-2005 frontend: formal_muldiv_handshake.sv
+Parsing formal SystemVerilog input from `formal_muldiv_handshake.sv' to AST representation.
+Generating RTLIL representation for module `\formal_muldiv_handshake'.
+Successfully finished Verilog frontend.
+
+2. Executing Verilog-2005 frontend: build/seq_MUT2.sv
+Parsing formal SystemVerilog input from `build/seq_MUT2.sv' to AST representation.
+Generating RTLIL representation for module `\seth_muldiv_seq'.
+Successfully finished Verilog frontend.
+
+3. Executing PREP pass.
+
+3.1. Executing HIERARCHY pass (managing design hierarchy).
+
+3.1.1. Analyzing design hierarchy..
+Top module:  \formal_muldiv_handshake
+Used module:     \seth_muldiv_seq
+
+3.1.2. Analyzing design hierarchy..
+Top module:  \formal_muldiv_handshake
+Used module:     \seth_muldiv_seq
+Removed 0 unused modules.
+Module formal_muldiv_handshake directly or indirectly contains formal properties -> setting "keep" attribute.
+
+3.2. Executing PROC pass (convert processes to netlists).
+
+3.2.1. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Cleaned up 0 empty switches.
+
+3.2.2. Executing PROC_RMDEAD pass (remove dead branches from decision trees).
+Marked 7 switch rules as full_case in process $proc$build/seq_MUT2.sv:70$42 in module seth_muldiv_seq.
+Removed a total of 0 dead cases.
+
+3.2.3. Executing PROC_PRUNE pass (remove redundant assignments in processes).
+Removed 1 redundant assignment.
+Promoted 4 assignments to connections.
+
+3.2.4. Executing PROC_INIT pass (extract init attributes).
+Found init rule in `\formal_muldiv_handshake.$proc$formal_muldiv_handshake.sv:20$17'.
+  Set init value: \done_q = 1'0
+Found init rule in `\formal_muldiv_handshake.$proc$formal_muldiv_handshake.sv:11$16'.
+  Set init value: \t = 8'00000000
+
+3.2.5. Executing PROC_ARST pass (detect async resets in processes).
+
+3.2.6. Executing PROC_ROM pass (convert switches to ROMs).
+Converted 0 switches.
+
+3.2.7. Executing PROC_MUX pass (convert decision trees to multiplexers).
+Creating decoders for process `\seth_muldiv_seq.$proc$build/seq_MUT2.sv:70$42'.
+     1/11: $0\done[0:0]
+     2/11: $0\result_q[31:0]
+     3/11: $0\rq[63:0]
+     4/11: $0\divisor[31:0]
+     5/11: $0\cnt[5:0]
+     6/11: $0\neg_r[0:0]
+     7/11: $0\neg_q[0:0]
+     8/11: $0\rem_op[0:0]
+     9/11: $0\state[1:0]
+    10/11: $0\busy[0:0]
+    11/11: $0\y[31:0]
+Creating decoders for process `\formal_muldiv_handshake.$proc$formal_muldiv_handshake.sv:20$17'.
+Creating decoders for process `\formal_muldiv_handshake.$proc$formal_muldiv_handshake.sv:11$16'.
+Creating decoders for process `\formal_muldiv_handshake.$proc$formal_muldiv_handshake.sv:23$8'.
+     1/2: $assert$formal_muldiv_handshake.sv:25$13_EN
+     2/2: $assert$formal_muldiv_handshake.sv:24$10_EN
+Creating decoders for process `\formal_muldiv_handshake.$proc$formal_muldiv_handshake.sv:21$7'.
+Creating decoders for process `\formal_muldiv_handshake.$proc$formal_muldiv_handshake.sv:13$5'.
+Creating decoders for process `\formal_muldiv_handshake.$proc$formal_muldiv_handshake.sv:12$2'.
+     1/1: $0\t[7:0]
+
+3.2.8. Executing PROC_DLATCH pass (convert process syncs to latches).
+No latch inferred for signal `\formal_muldiv_handshake.\rst' from process `\formal_muldiv_handshake.$proc$formal_muldiv_handshake.sv:13$5'.
+
+3.2.9. Executing PROC_DFF pass (convert process syncs to FFs).
+Creating register for signal `\seth_muldiv_seq.\y' using process `\seth_muldiv_seq.$proc$build/seq_MUT2.sv:70$42'.
+  created $dff cell `$procdff$271' with positive edge clock.
+Creating register for signal `\seth_muldiv_seq.\busy' using process `\seth_muldiv_seq.$proc$build/seq_MUT2.sv:70$42'.
+  created $dff cell `$procdff$272' with positive edge clock.
+Creating register for signal `\seth_muldiv_seq.\done' using process `\seth_muldiv_seq.$proc$build/seq_MUT2.sv:70$42'.
+  created $dff cell `$procdff$273' with positive edge clock.
+Creating register for signal `\seth_muldiv_seq.\state' using process `\seth_muldiv_seq.$proc$build/seq_MUT2.sv:70$42'.
+  created $dff cell `$procdff$274' with positive edge clock.
+Creating register for signal `\seth_muldiv_seq.\rem_op' using process `\seth_muldiv_seq.$proc$build/seq_MUT2.sv:70$42'.
+  created $dff cell `$procdff$275' with positive edge clock.
+Creating register for signal `\seth_muldiv_seq.\neg_q' using process `\seth_muldiv_seq.$proc$build/seq_MUT2.sv:70$42'.
+  created $dff cell `$procdff$276' with positive edge clock.
+Creating register for signal `\seth_muldiv_seq.\neg_r' using process `\seth_muldiv_seq.$proc$build/seq_MUT2.sv:70$42'.
+  created $dff cell `$procdff$277' with positive edge clock.
+Creating register for signal `\seth_muldiv_seq.\cnt' using process `\seth_muldiv_seq.$proc$build/seq_MUT2.sv:70$42'.
+  created $dff cell `$procdff$278' with positive edge clock.
+Creating register for signal `\seth_muldiv_seq.\divisor' using process `\seth_muldiv_seq.$proc$build/seq_MUT2.sv:70$42'.
+  created $dff cell `$procdff$279' with positive edge clock.
+Creating register for signal `\seth_muldiv_seq.\rq' using process `\seth_muldiv_seq.$proc$build/seq_MUT2.sv:70$42'.
+  created $dff cell `$procdff$280' with positive edge clock.
+Creating register for signal `\seth_muldiv_seq.\result_q' using process `\seth_muldiv_seq.$proc$build/seq_MUT2.sv:70$42'.
+  created $dff cell `$procdff$281' with positive edge clock.
+Creating register for signal `\formal_muldiv_handshake.\done_q' using process `\formal_muldiv_handshake.$proc$formal_muldiv_handshake.sv:21$7'.
+  created $dff cell `$procdff$282' with positive edge clock.
+Creating register for signal `\formal_muldiv_handshake.\t' using process `\formal_muldiv_handshake.$proc$formal_muldiv_handshake.sv:12$2'.
+  created $dff cell `$procdff$283' with positive edge clock.
+
+3.2.10. Executing PROC_MEMWR pass (convert process memory writes to cells).
+
+3.2.11. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Found and cleaned up 9 empty switches in `\seth_muldiv_seq.$proc$build/seq_MUT2.sv:70$42'.
+Removing empty process `seth_muldiv_seq.$proc$build/seq_MUT2.sv:70$42'.
+Removing empty process `formal_muldiv_handshake.$proc$formal_muldiv_handshake.sv:20$17'.
+Removing empty process `formal_muldiv_handshake.$proc$formal_muldiv_handshake.sv:11$16'.
+Found and cleaned up 1 empty switch in `\formal_muldiv_handshake.$proc$formal_muldiv_handshake.sv:23$8'.
+Removing empty process `formal_muldiv_handshake.$proc$formal_muldiv_handshake.sv:23$8'.
+Removing empty process `formal_muldiv_handshake.$proc$formal_muldiv_handshake.sv:21$7'.
+Removing empty process `formal_muldiv_handshake.$proc$formal_muldiv_handshake.sv:13$5'.
+Found and cleaned up 1 empty switch in `\formal_muldiv_handshake.$proc$formal_muldiv_handshake.sv:12$2'.
+Removing empty process `formal_muldiv_handshake.$proc$formal_muldiv_handshake.sv:12$2'.
+Cleaned up 11 empty switches.
+
+3.2.12. Executing OPT_EXPR pass (perform const folding).
+Optimizing module seth_muldiv_seq.
+Optimizing module formal_muldiv_handshake.
+
+3.3. Executing FUTURE pass.
+
+3.4. Executing OPT_EXPR pass (perform const folding).
+Optimizing module seth_muldiv_seq.
+Optimizing module formal_muldiv_handshake.
+
+3.5. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \seth_muldiv_seq..
+Finding unused cells or wires in module \formal_muldiv_handshake..
+Removed 2 unused cells and 88 unused wires.
+
+3.6. Executing CHECK pass (checking for obvious problems).
+Checking module seth_muldiv_seq...
+Checking module formal_muldiv_handshake...
+Warning: Wire formal_muldiv_handshake.\start is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\op [2] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\op [1] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\op [0] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\a [31] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\a [30] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\a [29] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\a [28] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\a [27] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\a [26] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\a [25] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\a [24] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\a [23] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\a [22] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\a [21] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\a [20] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\a [19] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\a [18] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\a [17] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\a [16] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\a [15] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\a [14] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\a [13] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\a [12] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\a [11] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\a [10] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\a [9] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\a [8] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\a [7] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\a [6] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\a [5] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\a [4] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\a [3] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\a [2] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\a [1] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\a [0] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\b [31] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\b [30] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\b [29] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\b [28] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\b [27] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\b [26] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\b [25] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\b [24] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\b [23] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\b [22] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\b [21] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\b [20] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\b [19] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\b [18] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\b [17] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\b [16] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\b [15] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\b [14] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\b [13] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\b [12] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\b [11] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\b [10] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\b [9] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\b [8] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\b [7] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\b [6] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\b [5] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\b [4] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\b [3] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\b [2] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\b [1] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\b [0] is used but has no driver.
+Found and reported 68 problems.
+
+3.7. Executing OPT pass (performing simple optimizations).
+
+3.7.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module seth_muldiv_seq.
+Optimizing module formal_muldiv_handshake.
+
+3.7.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\seth_muldiv_seq'.
+Computing hashes of 128 cells of `\seth_muldiv_seq'.
+Finding duplicate cells in `\seth_muldiv_seq'.
+Computing hashes of 114 cells of `\seth_muldiv_seq'.
+Finding duplicate cells in `\seth_muldiv_seq'.
+Finding identical cells in module `\formal_muldiv_handshake'.
+Computing hashes of 15 cells of `\formal_muldiv_handshake'.
+Finding duplicate cells in `\formal_muldiv_handshake'.
+Removed a total of 14 cells.
+
+3.7.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \seth_muldiv_seq..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \formal_muldiv_handshake..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+
+3.7.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \seth_muldiv_seq.
+  Optimizing cells in module \formal_muldiv_handshake.
+Performed a total of 0 changes.
+
+3.7.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\seth_muldiv_seq'.
+Computing hashes of 114 cells of `\seth_muldiv_seq'.
+Finding duplicate cells in `\seth_muldiv_seq'.
+Finding identical cells in module `\formal_muldiv_handshake'.
+Computing hashes of 15 cells of `\formal_muldiv_handshake'.
+Finding duplicate cells in `\formal_muldiv_handshake'.
+Computing hashes of 14 cells of `\formal_muldiv_handshake'.
+Finding duplicate cells in `\formal_muldiv_handshake'.
+Removed a total of 1 cells.
+
+3.7.6. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \seth_muldiv_seq..
+Finding unused cells or wires in module \formal_muldiv_handshake..
+Removed 0 unused cells and 15 unused wires.
+
+3.7.7. Executing OPT_EXPR pass (perform const folding).
+Optimizing module seth_muldiv_seq.
+Optimizing module formal_muldiv_handshake.
+
+3.7.8. Rerunning OPT passes. (Maybe there is more to do..)
+
+3.7.9. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \seth_muldiv_seq..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \formal_muldiv_handshake..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+
+3.7.10. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \seth_muldiv_seq.
+  Optimizing cells in module \formal_muldiv_handshake.
+Performed a total of 0 changes.
+
+3.7.11. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\seth_muldiv_seq'.
+Computing hashes of 114 cells of `\seth_muldiv_seq'.
+Finding duplicate cells in `\seth_muldiv_seq'.
+Finding identical cells in module `\formal_muldiv_handshake'.
+Computing hashes of 14 cells of `\formal_muldiv_handshake'.
+Finding duplicate cells in `\formal_muldiv_handshake'.
+Removed a total of 0 cells.
+
+3.7.12. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \seth_muldiv_seq..
+Finding unused cells or wires in module \formal_muldiv_handshake..
+
+3.7.13. Executing OPT_EXPR pass (perform const folding).
+Optimizing module seth_muldiv_seq.
+Optimizing module formal_muldiv_handshake.
+
+3.7.14. Finished fast OPT passes. (There is nothing left to do.)
+
+3.8. Executing WREDUCE pass (reducing word size of cells).
+Converting cell seth_muldiv_seq.$mul$build/seq_MUT2.sv:43$18 ($mul) from unsigned to signed.
+Removed top 32 bits (of 64) from port A of cell seth_muldiv_seq.$mul$build/seq_MUT2.sv:43$18 ($mul).
+Removed top 32 bits (of 64) from port B of cell seth_muldiv_seq.$mul$build/seq_MUT2.sv:43$18 ($mul).
+Converting cell seth_muldiv_seq.$mul$build/seq_MUT2.sv:44$19 ($mul) from unsigned to signed.
+Removed top 32 bits (of 64) from port A of cell seth_muldiv_seq.$mul$build/seq_MUT2.sv:44$19 ($mul).
+Removed top 31 bits (of 64) from port B of cell seth_muldiv_seq.$mul$build/seq_MUT2.sv:44$19 ($mul).
+Removed top 31 bits (of 32) from port B of cell seth_muldiv_seq.$add$build/seq_MUT2.sv:54$30 ($add).
+Removed top 31 bits (of 32) from port B of cell seth_muldiv_seq.$add$build/seq_MUT2.sv:55$33 ($add).
+Removed top 31 bits (of 32) from port B of cell seth_muldiv_seq.$add$build/seq_MUT2.sv:67$37 ($add).
+Removed top 31 bits (of 32) from port B of cell seth_muldiv_seq.$add$build/seq_MUT2.sv:68$40 ($add).
+Removed top 1 bits (of 3) from port B of cell seth_muldiv_seq.$le$build/seq_MUT2.sv:79$43 ($le).
+Removed top 5 bits (of 6) from port B of cell seth_muldiv_seq.$sub$build/seq_MUT2.sv:115$56 ($sub).
+Removed top 1 bits (of 3) from port B of cell seth_muldiv_seq.$procmux$79_CMP0 ($eq).
+Removed top 2 bits (of 3) from port B of cell seth_muldiv_seq.$procmux$80_CMP0 ($eq).
+Removed top 1 bits (of 2) from port B of cell seth_muldiv_seq.$procmux$261_CMP0 ($eq).
+Removed top 7 bits (of 8) from port B of cell formal_muldiv_handshake.$add$formal_muldiv_handshake.sv:12$4 ($add).
+
+3.9. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \seth_muldiv_seq..
+Finding unused cells or wires in module \formal_muldiv_handshake..
+
+3.10. Executing MEMORY_COLLECT pass (generating $mem cells).
+
+3.11. Executing OPT pass (performing simple optimizations).
+
+3.11.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module seth_muldiv_seq.
+Optimizing module formal_muldiv_handshake.
+
+3.11.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\seth_muldiv_seq'.
+Computing hashes of 114 cells of `\seth_muldiv_seq'.
+Finding duplicate cells in `\seth_muldiv_seq'.
+Finding identical cells in module `\formal_muldiv_handshake'.
+Computing hashes of 14 cells of `\formal_muldiv_handshake'.
+Finding duplicate cells in `\formal_muldiv_handshake'.
+Removed a total of 0 cells.
+
+3.11.3. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \seth_muldiv_seq..
+Finding unused cells or wires in module \formal_muldiv_handshake..
+
+3.11.4. Finished fast OPT passes.
+
+3.12. Executing SORT pass.
+
+3.13. Printing statistics.
+
+=== formal_muldiv_handshake ===
+
+        +----------Local Count, excluding submodules.
+        | 
+       19 wires
+      135 wire bits
+       11 public wires
+      113 public wire bits
+        1 ports
+        1 port bits
+       13 cells
+        1   $add
+        2   $check
+        2   $dff
+        2   $logic_and
+        3   $logic_not
+        2   $mux
+        1   $ne
+        1 submodules
+        1   seth_muldiv_seq
+
+=== seth_muldiv_seq ===
+
+        +----------Local Count, excluding submodules.
+        | 
+      124 wires
+     2238 wire bits
+       32 public wires
+      727 public wire bits
+        9 ports
+      104 port bits
+      114 cells
+        4   $add
+       11   $dff
+        9   $eq
+        1   $ge
+        1   $le
+        4   $logic_and
+        3   $logic_not
+        2   $logic_or
+        3   $mul
+       62   $mux
+        4   $not
+        6   $pmux
+        1   $reduce_bool
+        2   $sub
+        1   $xor
+
+=== design hierarchy ===
+
+        +----------Count including submodules.
+        | 
+      127 formal_muldiv_handshake
+      114 seth_muldiv_seq
+
+        +----------Count including submodules.
+        | 
+      143 wires
+     2373 wire bits
+       43 public wires
+      840 public wire bits
+       10 ports
+      105 port bits
+        - memories
+        - memory bits
+        - processes
+      127 cells
+        5   $add
+        2   $check
+       13   $dff
+        9   $eq
+        1   $ge
+        1   $le
+        6   $logic_and
+        6   $logic_not
+        2   $logic_or
+        3   $mul
+       64   $mux
+        1   $ne
+        4   $not
+        6   $pmux
+        1   $reduce_bool
+        2   $sub
+        1   $xor
+        1 submodules
+        1   seth_muldiv_seq
+
+3.14. Executing CHECK pass (checking for obvious problems).
+Checking module formal_muldiv_handshake...
+Warning: Wire formal_muldiv_handshake.\start is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\op [2] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\op [1] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\op [0] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\b [31] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\b [30] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\b [29] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\b [28] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\b [27] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\b [26] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\b [25] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\b [24] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\b [23] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\b [22] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\b [21] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\b [20] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\b [19] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\b [18] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\b [17] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\b [16] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\b [15] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\b [14] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\b [13] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\b [12] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\b [11] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\b [10] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\b [9] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\b [8] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\b [7] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\b [6] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\b [5] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\b [4] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\b [3] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\b [2] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\b [1] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\b [0] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\a [31] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\a [30] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\a [29] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\a [28] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\a [27] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\a [26] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\a [25] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\a [24] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\a [23] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\a [22] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\a [21] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\a [20] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\a [19] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\a [18] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\a [17] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\a [16] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\a [15] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\a [14] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\a [13] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\a [12] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\a [11] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\a [10] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\a [9] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\a [8] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\a [7] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\a [6] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\a [5] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\a [4] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\a [3] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\a [2] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\a [1] is used but has no driver.
+Warning: Wire formal_muldiv_handshake.\a [0] is used but has no driver.
+Checking module seth_muldiv_seq...
+Found and reported 68 problems.
+
+4. Executing ASYNC2SYNC pass.
+
+5. Executing DFFUNMAP pass (unmap clock enable and synchronous reset from FFs).
+
+6. Executing SMT2 backend.
+
+6.1. Executing BMUXMAP pass.
+
+6.2. Executing DEMUXMAP pass.
+Creating SMT-LIBv2 representation of module seth_muldiv_seq.
+Creating SMT-LIBv2 representation of module formal_muldiv_handshake.
+
+Warnings: 68 unique messages, 136 total
+End of script. Logfile hash: 2ac06502a6, time: 0.06s, user: 0.05s, system: 0.01s, MEM: 23.62 MB peak
+Yosys 0.65 (git sha1 aec814bdf3071f7e0fd0fbe43f7f711e99d01e24, g++ 14.3.0-19 -fvisibility-inlines-hidden -fmessage-length=0 -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/yosys_1778591527500/work=/usr/local/src/conda/yosys-0.65 -fdebug-prefix-map=/home/lordegypt/miniconda3/envs/eda=/usr/local/src/conda-prefix -fPIC -O3) [conda-forge/yosys-feedstock]
+Time spent: 26% 2x check (0 sec), 24% 5x opt_clean (0 sec), ...

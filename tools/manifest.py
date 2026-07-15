@@ -404,7 +404,8 @@ PROJECTS = [
         "domain": "Ray-triangle intersector", "doc": "docs/08_SobekCore_RayTrace.md",
         "depends": [], "phase": P235,
         "scope": "Phase 0/1 implements watertight Moller-Trumbore ray-triangle intersection "
-                 "golden and a pipelined pymodel.",
+                 "golden and a pipelined pymodel. Phase 4: sobek_dot3 and sobek_cross signed "
+                 "off on ASAP7 7nm (registered boundary).",
         "checkpoints": [
             ("SB.1", "Golden: Moller-Trumbore intersection", 0, "done"),
             ("SB.2", "pymodel: pipelined intersector", 1, "done"),
