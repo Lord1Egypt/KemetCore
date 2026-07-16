@@ -43,6 +43,7 @@ LABEL = {
     "hapi_fp32_cmp":     ("HapiCore", "fp32 comparison (registered)"),
     "hapi_fp32_class":   ("HapiCore", "fp32 classification (registered)"),
     "hapi_fp32_minmax":  ("HapiCore", "fp32 min/max (registered)"),
+    "hapi_fp32_to_bf16": ("HapiCore", "fp32 to bf16 conv (registered)"),
     "hapi_fp16_class":   ("HapiCore", "fp16 classification (registered)"),
     "hapi_fp16_cmp":     ("HapiCore", "fp16 comparison (registered)"),
     "hapi_fp16_minmax":  ("HapiCore", "fp16 min/max (registered)"),
