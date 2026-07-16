@@ -117,3 +117,11 @@
 - **Commit:** pending
 - **PR:** pending
 
+
+### 2026-07-16 - feat/hapi_fp16_add_p4
+- **Task:** Harden `hapi_fp16_add` (Phase 4 P&R).
+- **Action:** Created `hapi_fp16_add_p4top` registered wrapper and ASAP7 configs. Ran OpenROAD flow.
+- **Verification:** `./flow/harden.sh hapi_fp16_add` finished with WNS=0.00, 179.0 um^2 area, 0 routing DRC violations.
+- **Commit:** pending
+- **PR:** pending
+
