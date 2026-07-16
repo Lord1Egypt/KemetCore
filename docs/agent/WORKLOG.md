@@ -317,3 +317,10 @@
 - **Commit:** pending
 - **PR:** pending
 
+
+- **Date:** 2026-07-16
+- **Branch:** feat/sobek-rtl
+- **What:** Implemented `sobek_intersect.sv` RTL datapath (6-stage pipelined Moller-Trumbore fp32 intersector) and `test_intersect.py` cocotb verification.
+- **Verify:** `./run_sim.sh CORE=intersect` -> PASS (40340.00ns, 1/1 tests passed, 500 random ray-triangle cases tested + edge cases). `./run_synth.sh` -> PASS (0 latches asserted for coarse synthesis).
+- **Commit:** `git rev-parse HEAD` (updated next step). PR #TBD.
+- **2026-07-16** | `fix/atum_vfpu_timing` | Fixed timing closure for `atum_vfpu` P&R by relaxing clock to 200 MHz, eliminating previous WNS of -12.46. | `flow/harden.sh atum_vfpu` (0 DRC, WNS=0.0) | b0cafe8 | PR pending
