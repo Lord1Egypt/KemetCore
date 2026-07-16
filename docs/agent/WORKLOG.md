@@ -213,3 +213,11 @@
 - **Commit:** pending
 - **PR:** pending
 
+
+### 2026-07-16 - feat/hapi_bf16_minmax_p4
+- **Task:** Harden `hapi_bf16_minmax` (Phase 4 P&R).
+- **Action:** Created `hapi_bf16_minmax_p4top` registered wrapper and ASAP7 configs. Ran OpenROAD flow.
+- **Verification:** `./flow/harden.sh hapi_bf16_minmax` finished with WNS=0.00, 37.0 um^2 area, 0 routing DRC violations.
+- **Commit:** pending
+- **PR:** pending
+
