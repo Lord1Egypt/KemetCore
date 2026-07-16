@@ -1,0 +1,9 @@
+export DESIGN_NICKNAME = atum_vregfile
+export DESIGN_NAME     = atum_vregfile_p4top
+export PLATFORM        = asap7
+export VERILOG_FILES   = $(KEMETCORE)/projects/atumcore/rtl/atum_vregfile_p4top.sv $(KEMETCORE)/projects/atumcore/rtl/atum_vregfile.sv
+export SDC_FILE        = $(dir $(DESIGN_CONFIG))/constraint.sdc
+export CORE_UTILIZATION  = 35
+export PLACE_DENSITY     = 0.55
+export CORE_ASPECT_RATIO = 1
+export SYNTH_MEMORY_MAX_BITS = 32768
