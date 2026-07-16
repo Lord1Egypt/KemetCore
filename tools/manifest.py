@@ -512,7 +512,7 @@ PROJECTS = [
             ("RA.2", "Golden: NoC crossbar + descriptor DMA", 0, "done"),
             ("RA.3", "Golden: end-to-end axpy over KAI", 0, "done"),
             ("RA.4", "pymodel: arbitration + DMA timing", 1, "done"),
-            ("RA.5", "RTL: NoC + DMA", 2, "todo"),
+            ("RA.5", "RTL: NoC + DMA", 2, "done"),
             ("RA.7", "RTL: RaCore-Lite top integration", 2, "todo"),
             ("RA.10", "P&R: Lite hierarchical GDSII", 4, "partial"),
             ("RA.11", "Signoff: formal proof of NoC arbiter grant safety (k-induction, yosys-smtbmc+z3)", 5, "partial"),
