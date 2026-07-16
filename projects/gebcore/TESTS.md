@@ -10,5 +10,6 @@ Run: `pytest projects/gebcore/tests -v`
 | `test_compression_metadata` | 2-of-4 selection + indices correct | ✅ |
 | `test_macs_halved` | pymodel performs ~50% of dense MACs | ✅ |
 | `rtl: test_spmac (cocotb)` | geb_spmac == golden.sparse_matmul on 412 elements | ✅ |
+| `rtl: test_spmac_grid (cocotb)` | geb_spmac_grid 4x4 == golden.sparse_matmul on 40 random 2:4 matmuls | ✅ |
 
-**4/4 tests passing.**
+**5/5 tests passing.**
