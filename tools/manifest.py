@@ -290,7 +290,7 @@ PROJECTS = [
         "checkpoints": [
             ("PC.1", "Golden: conv2d (stride/pad) vs reference", 0, "done"),
             ("PC.2", "pymodel: tiled im2col dataflow", 1, "done"),
-            ("PC.3", "RTL: systolic conv array", 2, "todo"),
+            ("PC.3", "RTL: systolic conv array", 2, "done"),
             ("PC.4", "P&R: GDSII (tile-abutted)", 4, "partial"),
             ("PC.5", "Signoff: formal proof of ptah_bias_relu non-negativity (yosys-smtbmc+z3, all lanes)", 5, "partial"),
             ("PC.6", "Signoff: formal control-safety of the conv2d FSM — no illegal state + done only at rest (temporal k-induction, mutation-tested)", 5, "partial"),
