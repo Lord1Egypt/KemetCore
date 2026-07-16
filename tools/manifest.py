@@ -412,7 +412,7 @@ PROJECTS = [
         "checkpoints": [
             ("SB.1", "Golden: Moller-Trumbore intersection", 0, "done"),
             ("SB.2", "pymodel: pipelined intersector", 1, "done"),
-            ("SB.3", "RTL: intersection datapath", 2, "todo"),
+            ("SB.3", "RTL: intersection datapath", 2, "done"),
             ("SB.4", "P&R: GDSII", 4, "partial"),
             ("SB.5", "Signoff: formal proof of sobek_scale multiply-commutativity s*v==v*s all 3 lanes (yosys-smtbmc+z3, all fp32)", 5, "partial"),
         ],

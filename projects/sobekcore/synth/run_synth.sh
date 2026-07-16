@@ -139,6 +139,18 @@ if [ -z "${CI:-}" ]; then
         tee -o reports/sobek_reject.stat stat
     "
     echo "  -> reports/sobek_reject.stat (0 latches asserted)"
+
+    echo "=== synthesizing sobek_intersect (coarse, 0-latch check) ==="
+    "$YOSYS" -ql "reports/sobek_intersect.log" -p "
+        read_verilog -sv ${HAPI}/hapi_fp32_mul.sv ${HAPI}/hapi_fp32_add.sv \
+                         ${HAPI}/hapi_fp32_div.sv ${HAPI}/hapi_fp32_cmp.sv \
+                         ../rtl/sobek_dot3.sv ../rtl/sobek_cross.sv \
+                         ../rtl/sobek_recip.sv ../rtl/sobek_intersect.sv;
+        synth -top sobek_intersect -run :fine;
+        select -assert-none t:\$_DLATCH_* t:\$dlatch;
+        tee -o reports/sobek_intersect.stat stat
+    "
+    echo "  -> reports/sobek_intersect.stat (0 latches asserted)"
 else
     echo "=== skipping heavy sobek_recip / sobek_normalize synth (hapi_fp32_div/sqrt) under CI (see committed reports/*.stat) ==="
 fi

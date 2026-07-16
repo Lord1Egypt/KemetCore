@@ -80,6 +80,13 @@ else ifeq ($(CORE),dot3)
 VERILOG_SOURCES = $(PWD)/../sobek_dot3.sv $(HAPI)/hapi_fp32_mul.sv $(HAPI)/hapi_fp32_add.sv
 TOPLEVEL = sobek_dot3
 MODULE   = test_dot3
+else ifeq ($(CORE),intersect)
+VERILOG_SOURCES = $(PWD)/../sobek_intersect.sv $(PWD)/../sobek_cross.sv \
+                  $(PWD)/../sobek_dot3.sv $(PWD)/../sobek_recip.sv \
+                  $(HAPI)/hapi_fp32_mul.sv $(HAPI)/hapi_fp32_add.sv \
+                  $(HAPI)/hapi_fp32_div.sv $(HAPI)/hapi_fp32_cmp.sv
+TOPLEVEL = sobek_intersect
+MODULE   = test_intersect
 endif
 
 SIM_BUILD = sim_build_$(CORE)
