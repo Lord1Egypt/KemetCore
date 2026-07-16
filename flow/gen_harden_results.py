@@ -46,6 +46,7 @@ LABEL = {
     "hapi_bf16_class":   ("HapiCore", "bf16 classification (registered)"),
     "hapi_bf16_cmp":     ("HapiCore", "bf16 comparison (registered)"),
     "hapi_bf16_minmax":  ("HapiCore", "bf16 min/max (registered)"),
+    "hapi_bf16_sgnj":    ("HapiCore", "bf16 sign injection (registered)"),
     "sobek_dot3":    ("SobekCore",   "fp32 3-vec dot (registered)"),
     "sobek_lerp":    ("SobekCore",   "fp32 linear interpolation (registered)"),
     "sobek_ray_point":("SobekCore",  "fp32 parametric point (registered)"),
@@ -69,7 +70,7 @@ ORDER = ["ra_noc_arbiter","ra_kai_regs","seth_regfile","seth_alu","seth_muldiv",
          "ptah_mac","ptah_bias_relu","ptah_avgpool","imentet_qk_score","imentet_mask_add",
          "geb_spmac","bast_mac","bast_mac_grid","bast_int8_mac","sha256_core",
          "neith_ntt","neith_butterfly","neith_polyaddsub","sobek_dot3","sobek_lerp","sobek_ray_point","sobek_faceforward","sobek_cross","sobek_scale","hapi_fp32_mul",
-         "hapi_fp16_mul","hapi_bf16_mul","hapi_fp16_add","hapi_bf16_add","hapi_fp32_add","hapi_fp32_to_int","hapi_int_to_fp32","hapi_fp32_sgnj","hapi_fp32_cmp","hapi_fp32_class","hapi_fp32_minmax","hapi_bf16_class","hapi_bf16_cmp","hapi_bf16_minmax","hapi_fp32_to_bf16","hapi_fp32_to_fp16","hapi_bf16_to_fp32","hapi_fp16_to_fp32","atum_valu","atum_vredu","atum_vsadd","atum_vcompress","atum_viota","atum_vmask"]
+         "hapi_fp16_mul","hapi_bf16_mul","hapi_fp16_add","hapi_bf16_add","hapi_fp32_add","hapi_fp32_to_int","hapi_int_to_fp32","hapi_fp32_sgnj","hapi_fp32_cmp","hapi_fp32_class","hapi_fp32_minmax","hapi_bf16_class","hapi_bf16_cmp","hapi_bf16_minmax","hapi_bf16_sgnj","hapi_fp32_to_bf16","hapi_fp32_to_fp16","hapi_bf16_to_fp32","hapi_fp16_to_fp32","atum_valu","atum_vredu","atum_vsadd","atum_vcompress","atum_viota","atum_vmask"]
 
 
 def num(path, pat, last=True, grp=1, cast=float):
