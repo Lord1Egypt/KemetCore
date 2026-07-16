@@ -301,3 +301,11 @@
 - **Commit:** pending
 - **PR:** pending
 
+
+### 2026-07-16 - feat/atum_vrf_p4
+- **Task:** Harden `atum_vregfile` (Phase 4 P&R).
+- **Action:** Created `atum_vregfile_p4top` wrapper and ASAP7 configs. Adjusted `SYNTH_MEMORY_MAX_BITS` for flops mapping. Ran OpenROAD flow.
+- **Verification:** `./flow/harden.sh atum_vregfile` finished with WNS >= 0, 8898 um^2 area, 0 routing DRC violations.
+- **Commit:** pending
+- **PR:** pending
+
