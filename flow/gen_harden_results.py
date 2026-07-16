@@ -53,6 +53,7 @@ LABEL = {
     "hapi_bf16_minmax":  ("HapiCore", "bf16 min/max (registered)"),
     "hapi_bf16_sgnj":    ("HapiCore", "bf16 sign injection (registered)"),
     "hapi_bf16_to_fp32": ("HapiCore", "bf16 to fp32 conv (registered)"),
+    "hapi_fp16_to_fp32": ("HapiCore", "fp16 to fp32 conv (registered)"),
     "sobek_dot3":    ("SobekCore",   "fp32 3-vec dot (registered)"),
     "sobek_lerp":    ("SobekCore",   "fp32 linear interpolation (registered)"),
     "sobek_ray_point":("SobekCore",  "fp32 parametric point (registered)"),
