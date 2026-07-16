@@ -3,8 +3,8 @@
 **Current State:**
 - The repository is at `main`.
 - We are running in `/goal` mode (authorized to self-merge on green CI).
-- Just completed Phase 4 hardening of `hapi_fp32_minmax` (WNS 0.00, merged as PR #207).
+- Just completed Phase 4 hardening of `hapi_bf16_class` (WNS 0.00, merged as PR #208).
 
 **Next Step:**
-- Proceed to harden another Phase-4 P&R block from HapiCore (e.g., `hapi_fp32_to_int`, `hapi_fp32_fma`, `hapi_fma_core`, `hapi_fp32_div`, `hapi_fp32_sqrt`) or SobekCore.
-- Pick a small block like `hapi_fp32_to_int` next.
+- Proceed to harden another Phase-4 P&R block from HapiCore (e.g., `hapi_bf16_cmp`, `hapi_bf16_minmax`, `hapi_bf16_sgnj`, `hapi_fp16_class`, `hapi_fp16_cmp`, `hapi_fp16_minmax`, `hapi_fp16_sgnj`).
+- Pick a small block like `hapi_bf16_cmp` next.
