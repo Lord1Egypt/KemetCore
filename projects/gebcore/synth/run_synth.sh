@@ -17,6 +17,14 @@ echo "=== synthesizing geb_spmac ==="
 "
 echo "  -> reports/geb_spmac.stat (0 latches asserted)"
 
+echo "=== synthesizing geb_spmac_grid ==="
+"$YOSYS" -ql "reports/geb_spmac_grid.log" -p "
+    read_verilog -sv ${HAPI}/hapi_fp32_mul.sv ${HAPI}/hapi_fp32_add.sv ../rtl/geb_spmac.sv ../rtl/geb_spmac_grid.sv;
+    synth -top geb_spmac_grid;
+    select -assert-none t:\$_DLATCH_* t:\$dlatch;
+    tee -o reports/geb_spmac_grid.stat stat
+"
+echo "  -> reports/geb_spmac_grid.stat (0 latches asserted)"
 echo "=== synthesizing geb_prune ==="
 "$YOSYS" -ql "reports/geb_prune.log" -p "
     read_verilog -sv ../rtl/geb_prune.sv;

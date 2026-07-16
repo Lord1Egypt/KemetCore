@@ -17,6 +17,10 @@ else ifeq ($(CORE),compress)
   VERILOG_SOURCES = $(PWD)/../geb_compress.sv
   TOPLEVEL = geb_compress
   MODULE   = test_compress
+else ifeq ($(CORE),spmac_grid)
+  VERILOG_SOURCES = $(PWD)/../geb_spmac_grid.sv $(PWD)/../geb_spmac.sv $(HAPI)/hapi_fp32_mul.sv $(HAPI)/hapi_fp32_add.sv
+  TOPLEVEL = geb_spmac_grid
+  MODULE   = test_spmac_grid
 else
 # geb_spmac instantiates the verified HapiCore fp32 primitives, so they are compiled in.
 VERILOG_SOURCES = $(PWD)/../geb_spmac.sv $(HAPI)/hapi_fp32_mul.sv $(HAPI)/hapi_fp32_add.sv

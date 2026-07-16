@@ -323,7 +323,7 @@ PROJECTS = [
             ("G.2", "pymodel: metadata-driven MAC", 1, "done"),
             ("G.3", "RTL: sparse-MAC cell (lane-select + fp32 MAC) + cocotb vs golden", 2, "done"),
             ("G.4", "Synthesis: generic Yosys, 0 latches + gate count", 3, "done"),
-            ("G.5", "RTL: sparse PE array (abuttable)", 2, "todo"),
+            ("G.5", "RTL: sparse PE array (abuttable)", 2, "done"),
             ("G.6", "P&R: GDSII", 4, "partial"),
             ("G.7", "Signoff: formal proof of geb_prune 2:4 invariant (exactly 2 kept, yosys-smtbmc+z3)", 5, "done"),
         ],
@@ -332,6 +332,7 @@ PROJECTS = [
             ("test_compression_metadata", "2-of-4 selection + indices correct", "pass"),
             ("test_macs_halved", "pymodel performs ~50% of dense MACs", "pass"),
             ("rtl: test_spmac (cocotb)", "geb_spmac == golden.sparse_matmul on 412 elements", "pass"),
+            ("rtl: test_spmac_grid (cocotb)", "geb_spmac_grid 4x4 == golden.sparse_matmul on 40 random 2:4 matmuls", "pass"),
         ],
     },
     {
