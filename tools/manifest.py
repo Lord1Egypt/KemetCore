@@ -324,7 +324,7 @@ PROJECTS = [
             ("G.3", "RTL: sparse-MAC cell (lane-select + fp32 MAC) + cocotb vs golden", 2, "done"),
             ("G.4", "Synthesis: generic Yosys, 0 latches + gate count", 3, "done"),
             ("G.5", "RTL: sparse PE array (abuttable)", 2, "done"),
-            ("G.6", "P&R: GDSII", 4, "partial"),
+            ("G.6", "P&R: GDSII", 4, "done"),
             ("G.7", "Signoff: formal proof of geb_prune 2:4 invariant (exactly 2 kept, yosys-smtbmc+z3)", 5, "done"),
         ],
         "tests": [
