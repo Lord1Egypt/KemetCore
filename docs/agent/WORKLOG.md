@@ -335,3 +335,5 @@
 - **2026-07-17** | `main` | chore(hapicore): mark HA.15 P&R add+mul as done | `N/A` | `HEAD` | `N/A`
 - **2026-07-17** | `main` | feat(phase4): NeithCore modmul RTL wrapper & ASAP7 hardening | `WNS=0.0` (from HARDEN_RESULTS.md) | `HEAD` | `N/A`
 - **2026-07-17** | `main` | feat(phase4): NeithCore pointwise RTL wrapper & ASAP7 hardening | `WNS=0.0` (from HARDEN_RESULTS.md) | `HEAD` | `N/A`
+- **2026-07-17** | `main` | feat(phase4): NeithCore compress RTL wrapper & ASAP7 hardening | `WNS=0.0` (from HARDEN_RESULTS.md) | `HEAD` | `N/A`
+- **2026-07-17** | `main` | feat(manifest): flip all P&R checkpoints to done | `tools/gen_tracking.py` | `HEAD` | `N/A`

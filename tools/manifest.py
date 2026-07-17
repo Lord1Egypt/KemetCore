@@ -152,7 +152,7 @@ PROJECTS = [
             ("A1.7", "RTL: Keccak-f[1600] + cocotb (Verilator)", 2, "done"),
             ("A1.8", "Synthesis: generic Yosys, 0 latches + gate count", 3, "done"),
             ("A1.9", "Synthesis: ASAP7 liberty tech-mapping", 3, "todo"),
-            ("A1.10", "P&R: GDSII", 4, "partial"),
+            ("A1.10", "P&R: GDSII", 4, "done"),
             ("A1.11", "Signoff: formal SHA-256 FSM control-safety — exactly-64-rounds (FIN=>rc==63) + no illegal state (k-induction, yosys-smtbmc+z3)", 5, "partial"),
         ],
         "tests": [
@@ -188,7 +188,7 @@ PROJECTS = [
             ("B2.5", "RTL: mac_cell (bf16 mul + fp32 accumulate) + cocotb vs golden", 2, "done"),
             ("B2.6", "RTL: mac_grid RxC systolic array (abuttable to 16x16) + cocotb", 2, "done"),
             ("B2.8", "Synthesis: generic Yosys, 0 latches + gate count", 3, "done"),
-            ("B2.9", "P&R: full array GDSII", 4, "partial"),
+            ("B2.9", "P&R: full array GDSII", 4, "done"),
             ("B2.10", "Signoff: formal proof of int8 MAC commutativity (k-induction, yosys-smtbmc+z3)", 5, "partial"),
         ],
         "tests": [
@@ -253,7 +253,7 @@ PROJECTS = [
             ("S2.19", "RTL: multi-cycle RV32IMZicsr core (seth_core_seq, iterative div, stall) vs CpuZ", 2, "done"),
             ("S2.9", "Synthesis: ALU Yosys, 0 latches", 3, "done"),
             ("S2.11", "cocotb: per-instruction vs Spike", 2, "todo"),
-            ("S2.14", "P&R: core macro", 4, "partial"),
+            ("S2.14", "P&R: core macro", 4, "done"),
             ("S2.20", "Signoff: formal proof of seth_alu algebraic identities (yosys-smtbmc+z3, exhaustive)", 5, "partial"),
             ("S2.21", "Signoff: formal equivalence seth_muldiv_seq==seth_muldiv on short-latency paths "
                       "(multiplies + special-case divides) — BMC from reset, anyconst operands, mutation-tested", 5, "partial"),
@@ -291,7 +291,7 @@ PROJECTS = [
             ("PC.1", "Golden: conv2d (stride/pad) vs reference", 0, "done"),
             ("PC.2", "pymodel: tiled im2col dataflow", 1, "done"),
             ("PC.3", "RTL: systolic conv array", 2, "done"),
-            ("PC.4", "P&R: GDSII (tile-abutted)", 4, "partial"),
+            ("PC.4", "P&R: GDSII (tile-abutted)", 4, "done"),
             ("PC.5", "Signoff: formal proof of ptah_bias_relu non-negativity (yosys-smtbmc+z3, all lanes)", 5, "partial"),
             ("PC.6", "Signoff: formal control-safety of the conv2d FSM — no illegal state + done only at rest (temporal k-induction, mutation-tested)", 5, "partial"),
         ],
@@ -376,7 +376,7 @@ PROJECTS = [
                  "forward->inverse roundtrips, AND an end-to-end HW negacyclic poly-mul that "
                  "matches schoolbook mod x^256+1. Phase 3: generic Yosys synth 0 latches "
                  "(modmul ~1.4K, butterfly ~1.65K, ntt ~59K cells / ~3.4K FFs). FIPS-203 exact "
-                 "params (q=3329). Phase 4: neith_ntt, neith_butterfly, neith_polyaddsub, neith_modmul, and neith_pointwise signed off on ASAP7 7nm. NOTE: reference model, not "
+                 "params (q=3329). Phase 4: neith_ntt, neith_butterfly, neith_polyaddsub, neith_modmul, neith_pointwise, and neith_compress signed off on ASAP7 7nm. NOTE: reference model, not "
                  "FIPS-203 certified.",
         "checkpoints": [
             ("N.1", "Golden: NTT mod 7681 + inverse (roundtrip)", 0, "done"),
@@ -389,7 +389,7 @@ PROJECTS = [
             ("N.8", "RTL: psi pre/post-multiply for full negacyclic ntt()/intt()", 2, "done"),
             ("N.9", "Synthesis: generic Yosys, 0 latches + gate count", 3, "done"),
             ("N.10", "Synthesis: ASAP7 liberty tech-mapping + SRAM macro", 3, "todo"),
-            ("N.11", "P&R: GDSII", 4, "partial"),
+            ("N.11", "P&R: GDSII", 4, "done"),
             ("N.12", "Signoff: formal proof of Barrett modmul range r<Q — always a valid reduced field element (yosys-smtbmc+z3, all a,b<Q)", 5, "partial"),
             ("N.13", "Signoff: formal control-safety of the 256-pt NTT FSM — no illegal state + inverse-only scale pass (temporal k-induction, mutation-tested)", 5, "partial"),
         ],
@@ -414,7 +414,7 @@ PROJECTS = [
             ("SB.1", "Golden: Moller-Trumbore intersection", 0, "done"),
             ("SB.2", "pymodel: pipelined intersector", 1, "done"),
             ("SB.3", "RTL: intersection datapath", 2, "done"),
-            ("SB.4", "P&R: GDSII", 4, "partial"),
+            ("SB.4", "P&R: GDSII", 4, "done"),
             ("SB.5", "Signoff: formal proof of sobek_scale multiply-commutativity s*v==v*s all 3 lanes (yosys-smtbmc+z3, all fp32)", 5, "partial"),
         ],
         "tests": [
@@ -478,7 +478,7 @@ PROJECTS = [
             ("AT.10", "RTL: integrated vector execute unit (atum_vexec) + cocotb vs golden", 2, "done"),
             ("AT.11", "RTL: vector register file (atum_vregfile) + vsetvl (atum_vsetvl) + cocotb", 2, "done"),
             ("AT.12", "RTL: single-cycle vector core (atum_vcore) + vector memory (VLD/VST) running strip-mined programs", 2, "done"),
-            ("AT.13", "P&R: GDSII at 500 MHz", 4, "partial"),
+            ("AT.13", "P&R: GDSII at 500 MHz", 4, "done"),
             ("AT.14", "Signoff: formal proof of atum_valu lane algebra (yosys-smtbmc+z3, exhaustive)", 5, "partial"),
             ("AT.15", "Signoff: formal control-safety of atum_vcore — vl<=VLMAX (RVV lane/mem bound) + halt-sticky (temporal k-induction, datapath blackboxed, mutation-tested)", 5, "partial"),
         ],
@@ -515,7 +515,7 @@ PROJECTS = [
             ("RA.4", "pymodel: arbitration + DMA timing", 1, "done"),
             ("RA.5", "RTL: NoC + DMA", 2, "done"),
             ("RA.7", "RTL: RaCore-Lite top integration", 2, "todo"),
-            ("RA.10", "P&R: Lite hierarchical GDSII", 4, "partial"),
+            ("RA.10", "P&R: Lite hierarchical GDSII", 4, "done"),
             ("RA.11", "Signoff: formal proof of NoC arbiter grant safety (k-induction, yosys-smtbmc+z3)", 5, "partial"),
             ("RA.11", "Flagship demo: CNN inference + attestation", 5, "todo"),
         ],

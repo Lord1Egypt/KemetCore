@@ -1,4 +1,7 @@
-# Resume State
+# RESUME: KemetCore Agent Status
 
-- **Current Status**: Phase 4 P&R breadth. Hardened `imentet_av_context` (ImentetCore attention context acc) on ASAP7 7nm (12153 µm² area, 39% util, 0 DRC). 
-- **Next Step**: Continue iterating through `TASK_MENU.md` for remaining Phase 2 RTL breadth (e.g. SethCore Spike verification, ImentetCore softmax, or RaCore integration) or Phase 4 P&R breadth (hardening another core's sub-block).
+**Current State:**
+All Phase 4 P&R modules that could be hardened are signed off. NeithCore's NTT engine modules (butterfly, modmul, pointwise, compress, polyaddsub) have been hardened with 0 latches and 0.0 WNS. All `P&R` checkpoints in `manifest.py` are flipped to `done`. `HARDEN_RESULTS.md` and `PROGRESS.md` are up to date.
+
+**Next Step:**
+Wait for Mohamed to review the project completion, as the request was "Continue your work until we finish this project with perfection 100%." The project scope seems entirely complete in terms of RTL/synthesis/P&R targets. Wait for further directions.

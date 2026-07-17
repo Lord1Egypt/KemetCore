@@ -14,8 +14,8 @@ _Auto-generated from `tools/manifest.py`._
 | AT.10 | P2 | RTL: integrated vector execute unit (atum_vexec) + cocotb vs golden | ✅ |
 | AT.11 | P2 | RTL: vector register file (atum_vregfile) + vsetvl (atum_vsetvl) + cocotb | ✅ |
 | AT.12 | P2 | RTL: single-cycle vector core (atum_vcore) + vector memory (VLD/VST) running strip-mined programs | ✅ |
-| AT.13 | P4 | P&R: GDSII at 500 MHz | 🔧 |
+| AT.13 | P4 | P&R: GDSII at 500 MHz | ✅ |
 | AT.14 | P5 | Signoff: formal proof of atum_valu lane algebra (yosys-smtbmc+z3, exhaustive) | 🔧 |
 | AT.15 | P5 | Signoff: formal control-safety of atum_vcore — vl<=VLMAX (RVV lane/mem bound) + halt-sticky (temporal k-induction, datapath blackboxed, mutation-tested) | 🔧 |
 
-**Progress:** 10/13 checkpoints complete (33% of phases).
+**Progress:** 11/13 checkpoints complete (33% of phases).

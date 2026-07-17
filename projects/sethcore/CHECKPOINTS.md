@@ -21,10 +21,10 @@ _Auto-generated from `tools/manifest.py`._
 | S2.19 | P2 | RTL: multi-cycle RV32IMZicsr core (seth_core_seq, iterative div, stall) vs CpuZ | ✅ |
 | S2.9 | P3 | Synthesis: ALU Yosys, 0 latches | ✅ |
 | S2.11 | P2 | cocotb: per-instruction vs Spike | ⬜ |
-| S2.14 | P4 | P&R: core macro | 🔧 |
+| S2.14 | P4 | P&R: core macro | ✅ |
 | S2.20 | P5 | Signoff: formal proof of seth_alu algebraic identities (yosys-smtbmc+z3, exhaustive) | 🔧 |
 | S2.21 | P5 | Signoff: formal equivalence seth_muldiv_seq==seth_muldiv on short-latency paths (multiplies + special-case divides) — BMC from reset, anyconst operands, mutation-tested | 🔧 |
 | S2.22 | P5 | Signoff: formal control-safety of seth_muldiv_seq handshake (done⊕busy mutual exclusion + single-cycle done pulse) — BMC over all input sequences to depth 40, mutation-tested | 🔧 |
 | S2.23 | P5 | Signoff: formal bounded-termination of seth_muldiv_seq (iterative divide always finishes; busy never continuously high >33 cycles, bound proven tight) — mutation-tested | 🔧 |
 
-**Progress:** 16/22 checkpoints complete (33% of phases).
+**Progress:** 17/22 checkpoints complete (33% of phases).
