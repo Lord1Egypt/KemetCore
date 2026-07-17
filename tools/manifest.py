@@ -376,7 +376,7 @@ PROJECTS = [
                  "forward->inverse roundtrips, AND an end-to-end HW negacyclic poly-mul that "
                  "matches schoolbook mod x^256+1. Phase 3: generic Yosys synth 0 latches "
                  "(modmul ~1.4K, butterfly ~1.65K, ntt ~59K cells / ~3.4K FFs). FIPS-203 exact "
-                 "params (q=3329). Phase 4: neith_ntt, neith_butterfly, and neith_polyaddsub signed off on ASAP7 7nm. NOTE: reference model, not "
+                 "params (q=3329). Phase 4: neith_ntt, neith_butterfly, neith_polyaddsub, neith_modmul, and neith_pointwise signed off on ASAP7 7nm. NOTE: reference model, not "
                  "FIPS-203 certified.",
         "checkpoints": [
             ("N.1", "Golden: NTT mod 7681 + inverse (roundtrip)", 0, "done"),
