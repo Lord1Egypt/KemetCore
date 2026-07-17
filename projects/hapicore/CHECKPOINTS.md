@@ -22,7 +22,7 @@ _Auto-generated from `tools/manifest.py`._
 | HA.17 | P2 | RTL: fp32 sqrt (hapi_fp32_sqrt) + cocotb vs correctly-rounded golden | ✅ |
 | HA.13 | P3 | Synthesis: generic Yosys, 0 latches + gate count | ✅ |
 | HA.14 | P3 | Synthesis: ASAP7 liberty tech-mapping | ⬜ |
-| HA.15 | P4 | P&R: bf16/fp32 add+mul GDSII | 🔧 |
+| HA.15 | P4 | P&R: bf16/fp32 add+mul GDSII | ✅ |
 | HA.16 | P5 | Signoff: formal proof of fp32 mul commutativity+sign (all 2^64) + fp32 add additive-identity x+0==x (yosys-smtbmc+z3) | 🔧 |
 
-**Progress:** 17/20 checkpoints complete (33% of phases).
+**Progress:** 18/20 checkpoints complete (33% of phases).

@@ -332,3 +332,4 @@
 - **2026-07-17** | `feat/imentet_rowmax_p4` | Hardened `imentet_rowmax_sub` (ImentetCore) to 7nm ASAP7 GDSII. 3543 µm² area, 40% util, 0 DRC. | `./harden.sh imentet_rowmax_sub` | (pending) | PR pending
 - **2026-07-17** | `feat/imentet_av_ctx_p4` | Hardened `imentet_av_context` (ImentetCore) to 7nm ASAP7 GDSII. 12153 µm² area, 39% util, 0 DRC. | `./harden.sh imentet_av_context` | (pending) | PR pending
 - **2026-07-17** | `main` | feat(phase4): HapiCore fp16_sgnj RTL wrapper & ASAP7 hardening | `WNS=0.0` (from HARDEN_RESULTS.md) | `5abf350` | `N/A`
+- **2026-07-17** | `main` | chore(hapicore): mark HA.15 P&R add+mul as done | `N/A` | `HEAD` | `N/A`

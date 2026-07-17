@@ -102,7 +102,7 @@ PROJECTS = [
             ("HA.17", "RTL: fp32 sqrt (hapi_fp32_sqrt) + cocotb vs correctly-rounded golden", 2, "done"),
             ("HA.13", "Synthesis: generic Yosys, 0 latches + gate count", 3, "done"),
             ("HA.14", "Synthesis: ASAP7 liberty tech-mapping", 3, "todo"),
-            ("HA.15", "P&R: bf16/fp32 add+mul GDSII", 4, "partial"),
+            ("HA.15", "P&R: bf16/fp32 add+mul GDSII", 4, "done"),
             ("HA.16", "Signoff: formal proof of fp32 mul commutativity+sign (all 2^64) + fp32 add additive-identity x+0==x (yosys-smtbmc+z3)", 5, "partial"),
         ],
         "tests": [
