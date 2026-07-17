@@ -48,11 +48,12 @@ LABEL = {
     "hapi_fp32_to_fp16": ("HapiCore", "fp32 to fp16 conv (registered)"),
     "hapi_fp16_class":   ("HapiCore", "fp16 classification (registered)"),
     "hapi_fp16_cmp":     ("HapiCore", "fp16 comparison (registered)"),
-    "hapi_fp16_minmax":  ("HapiCore", "fp16 min/max (registered)"),
-    "hapi_bf16_class":   ("HapiCore", "bf16 classification (registered)"),
-    "hapi_bf16_cmp":     ("HapiCore", "bf16 comparison (registered)"),
-    "hapi_bf16_minmax":  ("HapiCore", "bf16 min/max (registered)"),
-    "hapi_bf16_sgnj":    ("HapiCore", "bf16 sign injection (registered)"),
+    "hapi_fp16_minmax":  ("HapiCore",  "fp16 min/max (registered)"),
+    "hapi_bf16_class":   ("HapiCore",  "bf16 classify (registered)"),
+    "hapi_bf16_cmp":     ("HapiCore",  "bf16 compare (registered)"),
+    "hapi_bf16_minmax":  ("HapiCore",  "bf16 min/max (registered)"),
+    "hapi_bf16_sgnj":    ("HapiCore",  "bf16 sign-inject (registered)"),
+    "hapi_fp16_sgnj":    ("HapiCore",  "fp16 sign-inject (registered)"),
     "hapi_bf16_to_fp32": ("HapiCore", "bf16 to fp32 conv (registered)"),
     "hapi_fp16_to_fp32": ("HapiCore", "fp16 to fp32 conv (registered)"),
     "sobek_dot3":    ("SobekCore",   "fp32 3-vec dot (registered)"),
@@ -85,7 +86,7 @@ ORDER = ["ra_noc_arbiter","ra_kai_regs","seth_regfile","seth_alu","seth_muldiv",
          "ptah_mac","ptah_bias_relu","ptah_avgpool","ptah_maxpool","imentet_qk_score","imentet_mask_add","imentet_rowmax_sub","imentet_av_context",
          "geb_spmac","geb_spmac_grid","bast_mac","bast_mac_grid","bast_int8_mac","sha256_core",
          "neith_ntt","neith_butterfly","neith_polyaddsub","sobek_dot3","sobek_lerp","sobek_ray_point","sobek_faceforward","sobek_cross","sobek_scale","hapi_fp32_mul",
-         "hapi_fp16_mul","hapi_bf16_mul","hapi_fp16_add","hapi_bf16_add","hapi_fp32_add","hapi_fp32_to_int","hapi_int_to_fp32","hapi_fp32_sgnj","hapi_fp32_cmp","hapi_fp32_class","hapi_fp32_minmax","hapi_fp16_class","hapi_fp16_cmp","hapi_fp16_minmax","hapi_bf16_class","hapi_bf16_cmp","hapi_bf16_minmax","hapi_bf16_sgnj","hapi_fp32_to_bf16","hapi_fp32_to_fp16","hapi_bf16_to_fp32","hapi_fp16_to_fp32","atum_valu","atum_vredu","atum_vsadd","atum_vcompress","atum_viota","atum_vmask","atum_vsetvl","atum_vfpu","atum_vregfile","atum_vimac"]
+         "hapi_fp16_mul","hapi_bf16_mul","hapi_fp16_add","hapi_bf16_add","hapi_fp32_add","hapi_fp32_to_int","hapi_int_to_fp32","hapi_fp32_sgnj","hapi_fp32_cmp","hapi_fp32_class","hapi_fp32_minmax","hapi_fp16_class","hapi_fp16_cmp","hapi_fp16_minmax","hapi_fp16_sgnj","hapi_bf16_class","hapi_bf16_cmp","hapi_bf16_minmax","hapi_bf16_sgnj","hapi_fp32_to_bf16","hapi_fp32_to_fp16","hapi_bf16_to_fp32","hapi_fp16_to_fp32","atum_valu","atum_vredu","atum_vsadd","atum_vcompress","atum_viota","atum_vmask","atum_vsetvl","atum_vfpu","atum_vregfile","atum_vimac"]
 
 
 def num(path, pat, last=True, grp=1, cast=float):
