@@ -166,3 +166,21 @@ def test_fp32_mask_add_order_and_bits():
     xb = [f.bits(v) for v in x2]
     mb = [f.bits(v) for v in m2]
     assert f.mask_add_bits(xb, mb) == [f.bits(v) for v in f.mask_add(x2, m2)]
+
+def test_exp_bits():
+    """imentet_fp32.exp_bits is the fixed-order fp32 datapath imentet_exp matches:
+    LUT for top 4 bits of mantissa, Taylor for remainder."""
+    import imentet_fp32 as f
+    
+    # Check max relative error
+    errs = []
+    for x in np.linspace(-10, 0, 100):
+        a = f.frombits(f.exp_bits(f.bits(x)))
+        e = np.exp(x)
+        errs.append(abs(a-e)/e)
+    assert max(errs) < 2e-5, f"exp_bits max error {max(errs)} too high"
+    
+    # Check bounds
+    assert f.frombits(f.exp_bits(f.bits(1.0))) == 1.0
+    assert f.frombits(f.exp_bits(f.bits(-100.0))) == 0.0
+

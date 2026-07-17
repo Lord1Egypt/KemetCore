@@ -12,7 +12,11 @@ PWD := $(shell pwd)
 HAPI := $(PWD)/../../../hapicore/rtl
 
 # The Imentet primitives instantiate the verified HapiCore fp32 blocks.
-ifeq ($(CORE),mask)
+ifeq ($(CORE),exp)
+VERILOG_SOURCES = $(PWD)/../imentet_exp.sv $(HAPI)/hapi_fp32_mul.sv $(HAPI)/hapi_fp32_add.sv $(HAPI)/hapi_fp32_cmp.sv $(HAPI)/hapi_fp32_to_int.sv $(HAPI)/hapi_int_to_fp32.sv
+TOPLEVEL = imentet_exp
+MODULE   = test_exp
+else ifeq ($(CORE),mask)
 VERILOG_SOURCES = $(PWD)/../imentet_mask_add.sv $(HAPI)/hapi_fp32_add.sv
 TOPLEVEL = imentet_mask_add
 MODULE   = test_mask_add
