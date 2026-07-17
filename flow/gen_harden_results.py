@@ -64,6 +64,7 @@ LABEL = {
     "imentet_qk_score":("ImentetCore","attention QK score (registered)"),
     "imentet_mask_add":("ImentetCore","attention mask add (registered)"),
     "imentet_rowmax_sub":("ImentetCore","attention rowmax sub (registered)"),
+    "imentet_av_context":("ImentetCore","attention context acc (registered)"),
     "atum_valu":     ("AtumCore",    "RVV int vector ALU (registered)"),
     "atum_vredu":    ("AtumCore",    "RVV vector reduction (registered)"),
     "atum_vsadd":    ("AtumCore",    "RVV vector saturating add (registered)"),
@@ -81,7 +82,7 @@ LABEL = {
 }
 # canonical harden order (cores 00..10)
 ORDER = ["ra_noc_arbiter","ra_kai_regs","seth_regfile","seth_alu","seth_muldiv",
-         "ptah_mac","ptah_bias_relu","ptah_avgpool","ptah_maxpool","imentet_qk_score","imentet_mask_add","imentet_rowmax_sub",
+         "ptah_mac","ptah_bias_relu","ptah_avgpool","ptah_maxpool","imentet_qk_score","imentet_mask_add","imentet_rowmax_sub","imentet_av_context",
          "geb_spmac","geb_spmac_grid","bast_mac","bast_mac_grid","bast_int8_mac","sha256_core",
          "neith_ntt","neith_butterfly","neith_polyaddsub","sobek_dot3","sobek_lerp","sobek_ray_point","sobek_faceforward","sobek_cross","sobek_scale","hapi_fp32_mul",
          "hapi_fp16_mul","hapi_bf16_mul","hapi_fp16_add","hapi_bf16_add","hapi_fp32_add","hapi_fp32_to_int","hapi_int_to_fp32","hapi_fp32_sgnj","hapi_fp32_cmp","hapi_fp32_class","hapi_fp32_minmax","hapi_fp16_class","hapi_fp16_cmp","hapi_fp16_minmax","hapi_bf16_class","hapi_bf16_cmp","hapi_bf16_minmax","hapi_bf16_sgnj","hapi_fp32_to_bf16","hapi_fp32_to_fp16","hapi_bf16_to_fp32","hapi_fp16_to_fp32","atum_valu","atum_vredu","atum_vsadd","atum_vcompress","atum_viota","atum_vmask","atum_vsetvl","atum_vfpu","atum_vregfile","atum_vimac"]
