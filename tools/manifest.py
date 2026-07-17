@@ -346,7 +346,7 @@ PROJECTS = [
             ("I.1", "Golden: scaled dot-product attention", 0, "done"),
             ("I.2", "Golden: stable softmax", 0, "done"),
             ("I.3", "pymodel: flash-tiled attention", 1, "done"),
-            ("I.4", "RTL: softmax (LUT exp + Newton)", 2, "todo"),
+            ("I.4", "RTL: softmax (LUT exp + Newton)", 2, "done"),
             ("I.5", "P&R: GDSII", 4, "done"),
             ("I.6", "Signoff: formal proof of attention-mask semantics — visible(m=0)=>score kept, masked(m=-inf)=>-inf (yosys-smtbmc+z3, all scores)", 5, "partial"),
         ],

@@ -43,6 +43,15 @@ echo "=== synthesizing imentet_rowmax_sub ==="
 "
 echo "  -> reports/imentet_rowmax_sub.stat (0 latches asserted)"
 
+echo "=== synthesizing imentet_exp ==="
+"$YOSYS" -ql "reports/imentet_exp.log" -p "
+    read_verilog -sv ${HAPI}/hapi_fp32_mul.sv ${HAPI}/hapi_fp32_add.sv ${HAPI}/hapi_fp32_cmp.sv ${HAPI}/hapi_fp32_to_int.sv ${HAPI}/hapi_int_to_fp32.sv ../rtl/imentet_exp.sv;
+    synth -top imentet_exp;
+    select -assert-none t:\$_DLATCH_* t:\$dlatch;
+    tee -o reports/imentet_exp.stat stat
+"
+echo "  -> reports/imentet_exp.stat (0 latches asserted)"
+
 # imentet_softmax_norm pulls in hapi_fp32_div (~41K-gate cloud) -> heavy synth is
 # CI-skipped (apt Yosys OOMs), coarse locally; committed .stat is the 0-latch evidence.
 if [ -z "${CI:-}" ]; then

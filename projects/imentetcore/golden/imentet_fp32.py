@@ -152,3 +152,66 @@ def mask_add_bits(xb, mb):
     x = [frombits(u) for u in xb]
     m = [frombits(u) for u in mb]
     return [bits(c) for c in mask_add(x, m)]
+
+# ---- Softmax LUT exp() approximation (hardware model) ------------------------- #
+
+# LUT for 2^(i/16) for i in 0..15 in fp32
+LUT_2_POW = [
+    1065353216, 1065724611, 1066112450, 1066517459,
+    1066940400, 1067382066, 1067843287, 1068324927,
+    1068827891, 1069353124, 1069901610, 1070474380,
+    1071072509, 1071697119, 1072349383, 1073030525
+]
+
+def exp_bits(xb):
+    """
+    Fixed-order fp32 datapath simulation for imentet_exp.
+    xb is 32-bit pattern of fp32 x.
+    1. Check bounds
+    2. Multiply x by log2(e) (fp32)
+    3. Extract I_shift and F_val
+    4. Compute LUT + Taylor
+    5. Adjust exponent
+    """
+    x = frombits(xb)
+    if x > 0:
+        return bits(1.0)
+    if x < -87.33654: # -126 * ln(2)
+        return bits(0.0)
+        
+    c = f32(1.44269504)
+    y = f32(f32(x) * c)
+    y_pos = f32(-y)
+    
+    # In hardware, extract integer via fp32-to-int truncate
+    I_pos = int(y_pos)
+    F_pos = f32(f32(y_pos) - f32(I_pos))
+    
+    if F_pos == 0.0:
+        I_shift = I_pos
+        F_val = f32(0.0)
+    else:
+        I_shift = I_pos + 1
+        F_val = f32(f32(1.0) - F_pos)
+        
+    f_16 = f32(F_val * 16.0)
+    idx = int(f_16)
+    rem = f32(f32(F_val) - f32(idx / 16.0))
+    
+    lut_val = frombits(LUT_2_POW[idx])
+    
+    ln2 = f32(0.69314718)
+    r_ln2 = f32(rem * ln2)
+    r_ln2_sq = f32(r_ln2 * r_ln2)
+    term2 = f32(f32(0.5) * r_ln2_sq)
+    poly = f32(f32(1.0) + f32(r_ln2 + term2))
+    
+    res = f32(lut_val * poly)
+    
+    res_b = bits(res)
+    exp_field = (res_b >> 23) & 0xFF
+    if exp_field >= I_shift:
+        res_b = (res_b & 0x807FFFFF) | ((exp_field - I_shift) << 23)
+        return res_b
+    else:
+        return bits(0.0)
