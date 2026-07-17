@@ -330,3 +330,4 @@
 - **2026-07-16** | `feat/geb_spmac_grid` | Added `geb_spmac_grid.sv` (GebCore 2:4 sparse PE array) + cocotb test vs `geb_sparse.py`. Yosys 0-latch passed. | `./run_sim.sh CORE=spmac_grid` | (pending) | PR pending
 - **2026-07-17** | `feat/geb_spmac_grid_p4` | Hardened `geb_spmac_grid` (GebCore) to 7nm ASAP7 GDSII. 15853 µm² area, 40% util, 0 DRC. | `./harden.sh geb_spmac_grid` | (pending) | PR pending
 - **2026-07-17** | `feat/imentet_rowmax_p4` | Hardened `imentet_rowmax_sub` (ImentetCore) to 7nm ASAP7 GDSII. 3543 µm² area, 40% util, 0 DRC. | `./harden.sh imentet_rowmax_sub` | (pending) | PR pending
+- **2026-07-17** | `feat/imentet_av_ctx_p4` | Hardened `imentet_av_context` (ImentetCore) to 7nm ASAP7 GDSII. 12153 µm² area, 39% util, 0 DRC. | `./harden.sh imentet_av_context` | (pending) | PR pending
