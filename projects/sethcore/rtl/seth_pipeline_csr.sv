@@ -38,6 +38,30 @@ module seth_pipeline_csr #(
     input  logic        irq_ext,
     output logic [31:0] dbg_pc,
     output logic        halted
+`ifdef RISCV_FORMAL
+    ,
+    output logic        rvfi_valid,
+    output logic [63:0] rvfi_order,
+    output logic [31:0] rvfi_insn,
+    output logic        rvfi_trap,
+    output logic        rvfi_halt,
+    output logic        rvfi_intr,
+    output logic [1:0]  rvfi_mode,
+    output logic [1:0]  rvfi_ixl,
+    output logic [4:0]  rvfi_rs1_addr,
+    output logic [4:0]  rvfi_rs2_addr,
+    output logic [31:0] rvfi_rs1_rdata,
+    output logic [31:0] rvfi_rs2_rdata,
+    output logic [4:0]  rvfi_rd_addr,
+    output logic [31:0] rvfi_rd_wdata,
+    output logic [31:0] rvfi_pc_rdata,
+    output logic [31:0] rvfi_pc_wdata,
+    output logic [31:0] rvfi_mem_addr,
+    output logic [3:0]  rvfi_mem_rmask,
+    output logic [3:0]  rvfi_mem_wmask,
+    output logic [31:0] rvfi_mem_rdata,
+    output logic [31:0] rvfi_mem_wdata
+`endif
 );
     localparam int AW = $clog2(WORDS);
 
@@ -299,10 +323,10 @@ module seth_pipeline_csr #(
                 wmem[m_alu_y[AW+1:2]] <= m_store_word;
 
             // ---- EX/MEM <- ID/EX ------------------------------------------ //
-            m_valid   <= ex_valid;
+            m_valid   <= ex_valid && !take_int;
             m_rw      <= ex_rw && !do_enter;
-            m_mr      <= ex_mr;
-            m_mw      <= ex_mw;
+            m_mr      <= ex_mr && !do_enter;
+            m_mw      <= ex_mw && !do_enter;
             m_ec      <= ex_ec;
             m_wb      <= ex_wb;
             m_f3      <= ex_f3;
@@ -374,4 +398,113 @@ module seth_pipeline_csr #(
             if (ex_valid && ex_is_mret && !take_int) mstatus_s <= ret_mstatus & MSTATUS_WMASK;
         end
     end
+
+`ifdef RISCV_FORMAL
+    // RVFI Tracking Pipeline
+    logic [63:0] rvfi_order_cnt;
+    always_ff @(posedge clk) begin
+        if (rst) rvfi_order_cnt <= 0;
+        else if (rvfi_valid) rvfi_order_cnt <= rvfi_order_cnt + 1;
+    end
+    
+    // Track next_pc from EX
+    wire [31:0] ex_next_pc = redirect ? redirect_pc : (ex_pc + 32'd4);
+    
+    // EX/MEM RVFI
+    logic [31:0] m_rvfi_insn, m_rvfi_pc_rdata, m_rvfi_pc_wdata;
+    logic [4:0]  m_rvfi_rs1_addr, m_rvfi_rs2_addr, m_rvfi_rd_addr;
+    logic [31:0] m_rvfi_rs1_rdata, m_rvfi_rs2_rdata;
+    logic        m_rvfi_trap;
+    always_ff @(posedge clk) begin
+        if (!halted && ex_valid && !stall && !redirect) begin
+            m_rvfi_insn <= ex_ins_for_val;
+            m_rvfi_pc_rdata <= ex_pc;
+            m_rvfi_pc_wdata <= ex_next_pc;
+            m_rvfi_rs1_addr <= ex_rs1;
+            m_rvfi_rs2_addr <= ex_rs2;
+            m_rvfi_rd_addr <= ex_rd;
+            m_rvfi_rs1_rdata <= fwd_r1;
+            m_rvfi_rs2_rdata <= fwd_r2;
+            m_rvfi_trap <= ex_is_illegal;
+        end
+    end
+    
+    // MEM/WB RVFI
+    logic [31:0] w_rvfi_insn, w_rvfi_pc_rdata, w_rvfi_pc_wdata;
+    logic [4:0]  w_rvfi_rs1_addr, w_rvfi_rs2_addr, w_rvfi_rd_addr;
+    logic [31:0] w_rvfi_rs1_rdata, w_rvfi_rs2_rdata;
+    logic        w_rvfi_trap;
+    logic [31:0] w_rvfi_mem_addr, w_rvfi_mem_rdata, w_rvfi_mem_wdata;
+    logic [3:0]  w_rvfi_mem_rmask, w_rvfi_mem_wmask;
+    always_ff @(posedge clk) begin
+        if (!halted && m_valid) begin
+            w_rvfi_insn <= m_rvfi_insn;
+            w_rvfi_pc_rdata <= m_rvfi_pc_rdata;
+            w_rvfi_pc_wdata <= m_rvfi_pc_wdata;
+            w_rvfi_rs1_addr <= m_rvfi_rs1_addr;
+            w_rvfi_rs2_addr <= m_rvfi_rs2_addr;
+            w_rvfi_rd_addr <= m_rw ? m_rd : 5'd0;
+            w_rvfi_rs1_rdata <= m_rvfi_rs1_rdata;
+            w_rvfi_rs2_rdata <= m_rvfi_rs2_rdata;
+            w_rvfi_trap <= m_rvfi_trap;
+            
+            w_rvfi_mem_addr <= m_alu_y;
+            w_rvfi_mem_rdata <= m_word;
+            w_rvfi_mem_wdata <= m_store_word;
+            
+            if (m_mr) begin
+                case (m_f3)
+                    3'h0, 3'h4: w_rvfi_mem_rmask <= 4'b0001 << m_alu_y[1:0];
+                    3'h1, 3'h5: w_rvfi_mem_rmask <= 4'b0011 << m_alu_y[1:0];
+                    3'h2:       w_rvfi_mem_rmask <= 4'b1111;
+                    default:    w_rvfi_mem_rmask <= 4'b0000;
+                endcase
+            end else begin
+                w_rvfi_mem_rmask <= 4'b0000;
+            end
+            
+            if (m_mw) begin
+                case (m_f3)
+                    3'h0:    w_rvfi_mem_wmask <= 4'b0001 << m_alu_y[1:0];
+                    3'h1:    w_rvfi_mem_wmask <= 4'b0011 << m_alu_y[1:0];
+                    3'h2:    w_rvfi_mem_wmask <= 4'b1111;
+                    default: w_rvfi_mem_wmask <= 4'b0000;
+                endcase
+            end else begin
+                w_rvfi_mem_wmask <= 4'b0000;
+            end
+        end
+    end
+    
+    logic [31:0] prev_pc_wdata;
+    always_ff @(posedge clk) begin
+        if (rst) prev_pc_wdata <= 32'd0;
+        else if (rvfi_valid) prev_pc_wdata <= w_rvfi_pc_wdata;
+    end
+    
+    assign rvfi_valid = w_valid && !halted && !rst;
+    assign rvfi_order = rvfi_order_cnt;
+    assign rvfi_insn = w_rvfi_insn;
+    assign rvfi_trap = w_rvfi_trap;
+    assign rvfi_halt = halted && w_valid && w_ec; // Only if ecall halted it
+    assign rvfi_intr = rvfi_valid && (w_rvfi_pc_rdata != prev_pc_wdata) && (rvfi_order_cnt > 0);
+    assign rvfi_mode = 2'd3; // M-mode
+    assign rvfi_ixl  = 2'd1; // 32-bit
+    
+    assign rvfi_rs1_addr = w_rvfi_rs1_addr;
+    assign rvfi_rs2_addr = w_rvfi_rs2_addr;
+    assign rvfi_rs1_rdata = w_rvfi_rs1_addr ? w_rvfi_rs1_rdata : 32'd0;
+    assign rvfi_rs2_rdata = w_rvfi_rs2_addr ? w_rvfi_rs2_rdata : 32'd0;
+    assign rvfi_rd_addr = w_rvfi_rd_addr;
+    assign rvfi_rd_wdata = w_rvfi_rd_addr ? w_value : 32'd0;
+    
+    assign rvfi_pc_rdata = w_rvfi_pc_rdata;
+    assign rvfi_pc_wdata = w_rvfi_pc_wdata;
+    
+    assign rvfi_mem_addr = w_rvfi_mem_addr;
+    assign rvfi_mem_rmask = w_rvfi_mem_rmask;
+    assign rvfi_mem_wmask = w_rvfi_mem_wmask;
+    assign rvfi_mem_rdata = w_rvfi_mem_rdata;
+    assign rvfi_mem_wdata = w_rvfi_mem_wdata;
+`endif
 endmodule

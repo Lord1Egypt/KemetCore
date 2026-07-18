@@ -4,7 +4,7 @@
 set -euo pipefail
 DESIGN="${1:-bast_mac}"
 REPO="$(cd "$(dirname "$0")/.." && pwd)"
-IMAGE="${ORFS_IMAGE:-openroad/orfs:latest}"
+IMAGE="${ORFS_IMAGE:-openroad/orfs@sha256:86dfae2d567b8570d71fa49f24ea420a2e79d9645673ba41fd70c5a63510e4aa}"
 CFG="/work/flow/designs/asap7/${DESIGN}/config.mk"
 MAKE_ARGS="${ORFS_MAKE_ARGS:-NUM_CORES=4}"       # cap workers -> bound peak RAM
 echo "▶ Hardening '${DESIGN}' on ASAP7 via ${IMAGE} (repo ${REPO})"
