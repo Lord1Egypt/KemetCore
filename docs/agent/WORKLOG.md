@@ -384,3 +384,4 @@
   - **Result:** `make -C projects/sethcore/formal/riscv_formal_config/checks -j$(nproc)` runs formally. CI updated.
   - **Commit:** `git rev-parse HEAD` (updated)
   - **PR:** #241
+- 2026-07-19 | feat/sethcore-riscv-formal | Fixed Yosys 0.65/0.33 syntax error compatibility for `const rand reg` in `riscv-formal` macros. | `yosys -p "read_verilog -sv -formal test.sv"` | 9d37387 | PR #241
