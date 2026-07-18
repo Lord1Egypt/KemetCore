@@ -1,0 +1,88 @@
+
+4. Printing statistics.
+
+=== ra_noc_xbar ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     1089 wires
+     2287 wire bits
+       50 public wires
+     1248 public wire bits
+       15 ports
+      618 port bits
+     1325 cells
+       19   $_ANDNOT_
+      449   $_AND_
+      130   $_MUX_
+      686   $_NAND_
+       27   $_NOR_
+        2   $_ORNOT_
+        4   $_OR_
+        4   $_SDFFE_PP0P_
+        4   $_SDFF_PP0_
+        2 submodules
+        2   $paramod\ra_noc_arbiter\N=s32'00000000000000000000000000000100
+
+=== $paramod\ra_noc_arbiter\N=s32'00000000000000000000000000000100 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+      273 wires
+      561 wire bits
+       13 public wires
+      270 public wire bits
+        7 ports
+      138 port bits
+      393 cells
+       32   $_ANDNOT_
+       71   $_AND_
+       32   $_DFFE_PP_
+      103   $_MUX_
+        9   $_NAND_
+        5   $_NOR_
+        2   $_NOT_
+        2   $_ORNOT_
+       36   $_OR_
+       96   $_SDFFCE_PN0P_
+        2   $_SDFFE_PP1P_
+        2   $_XNOR_
+        1   $_XOR_
+
+=== design hierarchy ===
+
+        +----------Count including submodules.
+        | 
+     2111 ra_noc_xbar
+      393 $paramod\ra_noc_arbiter\N=s32'00000000000000000000000000000100
+
+        +----------Count including submodules.
+        | 
+     1635 wires
+     3409 wire bits
+       76 public wires
+     1788 public wire bits
+       29 ports
+      894 port bits
+        - memories
+        - memory bits
+        - processes
+     2111 cells
+       83   $_ANDNOT_
+      591   $_AND_
+       64   $_DFFE_PP_
+      336   $_MUX_
+      704   $_NAND_
+       37   $_NOR_
+        4   $_NOT_
+        6   $_ORNOT_
+       76   $_OR_
+      192   $_SDFFCE_PN0P_
+        4   $_SDFFE_PP0P_
+        4   $_SDFFE_PP1P_
+        4   $_SDFF_PP0_
+        4   $_XNOR_
+        2   $_XOR_
+        2 submodules
+        2   $paramod\ra_noc_arbiter\N=s32'00000000000000000000000000000100
+
