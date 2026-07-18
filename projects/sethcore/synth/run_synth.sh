@@ -35,9 +35,9 @@ echo "  -> reports/seth_csru.stat (0 latches asserted)"
 # memory inferred as $mem, not flops) deterministically in <1s. Skipped under CI
 # (the stock apt Yosys is slow on the muldiv cloud); reports/*.stat are the evidence.
 SUBS="../rtl/seth_decode.sv ../rtl/seth_imm.sv ../rtl/seth_aluctl.sv \
-      ../rtl/seth_alu.sv ../rtl/seth_muldiv.sv ../rtl/seth_regfile.sv"
+      ../rtl/seth_alu.sv ../rtl/seth_muldiv.sv ../rtl/seth_regfile.sv ../rtl/seth_trap.sv"
 if [ -z "${CI:-}" ]; then
-    for top in seth_core seth_pipeline seth_pipeline_fwd; do
+    for top in seth_core seth_pipeline seth_pipeline_fwd seth_pipeline_csr; do
         echo "=== synthesizing $top (coarse, 0-latch check) ==="
         "$YOSYS" -ql "reports/${top}.log" -p "
             read_verilog -sv $SUBS ../rtl/${top}.sv;

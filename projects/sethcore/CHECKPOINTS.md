@@ -19,6 +19,7 @@ _Auto-generated from `tools/manifest.py`._
 | S2.18 | P2 | RTL: 5-stage interlocked pipeline (seth_pipeline) + cocotb vs ISA sim | ✅ |
 | S2.10 | P2 | RTL: forwarding pipeline (seth_pipeline_fwd) + cocotb vs interlock & ISA sim | ✅ |
 | S2.19 | P2 | RTL: multi-cycle RV32IMZicsr core (seth_core_seq, iterative div, stall) vs CpuZ | ✅ |
+| S2.22 | P2 | RTL: 5-stage RV32IMZicsr pipeline (seth_pipeline_csr) + cocotb vs CpuZ | ✅ |
 | S2.9 | P3 | Synthesis: ALU Yosys, 0 latches | ✅ |
 | S2.11 | P2 | cocotb: per-instruction vs Spike | ⬜ |
 | S2.14 | P4 | P&R: core macro | ✅ |
@@ -27,4 +28,4 @@ _Auto-generated from `tools/manifest.py`._
 | S2.22 | P5 | Signoff: formal control-safety of seth_muldiv_seq handshake (done⊕busy mutual exclusion + single-cycle done pulse) — BMC over all input sequences to depth 40, mutation-tested | 🔧 |
 | S2.23 | P5 | Signoff: formal bounded-termination of seth_muldiv_seq (iterative divide always finishes; busy never continuously high >33 cycles, bound proven tight) — mutation-tested | 🔧 |
 
-**Progress:** 17/22 checkpoints complete (33% of phases).
+**Progress:** 18/23 checkpoints complete (33% of phases).

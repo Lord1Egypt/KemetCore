@@ -252,6 +252,7 @@ PROJECTS = [
             ("S2.18", "RTL: 5-stage interlocked pipeline (seth_pipeline) + cocotb vs ISA sim", 2, "done"),
             ("S2.10", "RTL: forwarding pipeline (seth_pipeline_fwd) + cocotb vs interlock & ISA sim", 2, "done"),
             ("S2.19", "RTL: multi-cycle RV32IMZicsr core (seth_core_seq, iterative div, stall) vs CpuZ", 2, "done"),
+            ("S2.22", "RTL: 5-stage RV32IMZicsr pipeline (seth_pipeline_csr) + cocotb vs CpuZ", 2, "done"),
             ("S2.9", "Synthesis: ALU Yosys, 0 latches", 3, "done"),
             ("S2.11", "cocotb: per-instruction vs Spike", 2, "todo"),
             ("S2.14", "P&R: core macro", 4, "done"),
