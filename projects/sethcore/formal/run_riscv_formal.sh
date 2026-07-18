@@ -18,6 +18,9 @@ cd third_party/riscv-formal/cores/sethcore
 sed -i 's/read_verilog -sv/read_verilog -sv -formal/g' ../../checks/genchecks.py
 sed -i 's/read_verilog -sv/read_verilog -sv -formal/g' checks.cfg
 
+# Yosys 0.65+ requires 'rand const reg' instead of 'const rand reg'
+sed -i 's/const rand reg/rand const reg/g' ../../checks/rvfi_macros.vh
+
 python3 ../../checks/genchecks.py
 make -C checks -j$(nproc)
 echo "SethCore riscv-formal proofs PROVED ✅"
