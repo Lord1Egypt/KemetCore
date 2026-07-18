@@ -1,6 +1,6 @@
 # NeithCore — Build STEPS
 
-> Deity: Neith (war/wisdom) · Domain: ML-KEM (Kyber) lattice KEM · Spec: [docs/07_NeithCore_MLKEM.md](../../docs/07_NeithCore_MLKEM.md)
+> Deity: Neith (war/wisdom) · Domain: Kyber-round-1-style lattice/NTT engine (Q=7681) · Spec: [docs/07_NeithCore_MLKEM.md](../../docs/07_NeithCore_MLKEM.md)
 
 _Auto-generated from `tools/manifest.py` — do not edit by hand; edit the manifest and run `python tools/gen_tracking.py`._
 

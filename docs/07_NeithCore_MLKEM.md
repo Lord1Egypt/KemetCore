@@ -1,7 +1,7 @@
-# 𓋇 NeithCore — ML-KEM (CRYSTALS-Kyber) Lattice-Based KEM Accelerator
+# 𓋇 NeithCore — Kyber-round-1-style Lattice/NTT Accelerator (Q=7681)
 
 > **Deity:** Neith (𓋇, goddess of war, wisdom, and weaving — fitting for the "woven" structure of lattice crypto)
-> **Domain:** Post-Quantum Cryptography
+> **Domain:** Kyber-round-1-style lattice/NTT engine (Q=7681)
 > **Status:** Phase 0 — Spec & Golden
 > **Target Fmax:** 200 MHz on ASAP7
 > **Est. Gates:** ~100K (largest crypto project)
@@ -11,7 +11,13 @@
 
 ## 1. Technical Overview
 
-NeithCore is a dedicated hardware accelerator for **ML-KEM** (formerly CRYSTALS-Kyber), the NIST-standardized post-quantum key encapsulation mechanism (FIPS 203). It implements KeyGen, Encaps, and Decaps operations with an optimized NTT (Number Theoretic Transform) engine for polynomial multiplication.
+### A Note on Standards and Scope
+NeithCore implements the mathematics of Kyber round 1 using a modulus of Q=7681. FIPS-203 (ML-KEM) uses a modulus of q=3329. Therefore, NeithCore will not pass FIPS-203 KAT vectors, but serves as a representative lattice/NTT hardware engine.
+
+### Constant-Time Security
+NeithCore datapaths are fixed-latency by construction (no secret-dependent branches or memory addressing). Masking/DPA resistance is a non-goal for this phase.
+
+NeithCore is a dedicated hardware accelerator for lattice operations. It implements KeyGen, Encaps, and Decaps operations with an optimized NTT (Number Theoretic Transform) engine for polynomial multiplication.
 
 ### Why ML-KEM Hardware?
 

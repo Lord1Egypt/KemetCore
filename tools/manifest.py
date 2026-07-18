@@ -363,7 +363,7 @@ PROJECTS = [
     },
     {
         "key": "neithcore", "num": "07", "name": "NeithCore", "deity": "Neith (war/wisdom)",
-        "domain": "ML-KEM (Kyber) lattice KEM", "doc": "docs/07_NeithCore_MLKEM.md",
+        "domain": "Kyber-round-1-style lattice/NTT engine (Q=7681)", "doc": "docs/07_NeithCore_MLKEM.md",
         "depends": [],
         "phase": DONE4,
         "scope": "Phase 0/1: negacyclic NTT over Z_q (q=7681, NTT-friendly) plus a "
