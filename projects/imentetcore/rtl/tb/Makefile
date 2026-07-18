@@ -16,6 +16,10 @@ ifeq ($(CORE),exp)
 VERILOG_SOURCES = $(PWD)/../imentet_exp.sv $(HAPI)/hapi_fp32_mul.sv $(HAPI)/hapi_fp32_add.sv $(HAPI)/hapi_fp32_cmp.sv $(HAPI)/hapi_fp32_to_int.sv $(HAPI)/hapi_int_to_fp32.sv
 TOPLEVEL = imentet_exp
 MODULE   = test_exp
+else ifeq ($(CORE),core)
+VERILOG_SOURCES = $(PWD)/../imentet_core.sv $(PWD)/../imentet_qk_score.sv $(PWD)/../imentet_mask_add.sv $(PWD)/../imentet_rowmax_sub.sv $(PWD)/../imentet_exp.sv $(PWD)/../imentet_softmax_norm.sv $(PWD)/../imentet_av_context.sv $(HAPI)/hapi_fp32_mul.sv $(HAPI)/hapi_fp32_add.sv $(HAPI)/hapi_fp32_cmp.sv $(HAPI)/hapi_fp32_to_int.sv $(HAPI)/hapi_int_to_fp32.sv $(HAPI)/hapi_fp32_div.sv
+TOPLEVEL = imentet_core
+MODULE   = test_core
 else ifeq ($(CORE),mask)
 VERILOG_SOURCES = $(PWD)/../imentet_mask_add.sv $(HAPI)/hapi_fp32_add.sv
 TOPLEVEL = imentet_mask_add

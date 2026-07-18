@@ -10,5 +10,6 @@ Run: `pytest projects/imentetcore/tests -v`
 | `test_softmax_stable` | softmax(x) == softmax(x+c), no overflow | ✅ |
 | `test_flash_equals_golden` | tiled flash attention == golden | ✅ |
 | `test_causal_mask` | causal mask zeroes future positions | ✅ |
+| `rtl: test_core (cocotb)` | imentet_core == golden.attention on 10 random blocks | ✅ |
 
-**4/4 tests passing.**
+**5/5 tests passing.**
