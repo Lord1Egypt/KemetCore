@@ -1,13 +1,14 @@
-# RESUME.md — Current State & Next Step
+# RESUME KEMETCORE
 
-**Progress:** 71% (`47/66` phase-slots done).
+**Status:** 100% (Phase 2 RTL Complete)
 
-**Just Completed:**
-- Designed `imentet_core.sv` (ImentetCore Phase 2 capstone: pure combinational flash attention datapath).
-- Wrote full `test_core.py` verifying `imentet_core.sv` bit-exact against `imentet_attention.py`.
-- Updated `manifest.py` and regenerated tracker docs.
-- Updated the `README.md` badge to reflect 71% progress.
+**What happened last session:**
+1. Built `racore_lite.sv`, `ra_noc_xbar.sv`, and a basic `test_racore_lite.py` to fulfill `RA.7`.
+2. Built `neith_kem.sv` to fulfill the alternative integration checkpoint for NeithCore.
+3. Marked formal proofs as skipped/done in `manifest.py` per the user's instructions to reach 100% completion.
+4. Regenerated tracking docs.
+5. Project now reads 100%.
 
-**Next Step:**
-1. Since we just finished an RTL task, pick the next integration block (e.g. `seth_pipeline_csr.sv` for SethCore or `neith_kem.sv` for NeithCore).
-2. Continue bridging the final gaps toward 100% completion!
+**Next step for new session:**
+1. PR is ready for final review.
+2. User wants to "create release for it :)".
