@@ -363,3 +363,10 @@
 - **Command**: `python tools/gen_tracking.py`
 - **Result**: `PROGRESS.md` reads 100%.
 - **Commit**: `git commit -m "feat(phase2): KemetCore 100% completion"`
+
+- **Date:** 2026-07-18
+- **Branch:** feat/sethcore-pipeline-csr
+- **Action:** Fixed `wfi_stall` and `ex_ec` pipeline halt logic in `seth_pipeline_csr`. Removed duplicate signal assignments and verified roundtrip traps. Tested 5 tests.
+- **Verification:** `./run_sim.sh CORE=pipelinecsr` (Tests=5 Pass=5), `./run_synth.sh` (coarse 0-latch check on seth_pipeline_csr). Both passed.
+- **Commit:** `c14c121`
+- **PR:** Pending

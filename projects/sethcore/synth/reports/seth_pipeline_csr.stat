@@ -1,45 +1,62 @@
 
 11. Printing statistics.
 
-=== seth_pipeline_fwd ===
+=== seth_pipeline_csr ===
 
         +----------Local Count, excluding submodules.
         | 
-      249 wires
-     2874 wire bits
-       94 public wires
-     1220 public wire bits
-        7 ports
-      100 port bits
-      207 cells
+      372 wires
+     4275 wire bits
+      140 public wires
+     1802 public wire bits
+       10 ports
+      103 port bits
+      317 cells
         5   $alu
-        3   $and
-       27   $dffe
-       26   $eq
-       22   $logic_and
-        4   $logic_not
-       10   $logic_or
+        5   $and
+       28   $dffe
+       44   $eq
+       38   $logic_and
+        8   $logic_not
+       23   $logic_or
         1   $mem_v2
-       52   $mux
-        2   $ne
-       12   $not
-        3   $or
-        3   $pmux
-        7   $reduce_and
-        5   $reduce_bool
-        4   $reduce_or
-        8   $sdffce
-        8   $sdffe
+       73   $mux
+        1   $ne
+       14   $not
+        7   $or
+        6   $pmux
+       13   $reduce_and
+       13   $reduce_bool
+        6   $reduce_or
+       12   $sdffce
+       15   $sdffe
         2   $shl
         1   $shr
         2   $xor
-        6 submodules
+        7 submodules
         1   seth_alu
         1   seth_aluctl
         1   seth_decode
         1   seth_imm
         1   seth_muldiv
         1   seth_regfile
+        1   seth_trap
+
+=== seth_trap ===
+
+        +----------Local Count, excluding submodules.
+        | 
+       23 wires
+      580 wire bits
+       17 public wires
+      419 public wire bits
+       12 ports
+      352 port bits
+        5 cells
+        1   $alu
+        1   $logic_and
+        1   $mux
+        2   $or
 
 === seth_regfile ===
 
@@ -152,56 +169,58 @@
 
         +----------Count including submodules.
         | 
-      326 seth_pipeline_fwd
+      441 seth_pipeline_csr
        23 seth_alu
        18 seth_aluctl
        23 seth_decode
        11 seth_imm
        30 seth_muldiv
        14 seth_regfile
+        5 seth_trap
 
         +----------Count including submodules.
         | 
-      395 wires
-     4741 wire bits
-      139 public wires
-     1936 public wire bits
-       41 ports
-      541 port bits
+      541 wires
+     6722 wire bits
+      202 public wires
+     2937 public wire bits
+       56 ports
+      896 port bits
         - memories
         - memory bits
         - processes
-      326 cells
-        7   $alu
-        4   $and
-       27   $dffe
+      441 cells
+        8   $alu
+        6   $and
+       28   $dffe
         1   $div
-       75   $eq
-       24   $logic_and
-       10   $logic_not
-       10   $logic_or
+       93   $eq
+       41   $logic_and
+       14   $logic_not
+       23   $logic_or
         3   $macc_v2
         2   $mem_v2
         1   $mod
-       87   $mux
-        2   $ne
-       12   $not
-        4   $or
-        8   $pmux
-        7   $reduce_and
-        6   $reduce_bool
-        9   $reduce_or
-        8   $sdffce
-        8   $sdffe
+      109   $mux
+        1   $ne
+       14   $not
+       10   $or
+       11   $pmux
+       13   $reduce_and
+       14   $reduce_bool
+       11   $reduce_or
+       12   $sdffce
+       15   $sdffe
         3   $shl
         2   $shr
         1   $sshr
         5   $xor
-        6 submodules
+        7 submodules
         1   seth_alu
         1   seth_aluctl
         1   seth_decode
         1   seth_imm
         1   seth_muldiv
         1   seth_regfile
+        1   seth_trap
 
