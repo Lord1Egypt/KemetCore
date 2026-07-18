@@ -277,8 +277,7 @@ module seth_pipeline_csr #(
     assign load_use = id_valid && ex_valid && ex_mr && (ex_rd != 5'd0) &&
                       ((id_uses_rs1 && id_rs1 == ex_rd) ||
                        (id_uses_rs2 && id_rs2 == ex_rd));
-    assign stall = (id_uses_rs1 && ex_mr && ex_rd == id_rs1 && id_rs1 != 5'd0) ||
-                   (id_uses_rs2 && ex_mr && ex_rd == id_rs2 && id_rs2 != 5'd0);
+    assign stall = load_use;
 
     // ============================ sequential ============================== //
     always_ff @(posedge clk) begin
@@ -286,7 +285,6 @@ module seth_pipeline_csr #(
             pc <= 32'd0; halted <= 1'b0;
             id_valid <= 1'b0; ex_valid <= 1'b0; m_valid <= 1'b0; w_valid <= 1'b0;
             id_pc <= 32'd0; id_ins <= 32'd0;
-            mstatus_s<=0; mtvec_s<=0; mie_s<=0; mscratch_s<=0; mepc_s<=0; mcause_s<=0; mtval_s<=0;
             mstatus_s<=0; mtvec_s<=0; mie_s<=0; mscratch_s<=0; mepc_s<=0; mcause_s<=0; mtval_s<=0;
         end else if (load_en) begin
             wmem[load_addr[AW+1:2]] <= load_data;
@@ -299,7 +297,6 @@ module seth_pipeline_csr #(
             w_ec    <= m_valid && m_ec;
             if (m_valid && m_mw)
                 wmem[m_alu_y[AW+1:2]] <= m_store_word;
-
 
             // ---- EX/MEM <- ID/EX ------------------------------------------ //
             m_valid   <= ex_valid;
