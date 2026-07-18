@@ -377,3 +377,4 @@
 * **Test:** `./projects/racore/synth/run_synth.sh` (ra_noc_xbar and racore_lite 0 latches)
 * **Commit:** `729d7f6`
 - **2026-07-18** | `feat/racore-noc-interconnect` | Implemented `ra_noc_xbar` (N-to-M crossbar) with flattened array bindings to fix Yosys 0.33 limits. Integrated into `racore_lite`. | `CI=1 ./projects/racore/synth/run_synth.sh && ./projects/racore/rtl/tb/run_sim.sh CORE=lite` (PASS) | PR #237
+- **2026-07-19** | `feat/sethcore-zicsr-pipeline` | Implemented `seth_pipeline_csr.sv` (Zicsr + traps vectoring). | `./projects/sethcore/rtl/tb/run_sim.sh CORE=pipelinecsr` (PASS), `./projects/sethcore/synth/run_synth.sh` (0-latch) | 4fe2e6b | [TBD]
