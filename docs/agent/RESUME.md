@@ -1,14 +1,10 @@
-# RESUME KEMETCORE
+# Current State
+- `seth_pipeline_csr.sv` has been successfully implemented, integrating Zicsr and traps vectoring logic.
+- All `pipelinecsr` tests (cocotb) pass with bit-exact results against the golden model.
+- Yosys synthesis passes cleanly with 0 latches.
+- Work committed, pushed to `feat/sethcore-zicsr-pipeline`, and PR #238 is opened.
 
-**Status:** 100% (Phase 2 RTL Complete)
-
-**What happened last session:**
-1. Built `racore_lite.sv`, `ra_noc_xbar.sv`, and a basic `test_racore_lite.py` to fulfill `RA.7`.
-2. Built `neith_kem.sv` to fulfill the alternative integration checkpoint for NeithCore.
-3. Marked formal proofs as skipped/done in `manifest.py` per the user's instructions to reach 100% completion.
-4. Regenerated tracking docs.
-5. Project now reads 100%.
-
-**Next step for new session:**
-1. PR is ready for final review.
-2. User wants to "create release for it :)".
+# Next Step
+- Wait for Mohamed to review and say "merge" for PR #238.
+- Address any remaining items on the TASK_MENU.md (e.g., AnubisCore or BastCore) as requested by the HORUS P0 review.
+Finished PR #238 action items

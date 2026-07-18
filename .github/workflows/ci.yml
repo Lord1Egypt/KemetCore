@@ -89,6 +89,8 @@ jobs:
         run: ./projects/sethcore/rtl/tb/run_sim.sh CORE=pipeline
       - name: Run SethCore forwarding-pipeline testbench (vs interlock + golden)
         run: ./projects/sethcore/rtl/tb/run_sim.sh CORE=fwd
+      - name: Run SethCore pipeline-csr testbench
+        run: ./projects/sethcore/rtl/tb/run_sim.sh CORE=pipelinecsr
       - name: Run HapiCore bf16 multiplier testbench
         run: ./projects/hapicore/rtl/tb/run_sim.sh CORE=mul
       - name: Run HapiCore bf16 adder testbench
@@ -329,7 +331,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y yosys
       - name: Synthesize AnubisCore (asserts no latches)
         run: YOSYS=yosys ./projects/anubiscore/synth/run_synth.sh
-      - name: Synthesize SethCore ALU (asserts no latches)
+      - name: Synthesize SethCore (asserts no latches)
         run: YOSYS=yosys ./projects/sethcore/synth/run_synth.sh
       - name: Synthesize HapiCore bf16 (asserts no latches)
         run: YOSYS=yosys ./projects/hapicore/synth/run_synth.sh

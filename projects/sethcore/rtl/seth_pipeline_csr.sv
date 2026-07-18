@@ -91,7 +91,7 @@ module seth_pipeline_csr #(
     assign id_uses_rs1 = (id_op == 7'h33) || (id_op == 7'h13) || (id_op == 7'h03) ||
                          (id_op == 7'h23) || (id_op == 7'h63) || (id_op == 7'h67) || (id_op == 7'h73);
     assign id_uses_rs2 = (id_op == 7'h33) || (id_op == 7'h23) || (id_op == 7'h63);
-    // removed id_is_ecall
+    
 
 
     wire id_is_system = (id_op == 7'h73);
@@ -143,15 +143,16 @@ module seth_pipeline_csr #(
 
     wire [31:0] csr_old  = csr_read(ex_funct12);
     wire [31:0] csr_oper = ex_f3[2] ? {27'd0, ex_rs1} : fwd_r1;
-    logic [31:0] csr_raw; logic csr_we;
+    logic [31:0] csr_raw; logic csr_we_raw;
     always_comb begin
         case (ex_f3[1:0])
-            2'b01:   begin csr_raw = csr_oper;            csr_we = ex_is_csr && ex_valid;                 end
-            2'b10:   begin csr_raw = csr_old | csr_oper;  csr_we = ex_is_csr && (csr_oper!=0) && ex_valid; end
-            2'b11:   begin csr_raw = csr_old & ~csr_oper; csr_we = ex_is_csr && (csr_oper!=0) && ex_valid; end
-            default: begin csr_raw = csr_old;             csr_we = 1'b0;                    end
+            2'b01:   begin csr_raw = csr_oper;            csr_we_raw = ex_is_csr;                 end
+            2'b10:   begin csr_raw = csr_old | csr_oper;  csr_we_raw = ex_is_csr && (csr_oper!=0); end
+            2'b11:   begin csr_raw = csr_old & ~csr_oper; csr_we_raw = ex_is_csr && (csr_oper!=0); end
+            default: begin csr_raw = csr_old;             csr_we_raw = 1'b0;                    end
         endcase
     end
+    wire csr_we = csr_we_raw && ex_valid; // only write if valid
 
     // ---- trap vectoring --------------------------------------------------- //
     wire        m_ie   = mstatus_s[3];
@@ -165,6 +166,7 @@ module seth_pipeline_csr #(
     wire [30:0] trap_cause = take_int ? int_cause : exc_cause;
     wire        trap_isint = take_int;
     wire        do_enter   = take_int || (is_exc && ex_valid);
+    wire        wfi_stall  = ex_is_wfi && ~(|(mip_val & (mie_s & MIE_WMASK))) && ~take_int && ex_valid;
 
     logic [31:0] enter_target, enter_mepc, enter_mcause, enter_mstatus, ret_target, ret_mstatus;
     seth_trap e_trap (
@@ -223,8 +225,8 @@ module seth_pipeline_csr #(
 
     logic        redirect;
     logic [31:0] redirect_pc;
-    assign redirect    = (ex_valid && (ex_jmp || (ex_br && ex_take))) || do_enter || (ex_valid && ex_is_mret);
-    assign redirect_pc = do_enter ? enter_target : (ex_is_mret ? ret_target : (ex_jmp ? (ex_jalr ? ((fwd_r1 + ex_imm) & ~32'd1) : (ex_pc + ex_imm)) : (ex_pc + ex_imm)));
+    assign redirect    = (ex_valid && (ex_jmp || (ex_br && ex_take))) || do_enter || (ex_valid && ex_is_mret) || wfi_stall;
+    assign redirect_pc = do_enter ? enter_target : (ex_is_mret ? ret_target : (wfi_stall ? ex_pc : (ex_jmp ? (ex_jalr ? ((fwd_r1 + ex_imm) & ~32'd1) : (ex_pc + ex_imm)) : (ex_pc + ex_imm))));
 
     // ============================ MEM ===================================== //
     logic [31:0] m_word, m_load_fmt, boff;
@@ -275,8 +277,7 @@ module seth_pipeline_csr #(
     assign load_use = id_valid && ex_valid && ex_mr && (ex_rd != 5'd0) &&
                       ((id_uses_rs1 && id_rs1 == ex_rd) ||
                        (id_uses_rs2 && id_rs2 == ex_rd));
-    wire wfi_stall = id_is_wfi && id_valid && ~(|(mip_val & (mie_s & MIE_WMASK)));
-    assign stall = load_use || wfi_stall;
+    assign stall = load_use;
 
     // ============================ sequential ============================== //
     always_ff @(posedge clk) begin
@@ -296,8 +297,6 @@ module seth_pipeline_csr #(
             w_ec    <= m_valid && m_ec;
             if (m_valid && m_mw)
                 wmem[m_alu_y[AW+1:2]] <= m_store_word;
-            if (m_valid && m_ec)
-                halted <= 1'b1;
 
             // ---- EX/MEM <- ID/EX ------------------------------------------ //
             m_valid   <= ex_valid;
@@ -323,10 +322,10 @@ module seth_pipeline_csr #(
                 ex_is_mret <= 1'b0; ex_is_wfi <= 1'b0; ex_is_illegal <= 1'b0;
             end else begin
                 ex_valid  <= id_valid;
-                ex_rw     <= id_rw || id_is_csr; ex_alusrc <= id_alusrc; ex_apc <= id_apc;
+                ex_rw     <= id_rw || id_is_csr;     ex_alusrc <= id_alusrc; ex_apc <= id_apc;
                 ex_mr     <= id_mr;     ex_mw     <= id_mw;     ex_br  <= id_br;
                 ex_jmp    <= id_jmp;    ex_jalr   <= id_jalr;   ex_mdu <= id_mdu;
-                ex_ec     <= 1'b0; // ECALL does not halt in CSR mode
+                ex_ec     <= id_is_ecall;
                 ex_is_csr <= id_is_csr; ex_is_ecall <= id_is_ecall; ex_is_ebreak <= id_is_ebreak;
                 ex_is_mret <= id_is_mret; ex_is_wfi <= id_is_wfi; ex_is_illegal <= id_is_illegal; ex_funct12 <= id_ins[31:20];
                 ex_wb     <= id_wb;     ex_aluop  <= id_aluop;  ex_f3  <= id_f3;
@@ -346,7 +345,7 @@ module seth_pipeline_csr #(
                 id_valid <= id_valid;
                 id_pc    <= id_pc;
                 id_ins   <= id_ins;
-            end  else begin
+            end else begin
                 pc       <= pc + 32'd4;
                 id_valid <= 1'b1;
                 id_pc    <= pc;

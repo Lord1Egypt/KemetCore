@@ -45,8 +45,9 @@ state moves, and always regenerate `PROGRESS.md` after any manifest change.
    `id_uses_rs1`, splitting ecall/CSR by funct12, and trap-flush. Verify vs the
    `CpuZ` golden.
 
-6. **RaCore SoC integration** — wire multiple accelerators behind the KAI interface.
-   Largest scope; capstone. Plan explicitly first.
+6. [x] **RaCore (Top-Level SoC) - NoC Interconnect & Integration**
+   * Implemented `ra_noc_xbar` and successfully integrated `racore_lite` inside phase 2 RTL. 
+   * Waiting on further external components/cores before full `racore` can be complete.
 
 7. **Timing/SDC discipline** across cores (real clock targets, not just gate counts).
 
