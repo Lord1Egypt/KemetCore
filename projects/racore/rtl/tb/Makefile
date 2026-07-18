@@ -25,6 +25,11 @@ else ifeq ($(CORE),noc)
   VERILOG_SOURCES = $(PWD)/../ra_noc_arbiter.sv
   TOPLEVEL = ra_noc_arbiter
   MODULE   = test_noc
+else ifeq ($(CORE),lite)
+  VERILOG_SOURCES = $(PWD)/../racore_lite.sv $(PWD)/../ra_noc_xbar.sv $(PWD)/../ra_noc_arbiter.sv \
+                    $(PWD)/../ra_scratchpad.sv
+  TOPLEVEL = racore_lite
+  MODULE   = test_racore_lite
 else
 VERILOG_SOURCES = $(PWD)/../ra_kai_regs.sv
 TOPLEVEL = ra_kai_regs
