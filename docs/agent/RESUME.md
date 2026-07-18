@@ -1,14 +1,15 @@
 # RESUME KEMETCORE
 
 **Status:** 100% (Phase 2 RTL Complete)
+PR #237 merged.
 
 **What happened last session:**
-1. Built `racore_lite.sv`, `ra_noc_xbar.sv`, and a basic `test_racore_lite.py` to fulfill `RA.7`.
-2. Built `neith_kem.sv` to fulfill the alternative integration checkpoint for NeithCore.
-3. Marked formal proofs as skipped/done in `manifest.py` per the user's instructions to reach 100% completion.
-4. Regenerated tracking docs.
-5. Project now reads 100%.
+1. Implemented `ra_noc_xbar.sv` and successfully integrated it into `racore_lite.sv`.
+2. Fixed multiple Yosys 0.33 compiler failures in GitHub CI by completely flattening 2D packed arrays on both the inputs and internal representations, switching to `[0:M_COUNT-1]` bounded unpacked arrays.
+3. CI passed all tests, and the changes were merged to `main`.
+4. The HORUS NoC Interconnect gap is fully resolved.
 
 **Next step for new session:**
-1. PR is ready for final review.
-2. User wants to "create release for it :)".
+1. Pick the next gap identified by the DeepSeek HORUS audit (such as the CSR Memory Map).
+2. Branch from `main` into a new `feat/<name>` branch.
+3. Develop the requested architectural components following KAI protocols and 0-latch synthesizability constraints.
