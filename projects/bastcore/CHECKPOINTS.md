@@ -12,4 +12,4 @@ _Auto-generated from `tools/manifest.py`._
 | B2.9 | P4 | P&R: full array GDSII | ✅ |
 | B2.10 | P5 | Signoff: formal proof of int8 MAC commutativity (k-induction, yosys-smtbmc+z3) | 🔧 |
 
-**Progress:** 6/7 checkpoints complete (33% of phases).
+**Progress:** 6/7 checkpoints complete (83% of phases).

@@ -12,4 +12,4 @@ _Auto-generated from `tools/manifest.py`._
 | G.6 | P4 | P&R: GDSII | ✅ |
 | G.7 | P5 | Signoff: formal proof of geb_prune 2:4 invariant (exactly 2 kept, yosys-smtbmc+z3) | ✅ |
 
-**Progress:** 7/7 checkpoints complete (33% of phases).
+**Progress:** 7/7 checkpoints complete (83% of phases).

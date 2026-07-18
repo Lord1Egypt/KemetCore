@@ -18,4 +18,4 @@ _Auto-generated from `tools/manifest.py`._
 | AT.14 | P5 | Signoff: formal proof of atum_valu lane algebra (yosys-smtbmc+z3, exhaustive) | 🔧 |
 | AT.15 | P5 | Signoff: formal control-safety of atum_vcore — vl<=VLMAX (RVV lane/mem bound) + halt-sticky (temporal k-induction, datapath blackboxed, mutation-tested) | 🔧 |
 
-**Progress:** 11/13 checkpoints complete (33% of phases).
+**Progress:** 11/13 checkpoints complete (83% of phases).
