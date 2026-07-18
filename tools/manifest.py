@@ -348,6 +348,7 @@ PROJECTS = [
             ("I.2", "Golden: stable softmax", 0, "done"),
             ("I.3", "pymodel: flash-tiled attention", 1, "done"),
             ("I.4", "RTL: softmax (LUT exp + Newton)", 2, "done"),
+            ("I.4b", "RTL: attention datapath integration", 2, "done"),
             ("I.5", "P&R: GDSII", 4, "done"),
             ("I.6", "Signoff: formal proof of attention-mask semantics — visible(m=0)=>score kept, masked(m=-inf)=>-inf (yosys-smtbmc+z3, all scores)", 5, "partial"),
         ],
@@ -356,6 +357,7 @@ PROJECTS = [
             ("test_softmax_stable", "softmax(x) == softmax(x+c), no overflow", "pass"),
             ("test_flash_equals_golden", "tiled flash attention == golden", "pass"),
             ("test_causal_mask", "causal mask zeroes future positions", "pass"),
+            ("rtl: test_core (cocotb)", "imentet_core == golden.attention on 10 random blocks", "pass"),
         ],
     },
     {

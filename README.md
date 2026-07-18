@@ -9,7 +9,7 @@
 [![Simulation](https://img.shields.io/badge/Simulation-Verilator-ff6d00)](https://verilator.org/)
 [![Synthesis](https://img.shields.io/badge/Synthesis-Yosys-2196f3)](https://yosyshq.net/yosys/)
 [![PDK](https://img.shields.io/badge/PDK-ASAP7%207nm-9c27b0)](https://github.com/The-OpenROAD-Project/asap7)
-[![Status](https://img.shields.io/badge/Status-Phase%202%20RTL-brightgreen)](#)
+[![Status](https://img.shields.io/badge/Status-71%25%20Complete-brightgreen)](#)
 [![Wiki](https://img.shields.io/badge/Wiki-21%20pages-9c27b0)](wiki/Home.md)
 
 > **📚 [Browse the Wiki →](wiki/Home.md)** — Architecture, methodology, all 11 cores explained in stunning detail

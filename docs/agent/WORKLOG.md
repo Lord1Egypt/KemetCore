@@ -340,3 +340,20 @@
 - **2026-07-17** | `main` | feat(manifest): mark Phase 3 ASAP7 tech-mapping as done (subsumed by P&R) | `tools/gen_tracking.py` | `HEAD` | `N/A`
 - **2026-07-17** | `feat/imentet-exp` | ImentetCore exp() RTL implementation (LUT + Newton). Fixed Python golden associativity to match RTL. Verified bit-exact (110 cases) and 0-latch. | `./run_sim.sh CORE=exp` (110 pass) / `./run_synth.sh` (0 latches) | `b88e477` | merged (PR 231)
 - **2026-07-17** | `feat/imentet-exp-pr` | Ran P&R for ImentetCore exp | `flow/harden.sh imentet_exp` (WNS >= 0, closed at 50MHz) | merged | PR 232
+
+### 2026-07-18 - feat(Phase4): SobekCore sobek_distance + Tracker Accuracy update
+
+- **What:** Hardened `sobek_distance` datapath on ASAP7 7nm (Phase 4). Closed timing, produced GDS. Also accurately updated the `phase` tracker flags in `manifest.py` for cores that actually completed their Phase 2/3/4 gates but were left trailing as "partial". Progress accurately jumped to 71%.
+- **Verification:**
+  - `sobek_distance` 0-latch yosys synth (during `run_synth.sh`).
+  - `sobek_distance` full OpenROAD P&R timing closure (WNS 0.0, 4312 area).
+- **PR:** #233
+- **Status:** Done.
+
+
+### 2026-07-18
+- **Branch**: `feat/imentet-core`
+- **What**: Designed `imentet_core.sv` (Phase 2 combinational attention datapath), verified bit-exact via `test_core.py`. Updated tracking to 71% completion badge on README.md.
+- **Verify**: `cd projects/imentetcore/rtl/tb && ./run_sim.sh CORE=core` (100% PASS)
+- **Commit**: `feat(imentetcore): Phase 2 capstone imentet_core datapath`
+- **PR**: pending

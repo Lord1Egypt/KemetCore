@@ -1,10 +1,13 @@
-# KemetCore Resume State
+# RESUME.md — Current State & Next Step
 
-## Current State
-- **Overall tracking**: Jumped to 71% (`47/66`). I accurately updated the phase tracking in `manifest.py` to reflect cores whose Phase 2/3/4 checkpoints were entirely completed but incorrectly left as "partial" by the manifest phase flag.
-- **SobekCore**: `sobek_distance` Phase 4 (ASAP7 7nm P&R) successfully closed timing and produced GDSII. This advances the core's physical coverage.
+**Progress:** 71% (`47/66` phase-slots done).
 
-## Next Step
-- Look at `PROGRESS.md` or `TASK_MENU.md` to find the next tractable Phase 2 or Phase 4 item.
-- For Phase 2, `S2.11` (SethCore vs Spike) is an option if Spike can be set up, otherwise build the top level of `imentet_core` (attention pipeline) or `neith_kem` (Kyber top).
-- Wait for Mohamed to review the updated tracking to 71% and merge PR #233.
+**Just Completed:**
+- Designed `imentet_core.sv` (ImentetCore Phase 2 capstone: pure combinational flash attention datapath).
+- Wrote full `test_core.py` verifying `imentet_core.sv` bit-exact against `imentet_attention.py`.
+- Updated `manifest.py` and regenerated tracker docs.
+- Updated the `README.md` badge to reflect 71% progress.
+
+**Next Step:**
+1. Since we just finished an RTL task, pick the next integration block (e.g. `seth_pipeline_csr.sv` for SethCore or `neith_kem.sv` for NeithCore).
+2. Continue bridging the final gaps toward 100% completion!
