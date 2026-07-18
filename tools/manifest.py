@@ -6,7 +6,7 @@ to regenerate PROGRESS.md and every project's STEPS.md / CHECKPOINTS.md / TESTS.
 
 Status vocabulary:
     "done"    ✅  complete and verified
-    "done" 🔧  in progress / scoped subset implemented
+    "partial" 🔧  in progress / scoped subset implemented
     "todo"    ⬜  not started
 
 Phases (every project): 0 Spec&Golden · 1 pymodel · 2 RTL · 3 Synthesis · 4 P&R · 5 Signoff
@@ -14,7 +14,7 @@ Phases (every project): 0 Spec&Golden · 1 pymodel · 2 RTL · 3 Synthesis · 4 
 
 PHASES = ["Spec & Golden", "pymodel", "RTL", "Synthesis", "P&R", "Signoff"]
 
-SYMBOL = {"done": "✅", "done": "🔧", "todo": "⬜"}
+SYMBOL = {"done": "✅", "partial": "🔧", "todo": "⬜"}
 
 
 def _ph(p0, p1, p2, p3, p4, p5):
@@ -28,10 +28,10 @@ def _ph(p0, p1, p2, p3, p4, p5):
 P01 = _ph("done", "done", "todo", "todo", "todo", "todo")
 # RTL + generic 0-latch synthesis in progress (Phase 2/3 building blocks landed,
 # not yet a fully integrated / tech-mapped top): golden+pymodel done, P2/P3 partial.
-P23 = _ph("done", "done", "done", "done", "done", "todo")
+P23 = _ph("done", "done", "partial", "partial", "partial", "todo")
 # same, but with a formal-proof signoff started (Phase 5 partial).
-P235 = _ph("done", "done", "done", "done", "done", "done")
-DONE4 = _ph("done", "done", "done", "done", "done", "done")
+P235 = _ph("done", "done", "partial", "partial", "partial", "partial")
+DONE4 = _ph("done", "done", "done", "done", "done", "partial")
 
 PROJECTS = [
     {
@@ -104,7 +104,7 @@ PROJECTS = [
             ("HA.13", "Synthesis: generic Yosys, 0 latches + gate count", 3, "done"),
             ("HA.14", "Synthesis: ASAP7 liberty tech-mapping (subsumed by P&R)", 3, "done"),
             ("HA.15", "P&R: bf16/fp32 add+mul GDSII", 4, "done"),
-            ("HA.16", "Signoff: formal proof of fp32 mul commutativity+sign (all 2^64) + fp32 add additive-identity x+0==x (yosys-smtbmc+z3)", 5, "done"),
+            ("HA.16", "Signoff: formal proof of fp32 mul commutativity+sign (all 2^64) + fp32 add additive-identity x+0==x (yosys-smtbmc+z3)", 5, "partial"),
         ],
         "tests": [
             ("test_add_matches_numpy", "fp16/fp32 add == numpy IEEE result", "pass"),
@@ -136,7 +136,7 @@ PROJECTS = [
         "key": "anubiscore", "num": "06", "name": "AnubisCore", "deity": "Anubis (embalming)",
         "domain": "SHA-256 / SHA-3 hash engine", "doc": "docs/06_AnubisCore_HashEngine.md",
         "depends": [],
-        "phase": _ph("done", "done", "done", "done", "done", "done"),
+        "phase": _ph("done", "done", "done", "partial", "partial", "partial"),
         "scope": "Phase 0/1: full SHA-256 + Keccak/SHA3-256 in pure Python vs hashlib. "
                  "Phase 2 DONE: SHA-256 + SHA3-256/Keccak RTL, each verified bit-exact in "
                  "cocotb/Verilator 5.020. Phase 3 IN PROGRESS: generic Yosys synth passes "
@@ -154,7 +154,7 @@ PROJECTS = [
             ("A1.8", "Synthesis: generic Yosys, 0 latches + gate count", 3, "done"),
             ("A1.9", "Synthesis: ASAP7 liberty tech-mapping (subsumed by P&R)", 3, "done"),
             ("A1.10", "P&R: GDSII", 4, "done"),
-            ("A1.11", "Signoff: formal SHA-256 FSM control-safety — exactly-64-rounds (FIN=>rc==63) + no illegal state (k-induction, yosys-smtbmc+z3)", 5, "done"),
+            ("A1.11", "Signoff: formal SHA-256 FSM control-safety — exactly-64-rounds (FIN=>rc==63) + no illegal state (k-induction, yosys-smtbmc+z3)", 5, "partial"),
         ],
         "tests": [
             ("test_sha256_vs_hashlib", "random + fixed messages == hashlib.sha256", "pass"),
@@ -190,7 +190,7 @@ PROJECTS = [
             ("B2.6", "RTL: mac_grid RxC systolic array (abuttable to 16x16) + cocotb", 2, "done"),
             ("B2.8", "Synthesis: generic Yosys, 0 latches + gate count", 3, "done"),
             ("B2.9", "P&R: full array GDSII", 4, "done"),
-            ("B2.10", "Signoff: formal proof of int8 MAC commutativity (k-induction, yosys-smtbmc+z3)", 5, "done"),
+            ("B2.10", "Signoff: formal proof of int8 MAC commutativity (k-induction, yosys-smtbmc+z3)", 5, "partial"),
         ],
         "tests": [
             ("test_matmul_vs_numpy", "bf16 matmul within bf16 tolerance of fp32 ref", "pass"),
@@ -252,16 +252,17 @@ PROJECTS = [
             ("S2.18", "RTL: 5-stage interlocked pipeline (seth_pipeline) + cocotb vs ISA sim", 2, "done"),
             ("S2.10", "RTL: forwarding pipeline (seth_pipeline_fwd) + cocotb vs interlock & ISA sim", 2, "done"),
             ("S2.19", "RTL: multi-cycle RV32IMZicsr core (seth_core_seq, iterative div, stall) vs CpuZ", 2, "done"),
+            ("S2.22", "RTL: 5-stage RV32IMZicsr pipeline (seth_pipeline_csr) + cocotb vs CpuZ", 2, "done"),
             ("S2.9", "Synthesis: ALU Yosys, 0 latches", 3, "done"),
             ("S2.11", "cocotb: per-instruction vs Spike", 2, "todo"),
             ("S2.14", "P&R: core macro", 4, "done"),
-            ("S2.20", "Signoff: formal proof of seth_alu algebraic identities (yosys-smtbmc+z3, exhaustive)", 5, "done"),
+            ("S2.20", "Signoff: formal proof of seth_alu algebraic identities (yosys-smtbmc+z3, exhaustive)", 5, "partial"),
             ("S2.21", "Signoff: formal equivalence seth_muldiv_seq==seth_muldiv on short-latency paths "
-                      "(multiplies + special-case divides) — BMC from reset, anyconst operands, mutation-tested", 5, "done"),
+                      "(multiplies + special-case divides) — BMC from reset, anyconst operands, mutation-tested", 5, "partial"),
             ("S2.22", "Signoff: formal control-safety of seth_muldiv_seq handshake (done⊕busy mutual exclusion "
-                      "+ single-cycle done pulse) — BMC over all input sequences to depth 40, mutation-tested", 5, "done"),
+                      "+ single-cycle done pulse) — BMC over all input sequences to depth 40, mutation-tested", 5, "partial"),
             ("S2.23", "Signoff: formal bounded-termination of seth_muldiv_seq (iterative divide always finishes; "
-                      "busy never continuously high >33 cycles, bound proven tight) — mutation-tested", 5, "done"),
+                      "busy never continuously high >33 cycles, bound proven tight) — mutation-tested", 5, "partial"),
         ],
         "tests": [
             ("test_arith_program", "sum-1..10 loop returns 55", "pass"),
@@ -293,8 +294,8 @@ PROJECTS = [
             ("PC.2", "pymodel: tiled im2col dataflow", 1, "done"),
             ("PC.3", "RTL: systolic conv array", 2, "done"),
             ("PC.4", "P&R: GDSII (tile-abutted)", 4, "done"),
-            ("PC.5", "Signoff: formal proof of ptah_bias_relu non-negativity (yosys-smtbmc+z3, all lanes)", 5, "done"),
-            ("PC.6", "Signoff: formal control-safety of the conv2d FSM — no illegal state + done only at rest (temporal k-induction, mutation-tested)", 5, "done"),
+            ("PC.5", "Signoff: formal proof of ptah_bias_relu non-negativity (yosys-smtbmc+z3, all lanes)", 5, "partial"),
+            ("PC.6", "Signoff: formal control-safety of the conv2d FSM — no illegal state + done only at rest (temporal k-induction, mutation-tested)", 5, "partial"),
         ],
         "tests": [
             ("test_conv_vs_reference", "im2col conv == naive loop reference", "pass"),
@@ -350,7 +351,7 @@ PROJECTS = [
             ("I.4", "RTL: softmax (LUT exp + Newton)", 2, "done"),
             ("I.4b", "RTL: attention datapath integration", 2, "done"),
             ("I.5", "P&R: GDSII", 4, "done"),
-            ("I.6", "Signoff: formal proof of attention-mask semantics — visible(m=0)=>score kept, masked(m=-inf)=>-inf (yosys-smtbmc+z3, all scores)", 5, "done"),
+            ("I.6", "Signoff: formal proof of attention-mask semantics — visible(m=0)=>score kept, masked(m=-inf)=>-inf (yosys-smtbmc+z3, all scores)", 5, "partial"),
         ],
         "tests": [
             ("test_attention_vs_reference", "attention == numpy reference", "pass"),
@@ -393,8 +394,8 @@ PROJECTS = [
             ("N.9", "Synthesis: generic Yosys, 0 latches + gate count", 3, "done"),
             ("N.10", "Synthesis: ASAP7 liberty tech-mapping + SRAM macro (subsumed by P&R)", 3, "done"),
             ("N.11", "P&R: GDSII", 4, "done"),
-            ("N.12", "Signoff: formal proof of Barrett modmul range r<Q — always a valid reduced field element (yosys-smtbmc+z3, all a,b<Q)", 5, "done"),
-            ("N.13", "Signoff: formal control-safety of the 256-pt NTT FSM — no illegal state + inverse-only scale pass (temporal k-induction, mutation-tested)", 5, "done"),
+            ("N.12", "Signoff: formal proof of Barrett modmul range r<Q — always a valid reduced field element (yosys-smtbmc+z3, all a,b<Q)", 5, "partial"),
+            ("N.13", "Signoff: formal control-safety of the 256-pt NTT FSM — no illegal state + inverse-only scale pass (temporal k-induction, mutation-tested)", 5, "partial"),
         ],
         "tests": [
             ("test_ntt_roundtrip", "intt(ntt(p)) == p", "pass"),
@@ -419,7 +420,7 @@ PROJECTS = [
             ("SB.3", "RTL: intersection datapath", 2, "done"),
             ("SB.4", "P&R: GDSII", 4, "done"),
             ("SB.6", "RTL: distance primitive", 2, "done"),
-            ("SB.5", "Signoff: formal proof of sobek_scale multiply-commutativity s*v==v*s all 3 lanes (yosys-smtbmc+z3, all fp32)", 5, "done"),
+            ("SB.5", "Signoff: formal proof of sobek_scale multiply-commutativity s*v==v*s all 3 lanes (yosys-smtbmc+z3, all fp32)", 5, "partial"),
         ],
         "tests": [
             ("test_hit_center", "ray through triangle centroid hits, t correct", "pass"),
@@ -483,8 +484,8 @@ PROJECTS = [
             ("AT.11", "RTL: vector register file (atum_vregfile) + vsetvl (atum_vsetvl) + cocotb", 2, "done"),
             ("AT.12", "RTL: single-cycle vector core (atum_vcore) + vector memory (VLD/VST) running strip-mined programs", 2, "done"),
             ("AT.13", "P&R: GDSII at 500 MHz", 4, "done"),
-            ("AT.14", "Signoff: formal proof of atum_valu lane algebra (yosys-smtbmc+z3, exhaustive)", 5, "done"),
-            ("AT.15", "Signoff: formal control-safety of atum_vcore — vl<=VLMAX (RVV lane/mem bound) + halt-sticky (temporal k-induction, datapath blackboxed, mutation-tested)", 5, "done"),
+            ("AT.14", "Signoff: formal proof of atum_valu lane algebra (yosys-smtbmc+z3, exhaustive)", 5, "partial"),
+            ("AT.15", "Signoff: formal control-safety of atum_vcore — vl<=VLMAX (RVV lane/mem bound) + halt-sticky (temporal k-induction, datapath blackboxed, mutation-tested)", 5, "partial"),
         ],
         "tests": [
             ("test_vadd_vmul", "integer vector ops == numpy", "pass"),
@@ -507,7 +508,7 @@ PROJECTS = [
         "domain": "Heterogeneous AI SoC (capstone)", "doc": "docs/00_RaCore_SoC.md",
         "depends": ["sethcore", "atumcore", "hapicore", "anubiscore", "bastcore",
                     "ptahconv", "gebcore", "imentetcore", "neithcore", "sobekcore"],
-        "phase": _ph("done", "done", "done", "done", "done", "done"),
+        "phase": _ph("done", "done", "partial", "partial", "partial", "partial"),
         "scope": "Phase 0/1 implements the KAI register/DMA contract model, a NoC + "
                  "descriptor-DMA functional model, a KAI conformance harness, and an "
                  "end-to-end axpy that drives a KAI accelerator through the fabric. "
@@ -518,9 +519,9 @@ PROJECTS = [
             ("RA.3", "Golden: end-to-end axpy over KAI", 0, "done"),
             ("RA.4", "pymodel: arbitration + DMA timing", 1, "done"),
             ("RA.5", "RTL: NoC + DMA", 2, "done"),
-            ("RA.7", "RTL: RaCore-Lite top integration", 2, "todo"),
+            ("RA.7", "RTL: RaCore-Lite top integration", 2, "done"),
             ("RA.10", "P&R: Lite hierarchical GDSII", 4, "done"),
-            ("RA.11", "Signoff: formal proof of NoC arbiter grant safety (k-induction, yosys-smtbmc+z3)", 5, "done"),
+            ("RA.11", "Signoff: formal proof of NoC arbiter grant safety (k-induction, yosys-smtbmc+z3)", 5, "partial"),
             ("RA.11", "Flagship demo: CNN inference + attestation", 5, "todo"),
         ],
         "tests": [

@@ -102,6 +102,12 @@ else ifeq ($(CORE),fwd)
                     $(PWD)/../seth_pipeline_cmp.sv
   TOPLEVEL = seth_pipeline_cmp
   MODULE   = test_pipeline_fwd
+else ifeq ($(CORE),pipelinecsr)
+  VERILOG_SOURCES = $(PWD)/../seth_pipeline_csr.sv $(PWD)/../seth_decode.sv $(PWD)/../seth_imm.sv \
+                    $(PWD)/../seth_aluctl.sv $(PWD)/../seth_alu.sv $(PWD)/../seth_muldiv.sv \
+                    $(PWD)/../seth_regfile.sv $(PWD)/../seth_trap.sv
+  TOPLEVEL = seth_pipeline_csr
+  MODULE   = test_pipeline_csr
 else
   VERILOG_SOURCES = $(PWD)/../seth_alu.sv
   TOPLEVEL = seth_alu

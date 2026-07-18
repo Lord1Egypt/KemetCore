@@ -25,7 +25,7 @@
 // tb/test_pipeline_fwd.py (architectural equivalence + a cycle-count proof that
 // forwarding strictly reduces stalls vs the interlock pipeline).
 
-module seth_pipeline_fwd #(
+module seth_pipeline_csr #(
     parameter int WORDS = 1024
 ) (
     input  logic        clk,
@@ -33,6 +33,9 @@ module seth_pipeline_fwd #(
     input  logic        load_en,
     input  logic [31:0] load_addr,
     input  logic [31:0] load_data,
+    input  logic        irq_soft,
+    input  logic        irq_timer,
+    input  logic        irq_ext,
     output logic [31:0] dbg_pc,
     output logic        halted
 );
@@ -84,21 +87,93 @@ module seth_pipeline_fwd #(
     assign id_r1 = (wb_we && wb_rd == id_rs1 && id_rs1 != 5'd0) ? wb_value : id_rdata1;
     assign id_r2 = (wb_we && wb_rd == id_rs2 && id_rs2 != 5'd0) ? wb_value : id_rdata2;
 
-    logic id_uses_rs1, id_uses_rs2, id_is_ecall;
+    logic id_uses_rs1, id_uses_rs2;
     assign id_uses_rs1 = (id_op == 7'h33) || (id_op == 7'h13) || (id_op == 7'h03) ||
-                         (id_op == 7'h23) || (id_op == 7'h63) || (id_op == 7'h67);
+                         (id_op == 7'h23) || (id_op == 7'h63) || (id_op == 7'h67) || (id_op == 7'h73);
     assign id_uses_rs2 = (id_op == 7'h33) || (id_op == 7'h23) || (id_op == 7'h63);
-    assign id_is_ecall = (id_op == 7'h73);
+    // removed id_is_ecall
 
+
+    wire id_is_system = (id_op == 7'h73);
+    wire id_is_csr    = id_is_system && (id_f3 != 3'd0);
+    wire id_is_ecall  = id_is_system && (id_f3 == 3'd0) && (id_ins[31:20] == 12'h000);
+    wire id_is_ebreak = id_is_system && (id_f3 == 3'd0) && (id_ins[31:20] == 12'h001);
+    wire id_is_mret   = id_is_system && (id_f3 == 3'd0) && (id_ins[31:20] == 12'h302);
+    wire id_is_wfi    = id_is_system && (id_f3 == 3'd0) && (id_ins[31:20] == 12'h105);
+    wire id_is_legal  = (id_op == 7'h33) || (id_op == 7'h13) || (id_op == 7'h03) || (id_op == 7'h23)
+                     || (id_op == 7'h63) || (id_op == 7'h37) || (id_op == 7'h17) || (id_op == 7'h6F)
+                     || (id_op == 7'h67) || (id_op == 7'h73);
+    wire id_is_illegal = ~id_is_legal;
+
+    // ID/EX register additions
     // ============================ ID/EX register ========================== //
     logic        ex_valid, ex_rw, ex_alusrc, ex_apc, ex_mr, ex_mw, ex_br, ex_jmp, ex_jalr, ex_mdu, ex_ec;
+    logic        ex_is_csr, ex_is_ecall, ex_is_ebreak, ex_is_mret, ex_is_wfi, ex_is_illegal;
+    logic [11:0] ex_funct12;
     logic [1:0]  ex_wb;
     logic [3:0]  ex_aluop;
     logic [2:0]  ex_f3;
     logic [4:0]  ex_rd, ex_rs1, ex_rs2;
-    logic [31:0] ex_pc, ex_imm, ex_r1, ex_r2;
+    logic [31:0] ex_pc, ex_imm, ex_r1, ex_r2, ex_ins_for_val;
 
     // ============================ EX ====================================== //
+
+    // ---- CSR storage + WARL read ----------------------------------------- //
+    localparam logic [11:0] MSTATUS=12'h300, MISA=12'h301, MIE=12'h304, MTVEC=12'h305,
+                            MSCRATCH=12'h340, MEPC=12'h341, MCAUSE=12'h342, MTVAL=12'h343, MIP=12'h344;
+    localparam logic [31:0] MISA_VAL=32'h4000_1100, MSTATUS_WMASK=(32'h1<<3)|(32'h1<<7),
+                            MSTATUS_MPP=32'h3<<11, MIE_WMASK=(32'h1<<3)|(32'h1<<7)|(32'h1<<11);
+    logic [31:0] mstatus_s, mtvec_s, mie_s, mscratch_s, mepc_s, mcause_s, mtval_s;
+    wire [31:0] mip_val = ({31'd0, irq_soft} << 3) | ({31'd0, irq_timer} << 7) | ({31'd0, irq_ext} << 11);
+
+    function automatic logic [31:0] csr_read(input logic [11:0] a);
+        case (a)
+            MSTATUS:  csr_read = (mstatus_s & MSTATUS_WMASK) | MSTATUS_MPP;
+            MISA:     csr_read = MISA_VAL;
+            MIE:      csr_read = mie_s & MIE_WMASK;
+            MTVEC:    csr_read = mtvec_s;
+            MSCRATCH: csr_read = mscratch_s;
+            MEPC:     csr_read = mepc_s & 32'hFFFF_FFFE;
+            MCAUSE:   csr_read = mcause_s;
+            MTVAL:    csr_read = mtval_s;
+            MIP:      csr_read = mip_val;
+            default:  csr_read = 32'h0;
+        endcase
+    endfunction
+
+    wire [31:0] csr_old  = csr_read(ex_funct12);
+    wire [31:0] csr_oper = ex_f3[2] ? {27'd0, ex_rs1} : fwd_r1;
+    logic [31:0] csr_raw; logic csr_we;
+    always_comb begin
+        case (ex_f3[1:0])
+            2'b01:   begin csr_raw = csr_oper;            csr_we = ex_is_csr && ex_valid;                 end
+            2'b10:   begin csr_raw = csr_old | csr_oper;  csr_we = ex_is_csr && (csr_oper!=0) && ex_valid; end
+            2'b11:   begin csr_raw = csr_old & ~csr_oper; csr_we = ex_is_csr && (csr_oper!=0) && ex_valid; end
+            default: begin csr_raw = csr_old;             csr_we = 1'b0;                    end
+        endcase
+    end
+
+    // ---- trap vectoring --------------------------------------------------- //
+    wire        m_ie   = mstatus_s[3];
+    wire [31:0] ready  = mip_val & (mie_s & MIE_WMASK);
+    // Interrupts evaluated in EX, prioritize over exceptions
+    wire        take_int = m_ie && (|ready) && ex_valid;
+    wire [30:0] int_cause = ready[11] ? 31'd11 : (ready[3] ? 31'd3 : 31'd7);
+    
+    wire [30:0] exc_cause  = ex_is_illegal ? 31'd2 : (ex_is_ebreak ? 31'd3 : 31'd11);
+    wire        is_exc     = ex_is_ecall || ex_is_ebreak || ex_is_illegal;
+    wire [30:0] trap_cause = take_int ? int_cause : exc_cause;
+    wire        trap_isint = take_int;
+    wire        do_enter   = take_int || (is_exc && ex_valid);
+
+    logic [31:0] enter_target, enter_mepc, enter_mcause, enter_mstatus, ret_target, ret_mstatus;
+    seth_trap e_trap (
+        .pc(ex_pc), .cause(trap_cause), .is_interrupt(trap_isint),
+        .mtvec(csr_read(MTVEC)), .mstatus(csr_read(MSTATUS)), .mepc(csr_read(MEPC)),
+        .enter_target(enter_target), .enter_mepc(enter_mepc), .enter_mcause(enter_mcause),
+        .enter_mstatus(enter_mstatus), .ret_target(ret_target), .ret_mstatus(ret_mstatus));
+
+
     // EX/MEM and MEM/WB registers are declared below; forward muxes reference them.
     logic        m_valid, m_rw, m_mr, m_mw, m_ec;
     logic [1:0]  m_wb;
@@ -131,7 +206,7 @@ module seth_pipeline_fwd #(
     assign ex_alu_b = ex_alusrc ? ex_imm : fwd_r2;
     seth_alu    e_alu (.a(ex_alu_a), .b(ex_alu_b), .op(ex_aluop), .y(ex_alu_y));
     seth_muldiv e_mdu (.a(fwd_r1), .b(fwd_r2), .op(ex_f3), .y(ex_mdu_y));
-    assign ex_compute = ex_mdu ? ex_mdu_y : ex_alu_y;
+    assign ex_compute = ex_is_csr ? csr_old : (ex_mdu ? ex_mdu_y : ex_alu_y);
 
     logic ex_take;
     always_comb begin
@@ -148,9 +223,8 @@ module seth_pipeline_fwd #(
 
     logic        redirect;
     logic [31:0] redirect_pc;
-    assign redirect    = ex_valid && (ex_jmp || (ex_br && ex_take));
-    assign redirect_pc = ex_jmp ? (ex_jalr ? ((fwd_r1 + ex_imm) & ~32'd1) : (ex_pc + ex_imm))
-                                : (ex_pc + ex_imm);
+    assign redirect    = (ex_valid && (ex_jmp || (ex_br && ex_take))) || do_enter || (ex_valid && ex_is_mret);
+    assign redirect_pc = do_enter ? enter_target : (ex_is_mret ? ret_target : (ex_jmp ? (ex_jalr ? ((fwd_r1 + ex_imm) & ~32'd1) : (ex_pc + ex_imm)) : (ex_pc + ex_imm)));
 
     // ============================ MEM ===================================== //
     logic [31:0] m_word, m_load_fmt, boff;
@@ -201,7 +275,8 @@ module seth_pipeline_fwd #(
     assign load_use = id_valid && ex_valid && ex_mr && (ex_rd != 5'd0) &&
                       ((id_uses_rs1 && id_rs1 == ex_rd) ||
                        (id_uses_rs2 && id_rs2 == ex_rd));
-    assign stall = load_use;
+    wire wfi_stall = id_is_wfi && id_valid && ~(|(mip_val & (mie_s & MIE_WMASK)));
+    assign stall = load_use || wfi_stall;
 
     // ============================ sequential ============================== //
     always_ff @(posedge clk) begin
@@ -209,6 +284,7 @@ module seth_pipeline_fwd #(
             pc <= 32'd0; halted <= 1'b0;
             id_valid <= 1'b0; ex_valid <= 1'b0; m_valid <= 1'b0; w_valid <= 1'b0;
             id_pc <= 32'd0; id_ins <= 32'd0;
+            mstatus_s<=0; mtvec_s<=0; mie_s<=0; mscratch_s<=0; mepc_s<=0; mcause_s<=0; mtval_s<=0;
         end else if (load_en) begin
             wmem[load_addr[AW+1:2]] <= load_data;
         end else if (!halted) begin
@@ -225,7 +301,7 @@ module seth_pipeline_fwd #(
 
             // ---- EX/MEM <- ID/EX ------------------------------------------ //
             m_valid   <= ex_valid;
-            m_rw      <= ex_rw;
+            m_rw      <= ex_rw && !do_enter;
             m_mr      <= ex_mr;
             m_mw      <= ex_mw;
             m_ec      <= ex_ec;
@@ -243,14 +319,18 @@ module seth_pipeline_fwd #(
                 ex_valid <= 1'b0;
                 ex_rw <= 1'b0; ex_mw <= 1'b0; ex_mr <= 1'b0; ex_br <= 1'b0;
                 ex_jmp <= 1'b0; ex_jalr <= 1'b0; ex_mdu <= 1'b0; ex_ec <= 1'b0;
+                ex_is_csr <= 1'b0; ex_is_ecall <= 1'b0; ex_is_ebreak <= 1'b0;
+                ex_is_mret <= 1'b0; ex_is_wfi <= 1'b0; ex_is_illegal <= 1'b0;
             end else begin
                 ex_valid  <= id_valid;
-                ex_rw     <= id_rw;     ex_alusrc <= id_alusrc; ex_apc <= id_apc;
+                ex_rw     <= id_rw || id_is_csr; ex_alusrc <= id_alusrc; ex_apc <= id_apc;
                 ex_mr     <= id_mr;     ex_mw     <= id_mw;     ex_br  <= id_br;
                 ex_jmp    <= id_jmp;    ex_jalr   <= id_jalr;   ex_mdu <= id_mdu;
-                ex_ec     <= id_is_ecall;
+                ex_ec     <= 1'b0; // ECALL does not halt in CSR mode
+                ex_is_csr <= id_is_csr; ex_is_ecall <= id_is_ecall; ex_is_ebreak <= id_is_ebreak;
+                ex_is_mret <= id_is_mret; ex_is_wfi <= id_is_wfi; ex_is_illegal <= id_is_illegal; ex_funct12 <= id_ins[31:20];
                 ex_wb     <= id_wb;     ex_aluop  <= id_aluop;  ex_f3  <= id_f3;
-                ex_rd     <= id_rd;     ex_pc     <= id_pc;     ex_imm <= id_imm;
+                ex_rd     <= id_rd;     ex_pc     <= id_pc;     ex_imm <= id_imm; ex_ins_for_val <= id_ins;
                 ex_rs1    <= id_rs1;    ex_rs2    <= id_rs2;
                 ex_r1     <= id_r1;     ex_r2     <= id_r2;
             end
@@ -266,17 +346,33 @@ module seth_pipeline_fwd #(
                 id_valid <= id_valid;
                 id_pc    <= id_pc;
                 id_ins   <= id_ins;
-            end else if (id_valid && id_is_ecall) begin
-                // ecall enters EX (via the ID/EX block above); stop fetching past it
-                pc       <= pc;
-                id_valid <= 1'b0;
-                id_ins   <= 32'd0;
-            end else begin
+            end  else begin
                 pc       <= pc + 32'd4;
                 id_valid <= 1'b1;
                 id_pc    <= pc;
                 id_ins   <= if_ins;
             end
+
+            // CSR writes and trap side-effects
+            if (csr_we && !take_int) begin
+                case (ex_funct12)
+                    MSTATUS:  mstatus_s  <= csr_raw & MSTATUS_WMASK;
+                    MIE:      mie_s      <= csr_raw & MIE_WMASK;
+                    MTVEC:    mtvec_s    <= (csr_raw & 32'hFFFF_FFFC) | (csr_raw & 32'h1);
+                    MSCRATCH: mscratch_s <= csr_raw;
+                    MEPC:     mepc_s     <= csr_raw & 32'hFFFF_FFFE;
+                    MCAUSE:   mcause_s   <= csr_raw;
+                    MTVAL:    mtval_s    <= csr_raw;
+                    default:  ;
+                endcase
+            end
+            if (do_enter) begin
+                mepc_s    <= enter_mepc;
+                mcause_s  <= enter_mcause;
+                mstatus_s <= enter_mstatus & MSTATUS_WMASK;
+                mtval_s   <= take_int ? 32'd0 : (ex_is_illegal ? ex_ins_for_val : (ex_is_ebreak ? ex_pc : 32'd0));
+            end
+            if (ex_valid && ex_is_mret && !take_int) mstatus_s <= ret_mstatus & MSTATUS_WMASK;
         end
     end
 endmodule
