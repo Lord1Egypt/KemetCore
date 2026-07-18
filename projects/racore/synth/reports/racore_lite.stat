@@ -1,0 +1,14 @@
+
+6. Printing statistics.
+
+=== racore_lite ===
+
+        +----------Local Count, excluding submodules.
+        | 
+       21 wires
+      519 wire bits
+       21 public wires
+      519 public wire bits
+        6 ports
+       99 port bits
+

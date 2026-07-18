@@ -53,81 +53,71 @@ module racore_lite #(
     // 3. NoC Crossbar (4 Masters)
     // =========================================================================
     logic [3:0] m_req, m_we;
-    logic [3:0][3:0] m_be;
-    logic [3:0][31:0] m_addr, m_wdata;
+    logic [4*4-1:0] m_be;
+    logic [4*32-1:0] m_addr, m_wdata;
     logic [3:0] m_grant;
 
     assign m_req[0]   = cpu_mem_valid;
-    assign m_addr[0]  = cpu_mem_addr;
+    assign m_addr[0*32 +: 32]  = cpu_mem_addr;
     assign m_we[0]    = cpu_mem_we;
-    assign m_be[0]    = cpu_mem_be;
-    assign m_wdata[0] = cpu_mem_wdata;
+    assign m_be[0*4 +: 4]    = cpu_mem_be;
+    assign m_wdata[0*32 +: 32] = cpu_mem_wdata;
 
     assign m_req[1]   = dma_req;
-    assign m_addr[1]  = dma_addr;
+    assign m_addr[1*32 +: 32]  = dma_addr;
     assign m_we[1]    = dma_we;
-    assign m_be[1]    = dma_be;
-    assign m_wdata[1] = dma_wdata;
+    assign m_be[1*4 +: 4]    = dma_be;
+    assign m_wdata[1*32 +: 32] = dma_wdata;
 
     assign m_req[3:2] = '0;
-    assign m_addr[3:2] = '0;
+    assign m_addr[4*32-1:2*32] = '0;
     assign m_we[3:2] = '0;
-    assign m_be[3:2] = '0;
-    assign m_wdata[3:2] = '0;
+    assign m_be[4*4-1:2*4] = '0;
+    assign m_wdata[4*32-1:2*32] = '0;
 
-    logic xbar_req, xbar_we;
+    logic [0:0] xbar_req, xbar_we;
     logic [3:0] xbar_be;
     logic [31:0] xbar_addr, xbar_wdata, xbar_rdata;
 
-    ra_noc_xbar #(.N(4)) u_xbar (
+    ra_noc_xbar #(
+        .M_COUNT(4),
+        .S_COUNT(1),
+        .S_BASE({32'h00000000}),
+        .S_MASK({32'hFFF00000}) // 1MB scratchpad space
+    ) u_xbar (
         .clk(clk),
         .rst(rst),
         .m_req(m_req),
-        .m_addr(m_addr),
+        .m_addr_flat(m_addr),
         .m_we(m_we),
-        .m_be(m_be),
-        .m_wdata(m_wdata),
+        .m_be_flat(m_be),
+        .m_wdata_flat(m_wdata),
         .m_grant(m_grant),
+        .m_rdata_flat({m_rdata_3, m_rdata_2, dma_rdata, cpu_mem_rdata}), // We need to define these
         .s_req(xbar_req),
-        .s_addr(xbar_addr),
+        .s_addr_flat(xbar_addr),
         .s_we(xbar_we),
-        .s_be(xbar_be),
-        .s_wdata(xbar_wdata)
+        .s_be_flat(xbar_be),
+        .s_wdata_flat(xbar_wdata),
+        .s_rdata_flat(xbar_rdata)
     );
+
+    logic [31:0] m_rdata_2, m_rdata_3;
 
     // =========================================================================
     // 4. Shared Scratchpad (Slave 0)
     // =========================================================================
     // Address map: 0x0000_0000 to 0x000F_FFFF is scratchpad.
-    logic spad_sel;
-    assign spad_sel = (xbar_addr[31:20] == 12'h000);
-
     ra_scratchpad #(
         .DEPTH(MEM_WORDS)
     ) u_spad (
         .clk(clk),
-        .en(xbar_req && spad_sel),
-        .we(xbar_we),
+        .en(xbar_req[0]),
+        .we(xbar_we[0]),
         .be(xbar_be),
         .addr(xbar_addr[AW-1+2:2]),
         .wdata(xbar_wdata),
         .rdata(xbar_rdata)
     );
-
-    // =========================================================================
-    // 5. Read Data Mux
-    // =========================================================================
-    // Simple 1-cycle latency readback.
-    logic r_spad_sel;
-    always_ff @(posedge clk) begin
-        if (rst) r_spad_sel <= 1'b0;
-        else     r_spad_sel <= spad_sel;
-    end
-
-    assign xbar_rdata = r_spad_sel ? u_spad.rdata : 32'hDEADBEEF;
-    
-    // Broadcast read data back to masters.
-    assign cpu_mem_rdata = xbar_rdata;
-    assign dma_rdata = xbar_rdata;
 
 endmodule

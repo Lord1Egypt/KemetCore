@@ -57,4 +57,23 @@ if [ -z "${CI:-}" ]; then
 else
     echo "=== skipping ra_kai_dma synth under CI (see committed reports/ra_kai_dma.stat) ==="
 fi
+
+echo "=== synthesizing ra_noc_xbar ==="
+"$YOSYS" -ql "reports/ra_noc_xbar.log" -p "
+    read_verilog -sv ../rtl/ra_noc_xbar.sv ../rtl/ra_noc_arbiter.sv;
+    synth -top ra_noc_xbar;
+    select -assert-none t:\$_DLATCH_* t:\$dlatch;
+    tee -o reports/ra_noc_xbar.stat stat
+"
+echo "  -> reports/ra_noc_xbar.stat (0 latches asserted)"
+
+echo "=== synthesizing racore_lite ==="
+"$YOSYS" -ql "reports/racore_lite.log" -p "
+    read_verilog -sv ../rtl/racore_lite.sv ../rtl/ra_noc_xbar.sv ../rtl/ra_noc_arbiter.sv ../rtl/ra_scratchpad.sv;
+    synth -top racore_lite;
+    select -assert-none t:\$_DLATCH_* t:\$dlatch;
+    tee -o reports/racore_lite.stat stat
+"
+echo "  -> reports/racore_lite.stat (0 latches asserted)"
+
 echo "ALL SYNTHESIZED ✅ (no latches)"

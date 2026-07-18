@@ -370,3 +370,9 @@
 - **Verification:** `./run_sim.sh CORE=pipelinecsr` (Tests=5 Pass=5), `./run_synth.sh` (coarse 0-latch check on seth_pipeline_csr). Both passed.
 - **Commit:** `c14c121`
 - **PR:** Pending
+
+### 2026-07-18
+* **Branch:** `feat/racore-noc-interconnect`
+* **Action:** Upgraded `ra_noc_xbar` from N-to-1 to a full N-to-M address-decoding bus interconnect to address the P0 audit gap "مفيش Bus Interconnect خالص". Updated `racore_lite` to use the new interconnect interface.
+* **Test:** `./projects/racore/synth/run_synth.sh` (ra_noc_xbar and racore_lite 0 latches)
+* **Commit:** `729d7f6`
