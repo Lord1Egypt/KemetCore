@@ -9,9 +9,9 @@
 
 ---
 
-## 1. Technical Overview
+## 𓋇 NeithCore — Kyber-Round-1-Style Lattice/NTT Engine (Q=7681)
 
-NeithCore is a dedicated hardware accelerator for **ML-KEM** (formerly CRYSTALS-Kyber), the NIST-standardized post-quantum key encapsulation mechanism (FIPS 203). It implements KeyGen, Encaps, and Decaps operations with an optimized NTT (Number Theoretic Transform) engine for polynomial multiplication.
+NeithCore is a dedicated hardware accelerator originally intended for ML-KEM. However, it currently implements an early NTT-friendly modulus (Q=7681) reminiscent of early Kyber versions, rather than the FIPS 203 ML-KEM standard modulus (q=3329). It serves as a high-performance demonstration of polynomial multiplication via NTT (Number Theoretic Transform).
 
 ### Why ML-KEM Hardware?
 
