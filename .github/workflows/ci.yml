@@ -362,9 +362,13 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Install Yosys (incl. yosys-smtbmc) + z3 solver
+      - name: Install Yosys (incl. yosys-smtbmc) + yices/z3 solvers
         run: |
           sudo apt-get update && sudo apt-get install -y yosys z3
+          wget https://yices.csl.sri.com/releases/2.6.4/yices-2.6.4-x86_64-pc-linux-gnu-static-gmp.tar.gz
+          tar -xzf yices-2.6.4-x86_64-pc-linux-gnu-static-gmp.tar.gz
+          sudo cp yices-2.6.4/bin/yices-smt2 /usr/local/bin/yices-smt2
+          sudo cp yices-2.6.4/bin/yices /usr/local/bin/yices
           pip install z3-solver click
           yosys --version
           yosys-smtbmc --help >/dev/null
