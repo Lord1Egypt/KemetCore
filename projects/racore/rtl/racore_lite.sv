@@ -17,23 +17,53 @@ module racore_lite #(
     output logic [31:0] dbg_pc
 );
 
-    assign dbg_pc = 32'd0;
+    // dbg_pc driven by u_cpu
 
     // =========================================================================
-    // 1. Host Master Stub (Master 0)
+    // 1. SethCore Host Master (Master 0 & 2)
     // =========================================================================
-    logic        cpu_mem_valid;
-    logic        cpu_mem_we;
-    logic [3:0]  cpu_mem_be;
-    logic [31:0] cpu_mem_addr;
-    logic [31:0] cpu_mem_wdata;
-    logic [31:0] cpu_mem_rdata;
+    logic        cpu_dmem_req;
+    logic        cpu_dmem_we;
+    logic [3:0]  cpu_dmem_be;
+    logic [31:0] cpu_dmem_addr;
+    logic [31:0] cpu_dmem_wdata;
+    logic [31:0] cpu_dmem_rdata;
+    logic        cpu_dmem_grant;
 
-    assign cpu_mem_valid = 1'b0;
-    assign cpu_mem_we = 1'b0;
-    assign cpu_mem_be = 4'd0;
-    assign cpu_mem_addr = 32'd0;
-    assign cpu_mem_wdata = 32'd0;
+    logic        cpu_imem_req;
+    logic [31:0] cpu_imem_addr;
+    logic [31:0] cpu_imem_rdata;
+    logic        cpu_imem_grant;
+
+    seth_pipeline_csr #(
+        .USE_NOC(1)
+    ) u_cpu (
+        .clk(clk),
+        .rst(rst),
+        .load_en(load_en),
+        .load_addr(load_addr),
+        .load_data(load_data),
+        .irq_soft(1'b0),
+        .irq_timer(1'b0),
+        .irq_ext(1'b0),
+        .dbg_pc(dbg_pc),
+        .halted(),
+
+        // Instruction NoC Interface
+        .imem_req(cpu_imem_req),
+        .imem_addr(cpu_imem_addr),
+        .imem_grant(cpu_imem_grant),
+        .imem_rdata(cpu_imem_rdata),
+
+        // Data NoC Interface
+        .dmem_req(cpu_dmem_req),
+        .dmem_we(cpu_dmem_we),
+        .dmem_be(cpu_dmem_be),
+        .dmem_addr(cpu_dmem_addr),
+        .dmem_wdata(cpu_dmem_wdata),
+        .dmem_grant(cpu_dmem_grant),
+        .dmem_rdata(cpu_dmem_rdata)
+    );
 
     // =========================================================================
     // 2. KAI DMA (Master 1)
@@ -57,11 +87,12 @@ module racore_lite #(
     logic [4*32-1:0] m_addr, m_wdata;
     logic [3:0] m_grant;
 
-    assign m_req[0]   = cpu_mem_valid;
-    assign m_addr[0*32 +: 32]  = cpu_mem_addr;
-    assign m_we[0]    = cpu_mem_we;
-    assign m_be[0*4 +: 4]    = cpu_mem_be;
-    assign m_wdata[0*32 +: 32] = cpu_mem_wdata;
+    assign m_req[0]   = cpu_dmem_req;
+    assign m_addr[0*32 +: 32]  = cpu_dmem_addr;
+    assign m_we[0]    = cpu_dmem_we;
+    assign m_be[0*4 +: 4]    = cpu_dmem_be;
+    assign m_wdata[0*32 +: 32] = cpu_dmem_wdata;
+    assign cpu_dmem_grant = m_grant[0];
 
     assign m_req[1]   = dma_req;
     assign m_addr[1*32 +: 32]  = dma_addr;
@@ -69,11 +100,18 @@ module racore_lite #(
     assign m_be[1*4 +: 4]    = dma_be;
     assign m_wdata[1*32 +: 32] = dma_wdata;
 
-    assign m_req[3:2] = '0;
-    assign m_addr[4*32-1:2*32] = '0;
-    assign m_we[3:2] = '0;
-    assign m_be[4*4-1:2*4] = '0;
-    assign m_wdata[4*32-1:2*32] = '0;
+    assign m_req[2]   = cpu_imem_req;
+    assign m_addr[2*32 +: 32]  = cpu_imem_addr;
+    assign m_we[2]    = 1'b0;
+    assign m_be[2*4 +: 4]    = 4'd0;
+    assign m_wdata[2*32 +: 32] = 32'd0;
+    assign cpu_imem_grant = m_grant[2];
+
+    assign m_req[3]   = 1'b0;
+    assign m_addr[3*32 +: 32]  = 32'd0;
+    assign m_we[3]    = 1'b0;
+    assign m_be[3*4 +: 4]    = 4'd0;
+    assign m_wdata[3*32 +: 32] = 32'd0;
 
     logic [1:0] xbar_req, xbar_we;
     logic [7:0] xbar_be;
@@ -93,7 +131,7 @@ module racore_lite #(
         .m_be_flat(m_be),
         .m_wdata_flat(m_wdata),
         .m_grant(m_grant),
-        .m_rdata_flat({m_rdata_3, m_rdata_2, dma_rdata, cpu_mem_rdata}), // We need to define these
+        .m_rdata_flat({m_rdata_3, cpu_imem_rdata, dma_rdata, cpu_dmem_rdata}), // We need to define these
         .s_req(xbar_req),
         .s_addr_flat(xbar_addr),
         .s_we(xbar_we),
@@ -102,7 +140,7 @@ module racore_lite #(
         .s_rdata_flat(xbar_rdata)
     );
 
-    logic [31:0] m_rdata_2, m_rdata_3;
+    logic [31:0] m_rdata_3;
 
     // =========================================================================
     // 4. Boot ROM (Slave 0)

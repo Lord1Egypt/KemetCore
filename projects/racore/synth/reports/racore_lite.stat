@@ -1,14 +1,326 @@
 
-7. Printing statistics.
+29. Printing statistics.
+
+=== $paramod\ra_scratchpad\DEPTH=s32'00000000000000000000010000000000 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+    81006 wires
+   112855 wire bits
+     1031 public wires
+    32849 public wire bits
+        7 ports
+       81 port bits
+   112806 cells
+       17   $_ANDNOT_
+    28625   $_AND_
+    32800   $_DFFE_PP_
+    51360   $_NAND_
+        4   $_NOR_
+
+=== seth_trap ===
+
+        +----------Local Count, excluding submodules.
+        | 
+      175 wires
+      577 wire bits
+       17 public wires
+      419 public wire bits
+       12 ports
+      352 port bits
+      188 cells
+        3   $_AND_
+       28   $_MUX_
+       98   $_NAND_
+       12   $_OR_
+       13   $_XNOR_
+       34   $_XOR_
+
+=== seth_regfile ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     2818 wires
+     3915 wire bits
+       41 public wires
+     1138 public wire bits
+        9 ports
+      114 port bits
+     3833 cells
+       40   $_ANDNOT_
+      507   $_AND_
+     1535   $_MUX_
+      625   $_NAND_
+       31   $_NOR_
+       35   $_ORNOT_
+       68   $_OR_
+      992   $_SDFFCE_PN0P_
+
+=== seth_muldiv ===
+
+        +----------Local Count, excluding submodules.
+        | 
+    21800 wires
+    21895 wire bits
+        4 public wires
+       99 public wire bits
+        4 ports
+       99 port bits
+    21828 cells
+      367   $_ANDNOT_
+     2696   $_AND_
+     1051   $_MUX_
+     8899   $_NAND_
+       63   $_NOR_
+       62   $_NOT_
+      334   $_ORNOT_
+     1713   $_OR_
+     2565   $_XNOR_
+     4078   $_XOR_
+
+=== $paramod\seth_pipeline_csr\USE_NOC=s32'00000000000000000000000000000001 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     2778 wires
+     4491 wire bits
+      134 public wires
+     1789 public wire bits
+       21 ports
+      272 port bits
+     3627 cells
+      136   $_ANDNOT_
+      679   $_AND_
+      316   $_DFFE_PP_
+      531   $_MUX_
+     1093   $_NAND_
+       57   $_NOR_
+       48   $_NOT_
+      113   $_ORNOT_
+      187   $_OR_
+       13   $_SDFFCE_PP0P_
+        4   $_SDFFE_PP0N_
+      261   $_SDFFE_PP0P_
+       98   $_XNOR_
+       91   $_XOR_
+        7 submodules
+        1   seth_alu
+        1   seth_aluctl
+        1   seth_decode
+        1   seth_imm
+        1   seth_muldiv
+        1   seth_regfile
+        1   seth_trap
+
+=== seth_aluctl ===
+
+        +----------Local Count, excluding submodules.
+        | 
+       38 wires
+       55 wire bits
+        4 public wires
+       21 public wire bits
+        4 ports
+       21 port bits
+       38 cells
+        8   $_ANDNOT_
+       12   $_AND_
+        2   $_MUX_
+       10   $_NAND_
+        4   $_NOR_
+        1   $_ORNOT_
+        1   $_OR_
+
+=== $paramod$b19f631bfb2e958f53499afe7263d665b89619b3\ra_noc_xbar ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     1108 wires
+     2306 wire bits
+       50 public wires
+     1248 public wire bits
+       15 ports
+      618 port bits
+     1344 cells
+        8   $_ANDNOT_
+      464   $_AND_
+      130   $_MUX_
+      686   $_NAND_
+       42   $_NOR_
+        2   $_ORNOT_
+        4   $_OR_
+        4   $_SDFFE_PP0P_
+        4   $_SDFF_PP0_
+        2 submodules
+        2   $paramod\ra_noc_arbiter\N=s32'00000000000000000000000000000100
+
+=== seth_alu ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     1223 wires
+     1319 wire bits
+        4 public wires
+      100 public wire bits
+        4 ports
+      100 port bits
+     1251 cells
+       15   $_ANDNOT_
+      348   $_AND_
+      232   $_MUX_
+      394   $_NAND_
+        5   $_NOR_
+        7   $_NOT_
+       94   $_ORNOT_
+      117   $_OR_
+       18   $_XNOR_
+       21   $_XOR_
+
+=== seth_imm ===
+
+        +----------Local Count, excluding submodules.
+        | 
+       67 wires
+      189 wire bits
+        7 public wires
+      129 public wire bits
+        2 ports
+       64 port bits
+       92 cells
+        4   $_ANDNOT_
+       17   $_AND_
+       60   $_NAND_
+        3   $_NOR_
+        1   $_NOT_
+        4   $_ORNOT_
+        3   $_OR_
+
+=== seth_decode ===
+
+        +----------Local Count, excluding submodules.
+        | 
+       40 wires
+       84 wire bits
+       13 public wires
+       57 public wire bits
+       11 ports
+       43 port bits
+       38 cells
+        5   $_ANDNOT_
+       14   $_AND_
+        7   $_NAND_
+        7   $_NOR_
+        2   $_NOT_
+        2   $_ORNOT_
+        1   $_OR_
+
+=== $paramod\ra_noc_arbiter\N=s32'00000000000000000000000000000100 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+      272 wires
+      560 wire bits
+       13 public wires
+      270 public wire bits
+        7 ports
+      138 port bits
+      392 cells
+       33   $_ANDNOT_
+       67   $_AND_
+       32   $_DFFE_PP_
+      103   $_MUX_
+       10   $_NAND_
+        6   $_NOR_
+        1   $_NOT_
+        2   $_ORNOT_
+       37   $_OR_
+       96   $_SDFFCE_PN0P_
+        2   $_SDFFE_PP1P_
+        2   $_XNOR_
+        1   $_XOR_
+
+=== $paramod\ra_bootrom\DEPTH=s32'00000000000000000000000100000000 ===
+
+        +----------Local Count, excluding submodules.
+        | 
+       27 wires
+      112 wire bits
+        4 public wires
+       66 public wire bits
+        4 ports
+       66 port bits
+       24 cells
+       10   $_AND_
+        1   $_NAND_
+       12   $_NOR_
+        1   $_SDFFCE_PP0P_
 
 === racore_lite ===
 
         +----------Local Count, excluding submodules.
         | 
-       21 wires
-      519 wire bits
-       21 public wires
-      519 public wire bits
+       36 wires
+      857 wire bits
+       36 public wires
+      857 public wire bits
         6 ports
        99 port bits
+        4 submodules
+        1   $paramod$b19f631bfb2e958f53499afe7263d665b89619b3\ra_noc_xbar
+        1   $paramod\ra_bootrom\DEPTH=s32'00000000000000000000000100000000
+        1   $paramod\ra_scratchpad\DEPTH=s32'00000000000000000000010000000000
+        1   $paramod\seth_pipeline_csr\USE_NOC=s32'00000000000000000000000000000001
+
+=== design hierarchy ===
+
+        +----------Count including submodules.
+        | 
+   145853 racore_lite
+     1344 $paramod$b19f631bfb2e958f53499afe7263d665b89619b3\ra_noc_xbar
+      392   $paramod\ra_noc_arbiter\N=s32'00000000000000000000000000000100
+       24 $paramod\ra_bootrom\DEPTH=s32'00000000000000000000000100000000
+   112806 $paramod\ra_scratchpad\DEPTH=s32'00000000000000000000010000000000
+     3627 $paramod\seth_pipeline_csr\USE_NOC=s32'00000000000000000000000000000001
+     1251   seth_alu
+       38   seth_aluctl
+       38   seth_decode
+       92   seth_imm
+    21828   seth_muldiv
+     3833   seth_regfile
+      188   seth_trap
+
+        +----------Count including submodules.
+        | 
+   111660 wires
+   149775 wire bits
+     1371 public wires
+    39312 public wire bits
+      113 ports
+     2205 port bits
+        - memories
+        - memory bits
+        - processes
+   145853 cells
+      666   $_ANDNOT_
+    33509   $_AND_
+    33180   $_DFFE_PP_
+     3715   $_MUX_
+    63253   $_NAND_
+      240   $_NOR_
+      122   $_NOT_
+      589   $_ORNOT_
+     2180   $_OR_
+     1184   $_SDFFCE_PN0P_
+       14   $_SDFFCE_PP0P_
+        4   $_SDFFE_PP0N_
+      265   $_SDFFE_PP0P_
+        4   $_SDFFE_PP1P_
+        4   $_SDFF_PP0_
+     2698   $_XNOR_
+     4226   $_XOR_
+        4 submodules
+        1   $paramod$b19f631bfb2e958f53499afe7263d665b89619b3\ra_noc_xbar
+        1   $paramod\ra_bootrom\DEPTH=s32'00000000000000000000000100000000
+        1   $paramod\ra_scratchpad\DEPTH=s32'00000000000000000000010000000000
+        1   $paramod\seth_pipeline_csr\USE_NOC=s32'00000000000000000000000000000001
 

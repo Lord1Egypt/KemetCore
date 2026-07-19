@@ -26,7 +26,8 @@
 // forwarding strictly reduces stalls vs the interlock pipeline).
 
 module seth_pipeline_csr #(
-    parameter int WORDS = 1024
+    parameter int WORDS = 1024,
+    parameter bit USE_NOC = 0
 ) (
     input  logic        clk,
     input  logic        rst,
@@ -37,7 +38,22 @@ module seth_pipeline_csr #(
     input  logic        irq_timer,
     input  logic        irq_ext,
     output logic [31:0] dbg_pc,
-    output logic        halted
+    output logic        halted,
+
+    // Instruction NoC Interface
+    output logic        imem_req,
+    output logic [31:0] imem_addr,
+    input  logic        imem_grant,
+    input  logic [31:0] imem_rdata,
+
+    // Data NoC Interface
+    output logic        dmem_req,
+    output logic        dmem_we,
+    output logic [3:0]  dmem_be,
+    output logic [31:0] dmem_addr,
+    output logic [31:0] dmem_wdata,
+    input  logic        dmem_grant,
+    input  logic [31:0] dmem_rdata
 `ifdef RISCV_FORMAL
     ,
     output logic        rvfi_valid,
@@ -75,7 +91,25 @@ module seth_pipeline_csr #(
 
     // IF/ID pipeline register
     logic        id_valid;
+    logic [31:0] id_pc_reg, id_ins_reg;
     logic [31:0] id_pc, id_ins;
+
+    // NoC Instruction Fetch Logic
+    logic [31:0] hold_ins;
+    logic        use_hold;
+    logic        imem_valid_q;
+
+    assign imem_addr = pc;
+
+    generate
+        if (USE_NOC) begin : gen_noc_if
+            assign id_ins = use_hold ? hold_ins : imem_rdata;
+            assign id_pc  = id_pc_reg;
+        end else begin : gen_mem_if
+            assign id_ins = id_ins_reg;
+            assign id_pc  = id_pc_reg;
+        end
+    endgenerate
 
     // ============================ ID ====================================== //
     logic [4:0]  id_rs1, id_rs2, id_rd;
@@ -251,7 +285,7 @@ module seth_pipeline_csr #(
 
     // ============================ MEM ===================================== //
     logic [31:0] m_word, m_load_fmt, boff;
-    assign m_word = wmem[m_alu_y[AW+1:2]];
+    assign m_word = USE_NOC ? dmem_rdata : wmem[m_alu_y[AW+1:2]];
     assign boff   = {27'b0, m_alu_y[1:0], 3'b0};
     always_comb begin
         logic [31:0] sh;
@@ -294,18 +328,41 @@ module seth_pipeline_csr #(
 
     // ============================ hazard / control ======================== //
     // Only the load-use hazard remains: a load in EX feeding the instruction in ID.
-    logic load_use, stall;
+    logic load_use, stall, dmem_stall, imem_stall;
     assign load_use = id_valid && ex_valid && ex_mr && (ex_rd != 5'd0) &&
                       ((id_uses_rs1 && id_rs1 == ex_rd) ||
                        (id_uses_rs2 && id_rs2 == ex_rd));
-    assign stall = load_use;
+    assign dmem_stall = USE_NOC && dmem_req && !dmem_grant;
+    assign imem_stall = USE_NOC && imem_req && !imem_grant;
+    assign stall = load_use || dmem_stall;
+
+    assign imem_req = !halted && !redirect && !use_hold && !stall;
+
+    // Data memory requests
+    assign dmem_req  = ex_valid && (ex_mr || ex_mw) && !do_enter && !ex_is_mret && !wfi_stall;
+    assign dmem_we   = ex_mw;
+    assign dmem_addr = ex_alu_y;
+
+    always_comb begin
+        unique case (ex_f3)
+            3'h0:    dmem_be = 4'b0001 << ex_alu_y[1:0];
+            3'h1:    dmem_be = 4'b0011 << ex_alu_y[1:0];
+            default: dmem_be = 4'b1111;
+        endcase
+        unique case (ex_f3)
+            3'h0:    dmem_wdata = {4{fwd_r2[7:0]}};
+            3'h1:    dmem_wdata = {2{fwd_r2[15:0]}};
+            default: dmem_wdata = fwd_r2;
+        endcase
+    end
 
     // ============================ sequential ============================== //
     always_ff @(posedge clk) begin
         if (rst) begin
             pc <= 32'd0; halted <= 1'b0;
             id_valid <= 1'b0; ex_valid <= 1'b0; m_valid <= 1'b0; w_valid <= 1'b0;
-            id_pc <= 32'd0; id_ins <= 32'd0;
+            id_pc_reg <= 32'd0; id_ins_reg <= 32'd0;
+            use_hold <= 0; hold_ins <= 0; imem_valid_q <= 0;
             mstatus_s<=0; mtvec_s<=0; mie_s<=0; mscratch_s<=0; mepc_s<=0; mcause_s<=0; mtval_s<=0;
         end else if (load_en) begin
             wmem[load_addr[AW+1:2]] <= load_data;
@@ -356,21 +413,52 @@ module seth_pipeline_csr #(
             end
 
             // ---- IF/ID  +  PC --------------------------------------------- //
-            if (redirect) begin
-                pc       <= redirect_pc;
-                id_valid <= 1'b0;                 // flush wrong-path fetch
-                id_ins   <= 32'd0;
-            end else if (stall) begin
-                // freeze PC and IF/ID (hold the stalled instruction)
-                pc       <= pc;
-                id_valid <= id_valid;
-                id_pc    <= id_pc;
-                id_ins   <= id_ins;
+            if (USE_NOC) begin
+                imem_valid_q <= imem_req && imem_grant;
+                if (redirect) begin
+                    pc <= redirect_pc;
+                    id_valid <= 1'b0;
+                    use_hold <= 1'b0;
+                end else begin
+                    if (!stall) begin
+                        if (imem_stall) begin
+                            pc <= pc;
+                            id_valid <= 1'b0;
+                            id_pc_reg <= id_pc_reg;
+                        end else begin
+                            if (imem_req && imem_grant) pc <= pc + 32'd4;
+                            else pc <= pc;
+                            id_valid <= use_hold ? 1'b1 : imem_valid_q;
+                            if (imem_req && imem_grant) id_pc_reg <= pc;
+                        end
+                        use_hold <= 1'b0;
+                    end else begin
+                        pc <= pc;
+                        id_valid <= id_valid;
+                        id_pc_reg <= id_pc_reg;
+                        if (!use_hold && imem_valid_q) begin
+                            hold_ins <= imem_rdata;
+                            use_hold <= 1'b1;
+                        end
+                    end
+                end
             end else begin
-                pc       <= pc + 32'd4;
-                id_valid <= 1'b1;
-                id_pc    <= pc;
-                id_ins   <= if_ins;
+                if (redirect) begin
+                    pc       <= redirect_pc;
+                    id_valid <= 1'b0;                 // flush wrong-path fetch
+                    id_ins_reg <= 32'd0;
+                end else if (stall) begin
+                    // freeze PC and IF/ID (hold the stalled instruction)
+                    pc       <= pc;
+                    id_valid <= id_valid;
+                    id_pc_reg <= id_pc_reg;
+                    id_ins_reg <= id_ins_reg;
+                end else begin
+                    pc       <= pc + 32'd4;
+                    id_valid <= 1'b1;
+                    id_pc_reg <= pc;
+                    id_ins_reg <= if_ins;
+                end
             end
 
             // CSR writes and trap side-effects
