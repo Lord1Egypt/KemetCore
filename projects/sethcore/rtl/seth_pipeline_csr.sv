@@ -115,9 +115,6 @@ module seth_pipeline_csr #(
     assign id_uses_rs1 = (id_op == 7'h33) || (id_op == 7'h13) || (id_op == 7'h03) ||
                          (id_op == 7'h23) || (id_op == 7'h63) || (id_op == 7'h67) || (id_op == 7'h73);
     assign id_uses_rs2 = (id_op == 7'h33) || (id_op == 7'h23) || (id_op == 7'h63);
-    
-
-
     wire id_is_system = (id_op == 7'h73);
     wire id_is_csr    = id_is_system && (id_f3 != 3'd0);
     wire id_is_ecall  = id_is_system && (id_f3 == 3'd0) && (id_ins[31:20] == 12'h000);
