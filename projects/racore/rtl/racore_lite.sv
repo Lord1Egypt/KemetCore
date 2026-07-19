@@ -75,15 +75,15 @@ module racore_lite #(
     assign m_be[4*4-1:2*4] = '0;
     assign m_wdata[4*32-1:2*32] = '0;
 
-    logic [0:0] xbar_req, xbar_we;
-    logic [3:0] xbar_be;
-    logic [31:0] xbar_addr, xbar_wdata, xbar_rdata;
+    logic [1:0] xbar_req, xbar_we;
+    logic [7:0] xbar_be;
+    logic [63:0] xbar_addr, xbar_wdata, xbar_rdata;
 
     ra_noc_xbar #(
         .M_COUNT(4),
-        .S_COUNT(1),
-        .S_BASE({32'h00000000}),
-        .S_MASK({32'hFFF00000}) // 1MB scratchpad space
+        .S_COUNT(2),
+        .S_BASE({32'h10000000, 32'h00000000}),
+        .S_MASK({32'hFFF00000, 32'hFFFFF000}) // S1: 1MB scratchpad, S0: 4KB Boot ROM
     ) u_xbar (
         .clk(clk),
         .rst(rst),
@@ -105,19 +105,31 @@ module racore_lite #(
     logic [31:0] m_rdata_2, m_rdata_3;
 
     // =========================================================================
-    // 4. Shared Scratchpad (Slave 0)
+    // 4. Boot ROM (Slave 0)
     // =========================================================================
-    // Address map: 0x0000_0000 to 0x000F_FFFF is scratchpad.
+    ra_bootrom #(
+        .DEPTH(256)
+    ) u_bootrom (
+        .clk(clk),
+        .en(xbar_req[0]),
+        .addr(xbar_addr[31:0]),
+        .rdata(xbar_rdata[31:0])
+    );
+
+    // =========================================================================
+    // 5. Shared Scratchpad (Slave 1)
+    // =========================================================================
+    // Address map: 0x1000_0000 to 0x100F_FFFF is scratchpad.
     ra_scratchpad #(
         .DEPTH(MEM_WORDS)
     ) u_spad (
         .clk(clk),
-        .en(xbar_req[0]),
-        .we(xbar_we[0]),
-        .be(xbar_be),
-        .addr(xbar_addr[AW-1+2:2]),
-        .wdata(xbar_wdata),
-        .rdata(xbar_rdata)
+        .en(xbar_req[1]),
+        .we(xbar_we[1]),
+        .be(xbar_be[7:4]),
+        .addr(xbar_addr[63:34]), // xbar_addr is byte address, we need word
+        .wdata(xbar_wdata[63:32]),
+        .rdata(xbar_rdata[63:32])
     );
 
 endmodule

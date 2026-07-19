@@ -1,10 +1,11 @@
 # Current State
-- `seth_pipeline_csr.sv` has been successfully implemented, integrating Zicsr and traps vectoring logic.
-- All `pipelinecsr` tests (cocotb) pass with bit-exact results against the golden model.
-- Yosys synthesis passes cleanly with 0 latches.
-- Work committed, pushed to `feat/sethcore-zicsr-pipeline`, and PR #238 is opened.
+- `ra_bootrom.sv` has been created and instantiated as Slave 0 in `racore_lite.sv`.
+- Scratchpad has been successfully re-mapped to Slave 1 at `0x10000000`.
+- Python-based firmware generator created and executed to yield `bootrom.hex`.
+- Yosys synthesis passes cleanly with 0 latches (`racore_lite.stat` committed).
+- PR #244 is open for the RaCore Boot ROM SoC-mode feature.
 
 # Next Step
-- Wait for Mohamed to review and say "merge" for PR #238.
-- Address any remaining items on the TASK_MENU.md (e.g., AnubisCore or BastCore) as requested by the HORUS P0 review.
-Finished PR #238 action items
+- Wait for PR #244 CI to complete. If in Goal Mode, self-merge PR #244.
+- Cut a rolling restore tag `safe-auto-<date>-racore-bootrom` upon merge.
+- Check `NOTES_FOR_AGY.md` (or the previous audit logs) for the next triage item, which should be integrating SethCore fully as Master 0 into `racore_lite` to run the KAI fetch.
