@@ -362,10 +362,9 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Install Yosys (incl. yosys-smtbmc) + z3/boolector solvers
+      - name: Install Yosys (incl. yosys-smtbmc) + z3 solver
         run: |
-          sudo apt-get update
-          sudo apt-get install -y yosys z3 boolector
+          sudo apt-get update && sudo apt-get install -y yosys z3
           pip install z3-solver click
           yosys --version
           yosys-smtbmc --help >/dev/null
