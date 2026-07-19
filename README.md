@@ -74,7 +74,7 @@ Built in two honest tiers: **RaCore-Lite** (~3.5 mm², GDSII-feasible on a 16 GB
 | 04 | [**GebCore**](docs/04_GebCore_SparseMatmul.md) | ML — 2:4 structured sparse matmul | Geb (god of the earth) | ★★★☆☆ |
 | 05 | [**BastCore**](docs/05_BastCore_BF16Tensor.md) | ML — BF16 tensor core | Bastet (goddess of protection) | ★★☆☆☆ |
 | 06 | [**AnubisCore**](docs/06_AnubisCore_HashEngine.md) | Crypto — SHA-256/SHA-3 hash engine | Anubis (god of embalming) | ★★☆☆☆ |
-| 07 | [**NeithCore**](docs/07_NeithCore_MLKEM.md) | Crypto — ML-KEM (Kyber) lattice KEM | Neith (goddess of war/wisdom) | ★★★★☆ |
+| 07 | [**NeithCore**](docs/07_NeithCore_MLKEM.md) | Crypto — Kyber-round-1-style lattice/NTT (Q=7681) | Neith (goddess of war/wisdom) | ★★★★☆ |
 | 08 | [**SobekCore**](docs/08_SobekCore_RayTrace.md) | Graphics — Ray-triangle intersector | Sobek (god of the Nile) | ★★★☆☆ |
 | 09 | [**HapiCore**](docs/09_HapiCore_FPU.md) | Arithmetic — IEEE-754 FPU generator | Hapi (god of the Nile flood) | ★★☆☆☆ |
 | 10 | [**AtumCore**](docs/10_AtumCore_RVV.md) | CPU — RISC-V Vector Extension v1.0 | Atum (the creator god) | ★★★★★ |
