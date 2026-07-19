@@ -365,10 +365,10 @@ jobs:
       - name: Install Yosys (incl. yosys-smtbmc) + yices/z3 solvers
         run: |
           sudo apt-get update && sudo apt-get install -y yosys z3
-          wget https://yices.csl.sri.com/releases/2.6.4/yices-2.6.4-x86_64-pc-linux-gnu-static-gmp.tar.gz
-          tar -xzf yices-2.6.4-x86_64-pc-linux-gnu-static-gmp.tar.gz
-          sudo cp yices-2.6.4/bin/yices-smt2 /usr/local/bin/yices-smt2
-          sudo cp yices-2.6.4/bin/yices /usr/local/bin/yices
+          wget https://github.com/SRI-CSL/yices2/releases/download/yices-2.7.0/yices-2.7.0-x86_64-pc-linux-gnu-static-gmp.tar.gz
+          tar -xzf yices-2.7.0-x86_64-pc-linux-gnu-static-gmp.tar.gz
+          sudo cp yices-2.7.0/bin/yices-smt2 /usr/local/bin/yices-smt2
+          sudo cp yices-2.7.0/bin/yices /usr/local/bin/yices
           pip install z3-solver click
           yosys --version
           yosys-smtbmc --help >/dev/null
