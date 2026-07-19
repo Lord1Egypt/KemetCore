@@ -20,6 +20,20 @@
 
 ---
 
+## What KemetCore Is (and Is Not)
+
+**What it is:**
+- A laboratory for open-source silicon methodology.
+- A collection of 11 highly-verified, independent hardware accelerators.
+- A demonstration of a rigid `golden model → RTL → Formal/Simulation → GDSII` pipeline using open-source tools.
+- Educational, modular, and bit-exact by design.
+
+**What it is NOT:**
+- **Not a bootable SoC (Yet):** The cores are currently standalone macros. RaCore (the SoC fabric that ties them together with a NoC, memory, and CPU) is planned but not fully integrated. You cannot boot an OS on KemetCore today.
+- **Not Production-Ready for Tapeout:** The GDSII outputs are proofs-of-concept for the ASIC flow (routing density, area, Fmax). They do **not** include production constraints like DFT (Design for Test) scan chains, CDC (Clock Domain Crossing) synchronizers for external interfaces, padrings, or power-grid signoff. Do not tape these out without a backend physical design team.
+
+---
+
 ## The KemetCore Philosophy
 
 | Principle | What It Means |

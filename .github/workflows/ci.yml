@@ -354,23 +354,33 @@ jobs:
 
   formal:
     name: Phase 5 formal (yosys-smtbmc + z3)
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: recursive
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Install Yosys (incl. yosys-smtbmc) + z3 solver
+      - name: Install Yosys (incl. yosys-smtbmc) + yices/z3 solvers
         run: |
-          sudo apt-get update && sudo apt-get install -y yosys
-          pip install z3-solver
+          sudo apt-get update && sudo apt-get install -y yosys z3
+          wget https://github.com/SRI-CSL/yices2/releases/download/yices-2.7.0/yices-2.7.0-x86_64-pc-linux-gnu-static-gmp.tar.gz
+          tar -xzf yices-2.7.0-x86_64-pc-linux-gnu-static-gmp.tar.gz
+          sudo cp yices-2.7.0/bin/yices-smt2 /usr/local/bin/yices-smt2
+          sudo cp yices-2.7.0/bin/yices /usr/local/bin/yices
+          pip install z3-solver click
           yosys --version
           yosys-smtbmc --help >/dev/null
           z3 --version   # z3-solver wheel puts the z3 binary on the setup-python PATH
+          git clone https://github.com/YosysHQ/sby.git /tmp/sby
+          sudo make -C /tmp/sby install
       - name: HapiCore formal proofs (fp32 mul/add over all 2^64 inputs)
         run: YOSYS=yosys SMTBMC=yosys-smtbmc ./projects/hapicore/formal/run_formal.sh
       - name: SethCore formal proofs (seth_alu identities + iterative-divider equivalence)
         run: YOSYS=yosys SMTBMC=yosys-smtbmc ./projects/sethcore/formal/run_formal.sh
+      - name: SethCore riscv-formal proofs (RV32IM ISA compliance)
+        run: YOSYS=yosys SMTBMC=yosys-smtbmc ./projects/sethcore/formal/run_riscv_formal.sh
       - name: SobekCore formal proofs (fp32 dot3 commutativity)
         run: YOSYS=yosys SMTBMC=yosys-smtbmc ./projects/sobekcore/formal/run_formal.sh
       - name: AtumCore formal proofs (vector-ALU lane algebra)
