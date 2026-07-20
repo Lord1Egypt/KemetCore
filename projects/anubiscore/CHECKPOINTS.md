@@ -16,4 +16,4 @@ _Auto-generated from `tools/manifest.py`._
 | A1.10 | P4 | P&R: GDSII | ✅ |
 | A1.11 | P5 | Signoff: formal SHA-256 FSM control-safety — exactly-64-rounds (FIN=>rc==63) + no illegal state (k-induction, yosys-smtbmc+z3) | 🔧 |
 
-**Progress:** 10/11 checkpoints complete (50% of phases).
+**Progress:** 10/11 checkpoints complete (83% of phases).
