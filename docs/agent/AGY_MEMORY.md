@@ -1,0 +1,1 @@
+KemetCore: to continue, open /home/lordegypt/KemetCore, read docs/agent/RESUME.md, then follow AGENTS.md. Use Gemini 3 Pro High. We are currently operating under the /goal command! Wait for PR 252 CI and self-merge! Wait for sha3_256_core hardening and PR it!
