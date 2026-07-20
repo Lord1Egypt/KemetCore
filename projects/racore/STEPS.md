@@ -13,10 +13,10 @@ _Auto-generated from `tools/manifest.py` — do not edit by hand; edit the manif
 | 1 | P0 | Write the numpy/pure-python golden reference (the mathematical truth) | ✅ |
 | 2 | P0 | Write golden tests vs known-correct software; achieve passing pytest | ✅ |
 | 3 | P1 | Write the cycle/lane/round pymodel; assert it equals the golden bit-for-bit | ✅ |
-| 4 | P2 | Write SystemVerilog RTL + cocotb testbench (Verilator); coverage >= 90% | ✅ |
-| 5 | P3 | Yosys synthesis: 0 latches, gate count <= target | ✅ |
-| 6 | P4 | OpenROAD P&R on ASAP7: DRC clean, timing closed at target Fmax -> GDSII | ✅ |
-| 7 | P5 | CI pipeline + docs finalization; `make all` green | ✅ |
+| 4 | P2 | Write SystemVerilog RTL + cocotb testbench (Verilator); coverage >= 90% | 🔧 |
+| 5 | P3 | Yosys synthesis: 0 latches, gate count <= target | 🔧 |
+| 6 | P4 | OpenROAD P&R on ASAP7: DRC clean, timing closed at target Fmax -> GDSII | 🔧 |
+| 7 | P5 | CI pipeline + docs finalization; `make all` green | 🔧 |
 
 **Depends on:** [sethcore](../sethcore/STEPS.md), [atumcore](../atumcore/STEPS.md), [hapicore](../hapicore/STEPS.md), [anubiscore](../anubiscore/STEPS.md), [bastcore](../bastcore/STEPS.md), [ptahconv](../ptahconv/STEPS.md), [gebcore](../gebcore/STEPS.md), [imentetcore](../imentetcore/STEPS.md), [neithcore](../neithcore/STEPS.md), [sobekcore](../sobekcore/STEPS.md)
 

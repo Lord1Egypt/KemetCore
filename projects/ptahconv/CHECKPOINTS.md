@@ -11,4 +11,4 @@ _Auto-generated from `tools/manifest.py`._
 | PC.5 | P5 | Signoff: formal proof of ptah_bias_relu non-negativity (yosys-smtbmc+z3, all lanes) | 🔧 |
 | PC.6 | P5 | Signoff: formal control-safety of the conv2d FSM — no illegal state + done only at rest (temporal k-induction, mutation-tested) | 🔧 |
 
-**Progress:** 4/6 checkpoints complete (100% of phases).
+**Progress:** 4/6 checkpoints complete (83% of phases).

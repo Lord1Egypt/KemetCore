@@ -25,4 +25,4 @@ _Auto-generated from `tools/manifest.py`._
 | HA.15 | P4 | P&R: bf16/fp32 add+mul GDSII | ✅ |
 | HA.16 | P5 | Signoff: formal proof of fp32 mul commutativity+sign (all 2^64) + fp32 add additive-identity x+0==x (yosys-smtbmc+z3) | 🔧 |
 
-**Progress:** 19/20 checkpoints complete (100% of phases).
+**Progress:** 19/20 checkpoints complete (83% of phases).
