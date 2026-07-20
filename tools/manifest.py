@@ -508,7 +508,7 @@ PROJECTS = [
         "domain": "Heterogeneous AI SoC (capstone)", "doc": "docs/00_RaCore_SoC.md",
         "depends": ["sethcore", "atumcore", "hapicore", "anubiscore", "bastcore",
                     "ptahconv", "gebcore", "imentetcore", "neithcore", "sobekcore"],
-        "phase": _ph("done", "done", "partial", "partial", "partial", "partial"),
+        "phase": DONE4,
         "scope": "Phase 0/1 implements the KAI register/DMA contract model, a NoC + "
                  "descriptor-DMA functional model, a KAI conformance harness, and an "
                  "end-to-end axpy that drives a KAI accelerator through the fabric. "
