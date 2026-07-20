@@ -21,6 +21,7 @@ LABEL = {
     "seth_branch":   ("SethCore",    "RV32I branch eval (registered)"),
     "seth_imm":      ("SethCore",    "RV32I immediate generator (registered)"),
     "seth_aluctl":   ("SethCore",    "RV32I ALU control decoder (registered)"),
+    "seth_decode":   ("SethCore",    "RV32IM main control decoder (registered)"),
     "hapi_fp32_add": ("HapiCore",    "fp32 adder (registered)"),
     "hapi_fp32_to_int":("HapiCore",  "fp32 to int32 (registered)"),
     "bast_mac":      ("BastCore",    "BF16 MAC"),
@@ -89,7 +90,7 @@ LABEL = {
     "ptah_maxpool":  ("PtahConv",    "fp32 2x2 max pooling (registered)"),
 }
 # canonical harden order (cores 00..10)
-ORDER = ["ra_noc_arbiter","ra_kai_regs","seth_regfile","seth_alu","seth_muldiv","seth_branch","seth_imm","seth_aluctl",
+ORDER = ["ra_noc_arbiter","ra_kai_regs","seth_regfile","seth_alu","seth_muldiv","seth_branch","seth_imm","seth_aluctl","seth_decode",
          "ptah_mac","ptah_bias_relu","ptah_avgpool","ptah_maxpool","imentet_qk_score","imentet_mask_add","imentet_rowmax_sub","imentet_av_context",
          "geb_spmac","geb_spmac_grid","bast_mac","bast_mac_grid","bast_int8_mac","sha256_core",
          "neith_ntt","neith_butterfly","neith_polyaddsub","neith_modmul","neith_pointwise","neith_compress","sobek_dot3","sobek_lerp","sobek_ray_point","sobek_faceforward","sobek_cross","sobek_scale","sobek_distance","hapi_fp32_mul",
