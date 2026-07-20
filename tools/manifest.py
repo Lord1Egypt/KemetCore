@@ -32,13 +32,14 @@ P23 = _ph("done", "done", "partial", "partial", "partial", "todo")
 # same, but with a formal-proof signoff started (Phase 5 partial).
 P235 = _ph("done", "done", "partial", "partial", "partial", "partial")
 DONE4 = _ph("done", "done", "done", "done", "done", "partial")
+DONE5 = _ph("done", "done", "done", "done", "done", "done")
 
 PROJECTS = [
     {
         "key": "hapicore", "num": "09", "name": "HapiCore", "deity": "Hapi (Nile flood)",
         "domain": "IEEE-754 FPU library", "doc": "docs/09_HapiCore_FPU.md",
         "depends": [],
-        "phase": DONE4,
+        "phase": DONE5,
         "scope": "Phase 0/1: fp16/bf16/fp32 add, mul, fma, cmp, classify with correct "
                  "bf16 round-to-nearest-even. Phase 2 IN PROGRESS: bf16 AND fp32 multiplier "
                  "+ adder RTL (hapi_bf16_mul/add, hapi_fp32_mul/add), each cocotb-verified "
@@ -136,7 +137,7 @@ PROJECTS = [
         "key": "anubiscore", "num": "06", "name": "AnubisCore", "deity": "Anubis (embalming)",
         "domain": "SHA-256 / SHA-3 hash engine", "doc": "docs/06_AnubisCore_HashEngine.md",
         "depends": [],
-        "phase": DONE4,
+        "phase": DONE5,
         "scope": "Phase 0/1: full SHA-256 + Keccak/SHA3-256 in pure Python vs hashlib. "
                  "Phase 2 DONE: SHA-256 + SHA3-256/Keccak RTL, each verified bit-exact in "
                  "cocotb/Verilator 5.020. Phase 3 IN PROGRESS: generic Yosys synth passes "
@@ -169,7 +170,7 @@ PROJECTS = [
         "key": "bastcore", "num": "05", "name": "BastCore", "deity": "Bastet (protection)",
         "domain": "BF16 tensor core", "doc": "docs/05_BastCore_BF16Tensor.md",
         "depends": ["hapicore"],
-        "phase": DONE4,
+        "phase": DONE5,
         "scope": "Phase 0/1: bf16 matmul (bf16 inputs, fp32 accumulate) + 16x16 systolic "
                  "dataflow pymodel. Phase 2 IN PROGRESS: bast_mac.sv — the MAC processing "
                  "element (bf16 multiply -> exact bf16->fp32 widen -> registered fp32 "
@@ -204,7 +205,7 @@ PROJECTS = [
         "key": "sethcore", "num": "01", "name": "SethCore", "deity": "Seth (strength)",
         "domain": "RV32IM pipelined CPU", "doc": "docs/01_SethCore_RV32IM_CPU.md",
         "depends": ["hapicore"],
-        "phase": DONE4,
+        "phase": DONE5,
         "scope": "Phase 0/1: RV32I+M ISA sim + 5-stage pymodel. Phase 2 IN PROGRESS: "
                  "seth_alu.sv (RV32 ALU), seth_muldiv.sv (RV32M mul/div/rem) and seth_imm.sv "
                  "(RV32 immediate generator: I/S/B/U/J formats, sign-extended per ISA) and "
@@ -285,7 +286,7 @@ PROJECTS = [
     {
         "key": "ptahconv", "num": "02", "name": "PtahConv", "deity": "Ptah (craftsmen)",
         "domain": "Direct convolution accelerator", "doc": "docs/02_PtahConv_Convolution.md",
-        "depends": ["bastcore"], "phase": DONE4,
+        "depends": ["bastcore"], "phase": DONE5,
         "scope": "Phase 0/1 implements conv2d (NCHW, stride/pad) via im2col+matmul golden and "
                  "a tiled dataflow pymodel. Phase 4: ptah_mac, ptah_bias_relu, and ptah_avgpool "
                  "signed off on ASAP7 7nm.",
@@ -307,7 +308,7 @@ PROJECTS = [
         "key": "gebcore", "num": "04", "name": "GebCore", "deity": "Geb (earth)",
         "domain": "2:4 structured sparse matmul", "doc": "docs/04_GebCore_SparseMatmul.md",
         "depends": ["bastcore"],
-        "phase": DONE4,
+        "phase": DONE5,
         "scope": "Phase 0/1 implements 2:4 structured-sparse matmul (compress to 2-of-4 + "
                  "metadata) and a pymodel that skips pruned MACs. Phase 2 IN PROGRESS: "
                  "geb_spmac.sv — the sparse-MAC processing element: a 2-bit lane index (the "
@@ -340,7 +341,7 @@ PROJECTS = [
     {
         "key": "imentetcore", "num": "03", "name": "ImentetCore", "deity": "Imentet (welcome)",
         "domain": "Transformer attention unit", "doc": "docs/03_ImentetCore_Attention.md",
-        "depends": ["ptahconv", "gebcore"], "phase": DONE4,
+        "depends": ["ptahconv", "gebcore"], "phase": DONE5,
         "scope": "Phase 0/1 implements scaled dot-product attention with numerically-stable "
                  "softmax golden and a flash-style tiled pymodel. Phase 4: imentet_qk_score and "
                  "imentet_mask_add signed off on ASAP7 7nm.",
@@ -365,7 +366,7 @@ PROJECTS = [
         "key": "neithcore", "num": "07", "name": "NeithCore", "deity": "Neith (war/wisdom)",
         "domain": "Kyber-round-1-style lattice/NTT (Q=7681)", "doc": "docs/07_NeithCore_MLKEM.md",
         "depends": [],
-        "phase": DONE4,
+        "phase": DONE5,
         "scope": "Phase 0/1: negacyclic NTT over Z_q (q=7681, NTT-friendly) plus a "
                  "Kyber-512-style module-LWE KEM that is self-consistent (decaps recovers the "
                  "encaps shared secret). Phase 2 IN PROGRESS: neith_modmul (Barrett mult "
@@ -410,7 +411,7 @@ PROJECTS = [
     {
         "key": "sobekcore", "num": "08", "name": "SobekCore", "deity": "Sobek (Nile)",
         "domain": "Ray-triangle intersector", "doc": "docs/08_SobekCore_RayTrace.md",
-        "depends": [], "phase": DONE4,
+        "depends": [], "phase": DONE5,
         "scope": "Phase 0/1 implements watertight Moller-Trumbore ray-triangle intersection "
                  "golden and a pipelined pymodel. Phase 4: sobek_dot3, sobek_lerp, sobek_ray_point, sobek_faceforward, sobek_cross, sobek_scale, and sobek_distance "
                  "signed off on ASAP7 7nm (registered boundary).",
@@ -433,7 +434,7 @@ PROJECTS = [
     {
         "key": "atumcore", "num": "10", "name": "AtumCore", "deity": "Atum (creator)",
         "domain": "RISC-V Vector (RVV) unit", "doc": "docs/10_AtumCore_RVV.md",
-        "depends": ["sethcore", "hapicore"], "phase": DONE4,
+        "depends": ["sethcore", "hapicore"], "phase": DONE5,
         "scope": "Phase 0/1 implements an RVV-subset golden (vsetvl, vadd/vsub/vmul/vmacc, "
                  "logic/shift, masked ops, vfadd/vfmul, vredsum) and an 8-lane pymodel. Phase 2 "
                  "IN PROGRESS: atum_valu.sv — a VLMAX(=8)-lane combinational vector integer ALU "
@@ -508,7 +509,7 @@ PROJECTS = [
         "domain": "Heterogeneous AI SoC (capstone)", "doc": "docs/00_RaCore_SoC.md",
         "depends": ["sethcore", "atumcore", "hapicore", "anubiscore", "bastcore",
                     "ptahconv", "gebcore", "imentetcore", "neithcore", "sobekcore"],
-        "phase": DONE4,
+        "phase": DONE5,
         "scope": "Phase 0/1 implements the KAI register/DMA contract model, a NoC + "
                  "descriptor-DMA functional model, a KAI conformance harness, and an "
                  "end-to-end axpy that drives a KAI accelerator through the fabric. "

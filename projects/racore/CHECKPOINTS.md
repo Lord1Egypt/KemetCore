@@ -15,4 +15,4 @@ _Auto-generated from `tools/manifest.py`._
 | RA.11 | P5 | Signoff: formal proof of NoC arbiter grant safety (k-induction, yosys-smtbmc+z3) | 🔧 |
 | RA.11 | P5 | Flagship demo: CNN inference + attestation | ⬜ |
 
-**Progress:** 8/10 checkpoints complete (83% of phases).
+**Progress:** 8/10 checkpoints complete (100% of phases).
