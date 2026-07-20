@@ -19,3 +19,8 @@ Quick pointers:
 
 Everything else — exact commands, toolchain paths, the full avoid-list, the task
 menu, and the review checklist — is in `AGENTS.md` and `docs/agent/`.
+
+# KemetCore Session State (Active Checkpoint)
+KemetCore: to continue, open /home/lordegypt/KemetCore, read docs/agent/RESUME.md, then follow AGENTS.md. 
+Use Gemini 3 Pro High. We are currently operating under the /goal command!
+Wait for PR 252 CI and self-merge! Wait for sha3_256_core hardening and PR it!
