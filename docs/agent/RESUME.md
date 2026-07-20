@@ -3,8 +3,9 @@
 - Hardened `seth_branch` to ASAP7 7nm via ORFS. WNS 0.00, area 46 um^2. PR #246 is ready to be merged once CI is green.
 - Hardened `seth_imm` to ASAP7 7nm via ORFS. WNS 0.00, area 43 um^2. PR #247 is ready to be merged once CI is green.
 - Hardened `seth_aluctl` to ASAP7 7nm via ORFS. WNS 0.00, area 14 um^2. PR #248 is ready to be merged once CI is green.
-- Hardened `seth_decode` to ASAP7 7nm via ORFS. WNS 0.00, area 16 um^2.
+- Hardened `seth_decode` to ASAP7 7nm via ORFS. WNS 0.00, area 16 um^2. PR #249 is ready to be merged once CI is green.
+- Hardened `seth_trap` to ASAP7 7nm via ORFS. WNS 0.00, area 212 um^2.
 - Tracking and WORKLOG updated for all.
 
 # Next Step
-- Open a PR for `seth_decode`. Wait for PRs CI to pass and merge them. Proceed to the next core in Phase 3/4 based on `PROGRESS.md`.
+- Open a PR for `seth_trap`. Wait for PRs CI to pass and merge them. Proceed to the next core in Phase 3/4 based on `PROGRESS.md`.
