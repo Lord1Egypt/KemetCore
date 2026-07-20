@@ -397,3 +397,4 @@
 - 2026-07-20 | feat/sethcore-aluctl-p4 | Hardened seth_aluctl block to ASAP7 7nm via ORFS. WNS 0.00, area 14 um^2. | PR TBD
 - 2026-07-20 | feat/sethcore-decode-p4 | Hardened seth_decode block to ASAP7 7nm via ORFS. WNS 0.00, area 16 um^2. | PR TBD
 - 2026-07-20 | feat/sethcore-trap-p4 | Hardened seth_trap block to ASAP7 7nm via ORFS. WNS 0.00, area 212 um^2. | PR TBD
+- 2026-07-20 | feat/sethcore-lsu-p4 | Hardened seth_lsu block to ASAP7 7nm via ORFS. WNS 0.00, area 99 um^2. | PR TBD
