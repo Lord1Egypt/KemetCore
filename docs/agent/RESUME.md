@@ -1,7 +1,8 @@
 # Current State
 - `racore_lite.sv` successfully synthesized with 0 latches alongside `seth_pipeline_csr`. PR #245 is merged!
-- Hardened `seth_branch` to ASAP7 7nm via ORFS. WNS 0.00, area 46 um^2. PR #246 is merged!
-- Tracking and WORKLOG updated for both.
+- Hardened `seth_branch` to ASAP7 7nm via ORFS. WNS 0.00, area 46 um^2. PR #246 is ready to be merged once CI is green.
+- Hardened `seth_imm` to ASAP7 7nm via ORFS. WNS 0.00, area 43 um^2. 
+- Tracking and WORKLOG updated for all.
 
 # Next Step
-- Proceed to the next core in Phase 3/4 based on `PROGRESS.md`.
+- Open a PR for `seth_imm`. Wait for PR #246 CI to pass and merge it. Proceed to the next core in Phase 3/4 based on `PROGRESS.md`.

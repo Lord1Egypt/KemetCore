@@ -393,3 +393,4 @@
 - **2026-07-19** | `feat/racore-soc-firmware` | Developed racore_lite Boot ROM (ra_bootrom.sv) and firmware generator for SoC Mode, integrated into racore_lite.sv and verified latch-free synthesis | `synth=0 latches` | PR TBD |
 - 2026-07-19 | feat/racore-soc-synth | Synthesized RaCore-Lite with NoC and SethCore. Verified 0 latches on Yosys. | PR #245
 - 2026-07-19 | feat/sethcore-branch | Hardened seth_branch block to ASAP7 7nm via ORFS. WNS 0.00, area 46 um^2. | PR #246
+- 2026-07-20 | feat/sethcore-imm-p4 | Hardened seth_imm block to ASAP7 7nm via ORFS. WNS 0.00, area 43 um^2. | PR TBD
