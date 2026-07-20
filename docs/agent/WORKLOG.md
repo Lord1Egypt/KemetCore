@@ -391,3 +391,4 @@
 - 2026-07-19 | chore/neithcore-relabel | Addressed audit triage item 1: honest relabel of NeithCore from "ML-KEM" to "Kyber-round-1-style lattice/NTT (Q=7681)" across the README, specs, and manifest. | N/A | 0649425 | PR #242
 - **2026-07-19** | `fix/sethcore-csr-bugs` | Fixed PR 238 SethCore CSR review comments (restored trap roundtrip logic, removed halted on ecall, cleaned up stray comments, committed `.stat` file for 0-latch check), and removed root-level junk files. Verified pipelinecsr cocotb tests pass. | `tests=5 pass=5 fail=0 skip=0` | d85eb68 | PR #243 |
 - **2026-07-19** | `feat/racore-soc-firmware` | Developed racore_lite Boot ROM (ra_bootrom.sv) and firmware generator for SoC Mode, integrated into racore_lite.sv and verified latch-free synthesis | `synth=0 latches` | PR TBD |
+- 2026-07-19 | feat/racore-soc-synth | Synthesized RaCore-Lite with NoC and SethCore. Verified 0 latches on Yosys. | PR #245

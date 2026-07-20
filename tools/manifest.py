@@ -520,6 +520,7 @@ PROJECTS = [
             ("RA.4", "pymodel: arbitration + DMA timing", 1, "done"),
             ("RA.5", "RTL: NoC + DMA", 2, "done"),
             ("RA.7", "RTL: RaCore-Lite top integration", 2, "done"),
+            ("RA.8", "Synth: RaCore-Lite top integration", 3, "done"),
             ("RA.10", "P&R: Lite hierarchical GDSII", 4, "done"),
             ("RA.11", "Signoff: formal proof of NoC arbiter grant safety (k-induction, yosys-smtbmc+z3)", 5, "partial"),
             ("RA.11", "Flagship demo: CNN inference + attestation", 5, "todo"),
