@@ -18,4 +18,4 @@ _Auto-generated from `tools/manifest.py`._
 | N.12 | P5 | Signoff: formal proof of Barrett modmul range r<Q — always a valid reduced field element (yosys-smtbmc+z3, all a,b<Q) | 🔧 |
 | N.13 | P5 | Signoff: formal control-safety of the 256-pt NTT FSM — no illegal state + inverse-only scale pass (temporal k-induction, mutation-tested) | 🔧 |
 
-**Progress:** 11/13 checkpoints complete (83% of phases).
+**Progress:** 11/13 checkpoints complete (100% of phases).
