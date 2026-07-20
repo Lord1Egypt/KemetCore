@@ -1,13 +1,18 @@
-# Current State
-- `racore_lite.sv` successfully synthesized with 0 latches alongside `seth_pipeline_csr`. PR #245 is merged!
-- Hardened `seth_branch` to ASAP7 7nm via ORFS. WNS 0.00, area 46 um^2. PR #246 is ready to be merged once CI is green.
-- Hardened `seth_imm` to ASAP7 7nm via ORFS. WNS 0.00, area 43 um^2. PR #247 is ready to be merged once CI is green.
-- Hardened `seth_aluctl` to ASAP7 7nm via ORFS. WNS 0.00, area 14 um^2. PR #248 is ready to be merged once CI is green.
-- Hardened `seth_decode` to ASAP7 7nm via ORFS. WNS 0.00, area 16 um^2. PR #249 is ready to be merged once CI is green.
-- Hardened `seth_trap` to ASAP7 7nm via ORFS. WNS 0.00, area 212 um^2. PR #250 is ready to be merged once CI is green.
-- Hardened `seth_lsu` to ASAP7 7nm via ORFS. WNS 0.00, area 99 um^2. PR #251 is ready to be merged once CI is green.
-- Hardened `seth_mcsr` to ASAP7 7nm via ORFS. WNS 0.00, area 228 um^2.
-- Tracking and WORKLOG updated for all.
+# Current State (GOAL MODE ACTIVE)
+- `racore_lite.sv` successfully synthesized with 0 latches alongside `seth_pipeline_csr`. PR #245 is merged.
+- Hardened 7 blocks to ASAP7 7nm via ORFS:
+  - `seth_branch` (PR #246)
+  - `seth_imm` (PR #247)
+  - `seth_aluctl` (PR #248)
+  - `seth_decode` (PR #249)
+  - `seth_trap` (PR #250)
+  - `seth_lsu` (PR #251)
+  - `seth_mcsr` (PR #252)
+- All 7 PRs are open and currently waiting for their CI checks (Phase 0/1, Phase 2, Phase 3, Phase 5) to finish.
+- `HARDEN_RESULTS.md`, `WORKLOG.md`, and `PROGRESS.md` are up to date for all 7 blocks.
 
-# Next Step
-- Open a PR for `seth_mcsr`. Wait for PRs CI to pass and merge them. Proceed to the next core in Phase 3/4 based on `PROGRESS.md`.
+# Next Step (GOAL MODE ACTIVE)
+- Wait for the CI checks on PRs #246 through #252 to turn green.
+- Perform the `REVIEW_CHECKLIST.md` audit, and then **self-merge** the PRs (because `/goal` mode is active).
+- Cut a rolling restore tag `safe-auto-<date>-N` after merging.
+- Continue Phase 4 hardening for the remaining SethCore components (e.g. `seth_core`, etc.) based on `flow/gen_harden_results.py`'s `ORDER` array. Don't stop until all phases are done with releases.
