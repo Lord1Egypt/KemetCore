@@ -399,3 +399,5 @@
 - 2026-07-20 | feat/sethcore-trap-p4 | Hardened seth_trap block to ASAP7 7nm via ORFS. WNS 0.00, area 212 um^2. | PR TBD
 - 2026-07-20 | feat/sethcore-lsu-p4 | Hardened seth_lsu block to ASAP7 7nm via ORFS. WNS 0.00, area 99 um^2. | PR TBD
 - 2026-07-20 | feat/sethcore-mcsr-p4 | Hardened seth_mcsr block to ASAP7 7nm via ORFS. WNS 0.00, area 228 um^2. | PR TBD
+- 2026-07-20 | feat/sethcore-mcsr-p4 | Merged PR 252 (seth_mcsr synth to ASAP7 7nm) | PR 252 CI green | N/A | #252
+- 2026-07-20 | feat/anubiscore-sha3-p4 | Hardened sha3_256_core on ASAP7 7nm | ./flow/harden.sh sha3_256_core -> HARDEN_OK | N/A | #253
