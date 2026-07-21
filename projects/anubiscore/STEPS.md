@@ -4,7 +4,7 @@
 
 _Auto-generated from `tools/manifest.py` — do not edit by hand; edit the manifest and run `python tools/gen_tracking.py`._
 
-**Scope (current):** Phase 0/1: full SHA-256 + Keccak/SHA3-256 in pure Python vs hashlib. Phase 2 DONE: SHA-256 + SHA3-256/Keccak RTL, each verified bit-exact in cocotb/Verilator 5.020. Phase 3 IN PROGRESS: generic Yosys synth passes with 0 latches (sha256 ~6.4K cells, sha3 ~15.8K cells); ASAP7 liberty Phase 4: sha256_core signed off on ASAP7 7nm (routed GDSII, WNS 0.00, 1286 um^2, 0 route-DRC) via OpenROAD-flow-scripts locally.
+**Scope (current):** Phase 0/1: full SHA-256 + Keccak/SHA3-256 in pure Python vs hashlib. Phase 2 DONE: SHA-256 + SHA3-256/Keccak RTL, each verified bit-exact in cocotb/Verilator 5.020. Phase 3 DONE: generic Yosys synth passes with 0 latches (sha256 ~6.4K cells, sha3 ~15.8K cells). Phase 4 DONE: BOTH sha256_core AND sha3_256_core signed off on ASAP7 7nm (routed GDSII, WNS 0.00, 0 route-DRC — sha3 initially had 125 max-slew violations from the 1600-bit Keccak state array's unbuffered async reset net, the highest-fanout net in the project; fixed with explicit set_max_transition/set_max_fanout in constraint.sdc, re-verified 0 violations) via OpenROAD-flow-scripts locally.
 
 ## Ordered steps (6-phase lifecycle)
 
@@ -14,8 +14,8 @@ _Auto-generated from `tools/manifest.py` — do not edit by hand; edit the manif
 | 2 | P0 | Write golden tests vs known-correct software; achieve passing pytest | ✅ |
 | 3 | P1 | Write the cycle/lane/round pymodel; assert it equals the golden bit-for-bit | ✅ |
 | 4 | P2 | Write SystemVerilog RTL + cocotb testbench (Verilator); coverage >= 90% | ✅ |
-| 5 | P3 | Yosys synthesis: 0 latches, gate count <= target | 🔧 |
-| 6 | P4 | OpenROAD P&R on ASAP7: DRC clean, timing closed at target Fmax -> GDSII | 🔧 |
+| 5 | P3 | Yosys synthesis: 0 latches, gate count <= target | ✅ |
+| 6 | P4 | OpenROAD P&R on ASAP7: DRC clean, timing closed at target Fmax -> GDSII | ✅ |
 | 7 | P5 | CI pipeline + docs finalization; `make all` green | 🔧 |
 
 **Depends on:** none

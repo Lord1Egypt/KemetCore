@@ -136,13 +136,17 @@ PROJECTS = [
         "key": "anubiscore", "num": "06", "name": "AnubisCore", "deity": "Anubis (embalming)",
         "domain": "SHA-256 / SHA-3 hash engine", "doc": "docs/06_AnubisCore_HashEngine.md",
         "depends": [],
-        "phase": _ph("done", "done", "done", "partial", "partial", "partial"),
+        "phase": _ph("done", "done", "done", "done", "done", "partial"),
         "scope": "Phase 0/1: full SHA-256 + Keccak/SHA3-256 in pure Python vs hashlib. "
                  "Phase 2 DONE: SHA-256 + SHA3-256/Keccak RTL, each verified bit-exact in "
-                 "cocotb/Verilator 5.020. Phase 3 IN PROGRESS: generic Yosys synth passes "
-                 "with 0 latches (sha256 ~6.4K cells, sha3 ~15.8K cells); ASAP7 liberty "
-                 "Phase 4: sha256_core signed off on ASAP7 7nm (routed GDSII, WNS 0.00, "
-                 "1286 um^2, 0 route-DRC) via OpenROAD-flow-scripts locally.",
+                 "cocotb/Verilator 5.020. Phase 3 DONE: generic Yosys synth passes "
+                 "with 0 latches (sha256 ~6.4K cells, sha3 ~15.8K cells). "
+                 "Phase 4 DONE: BOTH sha256_core AND sha3_256_core signed off on ASAP7 7nm "
+                 "(routed GDSII, WNS 0.00, 0 route-DRC — sha3 initially had 125 max-slew "
+                 "violations from the 1600-bit Keccak state array's unbuffered async reset "
+                 "net, the highest-fanout net in the project; fixed with explicit "
+                 "set_max_transition/set_max_fanout in constraint.sdc, re-verified 0 "
+                 "violations) via OpenROAD-flow-scripts locally.",
         "checkpoints": [
             ("A1.1", "Golden: SHA-256 vs hashlib", 0, "done"),
             ("A1.2", "Golden: Keccak-f[1600] / SHA3-256 vs hashlib", 0, "done"),
@@ -153,7 +157,7 @@ PROJECTS = [
             ("A1.7", "RTL: Keccak-f[1600] + cocotb (Verilator)", 2, "done"),
             ("A1.8", "Synthesis: generic Yosys, 0 latches + gate count", 3, "done"),
             ("A1.9", "Synthesis: ASAP7 liberty tech-mapping (subsumed by P&R)", 3, "done"),
-            ("A1.10", "P&R: GDSII", 4, "done"),
+            ("A1.10", "P&R: GDSII — sha256_core AND sha3_256_core both signed off, 0 slew/DRC viol", 4, "done"),
             ("A1.11", "Signoff: formal SHA-256 FSM control-safety — exactly-64-rounds (FIN=>rc==63) + no illegal state (k-induction, yosys-smtbmc+z3)", 5, "partial"),
         ],
         "tests": [

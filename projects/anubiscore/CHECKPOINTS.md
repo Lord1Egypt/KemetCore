@@ -13,7 +13,7 @@ _Auto-generated from `tools/manifest.py`._
 | A1.7 | P2 | RTL: Keccak-f[1600] + cocotb (Verilator) | ✅ |
 | A1.8 | P3 | Synthesis: generic Yosys, 0 latches + gate count | ✅ |
 | A1.9 | P3 | Synthesis: ASAP7 liberty tech-mapping (subsumed by P&R) | ✅ |
-| A1.10 | P4 | P&R: GDSII | ✅ |
+| A1.10 | P4 | P&R: GDSII — sha256_core AND sha3_256_core both signed off, 0 slew/DRC viol | ✅ |
 | A1.11 | P5 | Signoff: formal SHA-256 FSM control-safety — exactly-64-rounds (FIN=>rc==63) + no illegal state (k-induction, yosys-smtbmc+z3) | 🔧 |
 
-**Progress:** 10/11 checkpoints complete (50% of phases).
+**Progress:** 10/11 checkpoints complete (83% of phases).

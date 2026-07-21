@@ -18,7 +18,7 @@ Legend: ✅ done · 🔧 in progress · ⬜ todo
 | 03 | **ImentetCore** | Transformer attention unit | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 | 83% | [steps](projects/imentetcore/STEPS.md) · [chk](projects/imentetcore/CHECKPOINTS.md) · [tests](projects/imentetcore/TESTS.md) |
 | 04 | **GebCore** | 2:4 structured sparse matmul | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | 100% | [steps](projects/gebcore/STEPS.md) · [chk](projects/gebcore/CHECKPOINTS.md) · [tests](projects/gebcore/TESTS.md) |
 | 05 | **BastCore** | BF16 tensor core | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 | 83% | [steps](projects/bastcore/STEPS.md) · [chk](projects/bastcore/CHECKPOINTS.md) · [tests](projects/bastcore/TESTS.md) |
-| 06 | **AnubisCore** | SHA-256 / SHA-3 hash engine | ✅ | ✅ | ✅ | 🔧 | 🔧 | 🔧 | 50% | [steps](projects/anubiscore/STEPS.md) · [chk](projects/anubiscore/CHECKPOINTS.md) · [tests](projects/anubiscore/TESTS.md) |
+| 06 | **AnubisCore** | SHA-256 / SHA-3 hash engine | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 | 83% | [steps](projects/anubiscore/STEPS.md) · [chk](projects/anubiscore/CHECKPOINTS.md) · [tests](projects/anubiscore/TESTS.md) |
 | 07 | **NeithCore** | Kyber-round-1-style lattice/NTT (Q=7681) | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 | 83% | [steps](projects/neithcore/STEPS.md) · [chk](projects/neithcore/CHECKPOINTS.md) · [tests](projects/neithcore/TESTS.md) |
 | 08 | **SobekCore** | Ray-triangle intersector | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 | 83% | [steps](projects/sobekcore/STEPS.md) · [chk](projects/sobekcore/CHECKPOINTS.md) · [tests](projects/sobekcore/TESTS.md) |
 | 09 | **HapiCore** | IEEE-754 FPU library | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 | 83% | [steps](projects/hapicore/STEPS.md) · [chk](projects/hapicore/CHECKPOINTS.md) · [tests](projects/hapicore/TESTS.md) |
