@@ -4,7 +4,7 @@
 
 _Auto-generated from `tools/manifest.py` — do not edit by hand; edit the manifest and run `python tools/gen_tracking.py`._
 
-**Scope (current):** Phase 0/1 implements 2:4 structured-sparse matmul (compress to 2-of-4 + metadata) and a pymodel that skips pruned MACs. Phase 2 IN PROGRESS: geb_spmac.sv — the sparse-MAC processing element: a 2-bit lane index (the 2:4 metadata) selects one of the group's 4 fp32 activations, multiplies by the kept weight (fp32), and fp32-accumulates, composing the verified HapiCore hapi_fp32_mul + hapi_fp32_add. So it performs exactly ONE MAC per kept lane (half a dense matmul). cocotb-verified bit-exact vs golden.sparse_matmul on 412 output elements (random pruned matrices, K up to 20). NB: golden's dense_matmul cross-check is only ~equal, not bit-identical, since fp32 sums are non-associative and use a different lane order — the HW target is sparse_matmul. Phase 3: generic Yosys synth 0 latches (~7130 cells). Sparse PE array (abut) + ASAP7 pending.
+**Scope (current):** Phase 0/1 implements 2:4 structured-sparse matmul (compress to 2-of-4 + metadata) and a pymodel that skips pruned MACs. Phase 5 DONE: geb_prune's 2:4 invariant proven COMPLETE and functional (not just bounded) by yosys-smtbmc+z3 over all 2^128 input combinations (symbolic, exhaustive): exactly-2-kept, val/idx self-consistency across all 6 mask combos, AND magnitude-correctness (every kept lane's key beats every dropped lane's, for all i,j pairs) — this is the full selection-correctness property, not a partial one. Re-verified + mutation-tested 2026-07-21 (flipped the beats() comparator from > to >=, proof correctly FAILED; restored, PASSED). Phase 2 IN PROGRESS: geb_spmac.sv — the sparse-MAC processing element: a 2-bit lane index (the 2:4 metadata) selects one of the group's 4 fp32 activations, multiplies by the kept weight (fp32), and fp32-accumulates, composing the verified HapiCore hapi_fp32_mul + hapi_fp32_add. So it performs exactly ONE MAC per kept lane (half a dense matmul). cocotb-verified bit-exact vs golden.sparse_matmul on 412 output elements (random pruned matrices, K up to 20). NB: golden's dense_matmul cross-check is only ~equal, not bit-identical, since fp32 sums are non-associative and use a different lane order — the HW target is sparse_matmul. Phase 3: generic Yosys synth 0 latches (~7130 cells). Sparse PE array (abut) + ASAP7 pending.
 
 ## Ordered steps (6-phase lifecycle)
 
@@ -16,7 +16,7 @@ _Auto-generated from `tools/manifest.py` — do not edit by hand; edit the manif
 | 4 | P2 | Write SystemVerilog RTL + cocotb testbench (Verilator); coverage >= 90% | ✅ |
 | 5 | P3 | Yosys synthesis: 0 latches, gate count <= target | ✅ |
 | 6 | P4 | OpenROAD P&R on ASAP7: DRC clean, timing closed at target Fmax -> GDSII | ✅ |
-| 7 | P5 | CI pipeline + docs finalization; `make all` green | 🔧 |
+| 7 | P5 | CI pipeline + docs finalization; `make all` green | ✅ |
 
 **Depends on:** [bastcore](../bastcore/STEPS.md)
 

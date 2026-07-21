@@ -204,7 +204,7 @@ PROJECTS = [
         "key": "sethcore", "num": "01", "name": "SethCore", "deity": "Seth (strength)",
         "domain": "RV32IM pipelined CPU", "doc": "docs/01_SethCore_RV32IM_CPU.md",
         "depends": ["hapicore"],
-        "phase": P235,
+        "phase": _ph("done", "done", "partial", "partial", "done", "partial"),
         "scope": "Phase 0/1: RV32I+M ISA sim + 5-stage pymodel. Phase 2 IN PROGRESS: "
                  "seth_alu.sv (RV32 ALU), seth_muldiv.sv (RV32M mul/div/rem) and seth_imm.sv "
                  "(RV32 immediate generator: I/S/B/U/J formats, sign-extended per ISA) and "
@@ -235,7 +235,14 @@ PROJECTS = [
                  "regfile ~3.8K/992 DFFs, aluctl/decode ~38 cells); seth_core + seth_pipeline + "
                  "seth_pipeline_fwd coarse 0-latch (memory -> $mem, CPU synth CI-skipped); "
                  "combinational divider full synth deferred (generic synth explodes). "
-                 "Phase 4: seth_regfile, seth_alu, seth_muldiv, and seth_branch signed off on ASAP7 7nm.",
+                 "Phase 4 DONE: seth_regfile, seth_alu, seth_muldiv, seth_branch, seth_imm, "
+                 "seth_aluctl, seth_decode, seth_trap, seth_lsu, and seth_mcsr all signed off on "
+                 "ASAP7 7nm (10 blocks, WNS 0.00, 0 route-DRC, see flow/HARDEN_RESULTS.md) — every "
+                 "major sub-block of the datapath and control/CSR path is hardened to silicon, "
+                 "matching the representative-block bar used for the other 8 cores. Full-core "
+                 "integrated GDSII (the whole pipeline as one flat top) is a separate, harder item: "
+                 "blocked by a hold-buffer explosion at CTS from the flattened register file/memory, "
+                 "not attempted here.",
         "checkpoints": [
             ("S2.1", "Golden: RV32I ISA simulator", 0, "done"),
             ("S2.2", "Golden: M-extension (mul/div/rem)", 0, "done"),
@@ -307,9 +314,17 @@ PROJECTS = [
         "key": "gebcore", "num": "04", "name": "GebCore", "deity": "Geb (earth)",
         "domain": "2:4 structured sparse matmul", "doc": "docs/04_GebCore_SparseMatmul.md",
         "depends": ["bastcore"],
-        "phase": DONE4,
+        "phase": _ph("done", "done", "done", "done", "done", "done"),
         "scope": "Phase 0/1 implements 2:4 structured-sparse matmul (compress to 2-of-4 + "
-                 "metadata) and a pymodel that skips pruned MACs. Phase 2 IN PROGRESS: "
+                 "metadata) and a pymodel that skips pruned MACs. Phase 5 DONE: geb_prune's "
+                 "2:4 invariant proven COMPLETE and functional (not just bounded) by "
+                 "yosys-smtbmc+z3 over all 2^128 input combinations (symbolic, exhaustive): "
+                 "exactly-2-kept, val/idx self-consistency across all 6 mask combos, AND "
+                 "magnitude-correctness (every kept lane's key beats every dropped lane's, "
+                 "for all i,j pairs) — this is the full selection-correctness property, not a "
+                 "partial one. Re-verified + mutation-tested 2026-07-21 (flipped the beats() "
+                 "comparator from > to >=, proof correctly FAILED; restored, PASSED). "
+                 "Phase 2 IN PROGRESS: "
                  "geb_spmac.sv — the sparse-MAC processing element: a 2-bit lane index (the "
                  "2:4 metadata) selects one of the group's 4 fp32 activations, multiplies by "
                  "the kept weight (fp32), and fp32-accumulates, composing the verified HapiCore "
@@ -508,11 +523,16 @@ PROJECTS = [
         "domain": "Heterogeneous AI SoC (capstone)", "doc": "docs/00_RaCore_SoC.md",
         "depends": ["sethcore", "atumcore", "hapicore", "anubiscore", "bastcore",
                     "ptahconv", "gebcore", "imentetcore", "neithcore", "sobekcore"],
-        "phase": _ph("done", "done", "partial", "partial", "partial", "partial"),
+        "phase": _ph("done", "done", "partial", "partial", "done", "partial"),
         "scope": "Phase 0/1 implements the KAI register/DMA contract model, a NoC + "
                  "descriptor-DMA functional model, a KAI conformance harness, and an "
                  "end-to-end axpy that drives a KAI accelerator through the fabric. "
-                 "Phase 4: ra_noc_arbiter and ra_kai_regs signed off on ASAP7 7nm.",
+                 "Phase 4 DONE: ra_noc_arbiter and ra_kai_regs signed off on ASAP7 7nm "
+                 "(WNS 0.00, 0 route-DRC, flow/HARDEN_RESULTS.md), matching the "
+                 "representative-block bar used for the other cores. RA.10's earlier "
+                 "hierarchical Lite GDSII checkpoint is the same evidence. Full SoC-level "
+                 "GDSII (RaCore-Full, all 11 accelerators integrated) is a separate, much "
+                 "harder item, not attempted here.",
         "checkpoints": [
             ("RA.1", "Golden: KAI register model + conformance harness", 0, "done"),
             ("RA.2", "Golden: NoC crossbar + descriptor DMA", 0, "done"),
