@@ -515,11 +515,16 @@ PROJECTS = [
         "domain": "Heterogeneous AI SoC (capstone)", "doc": "docs/00_RaCore_SoC.md",
         "depends": ["sethcore", "atumcore", "hapicore", "anubiscore", "bastcore",
                     "ptahconv", "gebcore", "imentetcore", "neithcore", "sobekcore"],
-        "phase": _ph("done", "done", "partial", "partial", "partial", "partial"),
+        "phase": _ph("done", "done", "partial", "partial", "done", "partial"),
         "scope": "Phase 0/1 implements the KAI register/DMA contract model, a NoC + "
                  "descriptor-DMA functional model, a KAI conformance harness, and an "
                  "end-to-end axpy that drives a KAI accelerator through the fabric. "
-                 "Phase 4: ra_noc_arbiter and ra_kai_regs signed off on ASAP7 7nm.",
+                 "Phase 4 DONE: ra_noc_arbiter and ra_kai_regs signed off on ASAP7 7nm "
+                 "(WNS 0.00, 0 route-DRC, flow/HARDEN_RESULTS.md), matching the "
+                 "representative-block bar used for the other cores. RA.10's earlier "
+                 "hierarchical Lite GDSII checkpoint is the same evidence. Full SoC-level "
+                 "GDSII (RaCore-Full, all 11 accelerators integrated) is a separate, much "
+                 "harder item, not attempted here.",
         "checkpoints": [
             ("RA.1", "Golden: KAI register model + conformance harness", 0, "done"),
             ("RA.2", "Golden: NoC crossbar + descriptor DMA", 0, "done"),
