@@ -13,7 +13,7 @@ Legend: ✅ done · 🔧 in progress · ⬜ todo
 | # | Project | Domain | P0 Golden | P1 pymodel | P2 RTL | P3 Synth | P4 P&R | P5 Signoff | % | Tracking |
 |:-:|---------|--------|:---------:|:----------:|:------:|:--------:|:------:|:----------:|:-:|----------|
 | 00 | **RaCore** | Heterogeneous AI SoC (capstone) | ✅ | ✅ | 🔧 | 🔧 | ✅ | 🔧 | 50% | [steps](projects/racore/STEPS.md) · [chk](projects/racore/CHECKPOINTS.md) · [tests](projects/racore/TESTS.md) |
-| 01 | **SethCore** | RV32IM pipelined CPU | ✅ | ✅ | 🔧 | 🔧 | ✅ | 🔧 | 50% | [steps](projects/sethcore/STEPS.md) · [chk](projects/sethcore/CHECKPOINTS.md) · [tests](projects/sethcore/TESTS.md) |
+| 01 | **SethCore** | RV32IM pipelined CPU | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 | 83% | [steps](projects/sethcore/STEPS.md) · [chk](projects/sethcore/CHECKPOINTS.md) · [tests](projects/sethcore/TESTS.md) |
 | 02 | **PtahConv** | Direct convolution accelerator | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 | 83% | [steps](projects/ptahconv/STEPS.md) · [chk](projects/ptahconv/CHECKPOINTS.md) · [tests](projects/ptahconv/TESTS.md) |
 | 03 | **ImentetCore** | Transformer attention unit | ✅ | ✅ | ✅ | ✅ | ✅ | 🔧 | 83% | [steps](projects/imentetcore/STEPS.md) · [chk](projects/imentetcore/CHECKPOINTS.md) · [tests](projects/imentetcore/TESTS.md) |
 | 04 | **GebCore** | 2:4 structured sparse matmul | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | 100% | [steps](projects/gebcore/STEPS.md) · [chk](projects/gebcore/CHECKPOINTS.md) · [tests](projects/gebcore/TESTS.md) |

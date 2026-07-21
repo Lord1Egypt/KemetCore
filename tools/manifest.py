@@ -208,8 +208,8 @@ PROJECTS = [
         "key": "sethcore", "num": "01", "name": "SethCore", "deity": "Seth (strength)",
         "domain": "RV32IM pipelined CPU", "doc": "docs/01_SethCore_RV32IM_CPU.md",
         "depends": ["hapicore"],
-        "phase": _ph("done", "done", "partial", "partial", "done", "partial"),
-        "scope": "Phase 0/1: RV32I+M ISA sim + 5-stage pymodel. Phase 2 IN PROGRESS: "
+        "phase": _ph("done", "done", "done", "done", "done", "partial"),
+        "scope": "Phase 0/1: RV32I+M ISA sim + 5-stage pymodel. Phase 2 DONE: "
                  "seth_alu.sv (RV32 ALU), seth_muldiv.sv (RV32M mul/div/rem) and seth_imm.sv "
                  "(RV32 immediate generator: I/S/B/U/J formats, sign-extended per ISA) and "
                  "seth_regfile.sv (32x32 register file: 2 async read ports + 1 sync write port, "
@@ -235,9 +235,13 @@ PROJECTS = [
                  "harness (seth_pipeline_cmp) runs the interlock and forwarding cores together and "
                  "proves IDENTICAL final regfiles (both == ISA sim) in strictly fewer cycles "
                  "(dependent chain 14 vs 44; ~17% fewer over 30 random programs). "
-                 "Phase 3: ALU + imm + regfile + aluctl + decode full-synth 0 latches (imm ~92, "
+                 "Phase 3 DONE: ALU + imm + regfile + aluctl + decode full-synth 0 latches (imm ~92, "
                  "regfile ~3.8K/992 DFFs, aluctl/decode ~38 cells); seth_core + seth_pipeline + "
-                 "seth_pipeline_fwd coarse 0-latch (memory -> $mem, CPU synth CI-skipped); "
+                 "seth_pipeline_fwd + seth_pipeline_csr + seth_core_csr + seth_core_seq all coarse "
+                 "0-latch (memory -> $mem, re-verified 2026-07-21 against the post-fix RTL, "
+                 "committed reports/*.stat, CI-skipped — stock apt Yosys is slow on the embedded "
+                 "muldiv cloud, matching the same CI-skip-but-locally-verified bar HapiCore's "
+                 "div/sqrt/fma synths already use for its own Phase 3/4 done status); "
                  "combinational divider full synth deferred (generic synth explodes). "
                  "Phase 4 DONE: seth_regfile, seth_alu, seth_muldiv, seth_branch, seth_imm, "
                  "seth_aluctl, seth_decode, seth_trap, seth_lsu, and seth_mcsr all signed off on "
