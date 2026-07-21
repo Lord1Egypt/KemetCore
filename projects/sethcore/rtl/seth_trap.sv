@@ -35,7 +35,7 @@ module seth_trap (
     // 4*cause, kept 32-bit ( (4*c) mod 2^32 == 4*(c mod 2^30) == {cause[29:0],2'b00} )
     wire [31:0] cause_x4 = {cause[29:0], 2'b00};
     assign enter_target  = (is_interrupt && vec_mode) ? (base + cause_x4) : base;
-    assign enter_mepc    = pc & 32'hFFFF_FFFE;
+    assign enter_mepc    = pc & 32'hFFFF_FFFC;
     assign enter_mcause  = {is_interrupt, cause};
 
     // MPIE <- old MIE, MIE <- 0, MPP <- 2'b11; other bits preserved
@@ -43,7 +43,7 @@ module seth_trap (
     assign enter_mstatus = (mstatus & ~((32'h1 << 3) | (32'h1 << 7) | (32'h3 << 11)))
                            | ({31'd0, mie_old} << 7) | (32'h3 << 11);
 
-    assign ret_target    = mepc & 32'hFFFF_FFFE;
+    assign ret_target    = mepc & 32'hFFFF_FFFC;
     // MIE <- old MPIE, MPIE <- 1
     wire mpie_old = mstatus[7];
     assign ret_mstatus   = (mstatus & ~((32'h1 << 3) | (32'h1 << 7)))

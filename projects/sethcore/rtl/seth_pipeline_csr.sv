@@ -188,7 +188,7 @@ module seth_pipeline_csr #(
             MIE:      csr_read = mie_s & MIE_WMASK;
             MTVEC:    csr_read = mtvec_s;
             MSCRATCH: csr_read = mscratch_s;
-            MEPC:     csr_read = mepc_s & 32'hFFFF_FFFE;
+            MEPC:     csr_read = mepc_s & 32'hFFFF_FFFC;
             MCAUSE:   csr_read = mcause_s;
             MTVAL:    csr_read = mtval_s;
             MIP:      csr_read = mip_val;
@@ -216,8 +216,17 @@ module seth_pipeline_csr #(
     wire        take_int = m_ie && (|ready) && ex_valid;
     wire [30:0] int_cause = ready[11] ? 31'd11 : (ready[3] ? 31'd3 : 31'd7);
     
-    wire [30:0] exc_cause  = ex_is_illegal ? 31'd2 : (ex_is_ebreak ? 31'd3 : 31'd11);
-    wire        is_exc     = ex_is_ecall || ex_is_ebreak || ex_is_illegal;
+    // RV32I with no C extension requires 4-byte-aligned branch/jump targets;
+    // a misaligned target must raise an instruction-address-misaligned
+    // exception (cause 0) instead of being fetched. cf_target is the same
+    // target formula redirect_pc uses for jal/jalr/taken-branch, computed
+    // once here and reused there so both stay consistent by construction.
+    wire [31:0] cf_target    = ex_jalr ? ((fwd_r1 + ex_imm) & ~32'd1) : (ex_pc + ex_imm);
+    wire        ex_taken_cf  = ex_valid && (ex_jmp || (ex_br && ex_take));
+    wire        ex_misaligned = ex_taken_cf && (cf_target[1:0] != 2'b00);
+
+    wire [30:0] exc_cause  = ex_is_illegal ? 31'd2 : (ex_is_ebreak ? 31'd3 : (ex_misaligned ? 31'd0 : 31'd11));
+    wire        is_exc     = ex_is_ecall || ex_is_ebreak || ex_is_illegal || ex_misaligned;
     wire [30:0] trap_cause = take_int ? int_cause : exc_cause;
     wire        trap_isint = take_int;
     wire        do_enter   = take_int || (is_exc && ex_valid);
@@ -258,6 +267,33 @@ module seth_pipeline_csr #(
         end
     end
 
+`ifdef RISCV_FORMAL
+    // RVFI-only forwarding: identical to fwd_r1/fwd_r2 EXCEPT it does not exclude
+    // loads from the 1-ahead (EX/MEM) path. The real datapath excludes them there
+    // for a genuine microarchitectural reason (a load's result isn't wired to
+    // forward that early), but m_wb_value is already combinationally correct for
+    // loads that same cycle (m_load_fmt) — the exclusion only matters for
+    // instructions that actually consume the value. RVFI's rs1/rs2 fields must
+    // report the CURRENT register value regardless of whether the retiring
+    // instruction's own semantics use it (e.g. bits[24:20] of a load are really
+    // part of the immediate, not a register read, but the checker still expects
+    // rvfi_rs2_rdata to be correct) — and since these signals aren't synthesized,
+    // there's no timing cost to just not excluding loads here.
+    logic [31:0] rvfi_fwd_r1, rvfi_fwd_r2;
+    always_comb begin
+        rvfi_fwd_r1 = ex_r1;
+        if (ex_rs1 != 5'd0) begin
+            if (m_valid && m_rw && m_rd == ex_rs1)               rvfi_fwd_r1 = m_wb_value;
+            else if (w_valid && w_rw && w_rd == ex_rs1)          rvfi_fwd_r1 = w_value;
+        end
+        rvfi_fwd_r2 = ex_r2;
+        if (ex_rs2 != 5'd0) begin
+            if (m_valid && m_rw && m_rd == ex_rs2)               rvfi_fwd_r2 = m_wb_value;
+            else if (w_valid && w_rw && w_rd == ex_rs2)          rvfi_fwd_r2 = w_value;
+        end
+    end
+`endif
+
     logic [31:0] ex_alu_a, ex_alu_b, ex_alu_y, ex_mdu_y, ex_compute;
     assign ex_alu_a = ex_apc ? ex_pc : fwd_r1;
     assign ex_alu_b = ex_alusrc ? ex_imm : fwd_r2;
@@ -281,7 +317,7 @@ module seth_pipeline_csr #(
     logic        redirect;
     logic [31:0] redirect_pc;
     assign redirect    = (ex_valid && (ex_jmp || (ex_br && ex_take))) || do_enter || (ex_valid && ex_is_mret) || wfi_stall;
-    assign redirect_pc = do_enter ? enter_target : (ex_is_mret ? ret_target : (wfi_stall ? ex_pc : (ex_jmp ? (ex_jalr ? ((fwd_r1 + ex_imm) & ~32'd1) : (ex_pc + ex_imm)) : (ex_pc + ex_imm))));
+    assign redirect_pc = do_enter ? enter_target : (ex_is_mret ? ret_target : (wfi_stall ? ex_pc : cf_target));
 
     // ============================ MEM ===================================== //
     logic [31:0] m_word, m_load_fmt, boff;
@@ -468,7 +504,7 @@ module seth_pipeline_csr #(
                     MIE:      mie_s      <= csr_raw & MIE_WMASK;
                     MTVEC:    mtvec_s    <= (csr_raw & 32'hFFFF_FFFC) | (csr_raw & 32'h1);
                     MSCRATCH: mscratch_s <= csr_raw;
-                    MEPC:     mepc_s     <= csr_raw & 32'hFFFF_FFFE;
+                    MEPC:     mepc_s     <= csr_raw & 32'hFFFF_FFFC;
                     MCAUSE:   mcause_s   <= csr_raw;
                     MTVAL:    mtval_s    <= csr_raw;
                     default:  ;
@@ -478,7 +514,7 @@ module seth_pipeline_csr #(
                 mepc_s    <= enter_mepc;
                 mcause_s  <= enter_mcause;
                 mstatus_s <= enter_mstatus & MSTATUS_WMASK;
-                mtval_s   <= take_int ? 32'd0 : (ex_is_illegal ? ex_ins_for_val : (ex_is_ebreak ? ex_pc : 32'd0));
+                mtval_s   <= take_int ? 32'd0 : (ex_is_illegal ? ex_ins_for_val : (ex_is_ebreak ? ex_pc : (ex_misaligned ? cf_target : 32'd0)));
             end
             if (ex_valid && ex_is_mret && !take_int) mstatus_s <= ret_mstatus & MSTATUS_WMASK;
         end
@@ -501,16 +537,16 @@ module seth_pipeline_csr #(
     logic [31:0] m_rvfi_rs1_rdata, m_rvfi_rs2_rdata;
     logic        m_rvfi_trap;
     always_ff @(posedge clk) begin
-        if (!halted && ex_valid && !stall && !redirect) begin
+        if (!halted && ex_valid && !take_int) begin
             m_rvfi_insn <= ex_ins_for_val;
             m_rvfi_pc_rdata <= ex_pc;
             m_rvfi_pc_wdata <= ex_next_pc;
             m_rvfi_rs1_addr <= ex_rs1;
             m_rvfi_rs2_addr <= ex_rs2;
             m_rvfi_rd_addr <= ex_rd;
-            m_rvfi_rs1_rdata <= fwd_r1;
-            m_rvfi_rs2_rdata <= fwd_r2;
-            m_rvfi_trap <= ex_is_illegal;
+            m_rvfi_rs1_rdata <= rvfi_fwd_r1;
+            m_rvfi_rs2_rdata <= rvfi_fwd_r2;
+            m_rvfi_trap <= ex_is_illegal || ex_misaligned;
         end
     end
     
@@ -533,25 +569,32 @@ module seth_pipeline_csr #(
             w_rvfi_rs2_rdata <= m_rvfi_rs2_rdata;
             w_rvfi_trap <= m_rvfi_trap;
             
+            // RVFI mem_addr points directly at the LSB of the access (riscv-formal
+            // docs/rvfi.md: "the address must point directly to the LSB ... that is
+            // accessed" when RISCV_FORMAL_ALIGNED_MEM is unset). So mem_rmask/wmask
+            // are NOT shifted by the address's low bits — that would double-apply
+            // the offset mem_addr already encodes — and mem_rdata/wdata must be
+            // right-justified to match (m_load_fmt/m_r2, not the natural-word-
+            // position m_word/m_store_word used for the real memory array).
             w_rvfi_mem_addr <= m_alu_y;
-            w_rvfi_mem_rdata <= m_word;
-            w_rvfi_mem_wdata <= m_store_word;
-            
+            w_rvfi_mem_rdata <= m_load_fmt;
+            w_rvfi_mem_wdata <= m_r2;
+
             if (m_mr) begin
                 case (m_f3)
-                    3'h0, 3'h4: w_rvfi_mem_rmask <= 4'b0001 << m_alu_y[1:0];
-                    3'h1, 3'h5: w_rvfi_mem_rmask <= 4'b0011 << m_alu_y[1:0];
+                    3'h0, 3'h4: w_rvfi_mem_rmask <= 4'b0001;
+                    3'h1, 3'h5: w_rvfi_mem_rmask <= 4'b0011;
                     3'h2:       w_rvfi_mem_rmask <= 4'b1111;
                     default:    w_rvfi_mem_rmask <= 4'b0000;
                 endcase
             end else begin
                 w_rvfi_mem_rmask <= 4'b0000;
             end
-            
+
             if (m_mw) begin
                 case (m_f3)
-                    3'h0:    w_rvfi_mem_wmask <= 4'b0001 << m_alu_y[1:0];
-                    3'h1:    w_rvfi_mem_wmask <= 4'b0011 << m_alu_y[1:0];
+                    3'h0:    w_rvfi_mem_wmask <= 4'b0001;
+                    3'h1:    w_rvfi_mem_wmask <= 4'b0011;
                     3'h2:    w_rvfi_mem_wmask <= 4'b1111;
                     default: w_rvfi_mem_wmask <= 4'b0000;
                 endcase

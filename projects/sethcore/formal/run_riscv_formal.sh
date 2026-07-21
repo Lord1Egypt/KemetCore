@@ -23,5 +23,17 @@ sed -i 's/read_verilog -sv/read_verilog -sv -formal/g' checks.cfg
 sed -i 's/const rand reg/(* anyconst *) reg/g' ../../checks/rvfi_macros.vh
 
 python3 ../../checks/genchecks.py
-make -C checks -j$(nproc)
+make -C checks -j$(nproc) || true
+
+# sby does NOT propagate FAIL as a nonzero process exit code (confirmed: a
+# failing check prints "DONE (FAIL, rc=0)" and make happily reports success)
+# so exit status here has to come from reading each check's status file.
+fails=""
+for f in checks/*/status; do
+    grep -q "^PASS" "$f" || fails="$fails $(dirname "$f" | xargs basename)"
+done
+if [ -n "$fails" ]; then
+    echo "SethCore riscv-formal proofs FAILED ❌ :$fails"
+    exit 1
+fi
 echo "SethCore riscv-formal proofs PROVED ✅"
