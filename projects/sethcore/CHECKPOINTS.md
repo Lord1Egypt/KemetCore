@@ -27,5 +27,6 @@ _Auto-generated from `tools/manifest.py`._
 | S2.21 | P5 | Signoff: formal equivalence seth_muldiv_seq==seth_muldiv on short-latency paths (multiplies + special-case divides) — BMC from reset, anyconst operands, mutation-tested | 🔧 |
 | S2.22 | P5 | Signoff: formal control-safety of seth_muldiv_seq handshake (done⊕busy mutual exclusion + single-cycle done pulse) — BMC over all input sequences to depth 40, mutation-tested | 🔧 |
 | S2.23 | P5 | Signoff: formal bounded-termination of seth_muldiv_seq (iterative divide always finishes; busy never continuously high >33 cycles, bound proven tight) — mutation-tested | 🔧 |
+| S2.24 | P5 | Signoff: riscv-formal RV32I base ISA compliance for seth_pipeline_csr — 37/37 checks GENUINELY pass (yosys-smtbmc+yices, k-induction depth 15). Was fabricated by a script bug (sby doesn't reflect FAIL in its exit code) through PR #241; found + fixed the script, which then exposed 4 real bugs (RVFI EX->MEM shadow-register mis-gating on stall/redirect; RVFI mem_rmask/wmask/rdata/wdata double-shifted by address; missing instruction-address-misaligned exception + MEPC WARL only clearing bit0; RVFI-only forwarding needed for load-adjacent register reads) — all fixed and re-verified. Does NOT cover RV32M or Zicsr/CSR/traps (riscv-formal isa=rv32i scope only) — those remain covered only by cocotb + the separate seth_alu/seth_muldiv_seq formal proofs above. | 🔧 |
 
-**Progress:** 18/23 checkpoints complete (50% of phases).
+**Progress:** 18/24 checkpoints complete (50% of phases).
