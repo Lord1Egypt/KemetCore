@@ -26,8 +26,13 @@ else ifeq ($(CORE),noc)
   TOPLEVEL = ra_noc_arbiter
   MODULE   = test_noc
 else ifeq ($(CORE),lite)
+  SETHCORE_RTL = $(PWD)/../../../sethcore/rtl
   VERILOG_SOURCES = $(PWD)/../racore_lite.sv $(PWD)/../ra_noc_xbar.sv $(PWD)/../ra_noc_arbiter.sv \
-                    $(PWD)/../ra_scratchpad.sv
+                    $(PWD)/../ra_scratchpad.sv $(PWD)/../ra_bootrom.sv \
+                    $(SETHCORE_RTL)/seth_pipeline_csr.sv $(SETHCORE_RTL)/seth_decode.sv \
+                    $(SETHCORE_RTL)/seth_imm.sv $(SETHCORE_RTL)/seth_aluctl.sv \
+                    $(SETHCORE_RTL)/seth_alu.sv $(SETHCORE_RTL)/seth_muldiv.sv \
+                    $(SETHCORE_RTL)/seth_regfile.sv $(SETHCORE_RTL)/seth_trap.sv
   TOPLEVEL = racore_lite
   MODULE   = test_racore_lite
 else
@@ -37,5 +42,5 @@ MODULE   = test_kai_regs
 endif
 
 SIM_BUILD = sim_build_$(CORE)
-EXTRA_ARGS += --no-timing
+EXTRA_ARGS += --no-timing -Wno-UNOPTFLAT
 include $(shell cocotb-config --makefiles)/Makefile.sim
