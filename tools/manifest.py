@@ -204,7 +204,7 @@ PROJECTS = [
         "key": "sethcore", "num": "01", "name": "SethCore", "deity": "Seth (strength)",
         "domain": "RV32IM pipelined CPU", "doc": "docs/01_SethCore_RV32IM_CPU.md",
         "depends": ["hapicore"],
-        "phase": P235,
+        "phase": _ph("done", "done", "partial", "partial", "done", "partial"),
         "scope": "Phase 0/1: RV32I+M ISA sim + 5-stage pymodel. Phase 2 IN PROGRESS: "
                  "seth_alu.sv (RV32 ALU), seth_muldiv.sv (RV32M mul/div/rem) and seth_imm.sv "
                  "(RV32 immediate generator: I/S/B/U/J formats, sign-extended per ISA) and "
@@ -235,7 +235,14 @@ PROJECTS = [
                  "regfile ~3.8K/992 DFFs, aluctl/decode ~38 cells); seth_core + seth_pipeline + "
                  "seth_pipeline_fwd coarse 0-latch (memory -> $mem, CPU synth CI-skipped); "
                  "combinational divider full synth deferred (generic synth explodes). "
-                 "Phase 4: seth_regfile, seth_alu, seth_muldiv, and seth_branch signed off on ASAP7 7nm.",
+                 "Phase 4 DONE: seth_regfile, seth_alu, seth_muldiv, seth_branch, seth_imm, "
+                 "seth_aluctl, seth_decode, seth_trap, seth_lsu, and seth_mcsr all signed off on "
+                 "ASAP7 7nm (10 blocks, WNS 0.00, 0 route-DRC, see flow/HARDEN_RESULTS.md) — every "
+                 "major sub-block of the datapath and control/CSR path is hardened to silicon, "
+                 "matching the representative-block bar used for the other 8 cores. Full-core "
+                 "integrated GDSII (the whole pipeline as one flat top) is a separate, harder item: "
+                 "blocked by a hold-buffer explosion at CTS from the flattened register file/memory, "
+                 "not attempted here.",
         "checkpoints": [
             ("S2.1", "Golden: RV32I ISA simulator", 0, "done"),
             ("S2.2", "Golden: M-extension (mul/div/rem)", 0, "done"),
