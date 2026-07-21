@@ -533,25 +533,32 @@ module seth_pipeline_csr #(
             w_rvfi_rs2_rdata <= m_rvfi_rs2_rdata;
             w_rvfi_trap <= m_rvfi_trap;
             
+            // RVFI mem_addr points directly at the LSB of the access (riscv-formal
+            // docs/rvfi.md: "the address must point directly to the LSB ... that is
+            // accessed" when RISCV_FORMAL_ALIGNED_MEM is unset). So mem_rmask/wmask
+            // are NOT shifted by the address's low bits — that would double-apply
+            // the offset mem_addr already encodes — and mem_rdata/wdata must be
+            // right-justified to match (m_load_fmt/m_r2, not the natural-word-
+            // position m_word/m_store_word used for the real memory array).
             w_rvfi_mem_addr <= m_alu_y;
-            w_rvfi_mem_rdata <= m_word;
-            w_rvfi_mem_wdata <= m_store_word;
-            
+            w_rvfi_mem_rdata <= m_load_fmt;
+            w_rvfi_mem_wdata <= m_r2;
+
             if (m_mr) begin
                 case (m_f3)
-                    3'h0, 3'h4: w_rvfi_mem_rmask <= 4'b0001 << m_alu_y[1:0];
-                    3'h1, 3'h5: w_rvfi_mem_rmask <= 4'b0011 << m_alu_y[1:0];
+                    3'h0, 3'h4: w_rvfi_mem_rmask <= 4'b0001;
+                    3'h1, 3'h5: w_rvfi_mem_rmask <= 4'b0011;
                     3'h2:       w_rvfi_mem_rmask <= 4'b1111;
                     default:    w_rvfi_mem_rmask <= 4'b0000;
                 endcase
             end else begin
                 w_rvfi_mem_rmask <= 4'b0000;
             end
-            
+
             if (m_mw) begin
                 case (m_f3)
-                    3'h0:    w_rvfi_mem_wmask <= 4'b0001 << m_alu_y[1:0];
-                    3'h1:    w_rvfi_mem_wmask <= 4'b0011 << m_alu_y[1:0];
+                    3'h0:    w_rvfi_mem_wmask <= 4'b0001;
+                    3'h1:    w_rvfi_mem_wmask <= 4'b0011;
                     3'h2:    w_rvfi_mem_wmask <= 4'b1111;
                     default: w_rvfi_mem_wmask <= 4'b0000;
                 endcase
