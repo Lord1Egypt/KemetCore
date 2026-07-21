@@ -20,6 +20,10 @@ def jal(rd, off):
     o = off & 0x1FFFFF
     return (((o >> 20) & 1) << 31) | (((o >> 1) & 0x3FF) << 21) | (((o >> 11) & 1) << 20) \
         | (((o >> 12) & 0xFF) << 12) | (rd << 7) | 0x6F
+def beq(rs1, rs2, off):
+    o = off & 0x1FFF
+    return (((o >> 12) & 1) << 31) | (((o >> 5) & 0x3F) << 25) | (rs2 << 20) | (rs1 << 15) \
+        | (((o >> 1) & 0xF) << 8) | (((o >> 11) & 1) << 7) | 0x63
 NOP = addi(0, 0, 0)
 ECALL, MRET = 0x00000073, 0x30200073
 CSRRW, CSRRS, CSRRWI = 0b001, 0b010, 0b101
@@ -130,6 +134,23 @@ async def test_illegal_instruction_trap(dut):
     assert int(dut.mtval_s.value) == ILLEGAL, f"mtval={int(dut.mtval_s.value):08x}"
     assert int(dut.mepc_s.value) == 0x0C
     assert int(dut.u_rf.regs[10].value) == 0     # instruction after illegal never ran
+
+@cocotb.test()
+async def test_misaligned_branch_trap(dut):
+    cocotb.start_soon(Clock(dut.clk, 10, units="ns").start())
+    prog = [
+        addi(5, 0, 0x14),                # 0x00 x5 = handler @ 0x14
+        csr(MTVEC, 5, CSRRW, 0),         # 0x04 mtvec = 0x14
+        addi(6, 0, 1),                   # 0x08 x6 = 1
+        beq(6, 6, 2),                    # 0x0C always-taken branch to 0x0E (misaligned!) -> trap
+        addi(10, 0, 9),                  # 0x10 (never runs either way; not the point of this test)
+        jal(0, 0),                       # 0x14 handler: self-loop
+    ]
+    await run_and_check(dut, prog, 15, "misaligned_branch")
+    assert int(dut.mcause_s.value) == 0, f"mcause={int(dut.mcause_s.value)}"    # instruction-address-misaligned
+    assert int(dut.mtval_s.value) == 0x0E, f"mtval={int(dut.mtval_s.value):08x}"  # the bad target
+    assert int(dut.mepc_s.value) == 0x0C                                        # the branch itself
+
 
 @cocotb.test()
 async def test_timer_interrupt(dut):
