@@ -41,6 +41,8 @@ class CpuZ(Cpu):
         if ready & (1 << self.B_MTI): return 7         # machine timer
         return None
 
+    CAUSE_MISALIGNED_FETCH = 0
+
     def step(self):
         cause = self._pending_cause()
         if cause is not None:
@@ -52,7 +54,20 @@ class CpuZ(Cpu):
             self.csr.mstatus = ms & MSTATUS_WMASK
             self.pc = u32(tgt)
             return
+        # RV32I with no C extension requires a 4-byte-aligned branch/jump target;
+        # a misaligned one raises instruction-address-misaligned instead of being
+        # fetched. Only branch(0x63)/jal(0x6F)/jalr(0x67) can ever misalign pc
+        # (every other path advances by a fixed +4 from an already-aligned pc).
+        ins = self._ld(self.pc, 4)
+        op = ins & 0x7F
+        rd = (ins >> 7) & 0x1F
+        pc_before, rd_before = self.pc, self.x[rd]
         super().step()
+        if op in (0x63, 0x6F, 0x67) and (self.pc & 0x3):
+            bad_target = self.pc
+            self.x[rd] = rd_before   # undo jal/jalr's rd<-npc (branches never write rd)
+            self.pc = pc_before
+            self.pc = self._trap(self.CAUSE_MISALIGNED_FETCH, 0, bad_target)
 
     def _trap(self, cause, is_int, tval):
         tgt, mepc, mcause, ms = trap_enter(
