@@ -501,7 +501,7 @@ module seth_pipeline_csr #(
     logic [31:0] m_rvfi_rs1_rdata, m_rvfi_rs2_rdata;
     logic        m_rvfi_trap;
     always_ff @(posedge clk) begin
-        if (!halted && ex_valid && !stall && !redirect) begin
+        if (!halted && ex_valid && !take_int) begin
             m_rvfi_insn <= ex_ins_for_val;
             m_rvfi_pc_rdata <= ex_pc;
             m_rvfi_pc_wdata <= ex_next_pc;
