@@ -314,9 +314,17 @@ PROJECTS = [
         "key": "gebcore", "num": "04", "name": "GebCore", "deity": "Geb (earth)",
         "domain": "2:4 structured sparse matmul", "doc": "docs/04_GebCore_SparseMatmul.md",
         "depends": ["bastcore"],
-        "phase": DONE4,
+        "phase": _ph("done", "done", "done", "done", "done", "done"),
         "scope": "Phase 0/1 implements 2:4 structured-sparse matmul (compress to 2-of-4 + "
-                 "metadata) and a pymodel that skips pruned MACs. Phase 2 IN PROGRESS: "
+                 "metadata) and a pymodel that skips pruned MACs. Phase 5 DONE: geb_prune's "
+                 "2:4 invariant proven COMPLETE and functional (not just bounded) by "
+                 "yosys-smtbmc+z3 over all 2^128 input combinations (symbolic, exhaustive): "
+                 "exactly-2-kept, val/idx self-consistency across all 6 mask combos, AND "
+                 "magnitude-correctness (every kept lane's key beats every dropped lane's, "
+                 "for all i,j pairs) — this is the full selection-correctness property, not a "
+                 "partial one. Re-verified + mutation-tested 2026-07-21 (flipped the beats() "
+                 "comparator from > to >=, proof correctly FAILED; restored, PASSED). "
+                 "Phase 2 IN PROGRESS: "
                  "geb_spmac.sv — the sparse-MAC processing element: a 2-bit lane index (the "
                  "2:4 metadata) selects one of the group's 4 fp32 activations, multiplies by "
                  "the kept weight (fp32), and fp32-accumulates, composing the verified HapiCore "
